@@ -28,7 +28,9 @@ export const HRIS_PERFORMANCE_CATALOG: readonly HrisCatalogNode[] = Object.freez
     '목표 주기',
     'Goal cycles',
     '목표 템플릿, 조직 전개, 수립·승인과 변경',
-    'Goal templates, cascade, creation, approval, and changes'
+    'Goal templates, cascade, creation, approval, and changes',
+    [],
+    ['/hr/operations/performance/goal-cycles']
   ),
   node({
     id: 'performance-review-operations',

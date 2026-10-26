@@ -37,12 +37,18 @@ export type HrisCatalogNode = Readonly<{
   capability: HrisLocalizedText;
   coverageNote?: HrisLocalizedText;
   legacyPaths: readonly string[];
+  currentPartialPaths: readonly string[];
   externalTarget?: HrisExternalTarget;
   href?: string;
 }>;
 
-type NodeInput = Omit<HrisCatalogNode, 'availability' | 'authorization' | 'legacyPaths'> &
-  Partial<Pick<HrisCatalogNode, 'availability' | 'authorization' | 'legacyPaths'>>;
+type NodeInput = Omit<
+  HrisCatalogNode,
+  'availability' | 'authorization' | 'legacyPaths' | 'currentPartialPaths'
+> &
+  Partial<
+    Pick<HrisCatalogNode, 'availability' | 'authorization' | 'legacyPaths' | 'currentPartialPaths'>
+  >;
 
 export function hrisCatalogNode(input: NodeInput): HrisCatalogNode {
   const availability =
@@ -64,6 +70,7 @@ export function hrisCatalogNode(input: NodeInput): HrisCatalogNode {
     availability,
     authorization,
     legacyPaths: Object.freeze([...(input.legacyPaths ?? [])]),
+    currentPartialPaths: Object.freeze([...(input.currentPartialPaths ?? [])]),
   });
 }
 
@@ -105,8 +112,10 @@ export function plannedHrisCatalogNode(
   en: string,
   capabilityKo: string,
   capabilityEn: string,
-  legacyPaths: readonly string[] = []
+  legacyPaths: readonly string[] = [],
+  currentPartialPaths: readonly string[] = []
 ): HrisCatalogNode {
+  const hasPartialSurface = legacyPaths.length > 0 || currentPartialPaths.length > 0;
   return hrisCatalogNode({
     id,
     inventoryGroup,
@@ -114,14 +123,15 @@ export function plannedHrisCatalogNode(
     module,
     personas,
     lifecycle: 'PLANNED',
-    ...(legacyPaths.length
+    ...(hasPartialSurface
       ? {
           availability: 'LEGACY_PARTIAL' as const,
           authorization: 'RUNTIME_POLICY_REQUIRED' as const,
           legacyPaths,
+          currentPartialPaths,
           coverageNote: {
-            ko: '기존 DWP 화면에서 일부 기능을 제공 중이며, 목표 메뉴로 통합·고도화할 예정입니다.',
-            en: 'Some capability remains available in existing DWP screens and will be consolidated and upgraded into this target menu.',
+            ko: '기존 또는 현재의 제한된 DWP 화면에서 일부 기능을 제공 중이며, 목표 메뉴로 통합·고도화할 예정입니다.',
+            en: 'Some capability is available in a legacy or current bounded DWP surface and will be consolidated and upgraded into this target menu.',
           },
         }
       : {}),

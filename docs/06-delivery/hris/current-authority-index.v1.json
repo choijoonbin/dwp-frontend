@@ -1,0 +1,146 @@
+{
+  "schema": "dwp.hris.current-authority-index.v1",
+  "indexId": "HRIS-CURRENT-AUTHORITY-20261026-R1",
+  "recordedAt": "2026-10-26T16:00:00+09:00",
+  "state": "CURRENT_READ_AUTHORITY_CHAIN_DEFAULT_OFF_ZERO_TENANT_ENROLLMENT",
+  "scope": "Read-only index over immutable base evidence and append-only successors; it grants no source, migration, activation, tenant-enrollment or release authority.",
+  "informationArchitecture": {
+    "immutableBaseRegister": "docs/06-delivery/hris/recovery/hris-porting-blueprint-2026-09-09/coding-readiness/hris-information-architecture-register.csv",
+    "expectedBaseNodes": 98,
+    "navigationPresentationSuccessors": [
+      "docs/06-delivery/hris/2026-10-20-hris-navigation-experience-successor.md",
+      "docs/06-delivery/hris/2026-10-22-hris-sidebar-presentation-successor.md"
+    ],
+    "runtimeManifest": "apps/dwp/src/features/hris/shell/model/hris-runtime-navigation-manifest.ts",
+    "expectedRuntimeNodes": 99,
+    "expectedShellEntries": 9,
+    "expectedTaskGroups": 46
+  },
+  "contractRegisterOverlays": [
+    {
+      "kind": "CROSS_MODULE_CONTRACT",
+      "immutableBase": "docs/06-delivery/hris/recovery/hris-porting-blueprint-2026-09-09/coding-readiness/cross-module-contract-register.csv",
+      "successor": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-04-central-admission-r1/cross-module-contract-register.successor.v1.csv",
+      "expectedSuccessorIds": ["XCON-027"]
+    },
+    {
+      "kind": "SERVICE_API_AUTH_BINDING",
+      "immutableBase": "docs/06-delivery/hris/recovery/hris-porting-blueprint-2026-09-09/coding-readiness/service-api-auth-binding-register.csv",
+      "successor": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-04-central-admission-r1/service-api-auth-binding-register.successor.v1.csv",
+      "expectedSuccessorIds": ["SVC-PEP-HRM-007"]
+    }
+  ],
+  "batch04ContractAuthority": {
+    "semanticDisposition": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-04-module-start-r1/semantic-dispositions/base-tfr-tim-003.semantic-disposition.v1.json",
+    "startToken": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-04-module-start-r1/tokens/base-tfr-tim-003.hrm-successor.start-token.v1.json",
+    "requiredContractIds": ["XCON-027", "SVC-PEP-HRM-007"]
+  },
+  "executionAuthority": {
+    "roadmap": "docs/06-delivery/hris/wave7-2026-10-17/execution-roadmap-successor.v20.json",
+    "requiredRoadmapState": "R7_BATCH_05_SEQUENCING_CLOSED_DEFAULT_OFF_ZERO_BUSINESS_CREDIT_BATCH_06_PREFLIGHT_NEXT_ZERO_TENANT_ENROLLMENT_ZERO_PRODUCTION_BINDING_P0_GATES_CARRIED",
+    "batch06Preflight": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-preflight-r1/semantic-dependency-migration-preflight.v1.json",
+    "requiredPreflightState": "PREFLIGHT_COMPLETE_FIXED_ORDER_FOUR_CONDITIONAL_SOURCE_LANES_ONE_REUSE_ONLY_AUDIT_NO_PACKETS_NO_TOKENS_NO_WORKTREES_NO_LEASES_NO_SOURCE"
+  },
+  "integrityPins": [
+    {
+      "path": "docs/06-delivery/hris/recovery/hris-porting-blueprint-2026-09-09/coding-readiness/cross-module-contract-register.csv",
+      "bytes": 13108,
+      "sha256": "783bd3f6c6fdcf5d35da73020b2cc01f0c59cfd6e9fe9d56ffa75a3cd380f725"
+    },
+    {
+      "path": "docs/06-delivery/hris/recovery/hris-porting-blueprint-2026-09-09/coding-readiness/service-api-auth-binding-register.csv",
+      "bytes": 14356,
+      "sha256": "a54272429e70d0e2494e082b214615a4befe2354d5ab72bf7619500e2b0fdcaa"
+    },
+    {
+      "path": "docs/06-delivery/hris/recovery/hris-porting-blueprint-2026-09-09/coding-readiness/hris-information-architecture-register.csv",
+      "bytes": 103877,
+      "sha256": "ab506a2bb2f80c8ab81a4b9d575374d6bda83b312d11dce07495d4812bdf4686"
+    },
+    {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-04-central-admission-r1/cross-module-contract-register.successor.v1.csv",
+      "bytes": 1462,
+      "sha256": "9f9e5ee701ad4b0c9f1df53e80274ab4b4eaf0d56c4aeb5519de6132de95ffd9"
+    },
+    {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-04-central-admission-r1/service-api-auth-binding-register.successor.v1.csv",
+      "bytes": 2190,
+      "sha256": "d13e1d296d358250ba6d1388f36421c34fbaf16c6d6c1299e0598eb287b3ab14"
+    },
+    {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-04-module-start-r1/semantic-dispositions/base-tfr-tim-003.semantic-disposition.v1.json",
+      "bytes": 107850,
+      "sha256": "60a21b6da8b97f2a30055404f167e52bb9fc813520d6c277c32a514494585ff9"
+    },
+    {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-04-module-start-r1/tokens/base-tfr-tim-003.hrm-successor.start-token.v1.json",
+      "bytes": 16405,
+      "sha256": "752ac27e1b3bfaccf9fec7b58cb997de4c66485dcfaa1b7a91e64b89c0b806af"
+    },
+    {
+      "path": "docs/06-delivery/hris/recovery/hris-porting-blueprint-2026-09-09/session-registers/hris-sys-source-coverage.csv",
+      "bytes": 154062,
+      "sha256": "88e23e9b2356bd40b23ddd1bdc8602aa6a0e439081d26f474e98aef3cdb9a294"
+    },
+    {
+      "path": "docs/06-delivery/hris/2026-10-20-hris-navigation-experience-successor.md",
+      "bytes": 35932,
+      "sha256": "8d8c736c645ce4e12eadc20a0d882ca35550b14a2faec42f10676c0bff1f48d1"
+    },
+    {
+      "path": "docs/06-delivery/hris/2026-10-22-hris-sidebar-presentation-successor.md",
+      "bytes": 2484,
+      "sha256": "468a32025781100574db140a45242afc8f625a1cf2444fd71f32d035bb90b712"
+    },
+    {
+      "path": "apps/dwp/src/features/hris/shell/model/hris-runtime-navigation-manifest.ts",
+      "bytes": 5468,
+      "sha256": "626808212df87da9f22049512663a515cc50e741f66a25672bdaf4edf69add60"
+    },
+    {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/execution-roadmap-successor.v20.json",
+      "bytes": 20200,
+      "sha256": "c0bb60884e5d99758296ea6f4024bfc4bf557352bbffedf8aa9d8d0f19bacba1"
+    },
+    {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-preflight-r1/semantic-dependency-migration-preflight.v1.json",
+      "bytes": 58498,
+      "sha256": "33d95637c2887bfae43b2369370662c3a0d06d8e0420df05c868299da2b752dd"
+    }
+  ],
+  "historicalEvidenceNotCurrentRuntimeTruth": [
+    "docs/06-delivery/hris/current-slice-integration-status.v1.csv"
+  ],
+  "sourceCoverageRecovery": {
+    "state": "REFERENCE_ONLY_GAPS_NOT_SYNTHESIZED",
+    "preservedCoverage": [
+      {
+        "path": "docs/06-delivery/hris/recovery/hris-porting-blueprint-2026-09-09/session-registers/hris-sys-source-coverage.csv",
+        "rows": 189,
+        "sha256": "88e23e9b2356bd40b23ddd1bdc8602aa6a0e439081d26f474e98aef3cdb9a294"
+      }
+    ],
+    "referenceOnlyMissingCoverage": [
+      "docs/06-delivery/hris/recovery/hris-porting-blueprint-2026-09-09/session-registers/hris-hrm-source-coverage.csv",
+      "docs/06-delivery/hris/recovery/hris-porting-blueprint-2026-09-09/session-registers/hris-per-source-coverage.csv",
+      "docs/06-delivery/hris/recovery/hris-porting-blueprint-2026-09-09/session-registers/hris-pay-source-coverage.csv",
+      "docs/06-delivery/hris/recovery/hris-porting-blueprint-2026-09-09/session-registers/hris-tim-source-coverage.csv"
+    ],
+    "referenceOnlyMissingChildTraces": [
+      "docs/06-delivery/hris/recovery/hris-porting-blueprint-2026-09-09/session-evidence/hrm/g1-child-trace.csv",
+      "docs/06-delivery/hris/recovery/hris-porting-blueprint-2026-09-09/session-evidence/per/g1-child-trace.csv",
+      "docs/06-delivery/hris/recovery/hris-porting-blueprint-2026-09-09/session-evidence/pay/g1-child-trace.csv",
+      "docs/06-delivery/hris/recovery/hris-porting-blueprint-2026-09-09/session-evidence/tim/g1-child-trace.csv",
+      "docs/06-delivery/hris/recovery/hris-porting-blueprint-2026-09-09/session-evidence/sys/g1-child-trace.csv"
+    ],
+    "futureAction": "Generate independently reviewed v2 coverage and child traces from pinned SKKF source; never synthesize or overwrite the missing historical v1 evidence."
+  },
+  "nonClaims": [
+    "The immutable recovery registers were edited in place.",
+    "The Batch-04 successor rows grant new source or activation authority.",
+    "The historical current-slice v1 CSV describes the latest mounted runtime.",
+    "The v20 declared activation evidence is a live production database observation.",
+    "Missing historical v1 coverage or child-trace files were reconstructed from counts or hashes.",
+    "HRIS, R7 or any module is complete."
+  ]
+}

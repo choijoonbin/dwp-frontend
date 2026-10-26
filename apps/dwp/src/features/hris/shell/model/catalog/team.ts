@@ -52,7 +52,8 @@ export const HRIS_TEAM_CATALOG: readonly HrisCatalogNode[] = Object.freeze([
     'Team leave',
     '팀 캘린더, 잔액 영향, 인력 경고와 승인',
     'Team calendar, balance impact, staffing warnings, and approval',
-    ['/hr/team/absence']
+    ['/hr/team/absence'],
+    ['/hr/team/leave']
   ),
   planned(
     'team-people-changes',
@@ -63,7 +64,9 @@ export const HRIS_TEAM_CATALOG: readonly HrisCatalogNode[] = Object.freeze([
     '인사 변경',
     'People changes',
     '이동, 겸직, 직무, 근무지와 계약 변경 요청',
-    'Transfer, concurrent role, job, location, and contract change requests'
+    'Transfer, concurrent role, job, location, and contract change requests',
+    [],
+    ['/hr/team/people-changes']
   ),
   planned(
     'team-performance',
@@ -85,6 +88,8 @@ export const HRIS_TEAM_CATALOG: readonly HrisCatalogNode[] = Object.freeze([
     '위임함',
     'Delegated work',
     '위임받은 승인, 만료와 충돌 확인',
-    'Delegated approvals, expiry, and conflict review'
+    'Delegated approvals, expiry, and conflict review',
+    [],
+    ['/hr/team/delegation']
   ),
 ]);

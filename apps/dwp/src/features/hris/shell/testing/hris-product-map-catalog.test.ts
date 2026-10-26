@@ -2,6 +2,7 @@ import { createHash } from 'node:crypto';
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 
+import { HRIS_R7_GOVERNED_PAGE_CATALOG } from '../../../hcm/hcm-navigation';
 import {
   countHrisCatalogByInventoryGroup,
   filterHrisCatalog,
@@ -16,7 +17,7 @@ describe('HRIS target product map catalog', () => {
     const semanticJson = JSON.stringify(HRIS_PRODUCT_MAP_CATALOG);
 
     expect(createHash('sha256').update(semanticJson).digest('hex')).toBe(
-      'beec4808ea853830be012778ddf67758ac04459071fd6dbd50213e1d85dc0ff2'
+      '9f3c685dba7906cc2097de8e6a7bd9799d381697962e951043d0ed540a6c453a'
     );
     expect(Object.isFrozen(HRIS_PRODUCT_MAP_CATALOG)).toBe(true);
     expect(HRIS_PRODUCT_MAP_CATALOG.every((item) => Object.isFrozen(item))).toBe(true);
@@ -175,14 +176,48 @@ describe('HRIS target product map catalog', () => {
     const governed = [...navigationSource.matchAll(/path: '(\/hr\/[^']+)'/gu)].map(
       (match) => match[1]!
     );
-    const mapped = HRIS_PRODUCT_MAP_CATALOG.flatMap((item) => item.legacyPaths);
+    const legacyMapped = HRIS_PRODUCT_MAP_CATALOG.flatMap((item) => item.legacyPaths);
+    const currentPartialMapped = HRIS_PRODUCT_MAP_CATALOG.flatMap(
+      (item) => item.currentPartialPaths
+    );
     const retained = HRIS_RETAINED_OUTSIDE_TARGET.map((item) => item.path);
     const deliveredModern = [
       '/hr/operations/performance/compensation-planning',
       '/hr/settings/navigation-policy',
     ];
+    const catalogOnly = HRIS_R7_GOVERNED_PAGE_CATALOG.filter(
+      (item) => item.state === 'CATALOG_ONLY'
+    ).map((item) => item.path);
 
-    expect(new Set([...mapped, ...retained, ...deliveredModern])).toEqual(new Set(governed));
+    expect(
+      new Set([
+        ...legacyMapped,
+        ...currentPartialMapped,
+        ...retained,
+        ...deliveredModern,
+        ...catalogOnly,
+      ])
+    ).toEqual(new Set(governed));
+    expect(catalogOnly).toEqual([
+      '/hr/operations/time/command-center',
+      '/hr/operations/time/daily-close',
+      '/hr/operations/time/monthly-close',
+    ]);
+    expect(
+      catalogOnly.every(
+        (path) => !legacyMapped.includes(path) && !currentPartialMapped.includes(path)
+      )
+    ).toBe(true);
+    expect(
+      ['time-command-center', 'time-daily-close', 'time-monthly-close'].map((id) => {
+        const item = HRIS_PRODUCT_MAP_CATALOG.find((candidate) => candidate.id === id);
+        return [item?.id, item?.lifecycle, item?.href];
+      })
+    ).toEqual([
+      ['time-command-center', 'PLANNED', undefined],
+      ['time-daily-close', 'PLANNED', undefined],
+      ['time-monthly-close', 'PLANNED', undefined],
+    ]);
     expect(HRIS_RETAINED_OUTSIDE_TARGET.map((item) => [item.path, item.sourceModule])).toEqual([
       ['/hr/data/reference', 'LEGACY_WORKFORCE_REFERENCE'],
       ['/hr/benefits', 'BENSK'],
@@ -218,6 +253,31 @@ describe('HRIS target product map catalog', () => {
         (item) => item.lifecycle !== 'PILOT' && item.href !== undefined
       ).map((item) => [item.id, item.href])
     ).toEqual([['dwp-governance', HCM_AUDIT_OVERVIEW_HREF]]);
+  });
+
+  it('owns each current bounded partial route through its exact canonical catalog node', () => {
+    const currentPartial = HRIS_PRODUCT_MAP_CATALOG.flatMap((item) =>
+      item.currentPartialPaths.map((path) => [item.id, path] as const)
+    );
+
+    expect(currentPartial).toEqual([
+      ['my-hr-requests', '/hr/me/requests'],
+      ['team-leave', '/hr/team/leave'],
+      ['team-people-changes', '/hr/team/people-changes'],
+      ['team-delegation', '/hr/team/delegation'],
+      ['hr-operations-home', '/hr/operations/home'],
+      ['hr-appointments', '/hr/operations/people/appointments'],
+      ['hr-organization-positions', '/hr/operations/people/organization-positions'],
+      ['hr-certificates-documents', '/hr/operations/people/certificates-documents'],
+      ['time-work-plans', '/hr/operations/time/work-plans'],
+      ['time-leave-operations', '/hr/operations/time/leave-operations'],
+      ['pay-population', '/hr/operations/payroll/population'],
+      ['performance-goal-cycles', '/hr/operations/performance/goal-cycles'],
+      ['settings-people-employment', '/hr/settings/people-employment'],
+      ['settings-workflow', '/hr/settings/workflow'],
+      ['settings-operations', '/hr/settings/operations'],
+    ]);
+    expect(new Set(currentPartial.map(([, path]) => path)).size).toBe(currentPartial.length);
   });
 
   it('projects work surfaces by module and persona without changing the catalog', () => {

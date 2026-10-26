@@ -28,7 +28,9 @@ export const HRIS_TIME_CATALOG: readonly HrisCatalogNode[] = Object.freeze([
     '근무계획',
     'Work plans',
     '근무제·교대, 일정 배정, 캘린더와 시뮬레이션',
-    'Work patterns, shifts, schedule assignment, calendar, and simulation'
+    'Work patterns, shifts, schedule assignment, calendar, and simulation',
+    [],
+    ['/hr/operations/time/work-plans']
   ),
   node({
     id: 'time-clock-ingestion',
@@ -119,7 +121,8 @@ export const HRIS_TIME_CATALOG: readonly HrisCatalogNode[] = Object.freeze([
     'Leave operations',
     '신청 대기열, 대량 등록, 원장, 증빙과 장기휴가',
     'Request queue, bulk registration, ledger, evidence, and long leave',
-    ['/hr/operations/absence']
+    ['/hr/operations/absence'],
+    ['/hr/operations/time/leave-operations']
   ),
   planned(
     'time-accrual-expiration',

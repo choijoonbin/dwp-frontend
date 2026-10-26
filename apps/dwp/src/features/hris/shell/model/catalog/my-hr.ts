@@ -136,6 +136,7 @@ export const HRIS_MY_HR_CATALOG: readonly HrisCatalogNode[] = Object.freeze([
     'HR requests',
     '정보·가족 변경, 증명, 퇴직·복직 신청과 처리 상태',
     'Data and family changes, certificates, exit or return requests, and status',
-    ['/hr/services']
+    ['/hr/services'],
+    ['/hr/me/requests']
   ),
 ]);

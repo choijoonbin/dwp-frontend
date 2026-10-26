@@ -39,7 +39,9 @@ export const HRIS_SETTINGS_CATALOG: readonly HrisCatalogNode[] = Object.freeze([
     '사람·고용',
     'People & employment',
     '인물번호, 고용형태, 배치·발령·계약유형과 필드 구성',
-    'Person numbering, worker types, assignment, appointment and contract types, and fields'
+    'Person numbering, worker types, assignment, appointment and contract types, and fields',
+    [],
+    ['/hr/settings/people-employment']
   ),
   planned(
     'settings-time',
@@ -113,7 +115,9 @@ export const HRIS_SETTINGS_CATALOG: readonly HrisCatalogNode[] = Object.freeze([
     '워크플로',
     'Workflow',
     '승인정책, 위임, SLA, 알림과 예외 상향',
-    'Approval policy, delegation, SLA, notifications, and escalation'
+    'Approval policy, delegation, SLA, notifications, and escalation',
+    [],
+    ['/hr/settings/workflow']
   ),
   planned(
     'settings-documents-communications',
@@ -159,6 +163,7 @@ export const HRIS_SETTINGS_CATALOG: readonly HrisCatalogNode[] = Object.freeze([
     'Operations',
     '작업 실행, 예외, 설정 이력, 상태와 사용량',
     'Job runs, exceptions, configuration history, health, and usage',
-    ['/hr/manage/system']
+    ['/hr/manage/system'],
+    ['/hr/settings/operations']
   ),
 ]);

@@ -17,7 +17,8 @@ export const HRIS_HR_OPERATIONS_CATALOG: readonly HrisCatalogNode[] = Object.fre
     'Operations home',
     '입퇴사, 발령·계약, 데이터 품질, SLA와 연계 오류',
     'Joiners and leavers, appointments, contracts, data quality, SLA, and integration errors',
-    ['/hr/operations']
+    ['/hr/operations'],
+    ['/hr/operations/home']
   ),
   node({
     id: 'hr-people',
@@ -66,7 +67,9 @@ export const HRIS_HR_OPERATIONS_CATALOG: readonly HrisCatalogNode[] = Object.fre
     '발령',
     'Appointments',
     '발령안, 일괄 검증, 승인, 게시, 취소와 정정',
-    'Appointment proposals, bulk validation, approval, publish, cancellation, and correction'
+    'Appointment proposals, bulk validation, approval, publish, cancellation, and correction',
+    [],
+    ['/hr/operations/people/appointments']
   ),
   planned(
     'hr-organization-positions',
@@ -78,7 +81,8 @@ export const HRIS_HR_OPERATIONS_CATALOG: readonly HrisCatalogNode[] = Object.fre
     'Organizations & positions',
     '법인, 사업장, 조직, 직무, 직급, 포지션과 시나리오',
     'Legal entities, sites, organizations, jobs, grades, positions, and scenarios',
-    ['/hr/organization', '/hr/design/organization']
+    ['/hr/organization', '/hr/design/organization'],
+    ['/hr/operations/people/organization-positions']
   ),
   planned(
     'hr-contracts-compensation-basis',
@@ -112,7 +116,9 @@ export const HRIS_HR_OPERATIONS_CATALOG: readonly HrisCatalogNode[] = Object.fre
     '증명·문서',
     'Certificates & documents',
     '증명서 발급·진위, 양식, 직인, 일괄처리와 보존',
-    'Certificate issue and verification, templates, seals, batches, and retention'
+    'Certificate issue and verification, templates, seals, batches, and retention',
+    [],
+    ['/hr/operations/people/certificates-documents']
   ),
   planned(
     'hr-exit-return',

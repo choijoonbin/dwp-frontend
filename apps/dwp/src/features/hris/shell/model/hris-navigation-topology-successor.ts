@@ -107,6 +107,7 @@ export const HRIS_CONTROLLED_EXPORT_TOPOLOGY_NODE = Object.freeze({
     }),
     coverageNote: null,
     legacyPaths: Object.freeze([] as const),
+    currentPartialPaths: Object.freeze([] as const),
     externalTarget: null,
     href: HRIS_CONTROLLED_EXPORT_ROUTE,
   }),

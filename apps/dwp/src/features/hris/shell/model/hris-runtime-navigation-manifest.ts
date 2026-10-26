@@ -33,6 +33,7 @@ export type HrisRuntimeCatalogProjection = Readonly<{
   capability: HrisLocalizedText;
   coverageNote: HrisLocalizedText | null;
   legacyPaths: readonly string[];
+  currentPartialPaths: readonly string[];
   externalTarget: HrisExternalTarget | null;
   href: string | null;
 }>;
@@ -72,6 +73,7 @@ function projectCurrentCatalog(node: HrisCatalogNode): HrisRuntimeCatalogProject
     capability: cloneLocalizedText(node.capability),
     coverageNote: node.coverageNote ? cloneLocalizedText(node.coverageNote) : null,
     legacyPaths: [...node.legacyPaths],
+    currentPartialPaths: [...node.currentPartialPaths],
     externalTarget: node.externalTarget ?? null,
     href: node.href ?? null,
   };

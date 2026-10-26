@@ -28,7 +28,9 @@ export const HRIS_PAYROLL_CATALOG: readonly HrisCatalogNode[] = Object.freeze([
     '급여 대상',
     'Payroll population',
     '대상자, 입퇴사·휴직, 비정기 급여와 제외 근거',
-    'Population, joins, exits, leave, off-cycle pay, and exclusion rationale'
+    'Population, joins, exits, leave, off-cycle pay, and exclusion rationale',
+    [],
+    ['/hr/operations/payroll/population']
   ),
   planned(
     'pay-inputs',
