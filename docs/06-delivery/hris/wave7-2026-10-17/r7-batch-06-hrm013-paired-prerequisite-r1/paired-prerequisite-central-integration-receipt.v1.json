@@ -1,0 +1,134 @@
+{
+  "schema": "dwp.hris.wave7.hrm013-paired-prerequisite-central-integration-receipt.v1",
+  "receiptId": "HRIS-WAVE7-BATCH06-HRM013-PAIRED-PREREQUISITE-CENTRAL-INTEGRATION-20261026-R1",
+  "recordedAt": "2026-10-26T11:40:10Z",
+  "recordedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "state": "PAIRED_PREREQUISITE_INTEGRATION_COMPLETE_RUNTIME_MODULE_OWNER_FULL_HRM013_AND_BUSINESS_COMPLETION_WITHHELD",
+  "sliceId": "BASE-TFR-HRM-013",
+  "scope": "CENTRAL_INTEGRATION_RECEIPT_FOR_APPROVAL_V59_AND_BOUNDED_PEOPLE_V61_PREREQUISITES_ONLY",
+  "purpose": "Record the exact conflict-free Approval-then-People backend dwp-dev merge, bounded combined-tree verification and pushed origin state. This receipt completes only the paired persistence prerequisite integration and grants no runtime or full module implementation authority.",
+  "artifactPins": {
+    "admissionDecision": {"path": "paired-prerequisite-central-admission-decision.v1.json", "bytes": 13356, "sha256": "65f1d6858f547dd0bcd24b9b465cf5b4e5e657c38ad8365f9e2e4f0b830edf2c"},
+    "admissionReview": {"path": "paired-prerequisite-central-admission-independent-review-evidence.v1.json", "bytes": 6670, "sha256": "80eeb059969169f78469363160d18411b3e4c2ac3d42d3b8e5575d1ad648bdc1"},
+    "admissionValidator": {"path": "validate_hrm013_paired_prerequisite_central_admission.py", "bytes": 15671, "sha256": "4aaad1405dd81a1ba3de5436c3353e0c8b5fc75d5f3e5a138fe2314c3562fc4a"},
+    "validator": {"path": "validate_hrm013_paired_prerequisite_central_integration.py", "bytes": 11429, "sha256": "90f49a7975b1c87321086ad6f67345cdf881e0063fd9d0397585a05c64a2ab1f"}
+  },
+  "frontendAdmissionCarrier": {
+    "repository": "dwp-frontend",
+    "branch": "dwp-dev",
+    "commit": "3ae4671e4d98c768a5426ae9eb2bb28ac2701f2f",
+    "tree": "954675861ed2d211f47deb0394aefc3bc3016a53",
+    "parent": "8739852a4608ce7d2c32607265d8b9d2c3ffdc34",
+    "commitObjectBytes": 251,
+    "commitObjectSha256": "90fd2e6747a4139673ffda497166312eedb6d372c165b38e23d514a845c6659f",
+    "treeListingBytes": 1853503,
+    "treeListingSha256": "f8e77280511295ba916b0a70ce9b84a909bebd5a44a6c0f0249734860952551f",
+    "originRef": "origin/dwp-dev",
+    "originExact": true,
+    "remoteProbeBytes": 60,
+    "remoteProbeSha256": "34f348336d2c17a0d4463e36e41ce2c8d9f6ff9bcb9753528caa57a8177cbfb8"
+  },
+  "backendBaseline": {
+    "commit": "fe2842a36d13709e6aecc27011a8f0ad3c770ce8",
+    "tree": "190636f40e29126970aaf1b68b85a94eaf49402d"
+  },
+  "integrationSequence": [
+    {
+      "order": 1,
+      "service": "dwp-approval-server",
+      "mergeCommit": "7b5bf40d5af3a8875e353f07bb56c4ad40fe8e9b",
+      "tree": "db13f4a08005d37905f1b42f1e992eec8185c118",
+      "firstParent": "fe2842a36d13709e6aecc27011a8f0ad3c770ce8",
+      "secondParent": "ef69ffd6fb608941053e1ca48a5a7a137bd0088e",
+      "commitObjectBytes": 309,
+      "commitObjectSha256": "494659df1270be08c37518a42860481dd8e78403ed44e8d96b027e899264e2c5",
+      "conflictResolutionOrSourceEdit": false
+    },
+    {
+      "order": 2,
+      "service": "dwp-people-server",
+      "mergeCommit": "c50b267e7b015758ab6f7acc7fdf353eee81e631",
+      "tree": "22bd6533ab340cfb91c6cf5ab5fd6991e501e6c4",
+      "firstParent": "7b5bf40d5af3a8875e353f07bb56c4ad40fe8e9b",
+      "secondParent": "2d814d42d07079429d265c2e534df9715685575f",
+      "commitObjectBytes": 307,
+      "commitObjectSha256": "f7d84b285438bb76131b7cbb4c1e9d41707292961b8b6989be762be1e49bc920",
+      "conflictResolutionOrSourceEdit": false
+    }
+  ],
+  "backendFinal": {
+    "repository": "dwp-backend",
+    "absolutePath": "/Users/a10697/Work/DWP/dwp-backend",
+    "branch": "dwp-dev",
+    "head": "c50b267e7b015758ab6f7acc7fdf353eee81e631",
+    "tree": "22bd6533ab340cfb91c6cf5ab5fd6991e501e6c4",
+    "expectedAdmissionCombinedTreeMatched": true,
+    "treeListingBytes": 1125946,
+    "treeListingSha256": "b63cf83ccc729181bc74498bdc52630793c3a42204f8c4cb2f0cc4a386bd35c3",
+    "originRef": "origin/dwp-dev",
+    "originExact": true,
+    "remoteProbeLine": "c50b267e7b015758ab6f7acc7fdf353eee81e631\\trefs/heads/dwp-dev",
+    "remoteProbeBytes": 60,
+    "remoteProbeSha256": "dec60a3d9453cb6290bce3cff209579c641078916205e91d82df67080a45270c",
+    "clean": true,
+    "porcelainSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "pushComplete": true
+  },
+  "verification": {
+    "combinedTreeVerifiedBeforePush": true,
+    "compile": {
+      "command": "./gradlew :dwp-approval-server:compileJava :dwp-approval-server:compileTestJava :dwp-people-server:compileJava :dwp-people-server:compileTestJava",
+      "tasks": [":dwp-approval-server:compileJava", ":dwp-approval-server:compileTestJava", ":dwp-people-server:compileJava", ":dwp-people-server:compileTestJava"],
+      "result": "BUILD_SUCCESSFUL"
+    },
+    "testXmlGeneratedAt": {
+      "approval": "2026-10-26T11:38:02Z",
+      "people": "2026-10-26T11:38:51Z"
+    },
+    "approval": [
+      {"class": "com.dwp.services.approval.hrisbridge.separation.HrisSeparationWaiverMigrationPostgresTest", "path": "dwp-approval-server/build/test-results/test/TEST-com.dwp.services.approval.hrisbridge.separation.HrisSeparationWaiverMigrationPostgresTest.xml", "bytes": 63713, "sha256": "91a73b9b40fe84a1f8bb441957d3698b47e1fd7438241e3dc03d757a249c0a80", "tests": 3, "failures": 0, "errors": 0, "skipped": 0},
+      {"class": "com.dwp.services.approval.hrisbridge.separation.HrisSeparationWaiverStoresPostgresTest", "path": "dwp-approval-server/build/test-results/test/TEST-com.dwp.services.approval.hrisbridge.separation.HrisSeparationWaiverStoresPostgresTest.xml", "bytes": 175759, "sha256": "fe04a7a2a94d2e92904ae0eb4ac589f0a67674f381b46f2ed1d3a6a2fd363547", "tests": 10, "failures": 0, "errors": 0, "skipped": 0},
+      {"class": "com.dwp.services.approval.hrisbridge.HrisEmployeeChangeBridgeMigrationPostgresTest", "path": "dwp-approval-server/build/test-results/test/TEST-com.dwp.services.approval.hrisbridge.HrisEmployeeChangeBridgeMigrationPostgresTest.xml", "bytes": 23848, "sha256": "b6d7596b461845fed2d1513d61c00e986c1c6130a532375f6596c41e0e9cda01", "tests": 1, "failures": 0, "errors": 0, "skipped": 0},
+      {"class": "com.dwp.services.approval.hrisbridge.HrisApprovalBindingLedgerPostgresTest", "path": "dwp-approval-server/build/test-results/test/TEST-com.dwp.services.approval.hrisbridge.HrisApprovalBindingLedgerPostgresTest.xml", "bytes": 18479, "sha256": "2ebdb49d22216a44091e25c898adefb0151d0e4ca4b0b0e5750496fc4c541be2", "tests": 1, "failures": 0, "errors": 0, "skipped": 0}
+    ],
+    "people": [
+      {"class": "com.dwp.services.people.hris.separation.hrm013.Hrm013PrerequisiteStoresPostgresTest", "path": "dwp-people-server/build/test-results/test/TEST-com.dwp.services.people.hris.separation.hrm013.Hrm013PrerequisiteStoresPostgresTest.xml", "bytes": 74063, "sha256": "0e793d435d35691aeb305aadd323b979f5cd513398e4dff34dda777a737869d0", "tests": 4, "failures": 0, "errors": 0, "skipped": 0},
+      {"class": "com.dwp.services.people.hris.separation.hrm013.Hrm013ServiceAuthorityPortTest", "path": "dwp-people-server/build/test-results/test/TEST-com.dwp.services.people.hris.separation.hrm013.Hrm013ServiceAuthorityPortTest.xml", "bytes": 859, "sha256": "a26b2a8063695ba9040922f3b22aa0eb424dba57945f4447e49c2fa6f7694ff6", "tests": 3, "failures": 0, "errors": 0, "skipped": 0},
+      {"class": "com.dwp.services.people.hris.separation.hrm013.Hrm013V61MigrationContractTest", "path": "dwp-people-server/build/test-results/test/TEST-com.dwp.services.people.hris.separation.hrm013.Hrm013V61MigrationContractTest.xml", "bytes": 1269, "sha256": "5ddf3fd5fef6ed3286a094e92ef3943516b0bfd1f01afbb83335bad17e0fa61a", "tests": 5, "failures": 0, "errors": 0, "skipped": 0},
+      {"class": "com.dwp.services.people.hris.separation.hrm013.Hrm013V61MigrationPostgresTest", "path": "dwp-people-server/build/test-results/test/TEST-com.dwp.services.people.hris.separation.hrm013.Hrm013V61MigrationPostgresTest.xml", "bytes": 149601, "sha256": "38b38d6eda3fca7110cd168f96ea146d25e00b89433f30275a2367e9bfda9f63", "tests": 7, "failures": 0, "errors": 0, "skipped": 0},
+      {"class": "com.dwp.services.people.integration.Hrm012V60MigrationPostgresTest", "methods": ["cleanMigrationThroughV60BuildsOnlyTheTwoTablesAndLockedControls", "upgradeFromV59PreservesRowsAndEveryHistoricalChecksum"], "path": "dwp-people-server/build/test-results/test/TEST-com.dwp.services.people.integration.Hrm012V60MigrationPostgresTest.xml", "bytes": 45176, "sha256": "1831bf235f5a3f40bbc2e4cb1ee8c292b28a1faddccf26a892c7559a8cc70a74", "tests": 2, "failures": 0, "errors": 0, "skipped": 0}
+    ],
+    "aggregate": {"tests": 36, "failures": 0, "errors": 0, "skipped": 0},
+    "fullRepositoryRerunPerformed": false,
+    "scopeRule": "Only the admission-sealed four compile tasks, four Approval classes, four People HRM-013 classes and two named HRM-012 methods were required."
+  },
+  "authority": {
+    "pairedPrerequisiteIntegrationComplete": true,
+    "approvalV59PrerequisiteIntegrated": true,
+    "peopleV61PrerequisiteIntegrated": true,
+    "backendDwpDevPushComplete": true,
+    "nextOwnerRuntimeBindingGatePreparationAuthorized": true,
+    "nextOwnerRuntimeBindingGateImplementationAuthorized": false,
+    "runtimeActivationAuthorized": false,
+    "controllerOrRelayActivationAuthorized": false,
+    "moduleOwnerPacketAuthorized": false,
+    "fullHrm013ModuleImplementationAuthorized": false,
+    "frontendUiMenuOrRouteAuthorized": false,
+    "featureEnablementAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "runtimeCredentialBindingAuthorized": false,
+    "productionBindingAuthorized": false,
+    "productionReleaseAuthorized": false,
+    "businessCompletionClaimed": false,
+    "businessCompletionCredit": 0
+  },
+  "nonClaims": [
+    "Approval APR-002 or HRM-010 runtime controller, relay or native workflow wiring is active.",
+    "People APR-002 publishing or HRM-008 through HRM-010 ingress is active.",
+    "An HRM-013 module owner packet or full source token has been issued.",
+    "Any frontend UI, route or menu is authorized.",
+    "Any feature, tenant, credential, production binding or release is authorized.",
+    "HRM-013, Batch-06 or HRIS business implementation is complete."
+  ],
+  "nextAction": "PREPARE_AND_INDEPENDENTLY_REVIEW_THE_NEXT_OWNER_RUNTIME_BINDING_GATE_CARRIER_WITHOUT_STARTING_ITS_IMPLEMENTATION"
+}
