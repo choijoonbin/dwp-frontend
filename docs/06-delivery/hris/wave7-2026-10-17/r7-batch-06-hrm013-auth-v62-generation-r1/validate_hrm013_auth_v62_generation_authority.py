@@ -28,6 +28,71 @@ WORKSPACE = FRONTEND.parent
 BACKEND = WORKSPACE / "dwp-backend"
 GIT = "/usr/bin/git"
 
+LIFECYCLE_CORRECTION_BASE = "50cf521fd38f09f1a930582562fd15f7c4bc126b"
+LIFECYCLE_CORRECTION_BASE_TREE = "830b484b5a3b338e984bbecd4be71236e611a86c"
+LIFECYCLE_CORRECTION_BRANCH = (
+    "codex/hris-wave7-batch06-hrm013-validator-lifecycle-"
+    "correction-frontend-20261027-r1"
+)
+LIFECYCLE_CORRECTION_ROOT = (
+    "docs/06-delivery/hris/wave7-2026-10-17/"
+    "r7-batch-06-hrm013-validator-lifecycle-successor-r1"
+)
+LIFECYCLE_CORRECTION_AUTHORITY = (
+    f"{LIFECYCLE_CORRECTION_ROOT}/validator-lifecycle-successor-authority.v1.json"
+)
+LIFECYCLE_CORRECTION_REVIEW = f"{LIFECYCLE_CORRECTION_ROOT}/independent-review.v1.json"
+LIFECYCLE_CORRECTION_VALIDATOR = (
+    f"{LIFECYCLE_CORRECTION_ROOT}/validate_hrm013_validator_lifecycle_successor.py"
+)
+LIFECYCLE_SEVENTH_VALIDATOR = (
+    "docs/06-delivery/hris/wave7-2026-10-17/"
+    "r7-batch-06-hrm013-auth-v62-generation-r1/"
+    "validate_hrm013_auth_v62_generation_authority.py"
+)
+LIFECYCLE_EIGHTH_VALIDATOR = (
+    "docs/06-delivery/hris/wave7-2026-10-17/"
+    "r7-batch-06-hrm013-auth-v62-generation-integration-r1/"
+    "validate_hrm013_auth_v62_generation_integration.py"
+)
+LIFECYCLE_NINTH_VALIDATOR = (
+    "docs/06-delivery/hris/wave7-2026-10-17/"
+    "r7-batch-06-hrm013-auth-v271-authority-r1/"
+    "validate_hrm013_auth_v271_authority.py"
+)
+LIFECYCLE_VALIDATORS = [
+    LIFECYCLE_SEVENTH_VALIDATOR,
+    LIFECYCLE_EIGHTH_VALIDATOR,
+    LIFECYCLE_NINTH_VALIDATOR,
+]
+LIFECYCLE_CORRECTION_PATHS = {
+    *LIFECYCLE_VALIDATORS,
+    LIFECYCLE_CORRECTION_AUTHORITY,
+    LIFECYCLE_CORRECTION_REVIEW,
+    LIFECYCLE_CORRECTION_VALIDATOR,
+    "package.json",
+}
+APPROVAL_INTEGRATION_COMMIT = "2479ef3da2185668ec8dcbe4815cd6ba3caa0986"
+APPROVAL_INTEGRATION_TREE = "8e99270400e5c47928d659a7ba4fe0552963445f"
+APPROVAL_INTEGRATION_PARENT = "b2fa6d56f16ce5befe0e366ca55d34ef8f42f58e"
+HARDENED_AUTH_RUNTIME_VALIDATOR = (
+    "docs/06-delivery/hris/wave7-2026-10-17/"
+    "r7-batch-06-hrm013-auth-runtime-authority-r1/"
+    "validate_hrm013_auth_runtime_authority.py"
+)
+APPROVAL_INTEGRATION_PATHS = {
+    "package.json",
+    HARDENED_AUTH_RUNTIME_VALIDATOR,
+    "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-approval-readiness-authority-r1/validate_hrm013_approval_readiness_authority.py",
+    "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-approval-readiness-successor-r1/validate_hrm013_approval_readiness_successor.py",
+    "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-owner-runtime-phase4-authority-r1/validate_hrm013_owner_runtime_phase4_authority.py",
+    "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-approval-drain-clarification-r1/validate_hrm013_approval_drain_clarification.py",
+    "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-approval-runtime-integration-r1/approval-runtime-central-integration-authority.v1.json",
+    "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-approval-runtime-integration-r1/independent-review.v1.json",
+    "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-approval-runtime-integration-r1/validate_hrm013_approval_runtime_integration.py",
+}
+
+
 FRONTEND_BASE = "b3841a03d3ee60864b721cc1d98397c3004de1d8"
 FRONTEND_TREE = "127540e50eae673fbf63bb96b025a8a0e641e5ea"
 BACKEND_BASE = "3505cb2e84fc73f97d62de385cc347c5f8c81572"
@@ -1071,6 +1136,7 @@ def future_carrier(
     v.require(ancestor(FRONTEND, governance["commit"], parent), "future integration carrier predates governance carrier")
     head, origin = text(FRONTEND, "rev-parse", "HEAD"), text(FRONTEND, "rev-parse", "origin/dwp-dev")
     v.require(ancestor(FRONTEND, commit, head) and ancestor(FRONTEND, commit, origin), "future integration carrier is not pushed")
+    correction = lifecycle_correction(v)
     blobs: dict[str, bytes] = {}
     for path in (FUTURE_AUTHORITY_REL, FUTURE_REVIEW_REL, FUTURE_VALIDATOR_REL, "package.json"):
         v.exact(mode(FRONTEND, commit, path), "100644", f"future carrier artifact mode drift: {path}")
@@ -1079,7 +1145,11 @@ def future_carrier(
         blobs[path] = data or b""
         if path != "package.json":
             v.require(symlink_free(FRONTEND, path), f"future carrier artifact symlinked: {path}")
-            v.exact(artifact(path, (FRONTEND / path).read_bytes()), artifact(path, blobs[path]), f"future carrier artifact mutated: {path}")
+            expected_live = (
+                correction["blobs"][path]
+                if path == FUTURE_VALIDATOR_REL else blobs[path]
+            )
+            v.exact(artifact(path, (FRONTEND / path).read_bytes()), artifact(path, expected_live), f"future carrier artifact mutated: {path}")
     v.exact(blobs["package.json"], expected_future_package(parent), "future package is not exact eighth-validator append")
     validate_python(v, blobs[FUTURE_VALIDATOR_REL], "future integration validator")
     reviewed = future_authority_and_review(
@@ -1269,6 +1339,7 @@ def historical(v: V) -> dict[str, Any]:
     v.require(ancestor(FRONTEND, carrier, head), "carrier not on frontend dwp-dev")
     tree = text(FRONTEND, "rev-parse", f"{carrier}^{{tree}}")
     committed = parse_time(text(FRONTEND, "show", "-s", "--format=%cI", carrier), "carrier committedAt")
+    correction = lifecycle_correction(v)
     blobs: dict[str, bytes] = {}
     for path in (AUTHORITY_REL, TOKEN_REL, REVIEW_REL, VALIDATOR_REL, "package.json"):
         v.exact(mode(FRONTEND, carrier, path), "100644", f"unsafe carrier mode: {path}")
@@ -1277,7 +1348,11 @@ def historical(v: V) -> dict[str, Any]:
         blobs[path] = data or b""
         if path != "package.json":
             v.require(symlink_free(FRONTEND, path), f"current artifact missing/symlinked: {path}")
-            v.exact(artifact(path, (FRONTEND / path).read_bytes()), artifact(path, blobs[path]), f"artifact mutated: {path}")
+            expected_live = (
+                correction["blobs"][path]
+                if path == VALIDATOR_REL else blobs[path]
+            )
+            v.exact(artifact(path, (FRONTEND / path).read_bytes()), artifact(path, expected_live), f"artifact mutated: {path}")
     check_package(v, blobs["package.json"], True)
     if head != carrier:
         check_package(v, (FRONTEND / "package.json").read_bytes(), False)
@@ -1299,14 +1374,332 @@ def negatives(v: V) -> None:
         v.require(not canonical(unsafe), f"unsafe path accepted: {unsafe}")
 
 
+
+def expected_lifecycle_correction_authority() -> dict[str, Any]:
+    return {
+        "schema": "dwp.hris.wave7.hrm013-validator-lifecycle-successor-authority.v1",
+        "state": "INDEPENDENTLY_REVIEWED_HASH_BOUND_EXACT_THREE_VALIDATOR_LIFECYCLE_SUCCESSOR",
+        "sliceId": "BASE-TFR-HRM-013",
+        "lane": "FRONTEND_VALIDATOR_LIFECYCLE_CORRECTION",
+        "carrier": {
+            "repository": "dwp-frontend",
+            "branch": LIFECYCLE_CORRECTION_BRANCH,
+            "baseCommit": LIFECYCLE_CORRECTION_BASE,
+            "baseTree": LIFECYCLE_CORRECTION_BASE_TREE,
+            "requiredDirectChild": True,
+            "exactChangedPathCount": 7,
+            "exactChangedPaths": [
+                *LIFECYCLE_VALIDATORS,
+                LIFECYCLE_CORRECTION_AUTHORITY,
+                LIFECYCLE_CORRECTION_REVIEW,
+                LIFECYCLE_CORRECTION_VALIDATOR,
+                "package.json",
+            ],
+        },
+        "historicalValidatorIntroductions": [
+            {"path": LIFECYCLE_SEVENTH_VALIDATOR, "commit": "d80e886121886792c33150b0ff97f128f0da9e14"},
+            {"path": LIFECYCLE_EIGHTH_VALIDATOR, "commit": "4b24bdefb0f61d5cb61d89d08397975e45ac389e"},
+            {"path": LIFECYCLE_NINTH_VALIDATOR, "commit": "24cb37b7c9f23b2f74a833aedf6939e499f5ab99"},
+        ],
+        "correction": {
+            "modifiedValidatorPaths": LIFECYCLE_VALIDATORS,
+            "historicalAuthorityReviewAndTokenBlobsRemainPinned": True,
+            "successorBlobSubstitutionRestrictedToValidatorPaths": True,
+            "packageMutationRestrictedToExactSingleValidatorAppend": True,
+            "basePackagePin": {
+                "path": "package.json", "bytes": 16469,
+                "sha256": "0e496cced22dbc11a4c9dfd7315f83d8ae6c905ec99c4cec166a6437b6a6e3ee",
+            },
+            "appendedValidatorPath": LIFECYCLE_CORRECTION_VALIDATOR,
+            "approvalRuntimeHardening": {
+                "carrierCommit": APPROVAL_INTEGRATION_COMMIT,
+                "carrierTree": APPROVAL_INTEGRATION_TREE,
+                "carrierParent": APPROVAL_INTEGRATION_PARENT,
+                "exactChangedPathCount": 9,
+                "authRuntimeValidatorPath": HARDENED_AUTH_RUNTIME_VALIDATOR,
+                "authRuntimeValidatorBytes": 34031,
+                "authRuntimeValidatorSha256": "a84254807daebc854ae35c9c6388869d02ba4129deda3a94312a367fad117b1c",
+            },
+        },
+        "authority": {
+            "independentReviewComplete": True,
+            "exactSevenPathCarrierCommitAndPushAuthorized": True,
+            "existingCurrentContractChainRevalidationAuthorized": True,
+            "exactSingleValidatorPackageAppendAuthorized": True,
+            "backendDwpDevIntegrationAuthorized": False,
+            "approvalRuntimeIntegrationAuthorityExpanded": False,
+            "peopleIntegrationAuthorized": False,
+            "featureActivationAuthorized": False,
+            "tenantEnrollmentAuthorized": False,
+            "runtimeCredentialProvisioningAuthorized": False,
+            "productionReleaseAuthorized": False,
+            "businessCompletionCredit": 0,
+        },
+        "next": (
+            "RERUN_CURRENT_CONTRACT_CHAIN_THEN_CONTINUE_ONLY_UNDER_"
+            "EXISTING_APPROVAL_RUNTIME_INTEGRATION_AUTHORITY"
+        ),
+    }
+
+
+def lifecycle_correction(v: V, authoring: bool = False) -> dict[str, Any]:
+    v.exact(
+        text(FRONTEND, "rev-parse", f"{LIFECYCLE_CORRECTION_BASE}^{{tree}}"),
+        LIFECYCLE_CORRECTION_BASE_TREE,
+        "lifecycle correction base tree",
+    )
+    v.exact(
+        text(FRONTEND, "rev-list", "--parents", "-n", "1", APPROVAL_INTEGRATION_COMMIT).split(),
+        [APPROVAL_INTEGRATION_COMMIT, APPROVAL_INTEGRATION_PARENT],
+        "Approval integration carrier parent",
+    )
+    v.exact(
+        text(FRONTEND, "rev-parse", f"{APPROVAL_INTEGRATION_COMMIT}^{{tree}}"),
+        APPROVAL_INTEGRATION_TREE,
+        "Approval integration carrier tree",
+    )
+    v.exact(
+        between(FRONTEND, APPROVAL_INTEGRATION_PARENT, APPROVAL_INTEGRATION_COMMIT),
+        APPROVAL_INTEGRATION_PATHS,
+        "Approval integration carrier paths",
+    )
+    hardened = blob(FRONTEND, APPROVAL_INTEGRATION_COMMIT, HARDENED_AUTH_RUNTIME_VALIDATOR)
+    v.require(hardened is not None, "hardened Auth runtime validator missing")
+    v.exact(
+        artifact(HARDENED_AUTH_RUNTIME_VALIDATOR, hardened or b""),
+        {
+            "path": HARDENED_AUTH_RUNTIME_VALIDATOR,
+            "bytes": 34031,
+            "sha256": "a84254807daebc854ae35c9c6388869d02ba4129deda3a94312a367fad117b1c",
+        },
+        "hardened Auth runtime validator pin",
+    )
+
+    if authoring:
+        v.exact(text(FRONTEND, "branch", "--show-current"), LIFECYCLE_CORRECTION_BRANCH, "correction branch")
+        v.exact(text(FRONTEND, "rev-parse", "HEAD"), LIFECYCLE_CORRECTION_BASE, "correction authoring head")
+        v.exact(text(FRONTEND, "rev-parse", "origin/dwp-dev"), LIFECYCLE_CORRECTION_BASE, "correction authoring origin")
+        v.exact(changes(FRONTEND), LIFECYCLE_CORRECTION_PATHS, "correction authoring paths")
+        commit = None
+    else:
+        additions: list[str] = []
+        for path in (
+            LIFECYCLE_CORRECTION_AUTHORITY,
+            LIFECYCLE_CORRECTION_REVIEW,
+            LIFECYCLE_CORRECTION_VALIDATOR,
+        ):
+            found = [
+                line for line in text(
+                    FRONTEND, "log", "--diff-filter=A", "--format=%H", "--", path,
+                ).splitlines() if line
+            ]
+            v.require(len(found) == 1, f"lifecycle correction introduction ambiguous: {path}")
+            additions.extend(found)
+        v.exact(len(set(additions)), 1, "lifecycle correction artifacts introduced separately")
+        commit = additions[0] if additions else ""
+        v.exact(
+            text(FRONTEND, "rev-list", "--parents", "-n", "1", commit).split(),
+            [commit, LIFECYCLE_CORRECTION_BASE],
+            "lifecycle correction is not the exact direct child",
+        )
+        v.exact(
+            between(FRONTEND, LIFECYCLE_CORRECTION_BASE, commit),
+            LIFECYCLE_CORRECTION_PATHS,
+            "lifecycle correction path set",
+        )
+        head = text(FRONTEND, "rev-parse", "HEAD")
+        origin = text(FRONTEND, "rev-parse", "origin/dwp-dev")
+        v.require(
+            ancestor(FRONTEND, commit, head) and ancestor(FRONTEND, commit, origin),
+            "lifecycle correction is not on pushed frontend dwp-dev",
+        )
+        v.exact(head, origin, "frontend HEAD/origin drift after lifecycle correction")
+        v.exact(changes(FRONTEND), set(), "frontend dirty after lifecycle correction")
+
+    blobs: dict[str, bytes] = {}
+    for path in [
+        LIFECYCLE_CORRECTION_AUTHORITY,
+        LIFECYCLE_CORRECTION_REVIEW,
+        LIFECYCLE_CORRECTION_VALIDATOR,
+        *LIFECYCLE_VALIDATORS,
+        "package.json",
+    ]:
+        if commit is None:
+            candidate = FRONTEND / path
+            v.require(candidate.is_file() and not candidate.is_symlink(), f"correction artifact missing: {path}")
+            v.exact(stat.S_IMODE(candidate.stat().st_mode), 0o644, f"correction artifact mode: {path}")
+            data = candidate.read_bytes()
+        else:
+            v.exact(mode(FRONTEND, commit, path), "100644", f"correction carrier mode: {path}")
+            data = blob(FRONTEND, commit, path)
+            v.require(data is not None, f"correction carrier artifact missing: {path}")
+            data = data or b""
+            v.exact(mode(FRONTEND, text(FRONTEND, "rev-parse", "HEAD"), path), "100644", f"current correction mode: {path}")
+            v.require(symlink_free(FRONTEND, path), f"current correction artifact symlinked: {path}")
+            v.exact(
+                artifact(path, (FRONTEND / path).read_bytes()),
+                artifact(path, data),
+                f"current correction artifact drift: {path}",
+            )
+        blobs[path] = data
+
+    base_package = blob(FRONTEND, LIFECYCLE_CORRECTION_BASE, "package.json")
+    v.require(base_package is not None, "correction base package missing")
+    v.exact(
+        artifact("package.json", base_package or b""),
+        {
+            "path": "package.json", "bytes": 16469,
+            "sha256": "0e496cced22dbc11a4c9dfd7315f83d8ae6c905ec99c4cec166a6437b6a6e3ee",
+        },
+        "correction base package pin",
+    )
+    base_package_json = load_json(base_package or b"", "lifecycle correction base package")
+    base_command = base_package_json["scripts"]["hris:current-contracts:check"]
+    successor_command = base_command + " && python3 " + LIFECYCLE_CORRECTION_VALIDATOR
+    old_command = json.dumps(base_command, ensure_ascii=False).encode()[1:-1]
+    new_command = json.dumps(successor_command, ensure_ascii=False).encode()[1:-1]
+    v.exact((base_package or b"").count(old_command), 1, "base package command byte count")
+    expected_package = (base_package or b"").replace(old_command, new_command, 1)
+    v.exact(blobs["package.json"], expected_package, "lifecycle correction package bytes drift")
+    package = load_json(blobs["package.json"], "lifecycle correction package")
+    scripts = package.get("scripts")
+    v.require(isinstance(scripts, dict), "lifecycle correction scripts missing")
+    if isinstance(scripts, dict):
+        v.require("prehris:current-contracts:check" not in scripts, "lifecycle correction npm pre-hook")
+        v.require("posthris:current-contracts:check" not in scripts, "lifecycle correction npm post-hook")
+        command = scripts.get("hris:current-contracts:check")
+        v.require(isinstance(command, str), "lifecycle correction chain missing")
+        if isinstance(command, str):
+            parts = command.split(" && ")
+            matches = [re.fullmatch(
+                r"python3 (docs/06-delivery/hris/[A-Za-z0-9._/-]+/validate_[A-Za-z0-9_]+\.py)",
+                item,
+            ) for item in parts]
+            v.require(all(matches), "lifecycle correction contains a non-validator command")
+            validator_paths = [match.group(1) for match in matches if match]
+            v.exact(len(validator_paths), len(set(validator_paths)), "lifecycle correction duplicate validator")
+            v.exact(validator_paths[-1], LIFECYCLE_CORRECTION_VALIDATOR, "lifecycle correction validator order")
+    correction_validator = FRONTEND / LIFECYCLE_CORRECTION_VALIDATOR
+    v.require(
+        correction_validator.is_file() and not correction_validator.is_symlink(),
+        "lifecycle correction validator missing or symlinked",
+    )
+    tracked = git(
+        FRONTEND, "ls-files", "--error-unmatch", "--",
+        LIFECYCLE_CORRECTION_VALIDATOR, check=False,
+    )
+    v.require(tracked.returncode == 0, "lifecycle correction validator is untracked")
+    v.exact(
+        artifact("package.json", (FRONTEND / "package.json").read_bytes()),
+        artifact("package.json", blobs["package.json"]),
+        "live package drift during lifecycle correction",
+    )
+
+    authority = load_json(blobs[LIFECYCLE_CORRECTION_AUTHORITY], "lifecycle correction authority")
+    v.exact(authority, expected_lifecycle_correction_authority(), "lifecycle correction authority drift")
+    review = load_json(blobs[LIFECYCLE_CORRECTION_REVIEW], "lifecycle correction review")
+    v.exact(
+        set(review),
+        {"schema", "state", "reviewedAt", "reviewer", "scope", "findings", "finalVerdict", "authority", "artifactPins"},
+        "lifecycle correction review key set",
+    )
+    v.exact(review.get("schema"), "dwp.hris.wave7.hrm013-validator-lifecycle-successor-independent-review.v1", "lifecycle review schema")
+    v.exact(review.get("state"), "INDEPENDENT_ZERO_FINDING_REVIEW_OF_EXACT_SEVEN_PATH_VALIDATOR_LIFECYCLE_SUCCESSOR", "lifecycle review state")
+    v.exact(review.get("reviewer"), "INDEPENDENT_HRM013_VALIDATOR_LIFECYCLE_SUCCESSOR_REVIEW", "lifecycle reviewer")
+    v.exact(review.get("scope"), {
+        "authorityPath": LIFECYCLE_CORRECTION_AUTHORITY,
+        "reviewPath": LIFECYCLE_CORRECTION_REVIEW,
+        "validatorPath": LIFECYCLE_CORRECTION_VALIDATOR,
+        "modifiedValidatorPaths": LIFECYCLE_VALIDATORS,
+        "packagePath": "package.json",
+        "reviewedBoundaries": [
+            "EXACT_DIRECT_CHILD_SEVEN_PATH_CARRIER",
+            "ORIGINAL_AUTHORITY_REVIEW_AND_TOKEN_BLOBS_REMAIN_IMMUTABLE",
+            "ONLY_THREE_VALIDATOR_BLOBS_USE_THE_CORRECTION_CARRIER",
+            "AUTH_RUNTIME_HARDENING_BOUND_TO_EXACT_APPROVAL_INTEGRATION_CARRIER",
+            "EXACT_SINGLE_VALIDATOR_PACKAGE_APPEND_AND_NO_BACKEND_OR_ACTIVATION_AUTHORITY",
+        ],
+    }, "lifecycle review scope")
+    v.exact(review.get("findings"), {"p0": [], "p1": [], "p2": []}, "lifecycle review findings")
+    v.exact(review.get("finalVerdict"), {
+        "p0": 0, "p1": 0, "p2": 0,
+        "decision": "GO_FOR_EXACT_SEVEN_PATH_VALIDATOR_LIFECYCLE_SUCCESSOR_ONLY",
+    }, "lifecycle review verdict")
+    v.exact(review.get("authority"), {
+        "independentReviewComplete": True,
+        "exactSevenPathCarrierCommitAndPushAuthorized": True,
+        "currentContractChainRevalidationAuthorized": True,
+        "exactSingleValidatorPackageAppendAuthorized": True,
+        "backendDwpDevIntegrationAuthorized": False,
+        "featureActivationOrProductionAuthority": False,
+        "businessCompletionCredit": 0,
+    }, "lifecycle review authority")
+    v.exact(review.get("artifactPins"), [
+        artifact(LIFECYCLE_CORRECTION_AUTHORITY, blobs[LIFECYCLE_CORRECTION_AUTHORITY]),
+        artifact(LIFECYCLE_CORRECTION_VALIDATOR, blobs[LIFECYCLE_CORRECTION_VALIDATOR]),
+        *[artifact(path, blobs[path]) for path in LIFECYCLE_VALIDATORS],
+        artifact("package.json", blobs["package.json"]),
+    ], "lifecycle review artifact pins")
+    reviewed_at = parse_time(review.get("reviewedAt"), "lifecycle correction reviewedAt")
+    v.require(
+        reviewed_at <= datetime.now(timezone.utc) + timedelta(minutes=5),
+        "lifecycle correction review is in the future",
+    )
+    base_at = parse_time(
+        text(FRONTEND, "show", "-s", "--format=%cI", LIFECYCLE_CORRECTION_BASE),
+        "lifecycle correction base committedAt",
+    )
+    hardening_at = parse_time(
+        text(FRONTEND, "show", "-s", "--format=%cI", APPROVAL_INTEGRATION_COMMIT),
+        "Approval integration committedAt",
+    )
+    v.require(max(base_at, hardening_at) <= reviewed_at, "lifecycle review predates its prerequisites")
+    if commit is None:
+        latest = max(
+            datetime.fromtimestamp(
+                int((FRONTEND / path).stat().st_mtime), timezone.utc,
+            )
+            for path in [
+                LIFECYCLE_CORRECTION_AUTHORITY,
+                LIFECYCLE_CORRECTION_VALIDATOR,
+                *LIFECYCLE_VALIDATORS,
+                "package.json",
+            ]
+        )
+        v.require(latest <= reviewed_at, "lifecycle review predates final authoring snapshot")
+    else:
+        committed_at = parse_time(
+            text(FRONTEND, "show", "-s", "--format=%cI", commit),
+            "lifecycle correction committedAt",
+        )
+        v.require(reviewed_at <= committed_at, "lifecycle review follows correction commit")
+    return {
+        "commit": commit,
+        "blobs": blobs,
+        "hardenedAuthRuntimeValidator": hardened or b"",
+    }
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--authoring", action="store_true")
+    parser.add_argument("--lifecycle-correction-authoring", action="store_true")
     parser.add_argument("--require-trusted", action="store_true")
     args = parser.parse_args()
     v = V()
     try:
-        isolated = runtime(v, args.require_trusted or args.authoring)
+        isolated = runtime(
+            v,
+            args.require_trusted or args.authoring
+            or args.lifecycle_correction_authoring,
+        )
+        if args.lifecycle_correction_authoring:
+            lifecycle_correction(v, authoring=True)
+            print(
+                "PASS state=VALIDATOR_LIFECYCLE_SUCCESSOR_READY_TO_COMMIT_AND_PUSH "
+                f"checks={v.checks} trusted_runtime={'true' if isolated else 'false'}"
+            )
+            return 0
         negatives(v)
         v.require(SCRIPT == SCRIPT.resolve(), "validator path symlinked")
         hygiene(v, FRONTEND)

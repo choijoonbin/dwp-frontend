@@ -1,0 +1,77 @@
+{
+  "schema": "dwp.hris.wave7.hrm013-validator-lifecycle-successor-authority.v1",
+  "state": "INDEPENDENTLY_REVIEWED_HASH_BOUND_EXACT_THREE_VALIDATOR_LIFECYCLE_SUCCESSOR",
+  "sliceId": "BASE-TFR-HRM-013",
+  "lane": "FRONTEND_VALIDATOR_LIFECYCLE_CORRECTION",
+  "carrier": {
+    "repository": "dwp-frontend",
+    "branch": "codex/hris-wave7-batch06-hrm013-validator-lifecycle-correction-frontend-20261027-r1",
+    "baseCommit": "50cf521fd38f09f1a930582562fd15f7c4bc126b",
+    "baseTree": "830b484b5a3b338e984bbecd4be71236e611a86c",
+    "requiredDirectChild": true,
+    "exactChangedPathCount": 7,
+    "exactChangedPaths": [
+      "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-auth-v62-generation-r1/validate_hrm013_auth_v62_generation_authority.py",
+      "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-auth-v62-generation-integration-r1/validate_hrm013_auth_v62_generation_integration.py",
+      "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-auth-v271-authority-r1/validate_hrm013_auth_v271_authority.py",
+      "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-validator-lifecycle-successor-r1/validator-lifecycle-successor-authority.v1.json",
+      "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-validator-lifecycle-successor-r1/independent-review.v1.json",
+      "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-validator-lifecycle-successor-r1/validate_hrm013_validator_lifecycle_successor.py",
+      "package.json"
+    ]
+  },
+  "historicalValidatorIntroductions": [
+    {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-auth-v62-generation-r1/validate_hrm013_auth_v62_generation_authority.py",
+      "commit": "d80e886121886792c33150b0ff97f128f0da9e14"
+    },
+    {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-auth-v62-generation-integration-r1/validate_hrm013_auth_v62_generation_integration.py",
+      "commit": "4b24bdefb0f61d5cb61d89d08397975e45ac389e"
+    },
+    {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-auth-v271-authority-r1/validate_hrm013_auth_v271_authority.py",
+      "commit": "24cb37b7c9f23b2f74a833aedf6939e499f5ab99"
+    }
+  ],
+  "correction": {
+    "modifiedValidatorPaths": [
+      "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-auth-v62-generation-r1/validate_hrm013_auth_v62_generation_authority.py",
+      "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-auth-v62-generation-integration-r1/validate_hrm013_auth_v62_generation_integration.py",
+      "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-auth-v271-authority-r1/validate_hrm013_auth_v271_authority.py"
+    ],
+    "historicalAuthorityReviewAndTokenBlobsRemainPinned": true,
+    "successorBlobSubstitutionRestrictedToValidatorPaths": true,
+    "packageMutationRestrictedToExactSingleValidatorAppend": true,
+    "basePackagePin": {
+      "path": "package.json",
+      "bytes": 16469,
+      "sha256": "0e496cced22dbc11a4c9dfd7315f83d8ae6c905ec99c4cec166a6437b6a6e3ee"
+    },
+    "appendedValidatorPath": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-validator-lifecycle-successor-r1/validate_hrm013_validator_lifecycle_successor.py",
+    "approvalRuntimeHardening": {
+      "carrierCommit": "2479ef3da2185668ec8dcbe4815cd6ba3caa0986",
+      "carrierTree": "8e99270400e5c47928d659a7ba4fe0552963445f",
+      "carrierParent": "b2fa6d56f16ce5befe0e366ca55d34ef8f42f58e",
+      "exactChangedPathCount": 9,
+      "authRuntimeValidatorPath": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-auth-runtime-authority-r1/validate_hrm013_auth_runtime_authority.py",
+      "authRuntimeValidatorBytes": 34031,
+      "authRuntimeValidatorSha256": "a84254807daebc854ae35c9c6388869d02ba4129deda3a94312a367fad117b1c"
+    }
+  },
+  "authority": {
+    "independentReviewComplete": true,
+    "exactSevenPathCarrierCommitAndPushAuthorized": true,
+    "existingCurrentContractChainRevalidationAuthorized": true,
+    "exactSingleValidatorPackageAppendAuthorized": true,
+    "backendDwpDevIntegrationAuthorized": false,
+    "approvalRuntimeIntegrationAuthorityExpanded": false,
+    "peopleIntegrationAuthorized": false,
+    "featureActivationAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "runtimeCredentialProvisioningAuthorized": false,
+    "productionReleaseAuthorized": false,
+    "businessCompletionCredit": 0
+  },
+  "next": "RERUN_CURRENT_CONTRACT_CHAIN_THEN_CONTINUE_ONLY_UNDER_EXISTING_APPROVAL_RUNTIME_INTEGRATION_AUTHORITY"
+}
