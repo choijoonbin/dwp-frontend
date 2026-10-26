@@ -1,0 +1,44 @@
+{
+  "schema": "dwp.hris.wave7.hrm013-auth-runtime-execution-authority.v1",
+  "state": "INDEPENDENTLY_REVIEWED_HASH_BOUND_AUTH_RUNTIME_EXECUTION_AUTHORITY",
+  "lane": "AUTH_SERVICE_GRANT_REQUESTER_AND_STEP_UP_CONTROL_PLANE",
+  "predecessor": {
+    "repository": "dwp-backend",
+    "commit": "d48dc900593f82e46c9971eac085c92a2f23427c",
+    "tree": "35f434ecbb0a412572ade7ce7bea7154c2fac00b",
+    "v271AuthorityCarrierCommit": "24cb37b7c9f23b2f74a833aedf6939e499f5ab99",
+    "v271AuthorityCarrierTree": "037184f9120bfeaec2d99e1e8ce8a6c744751916",
+    "v271SuccessorDelegationReceiptSha256": "436f17f6d46184a25001b662a4613a68aa9db7c5c18a198424589526697da5a4"
+  },
+  "backendImplementation": {
+    "repository": "dwp-backend",
+    "branch": "codex/hris-wave7-batch06-hrm013-auth-authority-backend-20261026-r1",
+    "baseCommit": "d48dc900593f82e46c9971eac085c92a2f23427c",
+    "baseTree": "35f434ecbb0a412572ade7ce7bea7154c2fac00b",
+    "operation": "AUTHOR_VALIDATE_COMMIT_AND_PUSH_AUTH_RUNTIME_ONLY",
+    "requiredDirectChild": true,
+    "migrationAuthoringAuthorized": false,
+    "directDwpDevIntegrationAuthorized": false
+  },
+  "delegationBoundary": {
+    "receiptPath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261026/batch06/hrm013-owner-runtime/receipts/auth-runtime-successor-delegation-authority.v1.json",
+    "receiptSchema": "dwp.hris.wave7.hrm013-auth-runtime-successor-delegation-authority-receipt.v1",
+    "receiptState": "HASH_BOUND_REVIEWED_AUTH_RUNTIME_SUCCESSOR_CONTROL_DELEGATION",
+    "requiredDecision": "GO_FOR_AUTH_RUNTIME_SUCCESSOR_CONTROL_DELEGATION_ONLY",
+    "externalAttestationRequired": true,
+    "currentV271AuthorityGrantsRuntime": false
+  },
+  "authority": {
+    "independentReviewComplete": true,
+    "authRuntimeImplementationAuthorizedAfterSeparateCleanWorktreeReceipt": true,
+    "laneCommitAndPushAuthorizedAfterTargetedVerification": true,
+    "backendDwpDevIntegrationAuthorized": false,
+    "approvalRuntimeImplementationAuthorized": false,
+    "peopleOwnerRuntimeImplementationAuthorized": false,
+    "taskDispatchOwnerImplementationAuthorized": false,
+    "featureEnablementAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "productionReleaseAuthorized": false,
+    "businessCompletionCredit": 0
+  }
+}

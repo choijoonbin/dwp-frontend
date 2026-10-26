@@ -1,0 +1,62 @@
+{
+  "schema": "dwp.hris.wave7.hrm013-auth-runtime-execution-authority-independent-review.v1",
+  "reviewedAt": "2026-10-26T18:56:49Z",
+  "reviewer": "INDEPENDENT_HRM013_AUTH_RUNTIME_AUTHORITY_REVIEW",
+  "scope": {
+    "authorityPath": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-auth-runtime-authority-r1/auth-runtime-execution-authority.v1.json",
+    "validatorPath": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-auth-runtime-authority-r1/validate_hrm013_auth_runtime_authority.py",
+    "packagePath": "package.json",
+    "reviewedBoundaries": [
+      "EXACT_INTEGRATED_AUTH_V271_COMMIT_AND_DELEGATION_RECEIPT",
+      "EXACT_AUTH_RUNTIME_BRANCH_BASE_AND_DIRECT_CHILD",
+      "DEDICATED_CLEAN_WORKTREE_AND_TARGETED_VERIFICATION_REQUIRED",
+      "NO_MIGRATION_OR_CROSS_MODULE_RUNTIME_AUTHORITY",
+      "NO_DIRECT_BACKEND_DWP_DEV_INTEGRATION",
+      "NO_FEATURE_TENANT_OR_PRODUCTION_AUTHORITY"
+    ]
+  },
+  "findings": {
+    "p0": [],
+    "p1": [],
+    "p2": [],
+    "notes": [
+      "The carrier may authorize only the Auth service-grant, requester-identity and step-up control-plane runtime from the exact integrated V271 commit.",
+      "No migration or Approval, People, Time or Payroll runtime source is authorized by this carrier.",
+      "Backend dwp-dev integration, feature activation, tenant enrollment and production release remain externally gated."
+    ]
+  },
+  "finalVerdict": {
+    "p0": 0,
+    "p1": 0,
+    "p2": 0,
+    "decision": "GO_FOR_AUTH_RUNTIME_AUTHORITY_CARRIER_COMMIT_AND_PUSH_ONLY"
+  },
+  "authority": {
+    "independentReviewComplete": true,
+    "carrierCommitAndPushAuthorized": true,
+    "cleanWorktreeMaterializationAuthorizedAfterCarrierPush": true,
+    "authRuntimeAuthoringAuthorizedAfterCleanReceipt": true,
+    "migrationAuthoringAuthorized": false,
+    "approvalOrPeopleRuntimeAuthorized": false,
+    "backendDwpDevIntegrationAuthorized": false,
+    "productionReleaseAuthorized": false,
+    "businessCompletionCredit": 0
+  },
+  "artifactPins": [
+    {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-auth-runtime-authority-r1/auth-runtime-execution-authority.v1.json",
+      "bytes": 2269,
+      "sha256": "122afa0381253fe1b3c080dbb9add07c25b782d3e587d0c2af57ad6d3c60f7ee"
+    },
+    {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-auth-runtime-authority-r1/validate_hrm013_auth_runtime_authority.py",
+      "bytes": 31962,
+      "sha256": "7c0d8841e9e08aad407969bbd807737f67e889013f8bbaea30e627ede3e2e4ef"
+    },
+    {
+      "path": "package.json",
+      "bytes": 15422,
+      "sha256": "122afcdf726b3ea014e830ebdbd338f782878d168be72c54eab8df58b803bd7f"
+    }
+  ]
+}
