@@ -1,0 +1,106 @@
+{
+  "schema": "dwp.hris.wave7.hrm013-paired-prerequisite-central-admission-independent-review-evidence.v1",
+  "reviewId": "HRIS-WAVE7-BATCH06-HRM013-PAIRED-PREREQUISITE-CENTRAL-ADMISSION-REVIEW-20261026-R1",
+  "recordedAt": "2026-10-26T11:34:01Z",
+  "recordedBy": "INDEPENDENT_CENTRAL_AUTHORITY_REVIEW",
+  "state": "INDEPENDENT_REVIEW_COMPLETE_ZERO_FINDINGS_GO_FOR_EXACT_PAIRED_MERGE",
+  "sliceId": "BASE-TFR-HRM-013",
+  "scope": "Independent evidence review of the exact final Approval and People prerequisite commits, their token boundaries, post-review findings, merge topology and bounded post-merge verification. No merge or runtime action is recorded here.",
+  "artifactPins": {
+    "decision": {"path": "paired-prerequisite-central-admission-decision.v1.json", "bytes": 13356, "sha256": "65f1d6858f547dd0bcd24b9b465cf5b4e5e657c38ad8365f9e2e4f0b830edf2c"},
+    "validator": {"path": "validate_hrm013_paired_prerequisite_central_admission.py", "bytes": 15671, "sha256": "4aaad1405dd81a1ba3de5436c3353e0c8b5fc75d5f3e5a138fe2314c3562fc4a"},
+    "phaseBTokenValidation": {"path": "token-validation-receipt.v1.json", "bytes": 3634, "sha256": "47678adb2f67a8b773b3ebc930540c6ed0bf5655a40d542ec89da4b56d2535d5"},
+    "peopleV60TestSuccessor": {"path": "people-v61-v60-regression-test-successor-authority.v1.json", "bytes": 4299, "sha256": "194e42e6e310d002153632f984bba1c251290dd32b78ca95af4744576f5f2b1c"}
+  },
+  "observedBaselines": {
+    "frontend": {"branch": "dwp-dev", "head": "8739852a4608ce7d2c32607265d8b9d2c3ffdc34", "tree": "cb9fac770f26ab82ce02e386e3f41ccc771eb767", "originExact": true},
+    "backend": {"branch": "dwp-dev", "head": "fe2842a36d13709e6aecc27011a8f0ad3c770ce8", "tree": "190636f40e29126970aaf1b68b85a94eaf49402d", "originExact": true, "clean": true}
+  },
+  "reviewMethod": [
+    "Recomputed the final commit, tree, ancestor chain, remote upstream parity and clean porcelain for both lane worktrees.",
+    "Recomputed the name-status and full binary diff SHA-256 values from the common backend baseline to each final commit.",
+    "Compared every changed path with the Approval token, People token and People V60 regression successor allowlists.",
+    "Confirmed Approval has 10 paths, People has 14 paths and the two path sets have no overlap.",
+    "Ran git diff --check for both exact final ranges with no finding.",
+    "Ran a merge-tree probe in required Approval-then-People topology and obtained the exact conflict-free combined tree.",
+    "Reviewed the lane post-implementation corrections and zero-finding post-reviews at the exact final commits.",
+    "Verified the central decision permits only merge commits, the named verification set and conditional dwp-dev push while every source edit, runtime, module, UI, tenant and production authority remains false."
+  ],
+  "laneEvidence": {
+    "approval": {
+      "finalCommit": "ef69ffd6fb608941053e1ca48a5a7a137bd0088e",
+      "finalTree": "db13f4a08005d37905f1b42f1e992eec8185c118",
+      "branchAndUpstreamExact": true,
+      "clean": true,
+      "changedPathCount": 10,
+      "diffCheck": "PASS",
+      "compileJava": "PASS_AT_FINAL_COMMIT",
+      "compileTestJava": "PASS_AT_FINAL_COMMIT",
+      "targetedTests": {
+        "HrisSeparationWaiverMigrationPostgresTest": "PASS_NO_SKIP",
+        "HrisSeparationWaiverStoresPostgresTest": "PASS_NO_SKIP",
+        "HrisEmployeeChangeBridgeMigrationPostgresTest": "PASS_NO_SKIP",
+        "HrisApprovalBindingLedgerPostgresTest": "PASS_NO_SKIP"
+      },
+      "boundaryReview": "V59 plus separation persistence/typed stores and PostgreSQL verification only; no controller, filter, relay, native terminal wiring, runtime binding or UI.",
+      "postReviewFindings": {"p0": 0, "p1": 0, "p2": 0},
+      "verdict": "GO"
+    },
+    "people": {
+      "finalCommit": "2d814d42d07079429d265c2e534df9715685575f",
+      "finalTree": "cfc00d488355428fca29b9b005caafe47cde5839",
+      "branchAndUpstreamExact": true,
+      "clean": true,
+      "changedPathCount": 14,
+      "diffCheck": "PASS",
+      "compileJava": "PASS_AT_FINAL_COMMIT",
+      "compileTestJava": "PASS_AT_FINAL_COMMIT",
+      "targetedTests": {
+        "Hrm013PrerequisiteStoresPostgresTest": "PASS_NO_SKIP",
+        "Hrm013ServiceAuthorityPortTest": "PASS_NO_SKIP",
+        "Hrm013V61MigrationContractTest": "PASS_NO_SKIP",
+        "Hrm013V61MigrationPostgresTest": "PASS_NO_SKIP",
+        "Hrm012V60MigrationPostgresTest.cleanMigrationThroughV60BuildsOnlyTheTwoTablesAndLockedControls": "PASS_NO_SKIP",
+        "Hrm012V60MigrationPostgresTest.upgradeFromV59PreservesRowsAndEveryHistoricalChecksum": "PASS_NO_SKIP"
+      },
+      "boundaryReview": "Full immutable V61 schema plus bounded persistence and ports only; no controller, filter, relay, ingress activation, production provider binding, runtime configuration or UI.",
+      "postReviewFindings": {"p0": 0, "p1": 0, "p2": 0},
+      "verdict": "GO"
+    }
+  },
+  "mergeEvidence": {
+    "requiredOrder": ["ef69ffd6fb608941053e1ca48a5a7a137bd0088e", "2d814d42d07079429d265c2e534df9715685575f"],
+    "changedPathOverlapCount": 0,
+    "mergeTreeProbe": "PASS",
+    "expectedCombinedTree": "22bd6533ab340cfb91c6cf5ab5fd6991e501e6c4",
+    "sourceConflictResolutionPermitted": false,
+    "sourceOrTestEditDuringMergePermitted": false,
+    "pushCondition": "Both no-ff merge commits exist in order, combined tree is exact, all sealed compile/test checks pass with no skips, and backend status is clean."
+  },
+  "findings": {"p0": 0, "p1": 0, "p2": 0},
+  "decision": "GO_FOR_EXACT_APPROVAL_THEN_PEOPLE_CENTRAL_MERGE_AND_BOUNDED_POST_MERGE_VERIFICATION",
+  "authority": {
+    "independentReviewComplete": true,
+    "mergeAuthorized": true,
+    "mergeCommitCreationAuthorized": true,
+    "targetedMergedVerificationAuthorized": true,
+    "conditionalBackendDwpDevPushAuthorized": true,
+    "sourceConflictResolutionAuthorized": false,
+    "additionalSourceOrTestEditAuthorized": false,
+    "runtimeActivationAuthorized": false,
+    "controllerOrRelayActivationAuthorized": false,
+    "frontendUiMenuOrRouteAuthorized": false,
+    "moduleOwnerPacketAuthorized": false,
+    "featureOrTenantEnrollmentAuthorized": false,
+    "productionBindingAuthorized": false,
+    "productionReleaseAuthorized": false,
+    "businessCompletionCredit": 0
+  },
+  "nonClaims": [
+    "The commits are not yet merged into backend dwp-dev.",
+    "The combined-tree verification has not yet run.",
+    "No runtime, module, UI, feature, tenant or production authority is granted.",
+    "HRM-013 is not complete."
+  ],
+  "nextAction": "COMMIT_AND_PUSH_THE_CENTRAL_ADMISSION_CARRIER_THEN_EXECUTE_THE_EXACT_TWO_MERGES_AND_SEALED_VERIFICATION_WITHOUT_SOURCE_EDITS"
+}

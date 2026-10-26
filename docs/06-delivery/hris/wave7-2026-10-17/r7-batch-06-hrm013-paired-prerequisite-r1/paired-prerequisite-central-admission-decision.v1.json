@@ -1,0 +1,171 @@
+{
+  "schema": "dwp.hris.wave7.hrm013-paired-prerequisite-central-admission-decision.v1",
+  "decisionId": "HRIS-WAVE7-BATCH06-HRM013-PAIRED-PREREQUISITE-CENTRAL-ADMISSION-20261026-R1",
+  "recordedAt": "2026-10-26T11:34:01Z",
+  "recordedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "state": "GO_EXACT_TWO_COMMIT_CONFLICT_FREE_CENTRAL_MERGE_WITH_TARGETED_VERIFICATION",
+  "sliceId": "BASE-TFR-HRM-013",
+  "scope": "CENTRAL_ADMISSION_OF_APPROVAL_V59_AND_BOUNDED_PEOPLE_V61_PREREQUISITES_ONLY",
+  "purpose": "Authorize the clean backend dwp-dev integration lane to merge exactly the independently reviewed Approval and People prerequisite commits, in that order, without source edits or conflict resolution, run only the sealed verification set, then push the verified merge commits.",
+  "immutability": {"sealed": true, "amendmentPolicy": "APPEND_ONLY_SUCCESSOR_WITH_NEW_DECISION_ID_AND_SHA256"},
+  "frontendAuthorityCarrier": {
+    "repository": "dwp-frontend",
+    "branch": "dwp-dev",
+    "head": "8739852a4608ce7d2c32607265d8b9d2c3ffdc34",
+    "tree": "cb9fac770f26ab82ce02e386e3f41ccc771eb767",
+    "originRef": "origin/dwp-dev",
+    "originExactAtDecision": true,
+    "cleanAtDecision": true,
+    "phaseBCommit": {"commit": "8c92334e7ba7b568a43aef6b8e5e79454cd0c19c", "tree": "882c80e64cdf50c7365dd15893b807ac1fd36bcc"},
+    "peopleV60SuccessorCommit": {"commit": "8739852a4608ce7d2c32607265d8b9d2c3ffdc34", "tree": "cb9fac770f26ab82ce02e386e3f41ccc771eb767"}
+  },
+  "pinnedAuthorityArtifacts": {
+    "contractClarification": {"path": "paired-prerequisite-contract-clarification.v1.json", "bytes": 9244, "sha256": "a839368ec78f43b1b45d6d50f0a8a741fd19e106671b52b356586a36c776079a"},
+    "leaseActivation": {"path": "migration-lease-activation.v1.json", "bytes": 2868, "sha256": "6af2db4505d570908b3170b93d07c5fe181434a872689729fea747dfe9d3200e"},
+    "tokenValidation": {"path": "token-validation-receipt.v1.json", "bytes": 3634, "sha256": "47678adb2f67a8b773b3ebc930540c6ed0bf5655a40d542ec89da4b56d2535d5"},
+    "approvalToken": {"path": "tokens/hrm-013-approval-v59-prerequisite.start-token.v1.json", "bytes": 5468, "sha256": "060a420174a36ef8a39153237b4ee8a171f2a074256ada9dcfa0d1122b88b2de"},
+    "peopleToken": {"path": "tokens/hrm-013-people-v61-prerequisite.start-token.v1.json", "bytes": 5627, "sha256": "8f8e87ab05402b73d20f1a4c749b9b2597b5b59663ff403ce58747f07b877146"},
+    "peopleV60TestSuccessor": {"path": "people-v61-v60-regression-test-successor-authority.v1.json", "bytes": 4299, "sha256": "194e42e6e310d002153632f984bba1c251290dd32b78ca95af4744576f5f2b1c"}
+  },
+  "backendAdmissionBaseline": {
+    "repository": "dwp-backend",
+    "absolutePath": "/Users/a10697/Work/DWP/dwp-backend",
+    "branch": "dwp-dev",
+    "head": "fe2842a36d13709e6aecc27011a8f0ad3c770ce8",
+    "tree": "190636f40e29126970aaf1b68b85a94eaf49402d",
+    "originRef": "origin/dwp-dev",
+    "originExactAtDecision": true,
+    "cleanAtDecision": true,
+    "porcelainSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "admittedLanes": {
+    "approval": {
+      "mergeOrder": 1,
+      "branch": "codex/hris-wave7-batch06-hrm013-approval-v59-prereq-backend-20261026-r1",
+      "remoteRef": "origin/codex/hris-wave7-batch06-hrm013-approval-v59-prereq-backend-20261026-r1",
+      "finalCommit": "ef69ffd6fb608941053e1ca48a5a7a137bd0088e",
+      "finalTree": "db13f4a08005d37905f1b42f1e992eec8185c118",
+      "laneCommitsAfterBaseline": ["ff73ba68dfa0b3942ddfc85dd8a9aa4ec89bf384", "ef69ffd6fb608941053e1ca48a5a7a137bd0088e"],
+      "cleanAtDecision": true,
+      "upstreamExactAtDecision": true,
+      "changedPathCount": 10,
+      "nameStatusBytes": 1194,
+      "nameStatusSha256": "f62da2ea62571902c0b59c3f342c07c2e7619e546fefe718d6844a470d0320b0",
+      "binaryDiffBytes": 133020,
+      "binaryDiffSha256": "55975684f08c52d0034053ea3fc2f442963a667c506ff35219632a1163f0fa05",
+      "changedPaths": [
+        "dwp-approval-server/src/main/java/com/dwp/services/approval/hrisbridge/separation/HrisSeparationDecisionOutboxStore.java",
+        "dwp-approval-server/src/main/java/com/dwp/services/approval/hrisbridge/separation/HrisSeparationGrantStore.java",
+        "dwp-approval-server/src/main/java/com/dwp/services/approval/hrisbridge/separation/HrisSeparationPersistenceModels.java",
+        "dwp-approval-server/src/main/java/com/dwp/services/approval/hrisbridge/separation/HrisSeparationProofReplayStore.java",
+        "dwp-approval-server/src/main/java/com/dwp/services/approval/hrisbridge/separation/HrisSeparationRlsScope.java",
+        "dwp-approval-server/src/main/java/com/dwp/services/approval/hrisbridge/separation/HrisSeparationWaiverBindingStore.java",
+        "dwp-approval-server/src/main/resources/db/migration/V59__bridge_hris_separation_task_waivers.sql",
+        "dwp-approval-server/src/test/java/com/dwp/services/approval/hrisbridge/HrisEmployeeChangeBridgeMigrationPostgresTest.java",
+        "dwp-approval-server/src/test/java/com/dwp/services/approval/hrisbridge/separation/HrisSeparationWaiverMigrationPostgresTest.java",
+        "dwp-approval-server/src/test/java/com/dwp/services/approval/hrisbridge/separation/HrisSeparationWaiverStoresPostgresTest.java"
+      ],
+      "postReview": {"state": "GO", "p0": 0, "p1": 0, "p2": 0}
+    },
+    "people": {
+      "mergeOrder": 2,
+      "branch": "codex/hris-wave7-batch06-hrm013-people-v61-prereq-backend-20261026-r1",
+      "remoteRef": "origin/codex/hris-wave7-batch06-hrm013-people-v61-prereq-backend-20261026-r1",
+      "finalCommit": "2d814d42d07079429d265c2e534df9715685575f",
+      "finalTree": "cfc00d488355428fca29b9b005caafe47cde5839",
+      "laneCommitsAfterBaseline": ["4d8fcdaf269b823f0b573bb67b54b1fc1a3c8167", "2d814d42d07079429d265c2e534df9715685575f"],
+      "cleanAtDecision": true,
+      "upstreamExactAtDecision": true,
+      "changedPathCount": 14,
+      "nameStatusBytes": 1568,
+      "nameStatusSha256": "912b61d09db6d885ed5dd47f21e581da371dd5d1c45a01a4a6df37439b235fd4",
+      "binaryDiffBytes": 213283,
+      "binaryDiffSha256": "9ba3317ea56fcb486e168fc93eb4f8a93f568714fd9b308f37b4b37c0282ecbc",
+      "changedPaths": [
+        "dwp-people-server/src/main/java/com/dwp/services/people/hris/separation/hrm013/Hrm013PersistenceModels.java",
+        "dwp-people-server/src/main/java/com/dwp/services/people/hris/separation/hrm013/Hrm013PersistencePorts.java",
+        "dwp-people-server/src/main/java/com/dwp/services/people/hris/separation/hrm013/Hrm013ServiceAuthorityPort.java",
+        "dwp-people-server/src/main/java/com/dwp/services/people/hris/separation/hrm013/Hrm013TenantScope.java",
+        "dwp-people-server/src/main/java/com/dwp/services/people/hris/separation/hrm013/JdbcHrm013CallbackAuthorityStore.java",
+        "dwp-people-server/src/main/java/com/dwp/services/people/hris/separation/hrm013/JdbcHrm013CallbackReceiptStore.java",
+        "dwp-people-server/src/main/java/com/dwp/services/people/hris/separation/hrm013/JdbcHrm013ProofReplayStore.java",
+        "dwp-people-server/src/main/java/com/dwp/services/people/hris/separation/hrm013/JdbcHrm013WaiverRequestOutboxStore.java",
+        "dwp-people-server/src/main/resources/db/migration/V61__hrm_base_tfr_hrm_013.sql",
+        "dwp-people-server/src/test/java/com/dwp/services/people/hris/separation/hrm013/Hrm013PrerequisiteStoresPostgresTest.java",
+        "dwp-people-server/src/test/java/com/dwp/services/people/hris/separation/hrm013/Hrm013ServiceAuthorityPortTest.java",
+        "dwp-people-server/src/test/java/com/dwp/services/people/hris/separation/hrm013/Hrm013V61MigrationContractTest.java",
+        "dwp-people-server/src/test/java/com/dwp/services/people/hris/separation/hrm013/Hrm013V61MigrationPostgresTest.java",
+        "dwp-people-server/src/test/java/com/dwp/services/people/integration/Hrm012V60MigrationPostgresTest.java"
+      ],
+      "postReview": {"state": "GO", "p0": 0, "p1": 0, "p2": 0}
+    }
+  },
+  "mergeTopology": {
+    "changedPathOverlapCount": 0,
+    "conflictFreeProbe": "PASS",
+    "probeCommand": "git merge-tree --write-tree --messages ef69ffd6fb608941053e1ca48a5a7a137bd0088e 2d814d42d07079429d265c2e534df9715685575f",
+    "expectedCombinedTree": "22bd6533ab340cfb91c6cf5ab5fd6991e501e6c4",
+    "requiredOrder": ["ef69ffd6fb608941053e1ca48a5a7a137bd0088e", "2d814d42d07079429d265c2e534df9715685575f"],
+    "mergeMode": "TWO_NO_FF_MERGE_COMMITS",
+    "sourceConflictResolutionAuthorized": false,
+    "sourceOrTestEditDuringIntegrationAuthorized": false,
+    "conflictRule": "Any conflict, changed commit/tree, path overlap, dirty baseline or source/test mutation invalidates this decision; abort the merge and return for a successor review."
+  },
+  "mergedVerification": {
+    "runOnlyAfterBothMergeCommitsAndBeforePush": true,
+    "compileCommand": "./gradlew :dwp-approval-server:compileJava :dwp-approval-server:compileTestJava :dwp-people-server:compileJava :dwp-people-server:compileTestJava",
+    "approvalCommand": "./gradlew :dwp-approval-server:test --tests 'com.dwp.services.approval.hrisbridge.separation.HrisSeparationWaiverMigrationPostgresTest' --tests 'com.dwp.services.approval.hrisbridge.separation.HrisSeparationWaiverStoresPostgresTest' --tests 'com.dwp.services.approval.hrisbridge.HrisEmployeeChangeBridgeMigrationPostgresTest' --tests 'com.dwp.services.approval.hrisbridge.HrisApprovalBindingLedgerPostgresTest'",
+    "approvalClasses": [
+      "com.dwp.services.approval.hrisbridge.separation.HrisSeparationWaiverMigrationPostgresTest",
+      "com.dwp.services.approval.hrisbridge.separation.HrisSeparationWaiverStoresPostgresTest",
+      "com.dwp.services.approval.hrisbridge.HrisEmployeeChangeBridgeMigrationPostgresTest",
+      "com.dwp.services.approval.hrisbridge.HrisApprovalBindingLedgerPostgresTest"
+    ],
+    "peopleCommand": "./gradlew :dwp-people-server:test --tests 'com.dwp.services.people.hris.separation.hrm013.Hrm013PrerequisiteStoresPostgresTest' --tests 'com.dwp.services.people.hris.separation.hrm013.Hrm013ServiceAuthorityPortTest' --tests 'com.dwp.services.people.hris.separation.hrm013.Hrm013V61MigrationContractTest' --tests 'com.dwp.services.people.hris.separation.hrm013.Hrm013V61MigrationPostgresTest' --tests 'com.dwp.services.people.integration.Hrm012V60MigrationPostgresTest.cleanMigrationThroughV60BuildsOnlyTheTwoTablesAndLockedControls' --tests 'com.dwp.services.people.integration.Hrm012V60MigrationPostgresTest.upgradeFromV59PreservesRowsAndEveryHistoricalChecksum'",
+    "peopleHrm013Classes": [
+      "com.dwp.services.people.hris.separation.hrm013.Hrm013PrerequisiteStoresPostgresTest",
+      "com.dwp.services.people.hris.separation.hrm013.Hrm013ServiceAuthorityPortTest",
+      "com.dwp.services.people.hris.separation.hrm013.Hrm013V61MigrationContractTest",
+      "com.dwp.services.people.hris.separation.hrm013.Hrm013V61MigrationPostgresTest"
+    ],
+    "peopleHrm012NamedMethods": [
+      "com.dwp.services.people.integration.Hrm012V60MigrationPostgresTest.cleanMigrationThroughV60BuildsOnlyTheTwoTablesAndLockedControls",
+      "com.dwp.services.people.integration.Hrm012V60MigrationPostgresTest.upgradeFromV59PreservesRowsAndEveryHistoricalChecksum"
+    ],
+    "successConditions": ["all four compile tasks pass", "all four Approval classes execute without failure or skip", "all four People HRM-013 classes execute without failure or skip", "both named HRM-012 methods execute without failure or skip", "backend status remains clean after verification", "HEAD tree equals 22bd6533ab340cfb91c6cf5ab5fd6991e501e6c4"],
+    "fullRepositoryTestRequired": false,
+    "verificationFailureRule": "Do not push; retain evidence and return for a successor decision."
+  },
+  "authority": {
+    "centralAdmissionApproved": true,
+    "exactApprovalCommitMergeAuthorized": true,
+    "exactPeopleCommitMergeAuthorized": true,
+    "approvalThenPeopleOrderRequired": true,
+    "mergeCommitCreationAuthorized": true,
+    "targetedMergedVerificationAuthorized": true,
+    "backendDwpDevPushAuthorizedAfterAllVerificationPasses": true,
+    "sourceConflictResolutionAuthorized": false,
+    "additionalSourceOrTestEditAuthorized": false,
+    "additionalLaneCommitAuthorized": false,
+    "additionalMigrationAuthorized": false,
+    "runtimeActivationAuthorized": false,
+    "controllerOrRelayActivationAuthorized": false,
+    "frontendUiMenuOrRouteAuthorized": false,
+    "moduleOwnerPacketAuthorized": false,
+    "fullHrm013ModuleSourceAuthorized": false,
+    "featureEnablementAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "runtimeCredentialBindingAuthorized": false,
+    "productionBindingAuthorized": false,
+    "productionReleaseAuthorized": false,
+    "businessCompletionCredit": 0
+  },
+  "nonClaims": [
+    "Neither backend commit is merged into dwp-dev by this document.",
+    "Merged verification has not yet executed on the combined tree.",
+    "Approval or People runtime endpoints, relays, controllers or production bindings are active.",
+    "The HRM-013 module owner packet or full module implementation is authorized.",
+    "HRM-013, Batch-06 or HRIS is complete."
+  ],
+  "nextAction": "COMMIT_AND_PUSH_THIS_CENTRAL_ADMISSION_CARRIER_THEN_MERGE_EXACT_APPROVAL_COMMIT_FIRST_AND_EXACT_PEOPLE_COMMIT_SECOND_WITH_NO_SOURCE_EDIT_RUN_ONLY_THE_SEALED_MERGED_VERIFICATION_RECORD_AN_APPEND_ONLY_INTEGRATION_RECEIPT_AND_PUSH_BACKEND_DWP_DEV_ONLY_IF_ALL_CHECKS_PASS"
+}
