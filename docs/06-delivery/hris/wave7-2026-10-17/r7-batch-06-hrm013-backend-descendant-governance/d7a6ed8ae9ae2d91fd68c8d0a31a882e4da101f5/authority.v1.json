@@ -1,0 +1,122 @@
+{
+  "schema": "dwp.hris.wave7.hrm013-backend-descendant-governance-authority.v1",
+  "state": "HASH_BOUND_REVIEWED_BACKEND_DESCENDANT_GOVERNANCE_SHARED_ELEVEN_BLOBS_IMMUTABLE",
+  "backendDescendant": {
+    "repository": "dwp-backend",
+    "branch": "dwp-dev",
+    "sharedIntegrationCommit": "3505cb2e84fc73f97d62de385cc347c5f8c81572",
+    "sharedIntegrationTree": "fa84a79668fd0f133d34c81d5a649747a6c527b6",
+    "immediateParentCommit": "3505cb2e84fc73f97d62de385cc347c5f8c81572",
+    "commit": "d7a6ed8ae9ae2d91fd68c8d0a31a882e4da101f5",
+    "tree": "fdf087a186c3084fbca6fcad2c32b119d8865675",
+    "changedPaths": [
+      "contracts/product-authorization/pilot-fixtures.v1.generated.json",
+      "contracts/product-authorization/product-surfaces-v1.bundle-v62.json",
+      "contracts/product-authorization/product-surfaces-v1.index.json",
+      "contracts/product-authorization/product-surfaces-v1.json",
+      "contracts/product-authorization/product-surfaces-v1.yaml",
+      "dwp-approval-server/src/main/resources/product-authorization/approval-pilot-pep-v62.generated.json",
+      "dwp-approval-server/src/test/java/com/dwp/services/approval/security/ApprovalRelease62PepContractTest.java",
+      "dwp-auth-server/src/main/java/com/dwp/services/auth/service/ProductAuthorizationContractValidator.java",
+      "dwp-auth-server/src/main/java/com/dwp/services/auth/service/ProductAuthorizationReleaseLineage.java",
+      "dwp-auth-server/src/main/resources/product-authorization/product-surfaces-v1.bundle-v62.generated.json",
+      "dwp-auth-server/src/main/resources/product-authorization/product-surfaces-v1.generated.json",
+      "dwp-auth-server/src/main/resources/product-authorization/product-surfaces-v1.index.generated.json",
+      "dwp-auth-server/src/test/java/com/dwp/services/auth/config/ProductAuthorizationSeedLoaderTest.java",
+      "dwp-auth-server/src/test/java/com/dwp/services/auth/service/ProductAuthorizationContractReleaseLineageTest.java",
+      "dwp-auth-server/src/test/java/com/dwp/services/auth/service/ProductAuthorizationReleaseLineageTest.java",
+      "dwp-auth-server/src/test/java/com/dwp/services/auth/service/ProductAuthorizationV62ContractTest.java",
+      "dwp-auth-server/src/test/java/com/dwp/services/auth/support/PilotAuthorizationFixtureAdapter.java",
+      "dwp-auth-server/src/test/java/com/dwp/services/auth/support/PilotAuthorizationFixtureAdapterTest.java",
+      "dwp-gateway/src/test/java/com/dwp/gateway/ProductSurfaceDecisionContextFilterTest.java",
+      "dwp-gateway/src/test/java/com/dwp/gateway/productsurface/GeneratedProductRouteCatalogTest.java",
+      "dwp-gateway/src/test/java/com/dwp/gateway/support/PilotAuthorizationFixtureAdapter.java",
+      "dwp-gateway/src/test/java/com/dwp/gateway/support/PilotAuthorizationFixtureAdapterTest.java",
+      "dwp-payroll-server/src/main/resources/product-authorization/hcm-payroll-pep-v62.generated.json",
+      "dwp-people-server/src/main/resources/product-authorization/hcm-people-pep-v62.generated.json",
+      "dwp-platform-server/src/main/resources/product-authorization/hcm-platform-pep-v62.generated.json",
+      "dwp-time-server/src/main/resources/product-authorization/hcm-time-pep-v62.generated.json",
+      "scripts/generate-product-authorization-contracts.py",
+      "scripts/generate-product-authorization-fixtures.py",
+      "scripts/tests/test_product_authorization_v61.py",
+      "scripts/tests/test_product_authorization_v62.py"
+    ]
+  },
+  "predecessorGovernanceReceipt": {
+    "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261026/batch06/hrm013-owner-runtime/receipts/shared-central-integration-authority.v1.json",
+    "bytes": 4186,
+    "sha256": "742db293eee814cbb038eede1222a2841c711346101ea1c466e2051c276ad672"
+  },
+  "sharedElevenBlobPins": [
+    {
+      "path": "dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/separation/v1/Hrm013SeparationBridgeV1.java",
+      "bytes": 50448,
+      "sha256": "72313abc7d2aa1624cb0545c13cf28f584b1faeb7d86e1e62ebb87c61e8f4c2f"
+    },
+    {
+      "path": "dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/separation/v1/Hrm013WorkloadProofV1.java",
+      "bytes": 73096,
+      "sha256": "0b4fe2aed65a4cede4c7f1d037810c54079b2a317b0cef968fc2934d6bc10aed"
+    },
+    {
+      "path": "dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/separation/v1/HrisServiceGrantAuthorityV1.java",
+      "bytes": 37763,
+      "sha256": "fda1ff149f5788bb0422ecca516301ea56c4fc83b045f66e1e095899507faada"
+    },
+    {
+      "path": "dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/separation/v1/Hrm013SafeErrorV1.java",
+      "bytes": 7639,
+      "sha256": "d5571c74516b8c480ca458b361cb9c7ed91266cf43a379cedaffa3c7e65885b6"
+    },
+    {
+      "path": "dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/separation/v1/Hrm013RequesterIdentityAuthorityV1.java",
+      "bytes": 14544,
+      "sha256": "83ccc02c0a37e7078e0163274355b03a977bbabc6099c91626ab9ff9a5f6483e"
+    },
+    {
+      "path": "dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/separation/v1/Hrm013TaskDispatchV1.java",
+      "bytes": 29536,
+      "sha256": "95de5dbfbd657b1069b035b0431ad485e6b8571c9e666983ce3699dc30de5a52"
+    },
+    {
+      "path": "dwp-platform-contracts/src/test/java/com/dwp/platform/contract/Hrm013SeparationBridgeV1Test.java",
+      "bytes": 12158,
+      "sha256": "0f93056eda1926e8a59b1eea203acc2efcfb0cc01559f47d6be9c779fd17ea20"
+    },
+    {
+      "path": "dwp-platform-contracts/src/test/java/com/dwp/platform/contract/Hrm013WorkloadProofV1Test.java",
+      "bytes": 30551,
+      "sha256": "16b978da26e1dfdd974ce6a24ae53da8ac5b82eaa84f2fe926e960e6935e1fbc"
+    },
+    {
+      "path": "dwp-platform-contracts/src/test/java/com/dwp/platform/contract/HrisServiceGrantAuthorityV1Test.java",
+      "bytes": 12537,
+      "sha256": "5ed61ce71bc6ed664210a0d2a5556b6bf1bd0be2624e61b35a9cda8807fc4d9f"
+    },
+    {
+      "path": "dwp-platform-contracts/src/test/java/com/dwp/platform/contract/Hrm013RequesterIdentityAuthorityV1Test.java",
+      "bytes": 11501,
+      "sha256": "2e328e5645142b094b9da10aff681bd676d3ec18e47ba711181c9aa172079a92"
+    },
+    {
+      "path": "dwp-platform-contracts/src/test/java/com/dwp/platform/contract/Hrm013TaskDispatchV1Test.java",
+      "bytes": 10471,
+      "sha256": "c6f1cab34d82f37c8cd0a8f30f7af427cd6e4191619c2dad5c2dabda12add9b5"
+    }
+  ],
+  "governingValidatorArtifact": {
+    "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-shared-contract-integration-r1/validate_hrm013_shared_contract_integration.py",
+    "bytes": 78934,
+    "sha256": "d177b30ca101a1cc3fd69749ff064d5a8e73224ff308fe812f18690ef291d49e"
+  },
+  "authority": {
+    "backendDescendantGovernanceRecorded": true,
+    "sharedElevenBlobsVerifiedImmutable": true,
+    "sharedBlobMutationAuthorized": false,
+    "authGenerationAuthorized": false,
+    "migrationAuthoringAuthorized": false,
+    "runtimeImplementationAuthorized": false,
+    "productionReleaseAuthorized": false,
+    "businessCompletionCredit": 0
+  }
+}
