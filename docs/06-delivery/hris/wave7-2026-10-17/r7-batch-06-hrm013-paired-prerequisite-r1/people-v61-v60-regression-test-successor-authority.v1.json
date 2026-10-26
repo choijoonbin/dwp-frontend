@@ -1,0 +1,81 @@
+{
+  "schema": "dwp.hris.wave7.hrm013-people-v61-v60-regression-test-successor-authority.v1",
+  "authorityId": "HRIS-WAVE7-BATCH06-HRM013-PEOPLE-V61-V60-REGRESSION-TEST-SUCCESSOR-20261026-R1",
+  "recordedAt": "2026-10-26T11:19:24Z",
+  "recordedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "state": "EXECUTABLE_NARROW_EXISTING_TEST_COMPATIBILITY_SUCCESSOR",
+  "sliceId": "BASE-TFR-HRM-013",
+  "purpose": "Permit only the two stale latest-migration calls in the HRM-012 V60 migration regression test to remain pinned to V60 after the authorized People V61 candidate is added. This successor does not authorize any production source, runtime, schema, fixture or HRM-012 behavior change.",
+  "pinnedAuthority": {
+    "frontendCarrier": {
+      "repository": "dwp-frontend",
+      "branch": "dwp-dev",
+      "commit": "8c92334e7ba7b568a43aef6b8e5e79454cd0c19c",
+      "tree": "882c80e64cdf50c7365dd15893b807ac1fd36bcc",
+      "originExactAtIssue": true
+    },
+    "peopleStartToken": {
+      "path": "tokens/hrm-013-people-v61-prerequisite.start-token.v1.json",
+      "bytes": 5627,
+      "sha256": "8f8e87ab05402b73d20f1a4c749b9b2597b5b59663ff403ce58747f07b877146"
+    },
+    "contractClarification": {
+      "path": "paired-prerequisite-contract-clarification.v1.json",
+      "bytes": 9244,
+      "sha256": "a839368ec78f43b1b45d6d50f0a8a741fd19e106671b52b356586a36c776079a"
+    },
+    "peopleImplementation": {
+      "repository": "dwp-backend",
+      "branch": "codex/hris-wave7-batch06-hrm013-people-v61-prereq-backend-20261026-r1",
+      "commit": "4d8fcdaf269b823f0b573bb67b54b1fc1a3c8167",
+      "tree": "91492ee1cce628d9f0214ddbd781d83c1a129f35"
+    }
+  },
+  "independentFinding": {
+    "severity": "P1",
+    "status": "CONFIRMED",
+    "description": "Hrm012V60MigrationPostgresTest uses unbounded Flyway in two scenarios that explicitly assert V60. Once V61 is present, those scenarios advance to V61 and fail even though the HRM-012 V60 contract is unchanged.",
+    "affectedMethods": [
+      "cleanMigrationThroughV60BuildsOnlyTheTwoTablesAndLockedControls",
+      "upgradeFromV59PreservesRowsAndEveryHistoricalChecksum"
+    ]
+  },
+  "changedPathAllowlist": {
+    "existingEditOnly": [
+      "dwp-people-server/src/test/java/com/dwp/services/people/integration/Hrm012V60MigrationPostgresTest.java"
+    ],
+    "exactEdit": "Replace exactly the two flyway(source, null) calls inside the named V60-only methods with flyway(source, \"60\"). Keep the V60 assertions, expected table set and every other test behavior unchanged.",
+    "newFilesAuthorized": [],
+    "allOtherAdditionalPathsForbidden": true
+  },
+  "requiredVerification": [
+    "Run both named Hrm012V60MigrationPostgresTest methods against Docker PostgreSQL with zero failures and zero skips.",
+    "Run the new HRM-013 V61 migration and persistence tests after the edit.",
+    "Verify the file diff contains exactly two null-to-60 argument replacements and no other change.",
+    "Verify the lane changed paths remain the original People token allowlist plus this one exact existing test path."
+  ],
+  "authority": {
+    "successorExecutable": true,
+    "exactExistingTestEditAuthorized": true,
+    "targetedTestExecutionAuthorized": true,
+    "laneBranchCommitAuthorized": true,
+    "laneBranchPushAuthorized": true,
+    "peopleV61SqlAuthorityUnchanged": true,
+    "peopleRuntimeSourceAuthorityUnchanged": true,
+    "productionSourceEditAuthorized": false,
+    "historicalMigrationEditAuthorized": false,
+    "directDwpDevMergeAuthorized": false,
+    "runtimeActivationAuthorized": false,
+    "featureOrTenantEnrollmentAuthorized": false,
+    "productionBindingAuthorized": false,
+    "productionReleaseAuthorized": false,
+    "businessCompletionCredit": 0
+  },
+  "invalidationConditions": [
+    "Either pinned carrier or People implementation commit/tree differs.",
+    "Any file other than the one exact existing test is newly added to the successor allowlist.",
+    "Either edit changes an assertion, fixture, migration, production source or runtime behavior.",
+    "Either V60 scenario is skipped or does not execute against PostgreSQL."
+  ],
+  "nextAction": "COMMIT_AND_PUSH_THIS_SUCCESSOR_AUTHORITY_THEN_APPLY_EXACTLY_TWO_V60_TARGET_ARGUMENT_CHANGES_RUN_THE_NARROW_V60_AND_V61_TEST_SET_AND_COMMIT_PUSH_THE_PEOPLE_LANE_FOLLOW_UP"
+}
