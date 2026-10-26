@@ -1,0 +1,63 @@
+{
+  "schema": "dwp.hris.wave7.hrm013-auth-v62-generation-central-integration-authority-independent-review.v1",
+  "reviewedAt": "2026-10-26T17:54:06Z",
+  "reviewer": "INDEPENDENT_HRM013_AUTH_V62_GENERATION_CENTRAL_INTEGRATION_REVIEW",
+  "scope": {
+    "authorityPath": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-auth-v62-generation-integration-r1/auth-v62-generation-central-integration-authority.v1.json",
+    "validatorPath": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-auth-v62-generation-integration-r1/validate_hrm013_auth_v62_generation_integration.py",
+    "packagePath": "package.json",
+    "reviewedBoundaries": [
+      "GENERATION_AUTHORITY_CARRIER_AND_FIVE_ARTIFACT_PINS",
+      "EXACT_GENERATION_LANE_COMMIT_TREE_PATHS_AND_RECEIPTS",
+      "DESCENDANT_GOVERNANCE_CARRIER_ARTIFACT_AND_RECEIPT_PINS",
+      "EXTERNAL_CENTRAL_INTEGRATION_RECEIPT_REQUIRED",
+      "DIRECT_FAST_FORWARD_TO_EXACT_GENERATION_COMMIT_ONLY",
+      "NO_V271_MIGRATION_RUNTIME_ACTIVATION_OR_PRODUCTION_AUTHORITY"
+    ]
+  },
+  "findings": {
+    "p0": [],
+    "p1": [],
+    "p2": [],
+    "notes": [
+      "The carrier authorizes only externally attested direct fast-forward integration of the exact reviewed Auth v62 generation commit.",
+      "The generation carrier, both generation receipts and the ordered descendant-governance carrier and receipt are hash-bound.",
+      "No V271 reservation, migration, runtime, activation, tenant enrollment, production binding or release is authorized."
+    ]
+  },
+  "finalVerdict": {
+    "p0": 0,
+    "p1": 0,
+    "p2": 0,
+    "decision": "GO_FOR_AUTH_V62_GENERATION_CENTRAL_INTEGRATION_AUTHORITY_CARRIER_COMMIT_AND_PUSH_ONLY"
+  },
+  "authority": {
+    "independentReviewComplete": true,
+    "carrierCommitAndPushAuthorized": true,
+    "externalReceiptIssuanceAuthorizedAfterCarrierPush": true,
+    "exactGenerationCommitDirectFastForwardAuthorizedAfterReceipt": true,
+    "authV271ReservationAuthorized": false,
+    "authV271ImplementationAuthorized": false,
+    "migrationAuthoringAuthorized": false,
+    "runtimeImplementationAuthorized": false,
+    "productionReleaseAuthorized": false,
+    "businessCompletionCredit": 0
+  },
+  "artifactPins": [
+    {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-auth-v62-generation-integration-r1/auth-v62-generation-central-integration-authority.v1.json",
+      "bytes": 7811,
+      "sha256": "f823a5b7e256a0e29832ea423c6423db645aa09da11eb15119888db4e44f486b"
+    },
+    {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-auth-v62-generation-integration-r1/validate_hrm013_auth_v62_generation_integration.py",
+      "bytes": 69057,
+      "sha256": "593c7385717649dd860588b3ec8a8d9a67a6f131b098886746c90a7ed0e77168"
+    },
+    {
+      "path": "package.json",
+      "bytes": 15154,
+      "sha256": "8d485521123a0dde1b10afb45cfda5a52c85f6fdd5e12f860c0da59c3a32c45d"
+    }
+  ]
+}
