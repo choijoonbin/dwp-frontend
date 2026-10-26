@@ -1,0 +1,2032 @@
+{
+  "schema": "dwp.hris.wave7.hrm013-owner-runtime-binding-gate.v1",
+  "gateId": "HRIS-WAVE7-BATCH06-HRM013-OWNER-RUNTIME-BINDING-GATE-20261026-R1",
+  "recordedAt": "2026-10-26T23:38:38+09:00",
+  "recordedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "state": "PREPARED_EXACT_OWNER_RUNTIME_BINDING_GATE_INDEPENDENT_REVIEW_REQUIRED_ZERO_IMPLEMENTATION_AUTHORITY",
+  "sliceId": "BASE-TFR-HRM-013",
+  "module": "HRM",
+  "moduleSession": "HRIS-HRM",
+  "purpose": "Resolve every source-visible P0 boundary between the integrated Approval V59 and People V61 prerequisites and a later HRM-013 owner/runtime implementation, without starting source, migration, worktree, activation, tenant or production work.",
+  "immutability": {
+    "appendOnly": true,
+    "predecessorMutationAllowed": false,
+    "amendmentPolicy": "APPEND_ONLY_SUCCESSOR_WITH_NEW_ID_REVISION_AND_SHA256"
+  },
+  "lineage": {
+    "pairedPrerequisiteIntegrationReceipt": {
+      "path": "../r7-batch-06-hrm013-paired-prerequisite-r1/paired-prerequisite-central-integration-receipt-successor.v2.json",
+      "bytes": 6309,
+      "sha256": "19dab7faef1f22a9c58db970b88dc29298e3eff7ba11c9f41dd787418089f980",
+      "requiredAuthority": {
+        "pairedPrerequisiteIntegrationComplete": true,
+        "nextOwnerRuntimeBindingGatePreparationAuthorized": true,
+        "nextOwnerRuntimeBindingGateImplementationAuthorized": false
+      }
+    },
+    "trustedCallbackAuthority": {
+      "path": "../r7-batch-06-hrm013-callback-binding-r1/hrm-013-trusted-callback-service-binding-successor.v1.json",
+      "bytes": 50694,
+      "sha256": "56a27680c74e07967e4bf03c1984ac8d4786a1a0f4ef68c560363a41b1020be9"
+    },
+    "waiverApprovalBridgeAuthority": {
+      "path": "../r7-batch-06-hrm013-callback-binding-r1/hrm-013-separation-waiver-approval-bridge-successor.v1.json",
+      "bytes": 39005,
+      "sha256": "43717d43a7aed49c56abe715188e5891d9c7da79d45125bfdc68acf0064ea7b5"
+    },
+    "peopleV61Manifest": {
+      "path": "../r7-batch-06-hrm013-callback-binding-r1/migration-manifests/base-tfr-hrm-013.people-v61-schema-manifest-successor.v2.json",
+      "bytes": 42115,
+      "sha256": "01aff4919302d2a5adc951f96b7dd513b752526c8e3066d4d0317d973c14d6a8"
+    },
+    "approvalV59Manifest": {
+      "path": "../r7-batch-06-hrm013-callback-binding-r1/migration-manifests/hrm-013.approval-v59-schema-manifest.v1.json",
+      "bytes": 25781,
+      "sha256": "8bec7573ed5453e2ca83b665d2824ae763a93703483ddf59063315cc7a8eff50"
+    },
+    "repositoryPins": {
+      "backend": {
+        "repository": "dwp-backend",
+        "branch": "dwp-dev",
+        "commit": "c50b267e7b015758ab6f7acc7fdf353eee81e631",
+        "tree": "22bd6533ab340cfb91c6cf5ab5fd6991e501e6c4",
+        "originEqualAtAudit": true
+      },
+      "frontend": {
+        "repository": "dwp-frontend",
+        "branch": "dwp-dev",
+        "commit": "cf7b70f2d1c079da114f62a3df15f784fcd9439d",
+        "tree": "5bcc595f5b07a81ca7528838eba1bc06010dd0c4",
+        "originEqualAtAudit": true
+      },
+      "agent": {
+        "repository": "dwp_agent",
+        "branch": "dwp-dev",
+        "commit": "9beb5439cad065e7d919a98c9f9becb44481508a",
+        "originEqualAtAudit": true
+      }
+    }
+  },
+  "sourceAudit": {
+    "method": "SIX_INDEPENDENT_READ_ONLY_DOMAIN_SECURITY_AND_EXECUTABILITY_AUDITS",
+    "lanes": [
+      "APPROVAL_RUNTIME_AND_TERMINAL_DECISION",
+      "PEOPLE_OWNER_CALLBACK_AND_RELAY_RUNTIME",
+      "CROSS_SERVICE_AUTHORITY_CONTRACT_AND_SECURITY",
+      "APPROVAL_CAST_ROUTE_AND_REQUESTER_IDENTITY_CLOSURE",
+      "TIME_PAYROLL_AUTH_TASK_DISPATCH_CLOSURE",
+      "FINAL_CROSS_SERVICE_EXECUTABILITY_AND_VALIDATOR_AUDIT"
+    ],
+    "confirmedFacts": [
+      "Approval V59 and People V61 prerequisite persistence are integrated, pushed and sufficient for their later runtime lanes.",
+      "Hrm013ServiceAuthorityPort has no production implementation and no repository-local authoritative service-grant source exists.",
+      "Auth V270 is a catalog-only HRM-013 user authorization seed; it creates no service-grant ledger, service authority API, key authority or enrollment.",
+      "The existing employee-change HrisApprovalBridgeV2 and HrisWorkloadProofV2 contracts are APR-001 and HRM-001 specific and cannot carry HRM-013 mTLS confirmation, grant revisions, callback lineage, owner revision or conditional step-up evidence.",
+      "People V61 already contains the required HRM-013 owner, proof replay, waiver request, callback authority and callback receipt persistence; People V62 is neither required nor allowed for this runtime.",
+      "Approval V59 already contains the required HRM-013 grant, proof replay, waiver binding and decision outbox persistence; Approval V60 is neither required nor allowed for this runtime.",
+      "A second ApprovalTerminalDecisionSink bean would make the existing optional single-sink injection ambiguous; one router bean must remain the sole terminal sink.",
+      "Callback identity and authority-stream advisory locks must be acquired before owner business reads to make concurrent replay and digest-conflict behavior exact.",
+      "The existing Approval and Auth workflow-runtime contracts admit only the generic task-decision route, so the HRM-013 approve route must become a first-class CAST route in both services rather than a path rewrite.",
+      "The legacy ApprovalIdentityDirectory and Approval form-user directory cannot provide an HRM-013 service-authorized exact actor-public-ID lookup and must not be reused with their static token path.",
+      "People V61 can atomically reuse sys_people_outbox_events for task dispatch without People V62, but the three owner ingress contracts, immutable dispatch digest and admission receipts must be closed before owner source.",
+      "The four People, Approval, Time and Payroll Auth resolver bindings require their own certificate-leaf-signed closed proof profiles before any service-grant row read.",
+      "Time and Payroll task-dispatch owners must resolve current People caller and owner signing keys through their own Auth resolver bindings before verifying dispatch proof or issuing a receipt; Auth verifies its local identity-task binding directly."
+    ],
+    "unresolvedP0BeforeThisGate": 20,
+    "resolvedByThisGate": [
+      "AUTHORITATIVE_SERVICE_GRANT_OWNER_AND_API",
+      "SHARED_HRM013_WIRE_AND_CRYPTO_CONTRACT_OWNER",
+      "TLS13_MTLS_TERMINATION_AND_CERTIFICATE_CONFIRMATION",
+      "APPROVAL_HRM013_STEP_UP_TO_DOWNSTREAM_EVIDENCE_MAPPING",
+      "APR002_WORKFLOW_FORM_AND_REQUESTER_SELECTION",
+      "PEOPLE_OWNER_AND_CALLBACK_RUNTIME_ATOMIC_SCOPE",
+      "APPROVAL_FIRST_CLASS_CAST_ROUTE",
+      "EXACT_REQUESTER_IDENTITY_AUTHORITY",
+      "AUTH_RESOLVER_CLOSED_PROOF_PROFILE",
+      "OWNER_TASK_DISPATCH_AND_ADMISSION_RECEIPT_CONTRACT",
+      "TIME_AND_PAYROLL_OWNER_AUTH_RESOLVER_BOOTSTRAP",
+      "AUTH_REPLAY_TABLE_ALL_INBOUND_CONTROL_PROFILES",
+      "IMMUTABLE_V59_GRANT_ROTATION_CONTINUITY",
+      "APPROVAL_COMMAND_DECISION_VERSUS_TERMINAL_OUTCOME_VOCABULARY",
+      "DEDICATED_APPROVE_BODY_QUORUM_AND_VERSION_BINDING",
+      "AUTH_V62_GENERATION_BEFORE_V271_RESERVATION_SEQUENCE",
+      "GENERIC_PEOPLE_OUTBOX_IMMUTABLE_AUTHORITY_DIGEST_FENCE",
+      "OUTBOUND_BINDING_OWNER_TLS_SPIFFE_DNS_AND_ENDPOINT_AUTHENTICATION",
+      "TASK_DISPATCH_AND_HRM008_CALLBACK_GRANT_REVISION_SEPARATION",
+      "SEALED_CALLBACK_KEY_DISCOVERY_AND_POST_SIGNATURE_AUTHORITY_RECHECK_ORDER"
+    ]
+  },
+  "decisions": {
+    "sharedContractOwnership": {
+      "ownerModule": "dwp-platform-contracts",
+      "package": "com.dwp.platform.contracts.hris.separation.v1",
+      "files": [
+        "dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/separation/v1/Hrm013SeparationBridgeV1.java",
+        "dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/separation/v1/Hrm013WorkloadProofV1.java",
+        "dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/separation/v1/HrisServiceGrantAuthorityV1.java",
+        "dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/separation/v1/Hrm013SafeErrorV1.java",
+        "dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/separation/v1/Hrm013RequesterIdentityAuthorityV1.java",
+        "dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/separation/v1/Hrm013TaskDispatchV1.java"
+      ],
+      "tests": [
+        "dwp-platform-contracts/src/test/java/com/dwp/platform/contract/Hrm013SeparationBridgeV1Test.java",
+        "dwp-platform-contracts/src/test/java/com/dwp/platform/contract/Hrm013WorkloadProofV1Test.java",
+        "dwp-platform-contracts/src/test/java/com/dwp/platform/contract/HrisServiceGrantAuthorityV1Test.java",
+        "dwp-platform-contracts/src/test/java/com/dwp/platform/contract/Hrm013RequesterIdentityAuthorityV1Test.java",
+        "dwp-platform-contracts/src/test/java/com/dwp/platform/contract/Hrm013TaskDispatchV1Test.java"
+      ],
+      "rules": [
+        "The shared lane owns closed DTOs, strict JSON codecs, RFC 8785 payload digests, fixed command digests, the four sealed APR-002 and HRM-008 through HRM-010 profiles, four resolver-bootstrap profiles, one requester-identity profile and three bidirectional task-dispatch profiles, proof verification primitives and safe error mapping. Every affected Hrm013WorkloadProofV1 business profile, including SVC-AUT-HRM-013, adds exact grantUseMode plus conditional seven-field DRAIN_EXISTING claims without adding a drain field to canonical business bodies other than approvalRequestId already required by the requester-identity body, or changing the five-header envelope.",
+        "Approval and People consume one merged shared-contract commit and may not define shadow DTOs or edit the shared package concurrently.",
+        "HrisApprovalBridgeV2, HrisWorkloadProofV2 and OAuth2 bearer or client-assertion Authorization transport are forbidden for APR-002 and HRM-008 through HRM-010. The sealed predecessor composition label TLS_1_3_MTLS_SPIFFE_AND_RS256_CLIENT_CREDENTIAL_JWT is realized exclusively by the X-DWP-Workload-Proof compact RS256 JWS and never authorizes an Authorization header.",
+        "The shared contract contains no database, HTTP client, Spring bean, tenant grant or credential implementation."
+      ]
+    },
+    "serviceGrantControlPlane": {
+      "authoritativeOwner": "dwp-auth-server",
+      "migration": {
+        "stream": "AUTH_MAIN",
+        "version": "V271",
+        "path": "dwp-auth-server/src/main/resources/db/migration/V271__create_hris_service_grant_authority.sql",
+        "required": true,
+        "reservedByThisGate": false,
+        "authoringAuthorizedByThisGate": false
+      },
+      "tables": [
+        {
+          "name": "auth_hris_service_grant_sets",
+          "role": "append-only tenant authority-set revision with grant_set_id, tenant_id, grant_revision, tenant_grant_revision, authorization_revision, ADMIT or REVOKE decision, supersedes_grant_set_id, canonical grant_digest, successor rotation_readiness_digest and recorded_at"
+        },
+        {
+          "name": "auth_hris_service_grant_bindings",
+          "role": "immutable members of one grant set with caller and owner workload IDs, exact SPIFFE IDs, RS256 key IDs and public JWKs, binding ID and purpose"
+        },
+        {
+          "name": "auth_hris_service_authority_proof_replays",
+          "role": "tenant-scoped digest-only JTI and requestNonce reservations for resolver bindings SVC-AUT-HRM-011, SVC-AUT-HRM-012, SVC-AUT-HRM-015 and SVC-AUT-HRM-016, the SVC-AUT-HRM-013 requester authority endpoint and service-grant rotation-readiness proofs"
+        },
+        {
+          "name": "auth_hris_service_grant_quiesce_fences",
+          "role": "append-only planned-cutover fence per exact tenant, bindingId, callerWorkloadId, ownerWorkloadId and purpose tuple with old_grant_set_id, quiesce_revision, QUIESCING, CUTOVER or ABORTED state, effective_at, successor command correlation and immutable fence digest"
+        },
+        {
+          "name": "auth_hris_service_grant_drain_activities",
+          "role": "append-only DRAIN_EXISTING admission activity per exact quiesce fence and CALLER or OWNER service role with a gap-free positive activity_revision, old grant set and revisions, continuation kind, root and continuation identities and digests, resolver proof digest, correlation and recorded_at"
+        }
+      ],
+      "databaseRules": [
+        "All five tables use forced tenant RLS for non-BYPASSRLS runtime roles.",
+        "Grant sets and members are immutable and append-only; revocation is a successor set, never an update.",
+        "SVC-PEP-APR-002, SVC-PEP-HRM-010 and SVC-AUT-HRM-013 are the bidirectionally closed waiver execution dependency group: all three exact tuples are members of the same Auth grant set with the same positive tenantGrantRevision and authorizationRevision, and an initial grant, successor ADMIT, planned rotation, emergency REVOKE or omission applies atomically to all three or fails. Approval V59 persists the immutable APR-002 plus HRM-010 projection subset under that same grantSetId and revisions and does not add an SVC-AUT-HRM-013 column or rewrite.",
+        "There is exactly one unambiguous highest grant_revision per tenant and binding membership, and every successor names the immediate prior grant set.",
+        "Public JWKs are RS256 signature keys of at least 2048 bits, kid-bound and immutable inside a grant-set revision; key rotation creates a successor authority set.",
+        "A successor ADMIT set requires a lowercase SHA-256 rotation_readiness_digest over the closed zero-pending receipts; an initial set has no predecessor and no readiness digest, while emergency REVOKE records the incident evidence digest instead of waiting for drain.",
+        "V271 inserts no tenant, grant, key, credential, enrollment or production row."
+      ],
+      "resolveEndpoint": {
+        "method": "POST",
+        "path": "/internal/auth/v1/hris-service-grant-authority/resolve",
+        "requestSchema": "HrisServiceGrantAuthorityV1.ResolveRequest",
+        "responseSchema": "HrisServiceGrantAuthorityV1.ResolveResponse",
+        "maximumRequestBytes": 8192,
+        "maximumResponseBytes": 16384,
+        "queryAllowed": false,
+        "gatewayOrBrowserExposureAllowed": false,
+        "callerBindings": [
+          {
+            "bindingId": "SVC-AUT-HRM-011",
+            "caller": "dwp-people-server",
+            "owner": "dwp-auth-server",
+            "purpose": "HRIS_SERVICE_GRANT_AUTHORITY_RESOLVE"
+          },
+          {
+            "bindingId": "SVC-AUT-HRM-012",
+            "caller": "dwp-approval-server",
+            "owner": "dwp-auth-server",
+            "purpose": "HRIS_SERVICE_GRANT_AUTHORITY_RESOLVE"
+          },
+          {
+            "bindingId": "SVC-AUT-HRM-015",
+            "caller": "dwp-time-server",
+            "owner": "dwp-auth-server",
+            "purpose": "HRIS_SERVICE_GRANT_AUTHORITY_RESOLVE"
+          },
+          {
+            "bindingId": "SVC-AUT-HRM-016",
+            "caller": "dwp-payroll-server",
+            "owner": "dwp-auth-server",
+            "purpose": "HRIS_SERVICE_GRANT_AUTHORITY_RESOLVE"
+          }
+        ],
+        "requiredRequestFields": [
+          "tenantId",
+          "requestingWorkloadId",
+          "targetCallerWorkloadId",
+          "targetOwnerWorkloadId",
+          "targetBindingId",
+          "targetPurpose",
+          "resolutionMode",
+          "signedTenantGrantRevision",
+          "signedAuthorizationRevision",
+          "correlationId"
+        ],
+        "conditionalRequestFields": {
+          "NEW_WORK": {
+            "revisionRule": "Both signed revisions are positive and come from the active atomicGrantCredentialLease.",
+            "mustBeAbsent": [
+              "drainRootWorkItemId",
+              "drainRootCreatedAt",
+              "drainRootPayloadSha256",
+              "drainContinuationKind",
+              "drainContinuationEventId",
+              "drainContinuationRevision",
+              "drainContinuationPayloadSha256"
+            ]
+          },
+          "DRAIN_EXISTING": {
+            "revisionRule": "Both signed revisions are positive and come from the old active or drain-only atomicGrantCredentialLease.",
+            "required": [
+              "drainRootWorkItemId",
+              "drainRootCreatedAt",
+              "drainRootPayloadSha256",
+              "drainContinuationKind",
+              "drainContinuationEventId",
+              "drainContinuationRevision",
+              "drainContinuationPayloadSha256"
+            ]
+          },
+          "READINESS_OBSERVE": {
+            "revisionRule": "Both signed revisions are positive and come from the exact old drain-only atomicGrantCredentialLease; Auth reads only the still-current fence and role-specific drain activity stream.",
+            "mustBeAbsent": [
+              "drainRootWorkItemId",
+              "drainRootCreatedAt",
+              "drainRootPayloadSha256",
+              "drainContinuationKind",
+              "drainContinuationEventId",
+              "drainContinuationRevision",
+              "drainContinuationPayloadSha256"
+            ]
+          },
+          "PROBE_MISSING": {
+            "revisionRule": "Both signed revisions are the exact integer sentinel 0 and no atomicGrantCredentialLease or business key is read.",
+            "mustBeAbsent": [
+              "drainRootWorkItemId",
+              "drainRootCreatedAt",
+              "drainRootPayloadSha256",
+              "drainContinuationKind",
+              "drainContinuationEventId",
+              "drainContinuationRevision",
+              "drainContinuationPayloadSha256"
+            ]
+          }
+        },
+        "admitResponseFields": [
+          "status",
+          "grantSetId",
+          "grantRevision",
+          "tenantId",
+          "tenantGrantRevision",
+          "authorizationRevision",
+          "decision",
+          "callerWorkloadId",
+          "callerSpiffeId",
+          "callerSigningKeyId",
+          "callerSigningPublicJwk",
+          "ownerWorkloadId",
+          "ownerSpiffeId",
+          "ownerSigningKeyId",
+          "ownerSigningPublicJwk",
+          "bindingId",
+          "purpose",
+          "supersedesGrantSetId",
+          "grantDigest",
+          "recordedAt",
+          "correlationId"
+        ],
+        "drainAdmitAdditionalResponseFields": [
+          "quiesceFenceId",
+          "quiesceRevision",
+          "quiesceEffectiveAt",
+          "attestingServiceRole",
+          "drainActivityRevision",
+          "drainActivityRecordedAt",
+          "drainAuthorizationExpiresAt",
+          "drainSettleUntil"
+        ],
+        "readinessObservedResponseFields": [
+          "status",
+          "tenantId",
+          "grantSetId",
+          "tenantGrantRevision",
+          "authorizationRevision",
+          "callerWorkloadId",
+          "ownerWorkloadId",
+          "bindingId",
+          "purpose",
+          "quiesceFenceId",
+          "quiesceRevision",
+          "quiesceEffectiveAt",
+          "attestingServiceRole",
+          "drainActivityRevision",
+          "drainQuietSince",
+          "readinessEligibleAt",
+          "readinessObservationSha256",
+          "correlationId"
+        ],
+        "statuses": [
+          "ADMIT",
+          "READINESS_OBSERVED",
+          "REVOKE",
+          "MISSING",
+          "AMBIGUOUS",
+          "STALE",
+          "REVISION_MISMATCH",
+          "QUIESCING",
+          "UNAVAILABLE"
+        ],
+        "httpMapping": {
+          "ADMIT_READINESS_OBSERVED_REVOKE_MISSING_AMBIGUOUS_STALE_REVISION_MISMATCH_QUIESCING": 200,
+          "AUTHENTICATION_FAILURE": "401_OR_403_EMPTY_NO_STORE",
+          "AUTHORITY_UNAVAILABLE": "503_OPAQUE_CORRELATION_ONLY_NO_STORE"
+        },
+        "bootstrapProof": {
+          "rule": "SVC-AUT-HRM-011, SVC-AUT-HRM-012, SVC-AUT-HRM-015 and SVC-AUT-HRM-016 do not depend on the service-grant ledger to verify their own resolver proof. After connector trust, revocation and exact SPIFFE validation, Auth verifies the RS256 compact JWS directly with the validated RSA mTLS leaf public key.",
+          "carrier": "Exactly one X-DWP-Workload-Proof header containing one compact JWS; Authorization, Cookie, forwarded identity and alternate proof headers are forbidden.",
+          "protectedHeaders": {
+            "requiredExactly": [
+              "alg",
+              "typ",
+              "kid"
+            ],
+            "constants": {
+              "alg": "RS256",
+              "typ": "JWT"
+            },
+            "unknownOrDuplicateAllowed": false
+          },
+          "closedClaims": [
+            "iss",
+            "aud",
+            "sub",
+            "iat",
+            "nbf",
+            "exp",
+            "jti",
+            "requestNonce",
+            "bindingId",
+            "purpose",
+            "method",
+            "path",
+            "tenantId",
+            "requestingWorkloadId",
+            "targetCallerWorkloadId",
+            "targetOwnerWorkloadId",
+            "targetBindingId",
+            "targetPurpose",
+            "resolutionMode",
+            "signedTenantGrantRevision",
+            "signedAuthorizationRevision",
+            "correlationId",
+            "requestBodySha256",
+            "authn",
+            "cnf"
+          ],
+          "conditionalClaims": {
+            "NEW_WORK": {
+              "mustBeAbsent": [
+                "drainRootWorkItemId",
+                "drainRootCreatedAt",
+                "drainRootPayloadSha256",
+                "drainContinuationKind",
+                "drainContinuationEventId",
+                "drainContinuationRevision",
+                "drainContinuationPayloadSha256"
+              ]
+            },
+            "DRAIN_EXISTING": {
+              "requiredExactly": [
+                "drainRootWorkItemId",
+                "drainRootCreatedAt",
+                "drainRootPayloadSha256",
+                "drainContinuationKind",
+                "drainContinuationEventId",
+                "drainContinuationRevision",
+                "drainContinuationPayloadSha256"
+              ]
+            },
+            "READINESS_OBSERVE": {
+              "mustBeAbsent": [
+                "drainRootWorkItemId",
+                "drainRootCreatedAt",
+                "drainRootPayloadSha256",
+                "drainContinuationKind",
+                "drainContinuationEventId",
+                "drainContinuationRevision",
+                "drainContinuationPayloadSha256"
+              ]
+            },
+            "PROBE_MISSING": {
+              "mustBeAbsent": [
+                "drainRootWorkItemId",
+                "drainRootCreatedAt",
+                "drainRootPayloadSha256",
+                "drainContinuationKind",
+                "drainContinuationEventId",
+                "drainContinuationRevision",
+                "drainContinuationPayloadSha256"
+              ]
+            }
+          },
+          "constantClaims": {
+            "iss": "EXACT_REQUESTING_WORKLOAD_ID",
+            "aud": "dwp-auth-server",
+            "sub": "EXACT_REQUESTING_WORKLOAD_ID",
+            "bindingId": "SVC-AUT-HRM-011_OR_012_OR_015_OR_016_MATCHING_CERTIFICATE_SPIFFE",
+            "purpose": "HRIS_SERVICE_GRANT_AUTHORITY_RESOLVE",
+            "method": "POST",
+            "path": "/internal/auth/v1/hris-service-grant-authority/resolve",
+            "authn": "MTLS_LEAF_RS256"
+          },
+          "bodyEqualityRule": "tenantId, requestingWorkloadId, targetCallerWorkloadId, targetOwnerWorkloadId, targetBindingId, targetPurpose, resolutionMode, signedTenantGrantRevision, signedAuthorizationRevision, correlationId and every DRAIN_EXISTING conditional field equal the closed request body; requestBodySha256 is lowercase SHA-256 of the exact request bytes.",
+          "kid": "base64url-without-padding SHA-256 of the leaf certificate DER bytes",
+          "cnf": "cnf.x5t#S256 equals the same leaf certificate thumbprint as kid",
+          "freshness": "iat equals nbf, exp minus iat is at most 30 seconds, verification skew is at most 5 seconds, and jti plus requestNonce are distinct canonical lowercase UUIDs.",
+          "replayRule": "After certificate and full proof validation but before any service-grant row read, Auth atomically reserves separate tenant-scoped lowercase SHA-256 token digests for jti and requestNonce; a replay or partial reservation fails closed.",
+          "strictness": "Unknown, duplicate, missing, null, blank, coerced, noncanonical or mismatched protected headers, claims, request fields or content fail closed before replay reservation or authority reads.",
+          "signingRule": "The resolver caller signs with the private key corresponding to its presented mTLS leaf certificate. A different proof key, a non-RSA leaf or a kid/cnf mismatch fails before any authority row read.",
+          "twoStageOrder": "First authenticate the resolver call with the leaf key; then use the returned current or drain-only target signing public JWK to verify SVC-AUT-HRM-013 requester identity, APR-002, task dispatch or HRM-008 through HRM-010."
+        },
+        "modeRules": {
+          "NEW_WORK": "Requires an exact positive active lease revision pair and no current QUIESCING fence. An exact current ADMIT returns authority; an active fence returns typed QUIESCING with no key or grant detail.",
+          "DRAIN_EXISTING": "Requires an exact positive old lease revision pair plus the seven canonical drainRoot and drainContinuation fields. ROOT_DELIVERY authorizes only the identical durably persisted pre-fence root item. DEPENDENT_READ authorizes only the SVC-AUT-HRM-013 requester lookup required to admit that exact APR-002 root and creates no identity or business row. TERMINAL_CHILD authorizes only the single deterministic HRM-010 or HRM-008 terminal child permitted by terminalDrainContinuationRule and atomically derived from that pre-fence root; none can create or widen native business intent. Before returning ADMIT, Auth appends the next gap-free role-specific drainActivityRevision and returns the current fence, drainActivityRecordedAt, drainAuthorizationExpiresAt exactly 30 seconds later and drainSettleUntil exactly 65 seconds later.",
+          "READINESS_OBSERVE": "Requires an exact positive old drain-only lease revision pair and no drain fields. For the authenticated workload's exact CALLER or OWNER role under a still-current QUIESCING fence, Auth returns READINESS_OBSERVED with no signing JWK or authority to perform work only when its database transaction timestamp is at or after readinessEligibleAt. It returns the current role-specific drainActivityRevision (zero when no DRAIN_EXISTING admission exists), drainQuietSince equal to the latest activity recordedAt or the fence effectiveAt when revision is zero, readinessEligibleAt exactly 65 seconds after drainQuietSince, and readinessObservationSha256. The observation never increments activity and never authorizes a business read or write.",
+          "PROBE_MISSING": "Uses only the independent leaf-signed resolver proof, exact revisions 0 and 0, and a sealed-register-authorized tuple. Auth always returns only typed MISSING and correlationId without reading any grant row, regardless of whether a row exists. It never returns a key, grant identifier, revision or existence detail and never reads a business private key or lease."
+        },
+        "authLocalRoleOperations": {
+          "transport": "IN_PROCESS_NO_SELF_HTTP",
+          "service": "HrisServiceGrantQuiesceService",
+          "roles": [
+            {
+              "bindingId": "SVC-AUT-HRM-013",
+              "purpose": "HRIS_SEPARATION_REQUESTER_IDENTITY_RESOLVE",
+              "serviceWorkloadId": "dwp-auth-server",
+              "attestingServiceRole": "OWNER"
+            },
+            {
+              "bindingId": "SVC-AUT-HRM-014",
+              "purpose": "HRIS_SEPARATION_IDENTITY_TASK_DISPATCH",
+              "serviceWorkloadId": "dwp-auth-server",
+              "attestingServiceRole": "OWNER"
+            },
+            {
+              "bindingId": "SVC-PEP-HRM-008",
+              "purpose": "HRIS_SEPARATION_IDENTITY_TASK_RECEIPT",
+              "serviceWorkloadId": "dwp-auth-server",
+              "attestingServiceRole": "CALLER"
+            }
+          ],
+          "rule": "Auth never calls its own HTTP resolver. The requester-identity ingress, identity-task ingress and identity callback producer invoke one tenant-transactional domain operation that applies the identical tuple, old drain-only lease, current QUIESCING fence, seven-field DRAIN_EXISTING, activity append, 30-second authorization expiry and 65-second settle rules as the external resolver before returning the same typed projection. The Auth-local readiness path invokes the same service with READINESS_OBSERVE semantics, produces the identical observation digest and signs one exact role receipt with the corresponding old business key supplied by HrisServiceGrantAuthorityOwnerCredentialProvider for SVC-AUT-HRM-013 or Hrm013IdentityWorkloadCredentialProvider for the identity task pair. Local current-ledger access cannot bypass proof, activity, expiry, receipt or CUTOVER locks.",
+          "raceRule": "DRAIN append, readiness observation and CUTOVER acquire the same tenant, fence and role activity-stream lock order. A local action commits before its returned drainAuthorizationExpiresAt or rolls back; a local observation cannot pass before readinessEligibleAt, and any later local or HTTP drain append invalidates it before CUTOVER."
+        },
+        "disclosureRule": "Only an authenticated workload bound by SVC-AUT-HRM-011, SVC-AUT-HRM-012, SVC-AUT-HRM-015 or SVC-AUT-HRM-016 receives the typed non-ADMIT status and correlationId; no grant, key, tenant row or target detail is returned. Approval, People, Time and Payroll collapse REVOKE, MISSING, AMBIGUOUS, STALE, REVISION_MISMATCH and QUIESCING to one opaque 403 at every HRM ingress, and no typed Auth status reaches a browser or gateway.",
+        "callerScopeRule": "The authenticated requesting workload must equal the target caller or target owner and may ask only for a target tuple authorized by the sealed service-binding register successor v3. The exact PROBE_MISSING sentinel is the only no-lease path, performs no grant-row read, always returns opaque MISSING and cannot return authority or reveal existence."
+      },
+      "requesterIdentityEndpoint": {
+        "bindingId": "SVC-AUT-HRM-013",
+        "caller": "dwp-approval-server",
+        "owner": "dwp-auth-server",
+        "purpose": "HRIS_SEPARATION_REQUESTER_IDENTITY_RESOLVE",
+        "method": "POST",
+        "path": "/internal/auth/v1/hris-separation-requester-authority/resolve",
+        "maximumRequestBytes": 8192,
+        "maximumResponseBytes": 16384,
+        "queryAllowed": false,
+        "cachePolicy": "NO_STORE",
+        "requestSchema": "Hrm013RequesterIdentityAuthorityV1.ResolveRequest",
+        "responseSchema": "Hrm013RequesterIdentityAuthorityV1.ResolveResponse",
+        "requestFields": [
+          "tenantId",
+          "approvalRequestId",
+          "requestedByActorPublicId",
+          "correlationId"
+        ],
+        "admitResponseFields": [
+          "status",
+          "requesterUserId",
+          "requesterPersonPublicId",
+          "requesterAccessRevision",
+          "requesterVersion",
+          "tenantGrantRevision",
+          "authorizationRevision",
+          "correlationId"
+        ],
+        "resolutionRule": "requestedByActorPublicId is the Auth com_users.person_public_id and approvalRequestId is the exact enclosing APR-002 root identity. In one tenant transaction pinned to the admitted current or drain-only grant, resolve exactly one same-tenant ACTIVE TENANT-plane row and return its positive user_id, identical person_public_id, nonnegative access_revision and version plus the admitted tenantGrantRevision and authorizationRevision; recheck that the highest grant and, for DEPENDENT_READ, the Auth-local OWNER drain authorization remain usable before the read and return. Zero, duplicate, cross-tenant, non-TENANT, non-ACTIVE, root mismatch, expired drain or authority drift collapses to DENY or UNAVAILABLE without identity detail.",
+        "bootstrapResolutionRule": "Before calling this endpoint, Approval uses the independent SVC-AUT-HRM-012 leaf-certificate-signed resolver proof to resolve the SVC-AUT-HRM-013 Approval-to-Auth tuple in the same NEW_WORK or DRAIN_EXISTING mode carried by the business proof. Only that returned current or drain-only caller signing key and revision pair may produce the requester proof. In DRAIN_EXISTING the Approval caller and Auth-local OWNER operations each append their role activity; both returned authorizations remain unexpired through the read. Approval validates its authorization immediately before send, and Auth validates its local authorization plus the unchanged tuple after full proof validation and before com_users access.",
+        "proofRule": "Require one SVC-AUT-HRM-013 Hrm013WorkloadProofV1 business proof signed by the current or drain-only Approval grant private key, audience dwp-auth-server, exact POST path and requestBodySha256, tenant, approvalRequestId, requestedByActorPublicId, tenantGrantRevision, authorizationRevision, correlationId, leaf cnf and grantUseMode. NEW_WORK forbids all drain claims. DRAIN_EXISTING requires DEPENDENT_READ and the exact seven drain claims where drainRootWorkItemId and drainContinuationEventId equal approvalRequestId, drainContinuationRevision is 0, both digests equal the enclosing APR-002 payloadSha256 and drainRootCreatedAt equals its requestedAt. The same 30-second, 5-second-skew, distinct UUID jti/requestNonce and atomic two-digest replay rules apply, and proof exp is no later than both role drain authorization expiries.",
+        "exposureRule": "No query, fuzzy search, browser or gateway route, legacy X-DWP-Identity-Sync-Token, ApprovalIdentityDirectory fallback or form-directory fallback is allowed.",
+        "httpMapping": {
+          "ADMIT": 200,
+          "DENY": 403,
+          "UNAVAILABLE": 503
+        }
+      },
+      "consumerRule": {
+        "people": "AuthHrm013ServiceAuthorityAdapter is the only production Hrm013ServiceAuthorityPort provider. Static maps, environment grants, cache-only authority and protocol-fence substitution remain forbidden.",
+        "approval": "APR-002 admission and HRM-010 dispatch require Auth ADMIT results for both exact bindings plus the current local apr_hrm013_tenant_grants projection row and must apply approvalProjectionComparison exactly. Either side unavailable, revoked, stale or mismatched fails closed.",
+        "approvalProjectionComparison": {
+          "selectionRule": "Approval selects exactly one current highest-grant_revision ADMIT V59 row and resolves both SVC-PEP-APR-002 and SVC-PEP-HRM-010 from one current Auth grant-set snapshot. Both Auth members must share the same grantSetId, tenantGrantRevision, authorizationRevision, decision and supersedesGrantSetId before any field comparison or business action.",
+          "commonExactComparisons": [
+            "tenant_id=tenantId",
+            "grant_id=grantSetId",
+            "tenant_grant_revision=tenantGrantRevision",
+            "authorization_revision=authorizationRevision",
+            "decision=decision",
+            "supersedes_grant_id=supersedesGrantSetId"
+          ],
+          "apr002ExactComparisons": [
+            "request_binding_id=bindingId",
+            "request_purpose_code=purpose",
+            "people_spiffe_id=callerSpiffeId",
+            "people_signing_key_id=callerSigningKeyId",
+            "approval_spiffe_id=ownerSpiffeId",
+            "approval_signing_key_id=ownerSigningKeyId"
+          ],
+          "hrm010ExactComparisons": [
+            "callback_binding_id=bindingId",
+            "callback_purpose_code=purpose",
+            "approval_spiffe_id=callerSpiffeId",
+            "approval_signing_key_id=callerSigningKeyId",
+            "people_spiffe_id=ownerSpiffeId",
+            "people_signing_key_id=ownerSigningKeyId"
+          ],
+          "nonComparableIntegrityFields": {
+            "approvalLocalOnly": [
+              "grant_revision",
+              "grant_digest",
+              "recorded_at"
+            ],
+            "authOnly": [
+              "grantRevision",
+              "grantDigest",
+              "recordedAt",
+              "rotationReadinessDigest",
+              "callerSigningPublicJwk",
+              "ownerSigningPublicJwk",
+              "SVC-AUT-HRM-013 member"
+            ],
+            "rule": "These fields are never compared, copied, substituted or digest-aliased across stores. Approval verifies grant_revision ordering, the two-member V59 grant_digest and recorded_at through immutable V59 constraints; Auth independently verifies its three-member grantRevision chain, grantDigest, recordedAt, rotationReadinessDigest, public JWKs and Auth-only SVC-AUT-HRM-013 member. In particular the V59 grant_digest must not equal or stand in for the Auth grantDigest or rotationReadinessDigest."
+          },
+          "atomicRule": "All common, APR-002 and HRM-010 comparisons succeed against the same local row and Auth snapshot or the operation fails closed before native request creation, outbox creation, proof signing or network dispatch. SVC-AUT-HRM-013 remains Auth-only and has no V59 projection field."
+        },
+        "statusMapping": {
+          "REVOKE_MISSING_AMBIGUOUS_STALE_REVISION_MISMATCH_QUIESCING": 403,
+          "UNAVAILABLE": 503
+        },
+        "conflictRule": "HTTP 409 is reserved for idempotency digest conflict, callback identity conflict, owner revision ordering or aggregate CAS conflict; service-grant denial or revision mismatch never becomes 409 at an HRM ingress."
+      },
+      "grantRotationContinuity": {
+        "plannedCutoverRule": "A planned successor ADMIT grant set for any HRM-013 binding is prohibited until Auth first appends an exact durable QUIESCING fence, NEW_WORK is fail-closed, the bounded in-flight grace elapses and every old-grant Approval request, Approval HRM-010 outbox, People APR-002 outbox, People task-dispatch outbox, task-owner callback outbox and accepted owner inbox is terminal and reconciled. Expansion is bidirectional for task-dispatch and its exact SVC-PEP-HRM-008 tuple and for the waiver execution dependency group SVC-PEP-APR-002 plus SVC-PEP-HRM-010 plus SVC-AUT-HRM-013; all members receive the same quiesceEffectiveAt, both roles of every expanded tuple are mandatory and no side may rotate alone. Auth records the complete zero-pending receipt digest and appends CUTOVER for every group member in the same transaction that makes the successor current.",
+        "quiesceProtocol": {
+          "maximumNewWorkTransactionSeconds": 30,
+          "maximumDrainAuthorizationSeconds": 30,
+          "quiesceGraceSeconds": 65,
+          "fenceRule": "Auth appends a tenant-scoped immutable QUIESCING revision in auth_hris_service_grant_quiesce_fences for every exact expanded tuple before requesting receipts. A resolver NEW_WORK call returns QUIESCING after effectiveAt; every NEW ROOT producer and owner admission transaction obtains NEW_WORK ADMIT and rechecks it immediately before commit, has a hard 30-second transaction deadline and rolls back on fence, timeout or Auth outage. The sole post-fence creation exception is the exact mapped TERMINAL_CHILD of a pre-fence root, which uses DRAIN_EXISTING, satisfies terminalDrainContinuationRule and proves immediately before the atomic terminal commit that its returned fence is unchanged and trusted database time is before drainAuthorizationExpiresAt.",
+          "drainRule": "Only DRAIN_EXISTING may use the old grant after effectiveAt. ROOT_DELIVERY may deliver only the exact durably persisted pre-fence root item and digest. DEPENDENT_READ may perform only the exact requester-identity lookup needed by the mapped APR-002 root and creates no identity or business row. TERMINAL_CHILD may create and deliver only the one deterministic terminal continuation defined by terminalDrainContinuationRule; no new root request, native business intent, unrelated outbox or unrelated inbox identity is permitted. Both sender attempt and receiver admission, and both sides of the dependent read, independently obtain DRAIN_EXISTING under their exact tuple role, causing Auth to append a role-specific drain activity before either side acts. A returned authorization is single-attempt evidence, expires exactly 30 seconds after Auth recorded it, and cannot be refreshed in place; every local write commits before expiry, every business-proof exp is no later than expiry, and a late, paused or reused attempt starts over with a new activity revision or fails without a protocol or business read.",
+          "terminalDrainContinuationRule": {
+            "kinds": [
+              "ROOT_DELIVERY",
+              "DEPENDENT_READ",
+              "TERMINAL_CHILD"
+            ],
+            "rootDeliveryRule": "drainContinuationEventId equals drainRootWorkItemId, drainContinuationRevision is the exact integer 0 and drainContinuationPayloadSha256 equals drainRootPayloadSha256. The root origin wire timestamp is before quiesceEffectiveAt. The sender cannot create a new logical root identity; the owner may atomically and idempotently create only the matching first native request or inbox projection under the same protocol identity and digest, and a different root identity or business intent is forbidden.",
+            "rootProjectionRegistry": [
+              {
+                "bindings": [
+                  "SVC-PEP-APR-002"
+                ],
+                "schema": "SeparationWaiverApprovalRequestV1",
+                "workItemIdField": "approvalRequestId",
+                "originCreatedAtField": "requestedAt",
+                "payloadDigestField": "payloadSha256"
+              },
+              {
+                "bindings": [
+                  "SVC-PEP-TIM-004",
+                  "SVC-PEP-PAY-002",
+                  "SVC-AUT-HRM-014"
+                ],
+                "schema": "Hrm013TaskDispatchV1",
+                "workItemIdField": "dispatchEventId",
+                "originCreatedAtField": "dispatchedAt",
+                "payloadDigestField": "payloadSha256"
+              },
+              {
+                "bindings": [
+                  "SVC-PEP-HRM-008",
+                  "SVC-PEP-HRM-009",
+                  "SVC-PEP-HRM-010"
+                ],
+                "schemas": [
+                  "SeparationTaskReceiptV2",
+                  "SeparationReconciliationResultV1",
+                  "SeparationWaiverDecisionV2"
+                ],
+                "workItemIdField": "callbackEventId",
+                "originCreatedAtField": "occurredAt",
+                "payloadDigestField": "payloadSha256"
+              }
+            ],
+            "terminalChildMappings": [
+              {
+                "rootBindingId": "SVC-PEP-APR-002",
+                "childBindingId": "SVC-PEP-HRM-010",
+                "childType": "APPROVAL_TERMINAL_DECISION_OUTBOX",
+                "rootProjection": "approvalRequestId|requestedAt|payloadSha256",
+                "childProjection": "callbackEventId|ownerRevision=decisionRevision=1|payloadSha256"
+              },
+              {
+                "rootBindingId": "SVC-PEP-TIM-004",
+                "childBindingId": "SVC-PEP-HRM-008",
+                "childPurpose": "HRIS_SEPARATION_TIME_TASK_RECEIPT",
+                "childType": "OWNER_TERMINAL_CALLBACK_OUTBOX",
+                "rootProjection": "dispatchEventId|dispatchedAt|payloadSha256",
+                "childProjection": "callbackEventId|ownerRevision|payloadSha256"
+              },
+              {
+                "rootBindingId": "SVC-PEP-PAY-002",
+                "childBindingId": "SVC-PEP-HRM-008",
+                "childPurpose": "HRIS_SEPARATION_PAYROLL_TASK_RECEIPT",
+                "childType": "OWNER_TERMINAL_CALLBACK_OUTBOX",
+                "rootProjection": "dispatchEventId|dispatchedAt|payloadSha256",
+                "childProjection": "callbackEventId|ownerRevision|payloadSha256"
+              },
+              {
+                "rootBindingId": "SVC-AUT-HRM-014",
+                "childBindingId": "SVC-PEP-HRM-008",
+                "childPurpose": "HRIS_SEPARATION_IDENTITY_TASK_RECEIPT",
+                "childType": "OWNER_TERMINAL_CALLBACK_OUTBOX",
+                "rootProjection": "dispatchEventId|dispatchedAt|payloadSha256",
+                "childProjection": "callbackEventId|ownerRevision|payloadSha256"
+              }
+            ],
+            "dependentReadMappings": [
+              {
+                "rootBindingId": "SVC-PEP-APR-002",
+                "dependentBindingId": "SVC-AUT-HRM-013",
+                "dependentPurpose": "HRIS_SEPARATION_REQUESTER_IDENTITY_RESOLVE",
+                "rootProjection": "approvalRequestId|requestedAt|payloadSha256",
+                "continuationProjection": "approvalRequestId|revision=0|payloadSha256",
+                "sideEffect": "READ_ONLY_EXACT_REQUESTER_NO_IDENTITY_OR_BUSINESS_ROW_CREATE"
+              }
+            ],
+            "dependentReadRule": "Approval may invoke SVC-AUT-HRM-013 with DEPENDENT_READ only while admitting the exact APR-002 root named by the seven drain fields. The requester identity body and business proof additionally bind the same approvalRequestId, and the proof binds the root requestedAt and payloadSha256; Auth's local OWNER operation revalidates the same current fence and appends its own activity before reading com_users. A different root, caller, requester, tuple, purpose or payload fails before the identity read, and neither side may cache the result as authority for another request.",
+            "businessProofCarrierRule": "Every APR-002, SVC-AUT-HRM-013 requester-identity, HRM-008 through HRM-010 and task-dispatch Hrm013WorkloadProofV1 profile contains grantUseMode. NEW_WORK requires every drain field absent. DRAIN_EXISTING requires exactly the same seven drainRoot and drainContinuation claims as both caller and owner authority operations; the canonical business body remains byte-identical and no new HTTP header is added. The receiver length-bounds and syntax-checks only the untrusted tenant, tuple, grantUseMode, revisions and seven drain selectors, invokes external resolver or Auth-local equivalent as its own exact role, verifies the complete business proof with the returned old-grant JWK, then reads the protocol fence/root and enforces proof-to-body-to-store equality. No protocol or business row is read before complete business-proof verification.",
+            "eligibilityRule": "The exact root row and its immutable origin wire timestamp and canonical payload digest were durably admitted before the matching current QUIESCING effectiveAt under the old coupled grant. The root reaches one legal terminal transition after the fence, and that same serializable transaction inserts exactly one child outbox with immutable root lineage and the old child-binding lease revisions. The root remains pending until this atomic transition and child insert commit, then the child remains pending until delivery or independent reconciliation. Every later DRAIN_EXISTING call invalidates any earlier role readiness observation through its appended drainActivityRevision. A missing root, post-fence root, nonterminal root, digest drift, wrong mapping, wrong purpose, revision gap or second child fails closed and rolls back.",
+            "identityRule": "The child event UUID is RFC 4122 UUIDv5 in namespace 8ca8c32b-c8f7-5ab4-a9a5-18166dc32128 over the exact UTF-8 name: ASCII decimal tenantId, LF, canonical lowercase drainRootWorkItemId UUID, LF, ASCII decimal positive drainContinuationRevision, LF, exact childBindingId, LF, exact TERMINAL_CHILD, with no trailing LF. The stored child identity and payload digest must equal drainContinuationEventId and drainContinuationPayloadSha256 before each send.",
+            "goldenVector": {
+              "namespace": "8ca8c32b-c8f7-5ab4-a9a5-18166dc32128",
+              "tenantId": 1,
+              "drainRootWorkItemId": "00000000-0000-0000-0000-000000000001",
+              "drainContinuationRevision": 1,
+              "childBindingId": "SVC-PEP-HRM-010",
+              "drainContinuationKind": "TERMINAL_CHILD",
+              "nameUtf8Escaped": "1\n00000000-0000-0000-0000-000000000001\n1\nSVC-PEP-HRM-010\nTERMINAL_CHILD",
+              "drainContinuationEventId": "87614dd7-b22b-5e02-9cdd-21720c767533"
+            },
+            "v59CompatibilityRule": "Approval V59 already stores approval_request_id as immutable root lineage, the old coupled grant_id plus both positive revisions, and caller-supplied UUID callback_event_id with tenant-scoped uniqueness and immutable identity; the deterministic terminal child is persisted as callback_event_id and therefore requires no V59 rewrite. outbox_id remains the service-local row identity and cannot substitute for the protocol continuation identity.",
+            "cardinalityRule": "Exactly zero or one terminal child exists for each root and terminal revision. Retry reuses byte-identical child identity and payload; a second identity or different digest is a conflict and cannot be repaired in place.",
+            "collisionRule": "An existing drainContinuationEventId is an idempotent no-op only when tenant, root identity, root digest, mapping, child binding and purpose, continuation revision and continuation payload digest are all exact. The same UUID attached to any different lineage, mapping, purpose, revision or digest is quarantined and fails closed; it is never treated as replay. V59 tenant callback uniqueness and every Phase-6 owner outbox enforce the same rule."
+          },
+          "drainActivityRule": "For each still-current QUIESCING fence and exact CALLER or OWNER role, Auth serializes a gap-free append-only activity stream. Every successful DRAIN_EXISTING resolution, including a retry that later performs no business write, appends the next positive drainActivityRevision before returning ADMIT; drainActivityRecordedAt is Auth's database transaction timestamp, drainAuthorizationExpiresAt is exactly 30 seconds later and drainSettleUntil is exactly 65 seconds later. The response binds the fence, role, revision and all three instants. ROOT_DELIVERY sender and receiver calls, DEPENDENT_READ caller and owner operations, and TERMINAL_CHILD creation, send and receive calls each record their own role activity. A duplicate proof is rejected by replay protection and cannot reuse an activity admission.",
+          "readinessObservationRule": "Before beginning its local repeatable-read zero scan, each exact external service role calls READINESS_OBSERVE with its old drain-only lease and the three Auth-local roles invoke the sealed in-process equivalent. drainQuietSince equals the latest role activity recordedAt or quiesceEffectiveAt when no activity exists; readinessEligibleAt is exactly 65 seconds later. Auth returns no observation before its database transaction timestamp reaches readinessEligibleAt. readinessObservationSha256 is lowercase SHA-256 of RFC 8785 canonical JSON over tenantId, exact binding tuple and purpose, serviceWorkloadId, attestingServiceRole, oldGrantSetId, quiesceFenceId, quiesceRevision, quiesceEffectiveAt, the nonnegative current drainActivityRevision, drainQuietSince and readinessEligibleAt. The signed readiness receipt carries that revision, both instants and digest. Any later DRAIN_EXISTING append changes the current revision and makes the earlier receipt unusable. During CUTOVER Auth locks every fence and role activity stream and requires each receipt revision, quiet instants and observation digest to equal the still-current values before making the successor visible.",
+          "receiptRule": "Auth accepts a readiness receipt only when its quiesceFenceId, quiesceRevision and quiesceEffectiveAt equal the still-current QUIESCING fence, its observedDrainActivityRevision, drainQuietSince, readinessEligibleAt and readinessObservationSha256 equal the still-current role activity stream, observedAt is the authoritative database transaction timestamp captured by the final repeatable-read zero scan and is not before readinessEligibleAt, the receipt is unexpired and the role-specific authoritative stores are zero under that fence. observedAt cannot be future-dated. The 65-second quiet interval after the latest activity exceeds the 30-second drain authorization and proof bounds plus 5-second skew, so every admitted action must expire or become visible before receipt observation; Any post-observation drain invalidates that receipt even if its local stores were previously zero.",
+          "pairedTupleClosureRule": "The task-dispatch-to-HRM-008 tuple mapping declared in taskDispatchContracts is symmetric: selection of either side expands to the other exact tuple, including the specific Time, Payroll or Auth caller and receipt purpose. Pair membership atomicity applies to initial ADMIT, successor ADMIT and emergency REVOKE, but quiesce fences plus caller and owner readiness receipts apply only to a planned successor ADMIT. Emergency REVOKE never waits for readiness; partial membership or one-sided rotation or revocation fails.",
+          "waiverDependencyGroupClosureRule": "SVC-PEP-APR-002, SVC-PEP-HRM-010 and SVC-AUT-HRM-013 form one symmetric indivisible waiver execution dependency group in one Auth grant set and revision pair. Selecting any member expands all three for initial ADMIT, successor ADMIT, omission, planned QUIESCING with one common effectiveAt, both-role drain activity and readiness coverage, CUTOVER, ABORTED and emergency REVOKE. The Approval V59 projection remains the first two-member subset, while the authoritative Auth grant set, fence set, readiness digest and atomic command cover all three. Emergency REVOKE is immediate and never waits for readiness; a partial group command fails.",
+          "commitRule": "Auth locks every expanded tuple fence, every CALLER and OWNER drain activity stream and the current old grant, revalidates the full receipt set, exact current observedDrainActivityRevision values, drainQuietSince, readinessEligibleAt, observation digests and replay reservations, inserts the successor grant set and appends each CUTOVER fence revision in one transaction. A concurrent DRAIN_EXISTING append serializes before the lock and invalidates the receipt or after CUTOVER and fails; no unexpired drain authorization, drain or NEW_WORK window exists between receipt verification and successor visibility.",
+          "abortRule": "A planned cutover abort appends ABORTED successors for every expanded fence in one transaction, invalidates the staged receipt set and audits the reason. Old-grant NEW_WORK may resume only after all participants observe the exact ABORTED revision; receipts from the aborted revision can never authorize a later cutover."
+        },
+        "readinessReceiptRule": "Each receipt proves exactly one tenant, registered binding tuple (bindingId, callerWorkloadId, ownerWorkloadId and bindingPurpose), attesting service workload, CALLER or OWNER role and old grant set; grouping multiple tuples or roles under one signature is forbidden. The corresponding still-current old-grant caller or owner key signs it. Auth requires the sealed-register caller and owner role receipt for every affected tuple; task dispatch requires both roles for both the outbound dispatch tuple and the exact paired SVC-PEP-HRM-008 caller-purpose tuple, while the waiver dependency group requires all six role receipts for SVC-PEP-APR-002, SVC-PEP-HRM-010 and SVC-AUT-HRM-013 under their common fence effectiveAt before computing rotation_readiness_digest.",
+        "readinessReceiptProfile": {
+          "schemaName": "HrisServiceGrantRotationReadinessReceiptV1",
+          "schemaVersion": 1,
+          "identity": "Exactly one (tenantId, bindingId, callerWorkloadId, ownerWorkloadId, bindingPurpose, serviceWorkloadId, attestingServiceRole, oldGrantSetId, quiesceFenceId, quiesceRevision) where attestingServiceRole is CALLER or OWNER and serviceWorkloadId equals that tuple role; duplicate identity, a tuple array or a multi-role receipt is forbidden.",
+          "fields": [
+            "schemaName",
+            "schemaVersion",
+            "tenantId",
+            "bindingId",
+            "callerWorkloadId",
+            "ownerWorkloadId",
+            "bindingPurpose",
+            "serviceWorkloadId",
+            "attestingServiceRole",
+            "oldGrantSetId",
+            "quiesceFenceId",
+            "quiesceRevision",
+            "quiesceEffectiveAt",
+            "observedDrainActivityRevision",
+            "drainQuietSince",
+            "readinessEligibleAt",
+            "readinessObservationSha256",
+            "observedGrantRevision",
+            "tenantGrantRevision",
+            "authorizationRevision",
+            "pendingCount",
+            "oldestPendingAt",
+            "observedAt",
+            "expiresAt",
+            "evidenceSha256",
+            "correlationId"
+          ],
+          "evidenceDigestRule": "evidenceSha256 is lowercase SHA-256 of RFC 8785 canonical JSON over every field except evidenceSha256; pendingCount is exactly 0 and oldestPendingAt MUST be the sole JSON null field. Null is forbidden for every other field. Unknown, duplicate, missing, coerced or noncanonical fields fail closed.",
+          "pendingScopeRule": "A CALLER receipt counts every old-tuple command or event not durably admitted plus every retryable, dead-lettered or RESULT_UNKNOWN outbound item not independently reconciled. An OWNER receipt counts every old-tuple admitted inbox or native request not terminal plus every accepted item whose receipt or callback is not durably relayed and reconciled. After READINESS_OBSERVE and before signing, the count, oldest timestamp and observedAt database transaction timestamp are captured by the final scan of the tuple's authoritative stores in one repeatable-read transaction; a missing store, unsupported tuple, concurrent insert, ambiguous status or reconciliation gap cannot be represented as zero. Activity after observation invalidates the receipt at Auth even when it crosses service databases and was invisible to that snapshot.",
+          "proofCarrier": "Each successor-command item carries exact RFC 8785 receipt bytes, exact RFC 8785 proof-claim bytes and exactly one detached compact JWS readinessProof in protected..signature form. An HTTP Authorization value, alternate proof field, duplicate proof or proof shared across receipts is forbidden.",
+          "proofPayloadRule": "The detached JWS payload is the separately carried exact proof-claim byte string containing exactly proofClaims. The verifier rejects noncanonical or reserialized bytes and reconstructs the RFC 7515 signing input as base64url(protected header bytes), period, base64url(exact proof-claim bytes), both without padding. evidenceSha256 binds the separate exact receipt bytes; neither receipt bytes nor proof-claim bytes may be regenerated before verification.",
+          "proofProtectedHeaders": {
+            "requiredExactly": [
+              "alg",
+              "typ",
+              "kid"
+            ],
+            "constants": {
+              "alg": "RS256",
+              "typ": "DWP-HRM013-ROTATION-READINESS-JWT"
+            },
+            "unknownOrDuplicateAllowed": false
+          },
+          "proofClaims": [
+            "iss",
+            "aud",
+            "sub",
+            "iat",
+            "nbf",
+            "exp",
+            "jti",
+            "requestNonce",
+            "tenantId",
+            "bindingId",
+            "callerWorkloadId",
+            "ownerWorkloadId",
+            "bindingPurpose",
+            "serviceWorkloadId",
+            "attestingServiceRole",
+            "oldGrantSetId",
+            "quiesceFenceId",
+            "quiesceRevision",
+            "quiesceEffectiveAt",
+            "observedDrainActivityRevision",
+            "drainQuietSince",
+            "readinessEligibleAt",
+            "readinessObservationSha256",
+            "observedGrantRevision",
+            "tenantGrantRevision",
+            "authorizationRevision",
+            "evidenceSha256",
+            "correlationId",
+            "proofPurpose"
+          ],
+          "proofRule": "iss, sub and serviceWorkloadId are identical; aud is dwp-auth-server; proofPurpose is HRIS_SERVICE_GRANT_ROTATION_READINESS; every receipt field claim is exactly equal. iat equals nbf, iat minus observedAt is between 0 and 5 seconds, observedAt is not later than Auth verification time plus 5-second skew, receipt expiresAt is after observedAt and no later than proof exp, exp minus iat is at most 300 seconds, and jti plus requestNonce are distinct canonical lowercase UUIDs. observedDrainActivityRevision is a nonnegative integer, drainQuietSince and readinessEligibleAt are the exact Auth values with a 65-second interval, and readinessObservationSha256 is the exact Auth-computable digest for that current fence, role, revision and quiet interval. The proof kid and signature verify only with the exact tuple's old-grant current caller key for attestingServiceRole CALLER or owner key for attestingServiceRole OWNER, and serviceWorkloadId must equal that sealed-register role. A certificate, a different caller-purpose row under SVC-PEP-HRM-008 or another binding's key cannot substitute.",
+          "coverageRule": "For every affected exact bindingId, callerWorkloadId, ownerWorkloadId and bindingPurpose tuple Auth derives both workloads from the sealed register and requires one unexpired zero-pending receipt for each attestingServiceRole under the same current quiesce fence whose observedDrainActivityRevision, drainQuietSince, readinessEligibleAt and readinessObservationSha256 still equal the locked role activity stream. Pair closure is bidirectional for each task-dispatch tuple and its exact paired SVC-PEP-HRM-008 tuple. Selection of SVC-PEP-APR-002, SVC-PEP-HRM-010 or SVC-AUT-HRM-013 expands to all three exact waiver dependency tuples, a common effectiveAt and all six role receipts. Missing, duplicate, conflicting, stale, unexpired drain authorization, post-observation activity, cross-tenant, cross-tuple, cross-fence or one-sided coverage fails closed.",
+          "replayAndDigestRule": "After complete signature and coverage validation and before making a successor current, Auth atomically reserves separate tenant-scoped lowercase SHA-256 digests for every proof jti and requestNonce in auth_hris_service_authority_proof_replays. It sorts receipts by bindingId, callerWorkloadId, ownerWorkloadId, bindingPurpose, attestingServiceRole, serviceWorkloadId and evidenceSha256, rejects duplicate coverage, and computes rotation_readiness_digest as lowercase SHA-256 of RFC 8785 canonical JSON containing the ordered evidenceSha256 values. A replay, partial reservation or authority drift aborts the entire successor command."
+        },
+        "v59CompatibilityRule": "Approval V59 remains immutable and Approval V60 is forbidden. V59 deliberately stores only the APR-002 plus HRM-010 projection subset of the three-member authoritative Auth waiver dependency grant set under the same grant_id and revisions; SVC-AUT-HRM-013 remains Auth-owned and adds no Approval column. Because V59 requires that same row to remain the current highest ADMIT for HRM-010 creation and send, every APR-002 admission, dependent requester read, terminal decision and HRM-010 delivery for the old group must finish before a planned cutover. Verify-only key overlap does not relax the current-grant rule.",
+        "replayAfterCutoverRule": "An exact APR-002 retry authenticated by the new current grant may return the byte-identical stored 202 as historical idempotency evidence because grant identity is not request identity, but it never revives, mutates or authorizes terminal relay for an old-grant request.",
+        "emergencyRevocationRule": "Emergency REVOKE is immediately fail closed even with pending work and never waits for quiesce or readiness receipts. Auth revokes every tuple of an affected task pair or three-member waiver dependency group in one transaction and records the incident evidence digest. Old requests and outboxes enter audited reconciliation without invented terminal success; operators cancel or close the native request and corresponding People fence where legal, and any continued business intent uses a new approvalRequestId, idempotency key, command digest and current grant. Automatic rebind of an old V59 row is forbidden.",
+        "activationRule": "Tenant enrollment and production activation remain forbidden until the quiesce, zero-pending proof, emergency revoke, cancellation, RESULT_UNKNOWN reconciliation and new-request drill are independently evidenced."
+      }
+    },
+    "transportAndCredentialBoundary": {
+      "inboundTermination": "A dedicated service-internal connector terminates TLS inside each owner JVM. It requires TLSv1.3 and client-auth=need and provides the validated leaf chain through jakarta.servlet.request.X509Certificate plus the negotiated protocol through org.apache.tomcat.util.net.secure_protocol_version.",
+      "certificateValidation": [
+        "The connector trust manager validates the configured internal workload CA, validity window, complete chain and revocation with fail-closed CRL or OCSP policy before the filter runs.",
+        "The application requires request.isSecure, protocol exactly TLSv1.3, exactly one URI SAN and the exact binding SPIFFE ID.",
+        "X-Forwarded-Client-Cert, Forwarded, X-Forwarded-* and every caller-supplied TLS or certificate header are rejected and never promoted into trusted request attributes.",
+        "The proof cnf.x5t#S256 value equals the base64url-without-padding SHA-256 thumbprint of the validated leaf certificate."
+      ],
+      "outboundPeerAuthentication": {
+        "bindingOwners": {
+          "SVC-AUT-HRM-011": "spiffe://dwp/service/dwp-auth-server",
+          "SVC-AUT-HRM-012": "spiffe://dwp/service/dwp-auth-server",
+          "SVC-AUT-HRM-013": "spiffe://dwp/service/dwp-auth-server",
+          "SVC-AUT-HRM-014": "spiffe://dwp/service/dwp-auth-server",
+          "SVC-AUT-HRM-015": "spiffe://dwp/service/dwp-auth-server",
+          "SVC-AUT-HRM-016": "spiffe://dwp/service/dwp-auth-server",
+          "SVC-PEP-APR-002": "spiffe://dwp/service/dwp-approval-server",
+          "SVC-PEP-HRM-008": "spiffe://dwp/service/dwp-people-server",
+          "SVC-PEP-HRM-009": "spiffe://dwp/service/dwp-people-server",
+          "SVC-PEP-HRM-010": "spiffe://dwp/service/dwp-people-server",
+          "SVC-PEP-TIM-004": "spiffe://dwp/service/dwp-time-server",
+          "SVC-PEP-PAY-002": "spiffe://dwp/service/dwp-payroll-server"
+        },
+        "rules": [
+          "Every outbound HRM-013 client uses TLSv1.3 only, the configured DWP internal workload CA and fail-closed certificate validity plus CRL or OCSP verification.",
+          "The validated owner leaf has exactly one URI SAN equal to the binding owner SPIFFE ID and a DNS SAN equal to the configured endpoint host; SNI, URI host, Host header and the sealed per-binding HTTPS endpoint allowlist must agree.",
+          "HTTP redirects, alternate schemes, caller-supplied endpoint overrides, proxy certificate substitution and forwarded certificate headers are forbidden.",
+          "Peer certificate, SPIFFE, DNS/SNI and endpoint validation completes before any response status, header or body is parsed; any mismatch is authority unavailable and no retry follows a redirected location.",
+          "Real test certificates cover trusted success plus wrong CA, expired, revoked, TLS downgrade, extra or wrong URI SAN, wrong DNS SAN/SNI, wrong endpoint, redirect and cnf mismatch."
+        ]
+      },
+      "internalRequestEnvelope": {
+        "appliesToBindings": [
+          "SVC-AUT-HRM-011",
+          "SVC-AUT-HRM-012",
+          "SVC-AUT-HRM-013",
+          "SVC-AUT-HRM-015",
+          "SVC-AUT-HRM-016",
+          "SVC-PEP-TIM-004",
+          "SVC-PEP-PAY-002",
+          "SVC-AUT-HRM-014"
+        ],
+        "queryAllowed": false,
+        "maximumAggregateApplicationHeaderBytes": 32768,
+        "maximumSingleApplicationHeaderBytes": 16384,
+        "allowedApplicationHeaderNames": [
+          "Content-Type",
+          "Accept",
+          "X-DWP-Service-Identity",
+          "X-DWP-Workload-Proof",
+          "X-Correlation-ID"
+        ],
+        "requiredApplicationHeaders": {
+          "Content-Type": "exactly one application/json without parameters",
+          "Accept": "exactly one application/json",
+          "X-DWP-Service-Identity": "exactly one exact caller workload ID",
+          "X-DWP-Workload-Proof": "exactly one compact RS256 JWS",
+          "X-Correlation-ID": "exactly one canonical lowercase UUID equal to body and proof"
+        },
+        "forbiddenApplicationHeaders": [
+          "Authorization",
+          "Cookie",
+          "Origin",
+          "Referer",
+          "Forwarded",
+          "X-Forwarded-*",
+          "Sec-*",
+          "X-DWP-Tenant-*",
+          "X-Tenant-*",
+          "X-DWP-User-*",
+          "X-DWP-Person-*",
+          "X-DWP-Roles",
+          "X-DWP-Permissions",
+          "X-DWP-Support-*",
+          "X-Purpose-Code",
+          "X-Projection-ID",
+          "any alternate proof header",
+          "any unregistered X-DWP-* header"
+        ],
+        "rules": [
+          "Duplicate required or forbidden application headers are rejected rather than joined, and aggregate or single-header overflow fails before proof parsing or authority reads.",
+          "Only the five allowed application-header names are accepted. Standard HTTP transport framing such as Host, Content-Length and User-Agent is handled separately; every other application header, including X-HTTP-Method-Override, X-Original-URL and X-Rewrite-URL, is rejected before proof parsing.",
+          "Content-Encoding and Transfer-Encoding transformations, a query string, browser credentials and forwarded identity are forbidden at the application boundary.",
+          "Every authenticated response carries Cache-Control: no-store; an error exposes only the safe typed status permitted by its endpoint and correlationId."
+        ]
+      },
+      "sealedPredecessorCompatibility": {
+        "compositionLabelRule": "The immutable predecessor label TLS_1_3_MTLS_SPIFFE_AND_RS256_CLIENT_CREDENTIAL_JWT means the certificate-confirmed RS256 compact JWS carried only in X-DWP-Workload-Proof. It is not OAuth2, an Authorization bearer token or an Authorization client assertion.",
+        "verificationOrder": "For APR-002, SVC-AUT-HRM-013 requester identity, HRM-008 through HRM-010 and task dispatch, validate TLS, exact five-header envelope, method, path and bounded compact-JWS structure; decode only canonical positive tenantId plus the bounded untrusted caller, binding, purpose, grantUseMode, revision selector tuple and, only for DRAIN_EXISTING, the seven drain selectors without granting authority; derive the requesting workload from the authenticated certificate and the target owner tuple from the sealed service-binding register; call Auth through the resolver binding's independent leaf-certificate-signed proof or invoke the sealed Auth-local owner equivalent with exactly those selectors; verify the complete business JWS with the returned current or drain-only JWK and all closed claims including exact tenantId and selector equality; reserve replay digests; then perform the post-signature unchanged-current-authority recheck and returned drain-activity recheck before protocol-fence or business reads.",
+        "guardOrderInterpretation": "The predecessor guardOrder statement that current service-authority metadata loads after JWS validation is the post-signature unchanged-authority recheck, not initial signing-key discovery. This successor gate closes the previously absent key-discovery source without weakening any predecessor TLS, header, proof, replay or business-read guard.",
+        "untrustedSelectorRule": "Untrusted tenantId, grantUseMode, revision and conditional drain-selector decoding is length-bounded, strict and usable only to scope the registered Auth lookup. tenantId is canonical and positive but grants no authority until full business-proof verification proves exact equality; the certificate-authenticated requesting workload and sealed-register target tuple override any untrusted identity suggestion. Selector decoding never authenticates a caller, chooses an arbitrary endpoint, reserves replay, discloses target existence or permits a protocol or business read."
+      },
+      "outboundCredentials": {
+        "providerContracts": {
+          "approval": "HrisSeparationWorkloadCredentialProvider",
+          "people": "Hrm013WorkloadCredentialProvider",
+          "time": "Hrm013TimeWorkloadCredentialProvider",
+          "payroll": "Hrm013PayrollWorkloadCredentialProvider",
+          "authIdentityTask": "Hrm013IdentityWorkloadCredentialProvider",
+          "authControlPlaneOwner": "HrisServiceGrantAuthorityOwnerCredentialProvider"
+        },
+        "requiredMaterial": [
+          "current client certificate chain and private key",
+          "current internal CA trust material",
+          "resolverProofSigner: the private key of the currently presented RSA mTLS leaf; kid and cnf are that leaf DER thumbprint",
+          "businessProofSigner: the current Auth-grant RS256 private key and immutable grant kid; cnf remains the presented leaf DER thumbprint",
+          "atomicGrantCredentialLease: the positive tenantId, grantSetId, grantRevision, tenantGrantRevision, authorizationRevision, bindingId, purpose, caller and owner workload plus SPIFFE identities, serviceRole, exact business signing kid and non-exportable private-key handle delivered as one immutable versioned secret snapshot"
+        ],
+        "atomicGrantCredentialLease": {
+          "requiredFields": [
+            "leaseId",
+            "leaseVersion",
+            "tenantId",
+            "grantSetId",
+            "grantRevision",
+            "tenantGrantRevision",
+            "authorizationRevision",
+            "bindingId",
+            "purpose",
+            "callerWorkloadId",
+            "callerSpiffeId",
+            "ownerWorkloadId",
+            "ownerSpiffeId",
+            "serviceRole",
+            "businessSigningKeyId",
+            "businessKeyVersionId",
+            "businessPublicJwkThumbprint",
+            "businessPrivateKeyHandle",
+            "notBefore",
+            "expiresAt",
+            "leaseDigest"
+          ],
+          "bootstrapSourceRule": "The approved runtime credential control plane delivers the private-key handle and all descriptor fields atomically from the same hash-bound secret version. Positive revisions are never discovered from an HRM business row, protocol fence, previous resolver response, environment scalar or cache-only guess. The exact leaf-signed PROBE_MISSING 0/0 sentinel is not a revision-discovery or authority path and reads no lease. This gate provisions no lease or secret.",
+          "digestAndKeyAttestationRule": "leaseDigest is lowercase SHA-256 of RFC 8785 canonical JSON over every required field except leaseDigest and the opaque businessPrivateKeyHandle; it includes leaseId, leaseVersion, stable businessKeyVersionId and businessPublicJwkThumbprint. The injected secret version attests that digest before activation. After Auth ADMIT, derive the RFC 7638 SHA-256 thumbprint of the returned exact public JWK, require it equals businessPublicJwkThumbprint, and sign a fresh verifier challenge with businessPrivateKeyHandle then verify that signature with the returned JWK. kid equality alone is insufficient; any digest, key-version, thumbprint or challenge mismatch fails before business proof creation or network send.",
+          "resolverRequestRule": "NEW_WORK, DRAIN_EXISTING and READINESS_OBSERVE resolver requests copy their positive signedTenantGrantRevision and signedAuthorizationRevision plus the exact target tuple only from the active or drain-only lease, while resolverProofSigner remains the independent mTLS-leaf key. ADMIT must return byte-for-byte equal tuple, grantSetId, revisions, public JWK kid and attested public-key thumbprint corresponding to the lease's service role before the business private key can sign. READINESS_OBSERVED returns no JWK and no work authority and is usable only to bind a readiness receipt to the current role activity revision. PROBE_MISSING is the sole no-lease exception and always returns only opaque MISSING without a grant-row read or authority detail. Every non-ADMIT status leaves every lease unchanged and stops new dispatch.",
+          "rotationRule": "A successor lease may be staged under a distinct version but cannot become active until Auth commits the matching successor grant after complete rotation-readiness coverage. Activation atomically swaps the entire descriptor and key handle; old and new fields may never mix. Old leases remain verify-only or drain-only exactly as allowed by the binding cutover and are destroyed only after the audited retention window.",
+          "concurrencyRule": "Each request holds one immutable lease snapshot from resolver request through response equality, business proof signing and the immediate pre-send current-authority recheck. A concurrent refresh causes a bounded retry from the beginning and never mutates an in-flight snapshot."
+        },
+        "rules": [
+          "Runtime secrets come from an injected provider or secret reference and are never committed, logged, persisted in HRM-013 business tables or supplied in start tokens.",
+          "Startup fails when an enabled ingress or relay lacks its exact current credential material; disabled lanes instantiate no client, relay or credential reader.",
+          "Each retry preserves exact request bytes and rotates only jti, requestNonce, proof timestamps and the mTLS session.",
+          "SVC-AUT-HRM-011, SVC-AUT-HRM-012, SVC-AUT-HRM-015 and SVC-AUT-HRM-016 use resolverProofSigner only; SVC-AUT-HRM-013, APR-002, HRM-008 through HRM-010 and all task-dispatch bindings use businessProofSigner only. Cross-use, a grant kid derived from the leaf or a resolver kid derived from a grant fails before network dispatch."
+        ]
+      },
+      "defaultOffProperties": {
+        "auth": [
+          "dwp.auth.hris-service-grant-authority.enabled=false",
+          "dwp.auth.hrm013-requester-authority.enabled=false",
+          "dwp.auth.hrm013-identity-task-dispatch.enabled=false"
+        ],
+        "approval": [
+          "dwp.approval.hrm013-bridge.enabled=false",
+          "dwp.approval.hrm013-bridge.relay-enabled=false"
+        ],
+        "people": [
+          "dwp.hris.separation.enabled=false",
+          "dwp.hris.separation.waiver-relay-enabled=false",
+          "dwp.hris.separation.task-dispatch-relay-enabled=false"
+        ],
+        "time": [
+          "dwp.time.hrm013-task-dispatch.enabled=false"
+        ],
+        "payroll": [
+          "dwp.payroll.hrm013-task-dispatch.enabled=false"
+        ]
+      }
+    },
+    "approvalWorkflowAndFormSelector": {
+      "managementResourceSetKey": "RS_APPROVALS",
+      "workflowKey": "HRIS_SEPARATION_TASK_WAIVER",
+      "formKey": "HRIS_SEPARATION_TASK_WAIVER_FORM",
+      "selection": [
+        "Under the admitted tenant, resolve exactly one PUBLISHED workflow definition with the fixed workflow key and management resource set.",
+        "Resolve exactly one PUBLISHED workflow version effective at APR-002 admission; choose the greatest version_number only when it is uniquely current and reject overlap or ambiguity.",
+        "Resolve exactly one ACTIVE form-workflow binding effective at APR-002 admission where effective_from is null or not after admission and effective_to is null or after admission, plus one PUBLISHED form with the fixed form key and the same management resource set; reject a gap, overlap or ambiguity.",
+        "Resolve exactly one PUBLISHED apr_form_versions row whose version_number equals apr_forms.current_version; apr_form_versions has no effective-time selection rule and any missing, duplicate or non-PUBLISHED current version fails closed.",
+        "Persist only the V59 columns workflow_version_id, form_version_id and frozen_policy_revision in apr_hrm013_waiver_request_bindings before returning 202. The referenced immutable Approval workflow/form version rows and the native apr_requests row retain and prove their parent IDs and version numbers; no V60 column is added.",
+        "The runtime creates no workflow, form, binding or tenant catalog row. Missing or ambiguous tenant configuration is authority unavailable and no native request is created."
+      ],
+      "requesterResolution": "Hrm013RequesterIdentityClient calls only SVC-AUT-HRM-013 and resolves requestedByActorPublicId as Auth com_users.person_public_id to exactly one same-tenant ACTIVE TENANT-plane requesterUserId/requesterPersonPublicId pair. The returned person ID must equal requestedByActorPublicId and the positive numeric user ID becomes apr_requests.requester_user_id. Fuzzy search, ApprovalIdentityDirectory, Approval form-directory, legacy token and caller-supplied numeric user ID are forbidden. caseMakerPublicId is retained for maker-checker separation and never substitutes for the requester.",
+      "apr002ReplayRule": "After transport, proof and current service-authority admission, acquire the tenant plus approvalRequestId identity lock and compare only the sealed exact request-body and command-digest identity before workflow, form, requester or target reads. An exact match returns the stored response bytes; a digest mismatch returns 409. The current grant authenticates the retry but grantId, tenantGrantRevision and authorizationRevision are not part of persisted replay identity, so rotation cannot turn exact historical replay into conflict; replay never rebinds or authorizes an old-grant terminal relay after cutover.",
+      "nativeRequest": {
+        "requestId": "approvalRequestId",
+        "title": "Separation task waiver",
+        "summary": "Governed HRIS separation-task waiver request",
+        "priority": "NORMAL",
+        "payloadSchema": "Hrm013SeparationWaiverNativePayloadV1",
+        "payloadFields": [
+          "schemaName",
+          "schemaVersion",
+          "approvalRequestId",
+          "casePublicId",
+          "taskPublicId",
+          "taskType",
+          "caseMakerPublicId",
+          "requestedByActorPublicId",
+          "reasonCode",
+          "taskOwnerRevision",
+          "taskVersion",
+          "requestedAt",
+          "payloadSha256",
+          "correlationId"
+        ],
+        "piiRule": "No worker name, employee number, raw note or unregistered field is copied into title, summary, audit labels or metrics."
+      }
+    },
+    "approvalStepUpAndTerminalRouting": {
+      "dedicatedCommandRoute": {
+        "routeContractKey": "route.approvals.work.hris-separation-waiver-task-approve.action",
+        "gatewayPath": "/api/approvals/v1/hris/separation-waiver-tasks/{taskId}/approve",
+        "servicePath": "/v1/hris/separation-waiver-tasks/{taskId}/approve",
+        "method": "POST",
+        "capabilityContractKey": "approvals.work.hris-separation-waiver-task.approve",
+        "riskTier": "HIGH",
+        "activationPolicy": "STEPUP-MGMT-HIGH-V1",
+        "scopeResolver": "DECIDABLE_TASK_SELF_APPROVAL_SOD",
+        "targetType": "HRIS_SEPARATION_WAIVER_TASK",
+        "targetIdPathParameter": "taskId",
+        "expectedObjectVersionSource": "COMMAND_HEADER",
+        "expectedObjectVersionName": "X-DWP-Expected-Object-Version",
+        "requestSchema": "ApprovalDtos.DecisionRequest",
+        "bodyRule": "Accept exactly decision, comment, expectedVersion and quorum under the existing strict Approval JSON rules. Command decision equals APPROVE; expectedVersion is the current task version and equals X-DWP-Expected-Object-Version; comment is null or a bounded 2000-character value; quorum is mandatory and contains positive generation and expectedStageVersion, the exact six current workflow/form/policy pins, positive payloadRevision, exact lowercase payloadSha256 and a non-null current expectedRequestVersion. The locked workflow runtime revalidates every quorum value before mutation. No step-up evidence field is accepted in the body.",
+        "requiredCommandHeaders": [
+          "Idempotency-Key",
+          "X-Correlation-ID",
+          "X-DWP-Step-Up-Challenge",
+          "X-DWP-Expected-Decision-Revision",
+          "X-DWP-Expected-Object-Version"
+        ],
+        "stepUpAudience": "dwp-approval-server",
+        "workflowRuntimeAuthority": "This is a first-class CAST route in ApprovalWorkflowRuntimeSource, WorkflowRuntimeBindingContract, Auth WorkflowRuntimeBindings, WorkflowRuntimeAuthorityService and WorkflowRuntimeIdentityAuthorityBridge. It maps only an HRM-013-bound command Decision.APPROVE to ACTION.APPROVAL_TASK:APPROVE and terminal Outcome.APPROVED, preserves the existing sealed owner, stage and target evidence, and may never be rewritten to or synthesized as the generic task-decision route."
+      },
+      "rejectionCommandRoute": {
+        "routeContractKey": "route.approvals.work.task-decision.action",
+        "gatewayPath": "/api/approvals/v1/tasks/{taskId}/decisions",
+        "servicePath": "/v1/tasks/{taskId}/decisions",
+        "method": "POST",
+        "allowedHrm013CommandDecision": "REJECT_ONLY",
+        "terminalOutcome": "REJECTED",
+        "stepUpAllowed": false,
+        "rule": "The existing generic route accepts only command Decision.REJECT for an HRM-013-bound task without step-up and produces terminal Outcome.REJECTED. It must fail closed before mutation when an HRM-013 payload requests command Decision.APPROVE, so terminal Outcome.APPROVED can occur only through the dedicated HIGH route."
+      },
+      "authRelease": {
+        "productBundleVersion": 62,
+        "migration": "V271__create_hris_service_grant_authority.sql",
+        "generationLaneRule": "The generation lane creates only the declared deterministic product-surfaces v62 source, bundle, index, fixtures and service PEP artifacts containing the high-risk capability and dedicated route. Product-authorization generated artifacts have no feature-policy authority and create no database release row.",
+        "v271SeedRelease": {
+          "bundleKey": "product-surfaces",
+          "version": 62,
+          "checksumSource": "Exact nonblank lowercase checksum field inside product-surfaces-v1.bundle-v62.generated.json, whose bytes and file SHA-256 are pinned by the generation receipt.",
+          "authSeedArtifact": "product-surfaces-v1.bundle-v62.generated.json",
+          "intendedBundleStatus": "DRAFT",
+          "automaticImportEnabled": false
+        },
+        "v271FeaturePolicySuccessor": {
+          "featureKey": "HRIS_HRM_EXIT_RETURN_WORKBENCH",
+          "policyVersion": 2,
+          "productKey": "hcm",
+          "appResourceKey": "APP.HCM",
+          "minimumBundleVersion": 62,
+          "baselineState": "OFF",
+          "ownerKey": "HRM"
+        },
+        "v271RouteBindingSnapshot": [
+          {
+            "routeContractKey": "route.hcm.operations.exit-return.page",
+            "productKey": "hcm",
+            "appResourceKey": "APP.HCM",
+            "routeKind": "PAGE",
+            "subjectType": "PRODUCT",
+            "surfaceKey": "hcm.operations"
+          },
+          {
+            "routeContractKey": "route.hcm.operations.exit-return.data",
+            "productKey": "hcm",
+            "appResourceKey": "APP.HCM",
+            "routeKind": "DATA",
+            "subjectType": "PRODUCT",
+            "surfaceKey": "hcm.operations"
+          },
+          {
+            "routeContractKey": "route.hcm.operations.separation-case.action",
+            "productKey": "hcm",
+            "appResourceKey": "APP.HCM",
+            "routeKind": "ACTION",
+            "subjectType": "PRODUCT",
+            "surfaceKey": "hcm.operations"
+          }
+        ],
+        "dedicatedApprovalRouteBoundary": "The cross-product Approval dedicated route is not inserted into the HCM feature-policy tables because their foreign key and runtime validator require the policy product and app tuple to match. It is protected by the v62 HIGH capability, STEPUP-MGMT-HIGH-V1, DECIDABLE_TASK_SELF_APPROVAL_SOD, exact HRM-013 native-task binding, default-OFF Approval runtime property and current service grant. With the v62 bundle still DRAFT, no assignment, no tenant enrollment and no runtime flag, it is unreachable. A separate Approval feature-policy schema expansion is outside this gate.",
+        "v271Rule": "V271 inserts exactly one v62 seed-release tuple, the baseline-OFF HCM policy-version-2 successor and policy-version-2 bindings for the exact three-route V270 HCM snapshot. It validates the three immutable V270 route-owner rows, rejects semantic drift or partial snapshot, and creates no user assignment, tenant enrollment, service grant, key, credential or automatic bundle import."
+      },
+      "decisionRules": [
+        "Only an HRM-013-bound native Approval task may enter the dedicated approve route; a non-HRM-013 task returns 404 without existence detail.",
+        "Command Decision.APPROVE exists only on the dedicated route, requires a fresh Auth-signed dwp-approval-server challenge bound to that route, actor, tenant, task, exact body, idempotency key, expected task version and current decision revision, and may produce terminal Outcome.APPROVED.",
+        "Command Decision.REJECT exists only on the existing generic task-decision route for an HRM-013-bound task, requires no step-up, rejects every supplied step-up header, may produce terminal Outcome.REJECTED and emits no downstream step-up field.",
+        "Both routes enter the same native quorum engine and carry an explicit typed ApprovalTerminalDecisionContext; route separation never creates a second approval engine.",
+        "The actor must differ from both immutable caseMakerPublicId and requestedByActorPublicId before terminal mutation."
+      ],
+      "downstreamEvidenceMapping": {
+        "stepUpEvidenceId": "canonical UUID challenge jti",
+        "stepUpEvidenceAudience": "dwp-people-server",
+        "stepUpEvidencePurpose": "HRIS_SEPARATION_TASK_WAIVER_DECISION",
+        "stepUpEvidenceNonce": "new canonical UUID generated inside the terminal decision transaction and distinct from the Auth challenge nonce",
+        "stepUpVerifiedAt": "the instant Approval verifies the Auth challenge inside the terminal command",
+        "stepUpConsumedAt": "the terminal decision transaction instant after successful replay reservation and not before stepUpVerifiedAt",
+        "stepUpEvidenceDigest": "lowercase SHA-256 of tenantId, approvalRequestId, decisionActorPublicId, stepUpEvidenceId, stepUpEvidenceAudience, stepUpEvidencePurpose, stepUpEvidenceNonce and stepUpVerifiedAt encoded in that order as canonical UTF-8 separated by LF with no trailing LF",
+        "freshness": "Auth auth_time to stepUpConsumedAt is at most 600 seconds; challenge expiry, current decision revision and single-use replay reservation are all rechecked in the terminal transaction.",
+        "attestation": "The original browser challenge remains audience dwp-approval-server. Approval converts its verified and consumed result into the seven-field downstream attestation, then binds those fields into the certificate-bound HRM-010 workload proof. The raw browser challenge and raw Auth nonce never leave Approval."
+      },
+      "terminalSink": {
+        "singleBeanRule": "Exactly one ApprovalTerminalDecisionSink bean exists.",
+        "implementation": "HrisApprovalDecisionOutbox becomes the feature-OR router for the existing employee-change handler and the HRM-013 handler; a second sink bean is forbidden.",
+        "contextRule": "ApprovalTerminalDecisionContext is an explicit typed method value passed through controller, service, command, facade and quorum runtime. ThreadLocal, request attributes and post-commit lookup are forbidden.",
+        "routingRule": "A request may match exactly one handler. Zero matches is a no-op for non-HRIS approvals; two matches fail and roll back the terminal decision."
+      }
+    },
+    "peopleOwnerRuntimeBoundary": {
+      "atomicPacketRule": "The People owner producer and callback runtime are one owner/runtime source packet. A callback-only implementation without the transactions that create its protocol fences is forbidden.",
+      "taskDispatchContracts": {
+        "schema": "Hrm013TaskDispatchV1",
+        "bindings": [
+          {
+            "bindingId": "SVC-PEP-TIM-004",
+            "caller": "dwp-people-server",
+            "owner": "dwp-time-server",
+            "purpose": "HRIS_SEPARATION_TIME_TASK_DISPATCH",
+            "taskType": "TIME_FINALIZATION",
+            "path": "/internal/hris-time/v1/separation-task-dispatches",
+            "eventType": "SeparationTimeFinalizationTaskDispatchRequested.v1",
+            "authorityResolverBindingId": "SVC-AUT-HRM-015",
+            "callbackBindingId": "SVC-PEP-HRM-008",
+            "callbackPurpose": "HRIS_SEPARATION_TIME_TASK_RECEIPT"
+          },
+          {
+            "bindingId": "SVC-PEP-PAY-002",
+            "caller": "dwp-people-server",
+            "owner": "dwp-payroll-server",
+            "purpose": "HRIS_SEPARATION_PAYROLL_TASK_DISPATCH",
+            "taskType": "PAYROLL_SETTLEMENT",
+            "path": "/internal/hris-payroll/v1/separation-task-dispatches",
+            "eventType": "SeparationPayrollSettlementTaskDispatchRequested.v1",
+            "authorityResolverBindingId": "SVC-AUT-HRM-016",
+            "callbackBindingId": "SVC-PEP-HRM-008",
+            "callbackPurpose": "HRIS_SEPARATION_PAYROLL_TASK_RECEIPT"
+          },
+          {
+            "bindingId": "SVC-AUT-HRM-014",
+            "caller": "dwp-people-server",
+            "owner": "dwp-auth-server",
+            "purpose": "HRIS_SEPARATION_IDENTITY_TASK_DISPATCH",
+            "taskType": "IDENTITY_ACCESS_REVOCATION",
+            "path": "/internal/auth/v1/separation-task-dispatches",
+            "eventType": "SeparationIdentityAccessRevocationTaskDispatchRequested.v1",
+            "authorityResolverBindingId": "LOCAL_AUTH_LEDGER",
+            "callbackBindingId": "SVC-PEP-HRM-008",
+            "callbackPurpose": "HRIS_SEPARATION_IDENTITY_TASK_RECEIPT"
+          }
+        ],
+        "method": "POST",
+        "maximumRequestBytes": 32768,
+        "maximumResponseBytes": 16384,
+        "commonBodyFields": [
+          "schemaName",
+          "schemaVersion",
+          "dispatchEventId",
+          "casePublicId",
+          "taskPublicId",
+          "taskType",
+          "taskOwnerRevision",
+          "taskVersion",
+          "dispatchedAt",
+          "payloadSha256",
+          "correlationId"
+        ],
+        "timeAndPayrollBodyFields": [
+          "workerPublicId",
+          "relationshipPublicId",
+          "separationType",
+          "effectiveDate",
+          "lastWorkingDate"
+        ],
+        "identityBodyFields": [
+          "personPublicId",
+          "separationType",
+          "effectiveDate"
+        ],
+        "forbiddenBodyFields": [
+          "tenantId",
+          "callerWorkloadId",
+          "purpose",
+          "reasonCode",
+          "workerName",
+          "employeeNumber",
+          "email",
+          "rawNote"
+        ],
+        "digestRule": "payloadSha256 is lowercase SHA-256 of RFC 8785 canonical JSON containing the schema name, version and every allowed variant body field except payloadSha256. The workload proof separately binds requestBodySha256 to the exact canonical HTTP bytes.",
+        "outboxRule": "Reuse the existing V1 plus V4 sys_people_outbox_events columns without People V62 as an integrity-fenced delivery row, not as a claim that the generic table has a row-immutability trigger. event_id equals dispatchEventId, an RFC 4122 UUIDv5 using fixed namespace 089d9495-71cf-55aa-96e5-5cbd1682e5bb and the exact UTF-8 name preimage: ASCII decimal tenantId, LF, canonical lowercase taskPublicId UUID, LF, ASCII decimal positive taskVersion, LF, exact bindingId, with no trailing LF. aggregate_type is SEPARATION_TASK; aggregate_id is canonical taskPublicId; event_type is the exact binding event type; payload is the closed body; correlation_id is the case correlation; published_at is set only after a verified admission receipt.",
+        "dispatchIdentityGoldenVector": {
+          "namespace": "089d9495-71cf-55aa-96e5-5cbd1682e5bb",
+          "tenantId": 1,
+          "taskPublicId": "00000000-0000-0000-0000-000000000001",
+          "taskVersion": 1,
+          "bindingId": "SVC-PEP-TIM-004",
+          "nameUtf8Escaped": "1\n00000000-0000-0000-0000-000000000001\n1\nSVC-PEP-TIM-004",
+          "dispatchEventId": "9ddb8198-a9c2-5493-a3a6-1c19fa9a327a"
+        },
+        "preSendIntegrityRule": "After claiming and again immediately before every network send, Hrm013TaskDispatchOutboxStore locks the dispatch row and its V61 ppl_separation_callback_authorities ADMIT fence and verifies event_id, tenant, aggregate type/id, event type, correlation, caller, binding, purpose, task type, expected owner revision and RFC 8785 payloadSha256 equal the authority's immutable originating_payload_sha256. It separately resolves and rechecks that both the outbound dispatch grant and the exact SVC-PEP-HRM-008 callback grant frozen in the fence remain current; either drift, denial or outage prevents the call. The HRM-013 store may update only attempt_count, next_attempt_at, published_at, last_error and dead_lettered_at. Any identity or payload mismatch is quarantined and dead-lettered without a call; rebuilding, repairing or silently accepting the row is forbidden.",
+        "atomicRule": "The exact task activation and aggregate CAS, immutable sys_people_outbox_events row and HRM-008 ADMIT callback authority for the owner workload, task type, receipt purpose, expected ownerRevision 1 and originatingPayloadSha256 are inserted in one tenant transaction. The callback authority freezes the current SVC-PEP-HRM-008 callback grant's tenantGrantRevision and authorizationRevision, never the separate task-dispatch grant revisions. The callback handler may never create or repair that authority.",
+        "requestProofRule": "Each dispatch uses the binding's current or drain-only business grant signer and mTLS leaf cnf with one closed Hrm013WorkloadProofV1 profile: exact iss, aud, sub, bindingId, purpose, POST path, tenant, dispatchEventId, casePublicId, taskPublicId, taskType, taskOwnerRevision, payloadSha256, requestBodySha256, grant revisions, correlationId and grantUseMode; NEW_WORK forbids and DRAIN_EXISTING requires the seven drain claims defined by terminalDrainContinuationRule. Lifetime is at most 30 seconds with at most 5 seconds skew and distinct canonical UUID jti/requestNonce.",
+        "dispatchAuthorityResolutionRule": "People uses SVC-AUT-HRM-011 and its independent leaf-certificate-signed resolver proof to resolve the current outbound SVC-PEP-TIM-004, SVC-PEP-PAY-002 or SVC-AUT-HRM-014 tuple before creating the dispatch proof. Only the returned current People caller key and dispatch revision pair may sign that request; the tuple is rechecked immediately before send and is never inferred from the callback fence.",
+        "authorityResolutionRule": "Time resolves the exact SVC-PEP-TIM-004 People caller and Time owner keys through SVC-AUT-HRM-015, and Payroll resolves SVC-PEP-PAY-002 through SVC-AUT-HRM-016, before proof replay or business reads and rechecks unchanged authority before signing a receipt. Auth verifies SVC-AUT-HRM-014 directly against its local current ledger under the same transaction. Resolver denial or outage produces no inbox reservation, task execution or receipt.",
+        "ownerCallbackSendAuthorityRule": "For every HRM-008 completion or failure callback attempt, Time uses SVC-AUT-HRM-015 and Payroll uses SVC-AUT-HRM-016 to resolve their exact current SVC-PEP-HRM-008 caller, People owner and receipt-purpose tuple; Auth reads that exact tuple from its local current ledger. The sender rechecks unchanged ADMIT immediately before send, binds the accepted task identity and expected next ownerRevision, and signs only with that callback tuple's current caller key and revision pair. Dispatch-binding revisions, admission-receipt owner keys and a stale callback fence may never substitute. Denial, emergency REVOKE, mismatch or authority outage emits no callback and retains the durable callback outbox for bounded retry or audited reconciliation.",
+        "callbackAuthorityResolutionRule": "Before the owner transaction, People uses SVC-AUT-HRM-011 to resolve the distinct current SVC-PEP-HRM-008 tuple for the exact Time, Payroll or Auth owner caller, People callback owner and corresponding receipt purpose. The transaction rechecks that callback grant is still current and freezes its positive tenantGrantRevision and authorizationRevision into ppl_separation_callback_authorities. Dispatch-grant revisions authenticate the outbound dispatch only and may never be copied into, compared as equal to or substituted for callback-grant revisions. Any missing, revoked, ambiguous, stale, mismatched or changed callback grant creates neither task activation, outbox nor callback fence.",
+        "admissionReceipt": {
+          "status": 202,
+          "fields": [
+            "dispatchEventId",
+            "taskPublicId",
+            "payloadSha256",
+            "requestBodySha256",
+            "admittedAt",
+            "receiptSha256",
+            "correlationId"
+          ],
+          "receiptDigestRule": "receiptSha256 is lowercase SHA-256 of RFC 8785 canonical JSON containing dispatchEventId, taskPublicId, payloadSha256, requestBodySha256, admittedAt and correlationId in the closed receipt body; receiptSha256 itself is excluded from its preimage. responseBodySha256 in the response proof is lowercase SHA-256 of the exact complete receipt bytes including receiptSha256.",
+          "consumerIdentity": "The owner atomically reserves tenantId plus dispatchEventId and the two request digests before execution. Exact replay returns byte-identical receipt bytes; a digest conflict returns 409 and quarantines without executing.",
+          "proofCarrier": "Exactly one X-DWP-Workload-Receipt-Proof compact JWS response header; alternate, duplicate or forwarded proof headers are forbidden.",
+          "proofProtectedHeaders": {
+            "requiredExactly": [
+              "alg",
+              "typ",
+              "kid"
+            ],
+            "constants": {
+              "alg": "RS256",
+              "typ": "DWP-HRM013-RECEIPT-JWT"
+            },
+            "unknownOrDuplicateAllowed": false
+          },
+          "proofClaims": [
+            "iss",
+            "aud",
+            "sub",
+            "iat",
+            "nbf",
+            "exp",
+            "bindingId",
+            "purpose",
+            "status",
+            "tenantId",
+            "dispatchEventId",
+            "taskPublicId",
+            "payloadSha256",
+            "requestBodySha256",
+            "responseBodySha256",
+            "tenantGrantRevision",
+            "authorizationRevision",
+            "correlationId",
+            "authn",
+            "cnf"
+          ],
+          "proofRule": "The owner signs the exact closed claim set with its current grant business key: iss and sub are the exact owner workload, aud is dwp-people-server, bindingId is the dispatch binding, purpose is the dispatch purpose plus _ADMISSION_RECEIPT, status is 202, authn is MTLS_SPIFFE_RS256 and cnf is the current owner mTLS leaf thumbprint. iat equals nbf, exp minus iat is at most 30 seconds and verification skew is at most 5 seconds. Unknown, duplicate, null, coerced or mismatched claims fail closed. People resolves or locally verifies unchanged current Auth authority and checks every request/receipt equality before persisting the safe receipt snapshot and receiptSha256 in sys_people_audit_events and setting published_at. A proof replay can affect only the same immutable dispatchEventId and exact digests and is idempotent after published_at."
+        },
+        "deliveryRule": "The default-OFF People relay claims rows with FOR UPDATE SKIP LOCKED, sends the same canonical request bytes and dispatchEventId on every attempt, and rotates only the mTLS session plus proof jti, requestNonce and timestamps. Timeout, oversize, invalid proof or ambiguous response retries with bounded full jitter for at most 10 attempts. Exhaustion sets dead_lettered_at and last_error RESULT_UNKNOWN, appends an audit event and never invents admission, success or task completion; only a later separately reconciled exact receipt may recover it.",
+        "completionRule": "Admission only accepts work. COMPLETED or FAILED arrives later only through HRM-008 with a distinct callbackEventId, externalReceiptPublicId and exact next ownerRevision."
+      },
+      "ownerTransactions": [
+        "Case and task creation, lifecycle transition and task dispatch authority are written under the same tenant transaction and exact aggregate CAS.",
+        "HRM-008 protocol authority is created in the same transaction as the exact TIME, PAYROLL or IDENTITY task dispatch outbox record.",
+        "HRM-009 protocol authority is created in the same transaction that admits the exact XCON-028 consumer event and originating payload digest.",
+        "APR-002 exact request bytes, request and payload digests, command digest, immutable waiver fence, relay outbox and HRM-010 revision-one protocol authority are created in one transaction before any network send."
+      ],
+      "concurrencyCorrections": [
+        "After TLS and exact-header validation, bounded untrusted selector extraction, initial Auth resolver lookup, complete business-proof validation, replay reservation and the post-signature unchanged-current-authority recheck, acquire the callback identity advisory lock and perform the existing-row digest check before any protocol fence or aggregate read.",
+        "Callback authority stream advisory lock is shared by latest and append operations, and no second writer can observe or create a gap.",
+        "Exact replay returns the stored response bytes with zero owner aggregate read; a digest conflict appends only a quarantine audit outside the rolled-back business transaction."
+      ],
+      "migrationRule": "No People V62 is permitted. Every runtime row uses the integrated V61 schema and the existing sys_people_audit_events boundary.",
+      "inProcessRule": "SeparationReconciliationPort is a typed in-process port inside dwp-people-server. HRIS-PER does not self-HTTP into People and no Performance subscription is activated by this gate."
+    }
+  },
+  "futureExecutionTopology": {
+    "baseRules": [
+      "Every future branch starts from the exact then-current origin/dwp-dev after the preceding required merge, not from either prerequisite worktree.",
+      "Each lane receives a separate hash-bound executable token and clean worktree receipt before source authoring; product-authorization generation and Auth V271 implementation are separate sequential lanes and tokens.",
+      "Only targeted compile and named tests run in a lane. Approval and People run one bounded owner/runtime handshake after their central integration; the complete twelve-condition cross-service matrix runs once only after the separately authorized Phase-6 task owners are integrated."
+    ],
+    "phases": [
+      {
+        "order": 1,
+        "lane": "SHARED_CONTRACT",
+        "branch": "codex/hris-wave7-batch06-hrm013-runtime-contract-backend-20261026-r1",
+        "worktree": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261026/batch06/hrm013-owner-runtime/shared",
+        "base": "backend dwp-dev c50b267e7b015758ab6f7acc7fdf353eee81e631 after a separate execution authority",
+        "mergeRequiredBeforeNext": true
+      },
+      {
+        "order": 2,
+        "lane": "AUTH_PRODUCT_AUTHORIZATION_V62_GENERATION_PREP",
+        "branch": "codex/hris-wave7-batch06-hrm013-auth-v62-generation-backend-20261026-r1",
+        "worktree": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261026/batch06/hrm013-owner-runtime/auth-v62-generation",
+        "base": "then-current backend dwp-dev containing the exact shared contract merge",
+        "migrationAuthoringAllowed": false,
+        "scope": "generator inputs, declared maximum generated outputs and named generation tests only",
+        "mergeRequiredBeforeNext": true
+      },
+      {
+        "order": 3,
+        "lane": "AUTH_SERVICE_GRANT_REQUESTER_AND_STEP_UP_CONTROL_PLANE",
+        "branch": "codex/hris-wave7-batch06-hrm013-auth-authority-backend-20261026-r1",
+        "worktree": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261026/batch06/hrm013-owner-runtime/auth",
+        "base": "then-current backend dwp-dev containing the exact shared and Auth v62 generation merges plus an exclusive V271 reservation",
+        "migration": "AUTH_MAIN V271",
+        "mergeRequiredBeforeNext": true
+      },
+      {
+        "order": 4,
+        "lane": "APPROVAL_RUNTIME",
+        "branch": "codex/hris-wave7-batch06-hrm013-approval-runtime-backend-20261026-r1",
+        "worktree": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261026/batch06/hrm013-owner-runtime/approval",
+        "base": "then-current backend dwp-dev containing shared and Auth merges",
+        "parallelGroup": "OWNER_RUNTIME",
+        "newMigrationAllowed": false
+      },
+      {
+        "order": 4,
+        "lane": "PEOPLE_OWNER_AND_RUNTIME",
+        "branch": "codex/hris-wave7-batch06-hrm013-people-owner-runtime-backend-20261026-r1",
+        "worktree": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261026/batch06/hrm013-owner-runtime/people",
+        "base": "then-current backend dwp-dev containing shared and Auth merges",
+        "parallelGroup": "OWNER_RUNTIME",
+        "newMigrationAllowed": false
+      },
+      {
+        "order": 5,
+        "lane": "CENTRAL_OWNER_RUNTIME_INTEGRATION",
+        "mergeOrder": [
+          "APPROVAL_RUNTIME",
+          "PEOPLE_OWNER_AND_RUNTIME_REBASED_ON_LATEST_DWP_DEV"
+        ],
+        "verification": "one bounded shared plus Auth plus Approval plus People handshake matrix"
+      },
+      {
+        "order": 6,
+        "lane": "TASK_DISPATCH_CONSUMERS_AND_CALLBACK_PRODUCERS",
+        "scope": "TIME, PAYROLL and AUTH task-dispatch ingress, durable admission receipts and HRM-008 callback producers",
+        "authority": "WITHHELD_UNTIL_OWNER_RUNTIME_INTEGRATION_RECEIPT",
+        "deferredFollowUp": "The People in-process HRIS-PER SeparationReconciliationPort consumer requires a separate post-owner-runtime gate and is not part of this Phase-6 maximum allowlist."
+      }
+    ]
+  },
+  "futureSourceAllowlists": {
+    "auth": {
+      "newPackage": "dwp-auth-server/src/main/java/com/dwp/services/auth/hrisservicegrant/",
+      "newClasses": [
+        "HrisServiceGrantAuthorityController.java",
+        "HrisServiceGrantAuthorityService.java",
+        "HrisServiceGrantAuthorityRepository.java",
+        "HrisServiceGrantAuthoritySecurityConfig.java",
+        "HrisServiceGrantAuthorityIngressFilter.java",
+        "HrisServiceGrantAuthorityRequestContext.java",
+        "HrisServiceGrantAuthorityProofVerifier.java",
+        "HrisServiceGrantAuthorityProblem.java",
+        "HrisServiceGrantQuiesceService.java",
+        "HrisServiceGrantRotationReadinessVerifier.java",
+        "HrisServiceGrantAuthorityOwnerCredentialProvider.java",
+        "Hrm013RequesterIdentityAuthorityController.java",
+        "Hrm013RequesterIdentityAuthorityService.java",
+        "Hrm013RequesterIdentityAuthorityRepository.java",
+        "Hrm013RequesterIdentityIngressFilter.java",
+        "Hrm013RequesterIdentityProofVerifier.java"
+      ],
+      "generatedAndMigration": [
+        "contracts/product-authorization/product-surfaces-v1.yaml",
+        "contracts/product-authorization/product-surfaces-v1.json",
+        "contracts/product-authorization/product-surfaces-v1.bundle-v62.json",
+        "contracts/product-authorization/product-surfaces-v1.index.json",
+        "contracts/product-authorization/pilot-fixtures.v1.generated.json",
+        "dwp-auth-server/src/main/resources/product-authorization/product-surfaces-v1.generated.json",
+        "dwp-auth-server/src/main/resources/product-authorization/product-surfaces-v1.bundle-v62.generated.json",
+        "dwp-auth-server/src/main/resources/product-authorization/product-surfaces-v1.index.generated.json",
+        "dwp-approval-server/src/main/resources/product-authorization/approval-pilot-pep-v62.generated.json",
+        "dwp-payroll-server/src/main/resources/product-authorization/hcm-payroll-pep-v62.generated.json",
+        "dwp-people-server/src/main/resources/product-authorization/hcm-people-pep-v62.generated.json",
+        "dwp-platform-server/src/main/resources/product-authorization/hcm-platform-pep-v62.generated.json",
+        "dwp-time-server/src/main/resources/product-authorization/hcm-time-pep-v62.generated.json",
+        "dwp-auth-server/src/main/resources/db/migration/V271__create_hris_service_grant_authority.sql"
+      ],
+      "generationRule": "A dedicated AUTH_PRODUCT_AUTHORIZATION_V62_GENERATION_PREP token may extend scripts/generate-product-authorization-contracts.py and, only if its deterministic fixture closure changes, scripts/generate-product-authorization-fixtures.py for global bundle v62 and the explicit Approval PEP successor approval-pilot-pep-v62. That token pins generator inputs and the maximum output allowlist; generation runs once, the receipt pins the exact changed subset and hashes, a byte-identical listed output is not committed, and any changed path outside the maximum allowlist stops the lane. The token grants no migration or V271 authority.",
+      "existingMayModify": [
+        "scripts/generate-product-authorization-contracts.py",
+        "scripts/generate-product-authorization-fixtures.py",
+        "dwp-auth-server/src/main/java/com/dwp/services/auth/service/ProductAuthorizationContractValidator.java",
+        "dwp-auth-server/src/main/java/com/dwp/services/auth/service/ProductAuthorizationReleaseLineage.java",
+        "dwp-auth-server/src/main/java/com/dwp/services/auth/service/ProductSurfaceStepUpRouteResolver.java",
+        "dwp-auth-server/src/main/java/com/dwp/services/auth/workflowruntime/WorkflowRuntimeBindings.java",
+        "dwp-auth-server/src/main/java/com/dwp/services/auth/workflowruntime/WorkflowRuntimeAuthorityService.java",
+        "dwp-auth-server/src/main/java/com/dwp/services/auth/workflowruntime/WorkflowRuntimeAdmissionLink.java",
+        "dwp-auth-server/src/main/java/com/dwp/services/auth/service/WorkflowRuntimeIdentityAuthorityBridge.java",
+        "dwp-approval-server/src/main/java/com/dwp/services/approval/security/ApprovalPepProjectionLineage.java",
+        "dwp-approval-server/src/main/java/com/dwp/services/approval/security/ApprovalPepProjectionLoader.java",
+        "dwp-approval-server/src/main/java/com/dwp/services/approval/security/ApprovalPilotPepRegistry.java",
+        "dwp-gateway/src/main/java/com/dwp/gateway/filter/ProductSurfaceDecisionContextFilter.java",
+        "dwp-gateway/src/main/java/com/dwp/gateway/productsurface/GeneratedProductRouteCatalog.java",
+        "dwp-auth-server/src/main/resources/application.yml"
+      ]
+    },
+    "approval": {
+      "newPackage": "dwp-approval-server/src/main/java/com/dwp/services/approval/hrisbridge/separation/",
+      "newClasses": [
+        "HrisSeparationApprovalController.java",
+        "HrisSeparationApprovalBridgeService.java",
+        "HrisSeparationApprovalAuthorityResolver.java",
+        "HrisSeparationTrustProfile.java",
+        "HrisSeparationProtocolException.java",
+        "HrisSeparationBridgeAdvice.java",
+        "HrisSeparationStepUpEvidenceVerifier.java",
+        "HrisSeparationDecisionRelay.java",
+        "HrisSeparationGrantRotationBarrier.java",
+        "AuthHrm013ServiceAuthorityClient.java",
+        "Hrm013RequesterIdentityClient.java",
+        "HrisSeparationWorkloadCredentialProvider.java"
+      ],
+      "existingMayModify": [
+        "dwp-approval-server/src/main/java/com/dwp/services/approval/security/ApprovalSecurityFilter.java",
+        "dwp-approval-server/src/main/java/com/dwp/services/approval/security/ApprovalStepUpVerifier.java",
+        "dwp-approval-server/src/main/java/com/dwp/services/approval/api/ApprovalController.java",
+        "dwp-approval-server/src/main/java/com/dwp/services/approval/domain/ApprovalService.java",
+        "dwp-approval-server/src/main/java/com/dwp/services/approval/domain/ApprovalWorkflowDecisionCommands.java",
+        "dwp-approval-server/src/main/java/com/dwp/services/approval/domain/ApprovalWorkflowQuorumFacade.java",
+        "dwp-approval-server/src/main/java/com/dwp/services/approval/domain/ApprovalWorkflowQuorumRuntime.java",
+        "dwp-approval-server/src/main/java/com/dwp/services/approval/domain/ApprovalWorkflowRuntimeSource.java",
+        "dwp-approval-server/src/main/java/com/dwp/services/approval/domain/ApprovalTerminalDecisionSink.java",
+        "dwp-approval-server/src/main/java/com/dwp/services/approval/domain/ApprovalCommandLifecycleRepository.java",
+        "dwp-approval-server/src/main/java/com/dwp/services/approval/workflowauthority/WorkflowRuntimeBindingContract.java",
+        "dwp-approval-server/src/main/java/com/dwp/services/approval/security/ApprovalWorkflowQuorumBodyFilter.java",
+        "dwp-approval-server/src/main/java/com/dwp/services/approval/security/ApprovalWorkflowQuorumCommandMetadata.java",
+        "dwp-approval-server/src/main/java/com/dwp/services/approval/hrisbridge/HrisApprovalDecisionOutbox.java",
+        "dwp-approval-server/src/main/java/com/dwp/services/approval/hrisbridge/separation/HrisSeparationWaiverBindingStore.java",
+        "dwp-approval-server/src/main/java/com/dwp/services/approval/hrisbridge/separation/HrisSeparationDecisionOutboxStore.java",
+        "dwp-approval-server/src/main/resources/application.yml"
+      ],
+      "newDomainFile": "dwp-approval-server/src/main/java/com/dwp/services/approval/domain/ApprovalTerminalDecisionContext.java",
+      "migrationForbidden": "dwp-approval-server/src/main/resources/db/migration/V60*"
+    },
+    "people": {
+      "package": "dwp-people-server/src/main/java/com/dwp/services/people/hris/separation/hrm013/",
+      "newClasses": [
+        "Hrm013RuntimeConfiguration.java",
+        "Hrm013RuntimeProperties.java",
+        "Hrm013CallbackIngressFilter.java",
+        "Hrm013CallbackRequestContext.java",
+        "Hrm013WorkloadProofVerifier.java",
+        "Hrm013CallbackController.java",
+        "Hrm013CallbackService.java",
+        "Hrm013OwnerService.java",
+        "JdbcHrm013OwnerStore.java",
+        "Hrm013WaiverRequestRelay.java",
+        "Hrm013ApprovalClient.java",
+        "Hrm013TaskDispatchOutboxStore.java",
+        "Hrm013TaskDispatchRelay.java",
+        "Hrm013TaskDispatchClient.java",
+        "Hrm013GrantRotationReadiness.java",
+        "AuthHrm013ServiceAuthorityAdapter.java",
+        "Hrm013WorkloadCredentialProvider.java",
+        "Hrm013AdmissionControl.java",
+        "Hrm013RuntimeProblem.java",
+        "SeparationReconciliationPort.java"
+      ],
+      "existingMayModify": [
+        "dwp-people-server/src/main/java/com/dwp/services/people/security/PeopleSecurityFilter.java",
+        "dwp-people-server/src/main/java/com/dwp/services/people/hris/separation/hrm013/Hrm013PersistencePorts.java",
+        "dwp-people-server/src/main/java/com/dwp/services/people/hris/separation/hrm013/Hrm013PersistenceModels.java",
+        "dwp-people-server/src/main/java/com/dwp/services/people/hris/separation/hrm013/Hrm013ServiceAuthorityPort.java",
+        "dwp-people-server/src/main/java/com/dwp/services/people/hris/separation/hrm013/JdbcHrm013CallbackAuthorityStore.java",
+        "dwp-people-server/src/main/java/com/dwp/services/people/hris/separation/hrm013/JdbcHrm013CallbackReceiptStore.java",
+        "dwp-people-server/src/main/java/com/dwp/services/people/hris/separation/hrm013/JdbcHrm013WaiverRequestOutboxStore.java",
+        "dwp-people-server/src/main/resources/application.yml"
+      ],
+      "migrationForbidden": "dwp-people-server/src/main/resources/db/migration/V62*"
+    },
+    "taskDispatchOwners": {
+      "authority": "MAXIMUM_PHASE_6_ALLOWLIST_ONLY_NO_SOURCE_OR_MIGRATION_AUTHORITY",
+      "time": {
+        "package": "dwp-time-server/src/main/java/com/dwp/services/time/hris/separation/hrm013/",
+        "newClasses": [
+          "Hrm013TimeTaskDispatchController.java",
+          "Hrm013TimeTaskDispatchService.java",
+          "Hrm013TimeTaskDispatchStore.java",
+          "Hrm013TimeTaskDispatchIngressFilter.java",
+          "AuthHrm013ServiceAuthorityClient.java",
+          "Hrm013TimeTaskReceiptRelay.java",
+          "Hrm013TimeWorkloadCredentialProvider.java"
+        ],
+        "existingMayModify": [
+          "dwp-time-server/src/main/resources/application.yml"
+        ],
+        "migrationCandidateNotReserved": "dwp-time-server/src/main/resources/db/migration/V15__hrm013_time_task_dispatch_inbox.sql"
+      },
+      "payroll": {
+        "package": "dwp-payroll-server/src/main/java/com/dwp/services/payroll/hris/separation/hrm013/",
+        "newClasses": [
+          "Hrm013PayrollTaskDispatchController.java",
+          "Hrm013PayrollTaskDispatchService.java",
+          "Hrm013PayrollTaskDispatchStore.java",
+          "Hrm013PayrollTaskDispatchIngressFilter.java",
+          "AuthHrm013ServiceAuthorityClient.java",
+          "Hrm013PayrollTaskReceiptRelay.java",
+          "Hrm013PayrollWorkloadCredentialProvider.java"
+        ],
+        "existingMayModify": [
+          "dwp-payroll-server/src/main/resources/application.yml"
+        ],
+        "migrationCandidateNotReserved": "dwp-payroll-server/src/main/resources/db/migration/V56__hrm013_payroll_task_dispatch_inbox.sql"
+      },
+      "authIdentityTask": {
+        "package": "dwp-auth-server/src/main/java/com/dwp/services/auth/hris/separation/hrm013/",
+        "newClasses": [
+          "Hrm013IdentityTaskDispatchController.java",
+          "Hrm013IdentityTaskDispatchService.java",
+          "Hrm013IdentityTaskDispatchStore.java",
+          "Hrm013IdentityTaskDispatchIngressFilter.java",
+          "Hrm013IdentityTaskReceiptRelay.java",
+          "Hrm013IdentityWorkloadCredentialProvider.java"
+        ],
+        "existingMayModify": [
+          "dwp-auth-server/src/main/resources/application.yml"
+        ],
+        "migrationCandidateNotReserved": "dwp-auth-server/src/main/resources/db/migration/V272__hrm013_identity_task_dispatch_inbox.sql"
+      },
+      "rule": "These owner ingress, inbox migration, task execution and HRM-008 callback producer paths remain withheld until a central owner/runtime integration receipt and a separate Phase-6 authority reserve their then-current migration heads. Listing them here grants no source, migration, credential, activation or completion authority."
+    }
+  },
+  "nextExecutionAuthorityPrerequisites": {
+    "serviceBindingRegisterSuccessor": {
+      "required": true,
+      "suggestedPath": "../r7-batch-06-hrm013-owner-runtime-execution-r1/service-api-auth-binding-register.successor.v3.csv",
+      "repositoryPath": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-owner-runtime-execution-r1/service-api-auth-binding-register.successor.v3.csv",
+      "predecessor": {
+        "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-callback-binding-r1/service-api-auth-binding-register.successor.v2.csv",
+        "bytes": 10190,
+        "sha256": "15b52f3cd3867aefa79f02cdf83441d9d5220836344391574cc42a8bdbde7e37"
+      },
+      "appendCount": 8,
+      "requiredSourceContract": "../r7-batch-06-hrm013-owner-runtime-binding-gate-r1/hrm-013-owner-runtime-binding-gate.v1.json",
+      "requiredState": "SEALED_DESIGN_HRM013_OWNER_RUNTIME_SHARED_AUTHORITY_REQUIRED_NOT_IMPLEMENTED",
+      "requiredHeader": [
+        "binding_id",
+        "module",
+        "source_operation_id",
+        "method",
+        "owner_path",
+        "owner_service",
+        "source_contract",
+        "source_authorization_alias",
+        "contract_scope",
+        "caller_service_identities",
+        "workload_authentication",
+        "tenant_propagation",
+        "purpose_codes",
+        "allowed_consumers",
+        "field_projection",
+        "transport_controls",
+        "audit_binding",
+        "replay_idempotency",
+        "in_process_consumer",
+        "in_process_port",
+        "in_process_controls",
+        "in_process_projection",
+        "in_process_test_allocation",
+        "state"
+      ],
+      "requiredCommonColumns": {
+        "module": "HRM",
+        "source_contract": "../r7-batch-06-hrm013-owner-runtime-binding-gate-r1/hrm-013-owner-runtime-binding-gate.v1.json",
+        "in_process_consumer": "NONE",
+        "in_process_port": "NONE",
+        "in_process_controls": "NONE",
+        "in_process_projection": "NONE",
+        "in_process_test_allocation": "NONE",
+        "state": "SEALED_DESIGN_HRM013_OWNER_RUNTIME_SHARED_AUTHORITY_REQUIRED_NOT_IMPLEMENTED"
+      },
+      "requiredProfiles": {
+        "AUTHORITY_RESOLVER": {
+          "method": "POST",
+          "owner_path": "/internal/auth/v1/hris-service-grant-authority/resolve",
+          "owner_service": "dwp-auth-server",
+          "contract_scope": "TARGET_HRIS_SERVICE_GRANT_AUTHORITY_RESOLVE",
+          "workload_authentication": "TLS_1_3_MTLS_SPIFFE_URI_SAN_EXACT|X_DWP_WORKLOAD_PROOF_RS256_JWT_AUD_DWP_AUTH_LEAF_CERTIFICATE_SIGNED|CNF_X5T_S256_LEAF_CERTIFICATE_BOUND|AUTHORIZATION_HEADER_FORBIDDEN",
+          "tenant_propagation": "SIGNED_TENANT_CLAIM|AUTH_TENANT_GRANT_REVALIDATION|REQUESTING_WORKLOAD_MATCH|TARGET_BINDING_MATCH|NO_CALLER_TENANT_OVERRIDE",
+          "field_projection": "dwp-auth-server/HrisServiceGrantAuthorityV1=ResolveRequest+ResolveResponse+DrainAdmitAdditionalResponseFields+ReadinessObservedResponseFields",
+          "transport_controls": "NO_BROWSER_ROUTE|NO_GATEWAY_ROUTE|TLS_1_3|MTLS_REQUIRED|SPIFFE_URI_SAN_EXACT|X_DWP_WORKLOAD_PROOF_REQUIRED|LEAF_CERTIFICATE_SIGNED_RESOLVER_PROFILE|AUTHORIZATION_HEADER_FORBIDDEN|CNF_X5T_S256_LEAF_CERTIFICATE_BOUND|RS256_CLOSED_CLAIMS|EXACT_METHOD_PATH_BODY|STRICT_HEADER_ALLOWLIST|X_CORRELATION_ID_REQUIRED|MAX_REQUEST_BYTES_8192|MAX_RESPONSE_BYTES_16384|RATE_AND_CONCURRENCY_LIMITED|NO_STORE",
+          "audit_binding": "AuditEventEnvelope.v1:callerSpiffeId+tenantId+bindingId+purposeCode+targetBindingId+targetPurpose+resolutionMode+tenantGrantRevision+authorizationRevision+correlationId+outcome+evidenceDigest",
+          "replay_idempotency": "ATOMIC_TWO_ROW_TENANT_TOKEN_DIGEST_RESERVATION|JTI_AND_REQUEST_NONCE_DISTINCT|REPLAY_DENIED_BEFORE_GRANT_ROW_READ|RETAIN_THROUGH_EXP_PLUS_5_SECONDS"
+        },
+        "REQUESTER_IDENTITY": {
+          "method": "POST",
+          "owner_path": "/internal/auth/v1/hris-separation-requester-authority/resolve",
+          "owner_service": "dwp-auth-server",
+          "contract_scope": "TARGET_HRIS_SEPARATION_REQUESTER_IDENTITY",
+          "workload_authentication": "TLS_1_3_MTLS_SPIFFE_URI_SAN_EXACT|X_DWP_WORKLOAD_PROOF_RS256_JWT_AUD_DWP_AUTH|CNF_X5T_S256_LEAF_CERTIFICATE_BOUND|AUTHORIZATION_HEADER_FORBIDDEN",
+          "tenant_propagation": "SIGNED_TENANT_CLAIM|AUTH_TENANT_GRANT_REVALIDATION|APPROVAL_REQUEST_ROOT_MATCH|REQUESTER_TARGET_TENANT_MATCH|NO_CALLER_TENANT_OVERRIDE",
+          "field_projection": "dwp-auth-server/Hrm013RequesterIdentityAuthorityV1=ResolveRequest+ResolveResponse",
+          "transport_controls": "NO_BROWSER_ROUTE|NO_GATEWAY_ROUTE|TLS_1_3|MTLS_REQUIRED|SPIFFE_URI_SAN_EXACT|X_DWP_WORKLOAD_PROOF_REQUIRED|AUTHORIZATION_HEADER_FORBIDDEN|CNF_X5T_S256_LEAF_CERTIFICATE_BOUND|RS256_CLOSED_CLAIMS|EXACT_METHOD_PATH_BODY|STRICT_HEADER_ALLOWLIST|X_CORRELATION_ID_REQUIRED|MAX_REQUEST_BYTES_8192|MAX_RESPONSE_BYTES_16384|RATE_AND_CONCURRENCY_LIMITED|NO_STORE",
+          "audit_binding": "AuditEventEnvelope.v1:callerSpiffeId+tenantId+bindingId+approvalRequestId+requestedByActorPublicId+purposeCode+tenantGrantRevision+authorizationRevision+correlationId+outcome+requestBodySha256+evidenceDigest",
+          "replay_idempotency": "ATOMIC_TWO_ROW_TENANT_TOKEN_DIGEST_RESERVATION|JTI_AND_REQUEST_NONCE_DISTINCT|DEPENDENT_READ_ROOT_BOUND|REPLAY_DENIED_BEFORE_IDENTITY_READ|RETAIN_THROUGH_EXP_PLUS_5_SECONDS"
+        },
+        "TASK_DISPATCH": {
+          "method": "POST",
+          "contract_scope": "TARGET_HRIS_SEPARATION_TASK_DISPATCH",
+          "workload_authentication": "TLS_1_3_MTLS_SPIFFE_URI_SAN_EXACT|X_DWP_WORKLOAD_PROOF_RS256_JWT_AUD_OWNER|CNF_X5T_S256_LEAF_CERTIFICATE_BOUND|AUTHORIZATION_HEADER_FORBIDDEN",
+          "tenant_propagation": "SIGNED_TENANT_CLAIM|OWNER_TENANT_GRANT_REVALIDATION|TASK_OWNER_MATCH|CALLBACK_FENCE_MATCH|NO_CALLER_TENANT_OVERRIDE",
+          "transport_controls": "NO_BROWSER_ROUTE|NO_GATEWAY_ROUTE|TLS_1_3|MTLS_REQUIRED|SPIFFE_URI_SAN_EXACT|X_DWP_WORKLOAD_PROOF_REQUIRED|X_DWP_WORKLOAD_RECEIPT_PROOF_REQUIRED|AUTHORIZATION_HEADER_FORBIDDEN|CNF_X5T_S256_LEAF_CERTIFICATE_BOUND|RS256_CLOSED_CLAIMS|EXACT_METHOD_PATH_BODY|STRICT_HEADER_ALLOWLIST|X_CORRELATION_ID_REQUIRED|MAX_REQUEST_BYTES_32768|MAX_RESPONSE_BYTES_16384|RATE_AND_CONCURRENCY_LIMITED|NO_STORE",
+          "audit_binding": "AuditEventEnvelope.v1:callerSpiffeId+tenantId+bindingId+dispatchEventId+casePublicId+taskPublicId+taskType+taskOwnerRevision+purposeCode+tenantGrantRevision+authorizationRevision+correlationId+outcome+payloadSha256+requestBodySha256+receiptSha256",
+          "replay_idempotency": "ATOMIC_TWO_ROW_TENANT_TOKEN_DIGEST_RESERVATION|DISPATCH_KEY=TENANT_DISPATCH_EVENT|PAYLOAD_AND_REQUEST_BODY_DIGEST_MATCH|EXACT_REPLAY_RETURNS_STORED_RECEIPT|DIGEST_CONFLICT_409_AND_QUARANTINE|OWNER_REVISION_FENCE_REQUIRED"
+        }
+      },
+      "requiredRows": [
+        {
+          "profile": "AUTHORITY_RESOLVER",
+          "columns": {
+            "binding_id": "SVC-AUT-HRM-011",
+            "source_operation_id": "resolveHrisServiceGrantAuthority",
+            "source_authorization_alias": "HRM-013 People-to-Auth service-grant resolver",
+            "caller_service_identities": "dwp-people-server",
+            "purpose_codes": "HRIS_SERVICE_GRANT_AUTHORITY_RESOLVE",
+            "allowed_consumers": "dwp-people-server"
+          }
+        },
+        {
+          "profile": "AUTHORITY_RESOLVER",
+          "columns": {
+            "binding_id": "SVC-AUT-HRM-012",
+            "source_operation_id": "resolveHrisServiceGrantAuthority",
+            "source_authorization_alias": "HRM-013 Approval-to-Auth service-grant resolver",
+            "caller_service_identities": "dwp-approval-server",
+            "purpose_codes": "HRIS_SERVICE_GRANT_AUTHORITY_RESOLVE",
+            "allowed_consumers": "dwp-approval-server"
+          }
+        },
+        {
+          "profile": "REQUESTER_IDENTITY",
+          "columns": {
+            "binding_id": "SVC-AUT-HRM-013",
+            "source_operation_id": "resolveHrisSeparationRequesterIdentity",
+            "source_authorization_alias": "HRM-013 Approval-to-Auth requester identity resolve",
+            "caller_service_identities": "dwp-approval-server",
+            "purpose_codes": "HRIS_SEPARATION_REQUESTER_IDENTITY_RESOLVE",
+            "allowed_consumers": "dwp-approval-server"
+          }
+        },
+        {
+          "profile": "TASK_DISPATCH",
+          "columns": {
+            "binding_id": "SVC-PEP-TIM-004",
+            "source_operation_id": "dispatchSeparationTimeFinalizationTask",
+            "owner_path": "/internal/hris-time/v1/separation-task-dispatches",
+            "owner_service": "dwp-time-server",
+            "source_authorization_alias": "HRM-013 People-to-Time separation task dispatch",
+            "caller_service_identities": "dwp-people-server",
+            "purpose_codes": "HRIS_SEPARATION_TIME_TASK_DISPATCH",
+            "allowed_consumers": "dwp-people-server",
+            "field_projection": "dwp-time-server/Hrm013TaskDispatchV1=CommonBodyFields+TimeAndPayrollBodyFields;dwp-people-server/Hrm013TaskDispatchAdmissionReceiptV1=dispatchEventId+taskPublicId+payloadSha256+requestBodySha256+admittedAt+receiptSha256+correlationId"
+          }
+        },
+        {
+          "profile": "TASK_DISPATCH",
+          "columns": {
+            "binding_id": "SVC-PEP-PAY-002",
+            "source_operation_id": "dispatchSeparationPayrollSettlementTask",
+            "owner_path": "/internal/hris-payroll/v1/separation-task-dispatches",
+            "owner_service": "dwp-payroll-server",
+            "source_authorization_alias": "HRM-013 People-to-Payroll separation task dispatch",
+            "caller_service_identities": "dwp-people-server",
+            "purpose_codes": "HRIS_SEPARATION_PAYROLL_TASK_DISPATCH",
+            "allowed_consumers": "dwp-people-server",
+            "field_projection": "dwp-payroll-server/Hrm013TaskDispatchV1=CommonBodyFields+TimeAndPayrollBodyFields;dwp-people-server/Hrm013TaskDispatchAdmissionReceiptV1=dispatchEventId+taskPublicId+payloadSha256+requestBodySha256+admittedAt+receiptSha256+correlationId"
+          }
+        },
+        {
+          "profile": "TASK_DISPATCH",
+          "columns": {
+            "binding_id": "SVC-AUT-HRM-014",
+            "source_operation_id": "dispatchSeparationIdentityAccessRevocationTask",
+            "owner_path": "/internal/auth/v1/separation-task-dispatches",
+            "owner_service": "dwp-auth-server",
+            "source_authorization_alias": "HRM-013 People-to-Auth identity task dispatch",
+            "caller_service_identities": "dwp-people-server",
+            "purpose_codes": "HRIS_SEPARATION_IDENTITY_TASK_DISPATCH",
+            "allowed_consumers": "dwp-people-server",
+            "field_projection": "dwp-auth-server/Hrm013TaskDispatchV1=CommonBodyFields+IdentityBodyFields;dwp-people-server/Hrm013TaskDispatchAdmissionReceiptV1=dispatchEventId+taskPublicId+payloadSha256+requestBodySha256+admittedAt+receiptSha256+correlationId"
+          }
+        },
+        {
+          "profile": "AUTHORITY_RESOLVER",
+          "columns": {
+            "binding_id": "SVC-AUT-HRM-015",
+            "source_operation_id": "resolveHrisServiceGrantAuthority",
+            "source_authorization_alias": "HRM-013 Time-to-Auth service-grant resolver",
+            "caller_service_identities": "dwp-time-server",
+            "purpose_codes": "HRIS_SERVICE_GRANT_AUTHORITY_RESOLVE",
+            "allowed_consumers": "dwp-time-server"
+          }
+        },
+        {
+          "profile": "AUTHORITY_RESOLVER",
+          "columns": {
+            "binding_id": "SVC-AUT-HRM-016",
+            "source_operation_id": "resolveHrisServiceGrantAuthority",
+            "source_authorization_alias": "HRM-013 Payroll-to-Auth service-grant resolver",
+            "caller_service_identities": "dwp-payroll-server",
+            "purpose_codes": "HRIS_SERVICE_GRANT_AUTHORITY_RESOLVE",
+            "allowed_consumers": "dwp-payroll-server"
+          }
+        }
+      ],
+      "requiredRowsSha256": "720ac954b8f5f45b520900a1e078bc1cb5b5750dc79745f714fb994dab9765ea",
+      "requiredNewBindings": [
+        "SVC-AUT-HRM-011",
+        "SVC-AUT-HRM-012",
+        "SVC-AUT-HRM-013",
+        "SVC-PEP-TIM-004",
+        "SVC-PEP-PAY-002",
+        "SVC-AUT-HRM-014",
+        "SVC-AUT-HRM-015",
+        "SVC-AUT-HRM-016"
+      ],
+      "rule": "The successor preserves every v2 row byte-for-byte and appends exactly the four People, Approval, Time and Payroll Auth resolver bindings, the Approval-to-Auth requester identity binding and the three People-to-owner task-dispatch bindings. Each appended row equals the deterministic requiredCommonColumns plus requiredProfiles plus requiredRows expansion across all 24 requiredHeader columns in the declared order, and the ordered expanded rows equal requiredRowsSha256; nonempty or partial-column matching is insufficient. It seals resolver leaf-key bootstrap proof, requester and dispatch business proofs, exact paths, purposes, field projections, transport, tenant, audit, replay, in-process and default-OFF controls and is independently reviewed before a shared/Auth token is executable."
+    },
+    "generationClosure": "Issue one AUTH_PRODUCT_AUTHORIZATION_V62_GENERATION_PREP token after the shared-contract merge. It binds declared generator inputs and the maximum output allowlist, grants no migration authority, runs generation once and produces a committed/pushed receipt with the exact changed subset and hashes. Any changed path outside the maximum allowlist fails closed and requires an append-only authority successor.",
+    "migrationReservation": "Reserve AUTH_MAIN V271 only after the service-binding successor, shared-contract merge and committed/pushed Auth v62 generation receipt are independently zero-finding reviewed. Reservation never precedes generation and the generation token cannot author V271.",
+    "authV271TokenRule": "Only after the exclusive V271 reservation may a separate AUTH_SERVICE_GRANT_REQUESTER_AND_STEP_UP_CONTROL_PLANE token authorize the exact V271 SQL and Auth control-plane source allowlist. The generation token and Auth V271 token cannot be combined.",
+    "validatorSuccessorRule": "Before any backend source commit may advance beyond the audited base, commit and push a hash-bound shared-contract execution-authority successor whose validator is docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-runtime-contract-authority-r1/validate_hrm013_runtime_contract_authority.py and append it immediately after this gate validator in hris:current-contracts:check. The validator, authority, independent-review and exact append-only v3 service-binding register artifacts must be Git-tracked, byte-pinned and introduced together with package.json by the exact non-merge direct child of this carrier; the validator invocation path and Git top-level must resolve to the same non-symlink frontend root, and an ignored or untracked local file, unrelated frontend commit, mutable successor artifact, intermediate or terminal symlink, noncanonical path or shell control operator cannot unlock historical mode. That successor must keep this immutable carrier discoverable, authorize only its exact lane and validate the then-current backend base.",
+    "validatorSuccessorCarrierContract": {
+      "authorityPath": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-runtime-contract-authority-r1/hrm-013-runtime-contract-execution-authority.v1.json",
+      "validatorPath": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-runtime-contract-authority-r1/validate_hrm013_runtime_contract_authority.py",
+      "independentReviewPath": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-runtime-contract-authority-r1/independent-review.v1.json",
+      "serviceBindingRegisterPath": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-owner-runtime-execution-r1/service-api-auth-binding-register.successor.v3.csv",
+      "authoritySchema": "dwp.hris.wave7.hrm013-runtime-contract-execution-authority.v1",
+      "reviewSchema": "dwp.hris.wave7.hrm013-runtime-contract-execution-authority-independent-review.v1",
+      "authorityState": "INDEPENDENTLY_REVIEWED_HASH_BOUND_SHARED_CONTRACT_EXECUTION_AUTHORITY",
+      "reviewDecision": "GO_FOR_SHARED_CONTRACT_EXECUTION_AUTHORITY_CARRIER_COMMIT_AND_PUSH_ONLY",
+      "lane": "SHARED_CONTRACT",
+      "exactChangedPaths": [
+        "package.json",
+        "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-runtime-contract-authority-r1/hrm-013-runtime-contract-execution-authority.v1.json",
+        "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-runtime-contract-authority-r1/independent-review.v1.json",
+        "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-runtime-contract-authority-r1/validate_hrm013_runtime_contract_authority.py",
+        "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-owner-runtime-execution-r1/service-api-auth-binding-register.successor.v3.csv"
+      ],
+      "directParentRule": "The unique add commit for all four successor artifacts is one non-merge direct child of this gate carrier, changes exactly exactChangedPaths, is an ancestor of frontend HEAD and origin/dwp-dev, and its package script is exactly the five-validator chain ending in validatorPath.",
+      "predecessorPinRule": "The successor authority pins this carrier commit, the carrier-commit bytes and SHA-256 of this gate, this validator, this independent review and package.json, and the exact pinned v2 register plus the verified v3 append bytes, SHA-256 and full 24-column requiredRowsSha256. The successor review pins the successor-commit bytes and SHA-256 of the successor authority, successor validator, v3 service-binding register and package.json. Every artifactPins list has the exact expected cardinality and a closed path-unique set; extra, duplicate or conflicting same-path pins fail. Current successor authority, validator, review and v3 register bytes must continue to equal their introducing-commit blobs.",
+      "scopeRule": "The successor authority lane is SHARED_CONTRACT, its authorizedSourcePaths and authorizedTestPaths equal decisions.sharedContractOwnership.files and tests exactly, its sealedServiceBindingRegister matches serviceBindingRegisterSuccessor exactly, and it authorizes no migration, Auth generation or runtime lane.",
+      "scriptGrammarRule": "The current hris:current-contracts:check is an exact sequence of unique python3 validator commands joined only by literal space-ampersand-ampersand-space. It preserves the four-command carrier prefix, places validatorPath fifth and permits only later tracked regular-file docs/06-delivery/hris validator paths matching the sealed command grammar. The validator invocation path and git rev-parse --show-toplevel resolve to the identical non-symlink frontend root. Every path is canonical with no dot, dot-dot or empty segment; every cumulative component from that root through each command and all four successor artifacts is non-symlink and resolves beneath the HRIS docs root where applicable. Shell alternatives, redirections, substitutions, options, path aliases and duplicate canonical paths are forbidden.",
+      "authority": {
+        "sharedContractExecutionAuthorityPrepared": true,
+        "independentReviewComplete": true,
+        "serviceBindingRegisterV3Sealed": true,
+        "sharedContractImplementationAuthorized": true,
+        "authV62GenerationPreparationAuthorized": false,
+        "authV271ReservationAuthorized": false,
+        "authV271ImplementationAuthorized": false,
+        "approvalRuntimeImplementationAuthorized": false,
+        "peopleOwnerRuntimeImplementationAuthorized": false,
+        "taskDispatchOwnerImplementationAuthorized": false,
+        "performanceConsumerImplementationAuthorized": false,
+        "grantRotationAuthorized": false,
+        "worktreeAuthorized": true,
+        "sourceAuthoringAuthorized": true,
+        "migrationAuthoringAuthorized": false,
+        "controllerOrRelayActivationAuthorized": false,
+        "callbackProducerImplementationAuthorized": false,
+        "frontendUiMenuOrRouteAuthorized": false,
+        "featureEnablementAuthorized": false,
+        "tenantEnrollmentAuthorized": false,
+        "runtimeCredentialBindingAuthorized": false,
+        "productionBindingAuthorized": false,
+        "productionReleaseAuthorized": false,
+        "businessCompletionCredit": 0
+      },
+      "reviewAuthority": {
+        "independentReviewComplete": true,
+        "successorCarrierCommitAndPushAuthorized": true,
+        "serviceBindingRegisterV3Reviewed": true,
+        "sharedContractImplementationAuthorizedAfterCarrierPush": true,
+        "sourceAuthoringAuthorizedBeforeCarrierPush": false,
+        "migrationAuthoringAuthorized": false,
+        "authGenerationAuthorized": false,
+        "runtimeImplementationAuthorized": false,
+        "productionBindingAuthorized": false,
+        "productionReleaseAuthorized": false,
+        "businessCompletionCredit": 0
+      }
+    },
+    "worktreeRule": "No worktree named by futureExecutionTopology may be created from this preparation carrier alone."
+  },
+  "futureTargetTestAllowlists": {
+    "shared": [
+      "dwp-platform-contracts/src/test/java/com/dwp/platform/contract/Hrm013SeparationBridgeV1Test.java",
+      "dwp-platform-contracts/src/test/java/com/dwp/platform/contract/Hrm013WorkloadProofV1Test.java",
+      "dwp-platform-contracts/src/test/java/com/dwp/platform/contract/HrisServiceGrantAuthorityV1Test.java",
+      "dwp-platform-contracts/src/test/java/com/dwp/platform/contract/Hrm013RequesterIdentityAuthorityV1Test.java",
+      "dwp-platform-contracts/src/test/java/com/dwp/platform/contract/Hrm013TaskDispatchV1Test.java"
+    ],
+    "auth": [
+      "dwp-auth-server/src/test/java/com/dwp/services/auth/hrisservicegrant/HrisServiceGrantAuthorityMigrationPostgresTest.java",
+      "dwp-auth-server/src/test/java/com/dwp/services/auth/hrisservicegrant/HrisServiceGrantAuthorityRepositoryPostgresTest.java",
+      "dwp-auth-server/src/test/java/com/dwp/services/auth/hrisservicegrant/HrisServiceGrantAuthorityControllerTest.java",
+      "dwp-auth-server/src/test/java/com/dwp/services/auth/hrisservicegrant/HrisServiceGrantAuthorityIngressFilterTest.java",
+      "dwp-auth-server/src/test/java/com/dwp/services/auth/hrisservicegrant/HrisServiceGrantAuthorityProofVerifierTest.java",
+      "dwp-auth-server/src/test/java/com/dwp/services/auth/hrisservicegrant/HrisServiceGrantAuthorityDefaultOffTest.java",
+      "dwp-auth-server/src/test/java/com/dwp/services/auth/hrisservicegrant/HrisServiceGrantQuiescePostgresTest.java",
+      "dwp-auth-server/src/test/java/com/dwp/services/auth/hrisservicegrant/HrisServiceGrantDrainActivityPostgresTest.java",
+      "dwp-auth-server/src/test/java/com/dwp/services/auth/hrisservicegrant/HrisServiceGrantReadinessObservationTest.java",
+      "dwp-auth-server/src/test/java/com/dwp/services/auth/hrisservicegrant/HrisServiceGrantDrainAuthorizationExpiryRaceTest.java",
+      "dwp-auth-server/src/test/java/com/dwp/services/auth/hrisservicegrant/HrisServiceGrantAuthLocalRoleOperationTest.java",
+      "dwp-auth-server/src/test/java/com/dwp/services/auth/hrisservicegrant/HrisServiceGrantCoupledBindingRotationTest.java",
+      "dwp-auth-server/src/test/java/com/dwp/services/auth/hrisservicegrant/HrisServiceGrantWaiverDependencyGroupRotationTest.java",
+      "dwp-auth-server/src/test/java/com/dwp/services/auth/hrisservicegrant/HrisServiceGrantRotationReadinessVerifierTest.java",
+      "dwp-auth-server/src/test/java/com/dwp/services/auth/hrisservicegrant/Hrm013RequesterIdentityAuthorityControllerTest.java",
+      "dwp-auth-server/src/test/java/com/dwp/services/auth/hrisservicegrant/Hrm013RequesterIdentityAuthorityRepositoryPostgresTest.java",
+      "dwp-auth-server/src/test/java/com/dwp/services/auth/hrisservicegrant/Hrm013RequesterIdentityIngressFilterTest.java",
+      "dwp-auth-server/src/test/java/com/dwp/services/auth/hrisservicegrant/Hrm013RequesterIdentityProofVerifierTest.java",
+      "dwp-auth-server/src/test/java/com/dwp/services/auth/hrisservicegrant/Hrm013RequesterIdentityDrainAuthorityTest.java",
+      "dwp-auth-server/src/test/java/com/dwp/services/auth/repository/TenantFeatureActivationV271MigrationContractTest.java",
+      "dwp-auth-server/src/test/java/com/dwp/services/auth/tenantfeatureactivation/TenantFeatureActivationV271PostgresTest.java",
+      "dwp-auth-server/src/test/java/com/dwp/services/auth/service/ProductAuthorizationV62ContractTest.java",
+      "dwp-auth-server/src/test/java/com/dwp/services/auth/service/ProductAuthorizationContractReleaseLineageTest.java",
+      "dwp-auth-server/src/test/java/com/dwp/services/auth/service/ProductAuthorizationReleaseLineageTest.java",
+      "dwp-auth-server/src/test/java/com/dwp/services/auth/config/ProductAuthorizationSeedLoaderTest.java",
+      "dwp-auth-server/src/test/java/com/dwp/services/auth/workflowruntime/WorkflowRuntimeAdmissionLinkTest.java",
+      "dwp-auth-server/src/test/java/com/dwp/services/auth/workflowruntime/WorkflowRuntimeProofTest.java",
+      "dwp-auth-server/src/test/java/com/dwp/services/auth/service/WorkflowRuntimeAuthorityPostgresTest.java",
+      "dwp-approval-server/src/test/java/com/dwp/services/approval/security/ApprovalRelease62PepContractTest.java",
+      "dwp-gateway/src/test/java/com/dwp/gateway/ProductSurfaceDecisionContextFilterTest.java",
+      "dwp-gateway/src/test/java/com/dwp/gateway/productsurface/GeneratedProductRouteCatalogTest.java",
+      "scripts/tests/test_product_authorization_v62.py"
+    ],
+    "approval": [
+      "dwp-approval-server/src/test/java/com/dwp/services/approval/hrisbridge/separation/HrisSeparationApprovalControllerTest.java",
+      "dwp-approval-server/src/test/java/com/dwp/services/approval/hrisbridge/separation/HrisSeparationTrustProfileTest.java",
+      "dwp-approval-server/src/test/java/com/dwp/services/approval/hrisbridge/separation/HrisSeparationApprovalBridgePostgresTest.java",
+      "dwp-approval-server/src/test/java/com/dwp/services/approval/hrisbridge/separation/HrisSeparationTerminalDecisionOutboxPostgresTest.java",
+      "dwp-approval-server/src/test/java/com/dwp/services/approval/hrisbridge/separation/HrisSeparationDecisionRelayTest.java",
+      "dwp-approval-server/src/test/java/com/dwp/services/approval/hrisbridge/separation/HrisSeparationFeatureGateTest.java",
+      "dwp-approval-server/src/test/java/com/dwp/services/approval/hrisbridge/separation/HrisSeparationWorkloadCredentialProviderTest.java",
+      "dwp-approval-server/src/test/java/com/dwp/services/approval/hrisbridge/separation/HrisSeparationOutboundTlsBoundaryTest.java",
+      "dwp-approval-server/src/test/java/com/dwp/services/approval/hrisbridge/separation/HrisSeparationGrantRotationDrainPostgresTest.java",
+      "dwp-approval-server/src/test/java/com/dwp/services/approval/hrisbridge/separation/HrisSeparationDrainContinuationOutboxPostgresTest.java",
+      "dwp-approval-server/src/test/java/com/dwp/services/approval/security/HrisApprovalSecurityBoundaryTest.java",
+      "dwp-approval-server/src/test/java/com/dwp/services/approval/security/Hrm013DedicatedApproveRouteContractTest.java",
+      "dwp-approval-server/src/test/java/com/dwp/services/approval/security/ApprovalWorkflowQuorumCommandMetadataTest.java",
+      "dwp-approval-server/src/test/java/com/dwp/services/approval/domain/ApprovalWorkflowQuorumRuntimePostgresTest.java",
+      "dwp-approval-server/src/test/java/com/dwp/services/approval/domain/ApprovalWorkflowRuntimeTargetPostgresTest.java",
+      "dwp-approval-server/src/test/java/com/dwp/services/approval/workflowauthority/WorkflowRuntimeTransportTest.java",
+      "dwp-approval-server/src/crossServiceTest/java/com/dwp/services/approval/workflowauthority/WorkflowRuntimeActualAuthHttpTest.java",
+      "dwp-approval-server/src/test/java/com/dwp/services/approval/hrisbridge/separation/Hrm013RequesterIdentityClientTest.java",
+      "dwp-approval-server/src/test/java/com/dwp/services/approval/domain/HrisApprovalTerminalDecisionOutboxPostgresTest.java",
+      "dwp-approval-server/src/test/java/com/dwp/services/approval/hrisbridge/separation/HrisSeparationWaiverStoresPostgresTest.java",
+      "dwp-approval-server/src/test/java/com/dwp/services/approval/hrisbridge/HrisApprovalBridgeControllerTest.java",
+      "dwp-approval-server/src/test/java/com/dwp/services/approval/hrisbridge/HrisApprovalDecisionRelayTest.java",
+      "dwp-approval-server/src/test/java/com/dwp/services/approval/hrisbridge/HrisApprovalTrustProfileTest.java"
+    ],
+    "people": [
+      "dwp-people-server/src/test/java/com/dwp/services/people/hris/separation/hrm013/Hrm013RuntimeDefaultOffTest.java",
+      "dwp-people-server/src/test/java/com/dwp/services/people/hris/separation/hrm013/Hrm013CallbackIngressFilterTest.java",
+      "dwp-people-server/src/test/java/com/dwp/services/people/hris/separation/hrm013/Hrm013WorkloadProofVerifierTest.java",
+      "dwp-people-server/src/test/java/com/dwp/services/people/hris/separation/hrm013/Hrm013CallbackServicePostgresTest.java",
+      "dwp-people-server/src/test/java/com/dwp/services/people/hris/separation/hrm013/Hrm013OwnerServicePostgresTest.java",
+      "dwp-people-server/src/test/java/com/dwp/services/people/hris/separation/hrm013/Hrm013TaskDispatchContractTest.java",
+      "dwp-people-server/src/test/java/com/dwp/services/people/hris/separation/hrm013/Hrm013TaskDispatchAtomicityPostgresTest.java",
+      "dwp-people-server/src/test/java/com/dwp/services/people/hris/separation/hrm013/Hrm013TaskDispatchCallbackGrantFencePostgresTest.java",
+      "dwp-people-server/src/test/java/com/dwp/services/people/hris/separation/hrm013/Hrm013TaskDispatchOutboxPostgresTest.java",
+      "dwp-people-server/src/test/java/com/dwp/services/people/hris/separation/hrm013/Hrm013TaskDispatchRelayTest.java",
+      "dwp-people-server/src/test/java/com/dwp/services/people/hris/separation/hrm013/Hrm013WorkloadCredentialProviderTest.java",
+      "dwp-people-server/src/test/java/com/dwp/services/people/hris/separation/hrm013/Hrm013OutboundTlsBoundaryTest.java",
+      "dwp-people-server/src/test/java/com/dwp/services/people/hris/separation/hrm013/Hrm013GrantRotationReconciliationPostgresTest.java",
+      "dwp-people-server/src/test/java/com/dwp/services/people/hris/separation/hrm013/Hrm013WaiverRequestRelayPostgresTest.java",
+      "dwp-people-server/src/test/java/com/dwp/services/people/hris/separation/hrm013/Hrm013CallbackConcurrencyPostgresTest.java",
+      "dwp-people-server/src/test/java/com/dwp/services/people/hris/separation/hrm013/Hrm013SeparationReconciliationInProcessContractTest.java",
+      "dwp-people-server/src/test/java/com/dwp/services/people/hris/separation/hrm013/Hrm013ControlPlaneAuthorityAdapterTest.java",
+      "dwp-people-server/src/test/java/com/dwp/services/people/security/PeopleSecurityFilterTest.java",
+      "dwp-people-server/src/test/java/com/dwp/services/people/hris/separation/hrm013/Hrm013V61MigrationContractTest.java",
+      "dwp-people-server/src/test/java/com/dwp/services/people/hris/separation/hrm013/Hrm013V61MigrationPostgresTest.java",
+      "dwp-people-server/src/test/java/com/dwp/services/people/hris/separation/hrm013/Hrm013PrerequisiteStoresPostgresTest.java",
+      "dwp-people-server/src/test/java/com/dwp/services/people/hris/separation/hrm013/Hrm013ServiceAuthorityPortTest.java",
+      "dwp-people-server/src/test/java/com/dwp/services/people/integration/Hrm012V60MigrationPostgresTest.java"
+    ],
+    "taskDispatchOwners": [
+      "dwp-time-server/src/test/java/com/dwp/services/time/hris/separation/hrm013/Hrm013TimeTaskDispatchControllerTest.java",
+      "dwp-time-server/src/test/java/com/dwp/services/time/hris/separation/hrm013/Hrm013TimeTaskDispatchIngressFilterTest.java",
+      "dwp-time-server/src/test/java/com/dwp/services/time/hris/separation/hrm013/Hrm013TimeTaskDispatchStorePostgresTest.java",
+      "dwp-time-server/src/test/java/com/dwp/services/time/hris/separation/hrm013/Hrm013TimeControlPlaneAuthorityClientTest.java",
+      "dwp-time-server/src/test/java/com/dwp/services/time/hris/separation/hrm013/Hrm013TimeCallbackAuthorityTest.java",
+      "dwp-time-server/src/test/java/com/dwp/services/time/hris/separation/hrm013/Hrm013TimeTaskReceiptRelayTest.java",
+      "dwp-time-server/src/test/java/com/dwp/services/time/hris/separation/hrm013/Hrm013TimeWorkloadCredentialProviderTest.java",
+      "dwp-time-server/src/test/java/com/dwp/services/time/hris/separation/hrm013/Hrm013TimeOutboundTlsBoundaryTest.java",
+      "dwp-time-server/src/test/java/com/dwp/services/time/hris/separation/hrm013/Hrm013TimeTaskDispatchDefaultOffTest.java",
+      "dwp-time-server/src/test/java/com/dwp/services/time/hris/separation/hrm013/Hrm013TimeDrainContinuationCallbackTest.java",
+      "dwp-payroll-server/src/test/java/com/dwp/services/payroll/hris/separation/hrm013/Hrm013PayrollTaskDispatchControllerTest.java",
+      "dwp-payroll-server/src/test/java/com/dwp/services/payroll/hris/separation/hrm013/Hrm013PayrollTaskDispatchIngressFilterTest.java",
+      "dwp-payroll-server/src/test/java/com/dwp/services/payroll/hris/separation/hrm013/Hrm013PayrollTaskDispatchStorePostgresTest.java",
+      "dwp-payroll-server/src/test/java/com/dwp/services/payroll/hris/separation/hrm013/Hrm013PayrollControlPlaneAuthorityClientTest.java",
+      "dwp-payroll-server/src/test/java/com/dwp/services/payroll/hris/separation/hrm013/Hrm013PayrollCallbackAuthorityTest.java",
+      "dwp-payroll-server/src/test/java/com/dwp/services/payroll/hris/separation/hrm013/Hrm013PayrollTaskReceiptRelayTest.java",
+      "dwp-payroll-server/src/test/java/com/dwp/services/payroll/hris/separation/hrm013/Hrm013PayrollWorkloadCredentialProviderTest.java",
+      "dwp-payroll-server/src/test/java/com/dwp/services/payroll/hris/separation/hrm013/Hrm013PayrollOutboundTlsBoundaryTest.java",
+      "dwp-payroll-server/src/test/java/com/dwp/services/payroll/hris/separation/hrm013/Hrm013PayrollTaskDispatchDefaultOffTest.java",
+      "dwp-payroll-server/src/test/java/com/dwp/services/payroll/hris/separation/hrm013/Hrm013PayrollDrainContinuationCallbackTest.java",
+      "dwp-auth-server/src/test/java/com/dwp/services/auth/hris/separation/hrm013/Hrm013IdentityTaskDispatchControllerTest.java",
+      "dwp-auth-server/src/test/java/com/dwp/services/auth/hris/separation/hrm013/Hrm013IdentityTaskDispatchIngressFilterTest.java",
+      "dwp-auth-server/src/test/java/com/dwp/services/auth/hris/separation/hrm013/Hrm013IdentityTaskDispatchStorePostgresTest.java",
+      "dwp-auth-server/src/test/java/com/dwp/services/auth/hris/separation/hrm013/Hrm013IdentityCallbackAuthorityTest.java",
+      "dwp-auth-server/src/test/java/com/dwp/services/auth/hris/separation/hrm013/Hrm013IdentityTaskReceiptRelayTest.java",
+      "dwp-auth-server/src/test/java/com/dwp/services/auth/hris/separation/hrm013/Hrm013IdentityWorkloadCredentialProviderTest.java",
+      "dwp-auth-server/src/test/java/com/dwp/services/auth/hris/separation/hrm013/Hrm013IdentityOutboundTlsBoundaryTest.java",
+      "dwp-auth-server/src/test/java/com/dwp/services/auth/hris/separation/hrm013/Hrm013IdentityTaskDispatchDefaultOffTest.java",
+      "dwp-auth-server/src/test/java/com/dwp/services/auth/hris/separation/hrm013/Hrm013IdentityDrainContinuationCallbackTest.java",
+      "dwp-people-server/src/test/java/com/dwp/services/people/hris/separation/hrm013/Hrm013TaskDispatchReceiptHandshakeTest.java"
+    ]
+  },
+  "activationGatePrerequisites": [
+    "Seal and test the certificate and signing-key rotation sequence, including new-work quiesce, 30-second expiring role-specific drain admissions, 65-second post-activity quiet observation, Auth-local role parity, hash-bound zero-pending receipts, V59 terminal/outbox drain before planned cutover, overlapping verify-only grace that never bypasses current-grant checks, exact current-key cutover and immediate fail-closed emergency revocation with new approvalRequestId recovery.",
+    "Seal proof-replay, service-authority and immutable receipt retention and purge windows so no replay row is removed before every accepted token, retry and investigation window expires.",
+    "Provide CRL or OCSP failure and recovery runbooks, authority outage recovery, RESULT_UNKNOWN reconciliation, credential rollback and tenant grant revocation drills.",
+    "Keep feature enablement, tenant enrollment, real credential binding and production traffic prohibited until those runbooks and one staged certificate-rotation exercise are independently evidenced.",
+    "Before any runtime credential binding, independently attest that each enabled tenant and exact binding tuple receives one hash-bound atomicGrantCredentialLease whose private-key handle, kid, identities, purpose and positive grant revisions match the current Auth row, and prove that partial secret update, stale revision, mixed old/new lease and resolver denial all fail before business proof signing or network dispatch."
+  ],
+  "targetedAcceptanceMatrix": [
+    {
+      "id": "HRM013-RBG-01",
+      "criterion": "Shared codecs reject unknown, duplicate, null, noncanonical and oversized bodies, headers and proof claims for the Auth resolver, requester identity, three task dispatches, APR-002 and HRM-008 through HRM-010; every affected business proof enforces grantUseMode and exact conditional seven-field DRAIN_EXISTING claims, and requester identity permits only the APR-002-bound DEPENDENT_READ while preserving the five-header envelope."
+    },
+    {
+      "id": "HRM013-RBG-02",
+      "criterion": "Inbound and outbound TLS1.3, exact binding-owner SPIFFE URI SAN, DNS/SNI/endpoint, current certificate chain and revocation are validated before proof or response parsing; cnf leaf thumbprint is validated during proof verification, redirects and forwarded certificate headers never authenticate, and all checks complete before authority or business reads."
+    },
+    {
+      "id": "HRM013-RBG-03",
+      "criterion": "Auth V271 provides one append-only current grant-set chain, strict four-caller NEW_WORK, DRAIN_EXISTING, READINESS_OBSERVE and opaque PROBE_MISSING resolve API for People, Approval, Time and Payroll plus the exact in-process equivalent for Auth requester-identity and identity-task roles, requester identity authority, durable quiesce fences, gap-free per-role drain activities, 30-second drain expiry, 65-second post-activity quiet observation, stale-readiness invalidation, task-pair rotation and the atomic APR-002/HRM-010/SVC-AUT-HRM-013 waiver dependency group, plus ADMIT, READINESS_OBSERVED, REVOKE, MISSING, AMBIGUOUS, STALE, REVISION_MISMATCH, QUIESCING and UNAVAILABLE behavior under forced tenant RLS."
+    },
+    {
+      "id": "HRM013-RBG-04",
+      "criterion": "Disabled Auth, Approval, People, Time and Payroll flags instantiate no HRM-013 controller, relay, consumer or credential reader and emit zero calls; migrations insert no grant or enrollment."
+    },
+    {
+      "id": "HRM013-RBG-05",
+      "criterion": "APR-002 accepts only the exact current three-member Auth authority plus the two-member Approval V59 projection after applying the sealed APR-002 and HRM-010 cross-store comparison map; local grant_revision, two-member grant_digest and recorded_at never alias Auth grantRevision, three-member grantDigest, recordedAt or rotationReadinessDigest, and SVC-AUT-HRM-013 remains Auth-only. It resolves the exact requester and fixed effective published workflow/form unambiguously, creates and submits once, and returns byte-identical stored 202 for exact replay; after grant rotation replay is historical only and never rebinds or authorizes an old terminal relay."
+    },
+    {
+      "id": "HRM013-RBG-06",
+      "criterion": "The dedicated HRM-013 approve route is a first-class Approval and Auth CAST route, accepts only command Decision.APPROVE, rejects non-HRM-013 tasks and cannot rewrite to the generic path; the generic task-decision route accepts only HRM-013 command Decision.REJECT, and both enforce maker, requester and decision-actor separation without existence disclosure."
+    },
+    {
+      "id": "HRM013-RBG-07",
+      "criterion": "Terminal Outcome.APPROVED consumes one fresh command-bound Auth challenge and emits the exact seven-field downstream evidence; terminal Outcome.REJECTED accepts no step-up input and emits none."
+    },
+    {
+      "id": "HRM013-RBG-08",
+      "criterion": "Exactly one ApprovalTerminalDecisionSink routes mutually exclusively to employee-change or separation; ambiguity rolls back and APR-001/HRM-001 regressions remain green."
+    },
+    {
+      "id": "HRM013-RBG-09",
+      "criterion": "People owner transactions atomically create every immutable callback authority with its exact integrity-fenced task-dispatch outbox, XCON-028 admission or APR-002 waiver fence; task dispatch and SVC-PEP-HRM-008 callback grants are resolved, frozen and revalidated as distinct revision pairs, every dispatch send revalidates the outbox against that fence, the three owners admit idempotently and no callback handler fabricates a fence. A pre-quiesce APR-002 or accepted owner task may create only its one UUIDv5 terminal HRM-010 or HRM-008 child in the same terminal transaction after a fence; sender and receiver business proofs carry the exact drain projection, while a new root, wrong lineage, collision, wrong digest or second child fails closed."
+    },
+    {
+      "id": "HRM013-RBG-10",
+      "criterion": "JTI and requestNonce reservations, callback identity locks and authority-stream locks make exact replay read-free, digest conflict quarantined and concurrent revision gaps impossible."
+    },
+    {
+      "id": "HRM013-RBG-11",
+      "criterion": "Task-dispatch, APR-002 and HRM-010 relays preserve exact bytes and identities, use fresh proof per bounded attempt, cap responses at 16384 bytes and end ambiguity as RESULT_UNKNOWN without invented admission or success."
+    },
+    {
+      "id": "HRM013-RBG-12",
+      "criterion": "Targeted unit, PostgreSQL, concurrency, migration, durable-quiesce, paused-drain expiry, Auth-local role parity, cross-service stale-readiness invalidation, terminal-child collision, task-pair and three-member waiver dependency planned drain, exact Approval projection comparison and digest non-alias, immediate group emergency-revocation and real test-certificate handshake suites pass at their bounded integration gates, including HrisSeparationGrantRotationDrainPostgresTest and HrisServiceGrantWaiverDependencyGroupRotationTest, while People V62, Approval V60, gateway internal-route exposure, raw PII logs and production activation remain absent."
+    }
+  ],
+  "validationStrategy": {
+    "broadRepositoryRerunRequired": false,
+    "laneRule": "Compile the changed module and run only named contract, security, store, concurrency and migration tests for that lane.",
+    "centralRule": "After Approval and People merge, run their bounded combined handshake matrix once; after separately authorized Phase 6 owner ingresses merge, run the complete twelve-condition matrix once against combined dwp-dev, including real test-certificate resolver, requester, task-dispatch, APR-002 and callback handshakes.",
+    "carrierLifecycle": {
+      "carrierDiscovery": "The immutable carrier commit is the unique non-merge commit that first adds this gate path; its sole parent is the pinned frontend base and its exact changed paths are package.json, this gate, this validator and independent-review.v1.json.",
+      "initialStrictMode": "While frontend HEAD equals that carrier commit, backend and agent HEAD plus origin remain exactly pinned, the package script is the exact four-validator chain, and the independent review has exactly three path-unique artifact pins for this gate, this validator and package.json with no extras.",
+      "successorUnlock": "Historical mode is permitted only when frontend HEAD and origin advance together from the carrier, the carrier remains an ancestor, the exact tracked and independently reviewed successor carrier contract including the byte-preserving eight-row v3 service-binding register append is introduced by the carrier's direct child, all predecessor and successor byte pins match, and the current package script preserves the exact four-validator prefix, immediately appends docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-runtime-contract-authority-r1/validate_hrm013_runtime_contract_authority.py and satisfies the sealed canonical regular-file command grammar. Ignored or untracked files, symlinks, path aliases and shell failure masking cannot unlock it.",
+      "historicalMode": "After successor unlock, this validator verifies the original carrier parent, exact carrier diff and carrier package hash, the direct-child successor carrier, immutable successor artifacts and independently reviewed v3 register while requiring backend and agent to contain their pinned bases and remain clean; it no longer freezes legitimate later HEADs. Each later lane is governed by its appended tracked current successor validator, never by weakening or editing this carrier."
+    },
+    "regressions": [
+      "existing APR-001 and HRM-001 employee-change bridge tests",
+      "People V60 HRM-012 named regression tests",
+      "Approval V58 employee-change migration and binding-ledger tests"
+    ]
+  },
+  "authority": {
+    "ownerRuntimeBindingGatePreparationComplete": true,
+    "p0ContractDecisionsClosed": true,
+    "independentReviewRequired": true,
+    "independentReviewComplete": false,
+    "gateCarrierCommitAndPushAuthorized": false,
+    "nextSequentialSharedAndAuthGenerationAuthorityPreparationEligibleAfterReviewAndPush": true,
+    "sharedContractImplementationAuthorized": false,
+    "authV62GenerationPreparationAuthorized": false,
+    "authV271ReservationAuthorized": false,
+    "authV271ImplementationAuthorized": false,
+    "approvalRuntimeImplementationAuthorized": false,
+    "peopleOwnerRuntimeImplementationAuthorized": false,
+    "taskDispatchOwnerImplementationAuthorized": false,
+    "performanceConsumerImplementationAuthorized": false,
+    "grantRotationAuthorized": false,
+    "worktreeAuthorized": false,
+    "sourceAuthoringAuthorized": false,
+    "migrationAuthoringAuthorized": false,
+    "controllerOrRelayActivationAuthorized": false,
+    "callbackProducerImplementationAuthorized": false,
+    "frontendUiMenuOrRouteAuthorized": false,
+    "featureEnablementAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "runtimeCredentialBindingAuthorized": false,
+    "productionBindingAuthorized": false,
+    "productionReleaseAuthorized": false,
+    "businessCompletionCredit": 0
+  },
+  "nonClaims": [
+    "A shared contract, Auth V271, product bundle v62, controller, relay, owner runtime, worktree or executable token exists.",
+    "Approval V60 or People V62 is needed or allowed.",
+    "Any service grant, workflow, form, tenant, certificate, key or production credential is provisioned.",
+    "Any callback producer, Performance consumer, UI route or menu is implemented or activated.",
+    "HRM-013, Batch-06 or HRIS is complete."
+  ],
+  "nextAction": "INDEPENDENTLY_REVIEW_AND_COMMIT_PUSH_THIS_GATE_CARRIER_ONLY_THEN_PREPARE_SEQUENTIAL_HASH_BOUND_EXECUTION_AUTHORITIES_FOR_SHARED_HRM013_CONTRACT_THEN_AUTH_V62_GENERATION_PREP;RESERVE_AND_AUTHOR_AUTH_V271_ONLY_AFTER_THE_GENERATION_RECEIPT_WITHOUT_STARTING_APPROVAL_OR_PEOPLE_RUNTIME"
+}
