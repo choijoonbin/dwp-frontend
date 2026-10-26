@@ -1,0 +1,106 @@
+{
+  "schema": "dwp.hris.wave7.r7-batch-06-hrm013-paired-prerequisite-independent-review.v1",
+  "reviewId": "HRIS-WAVE7-R7-BATCH-06-HRM013-PAIRED-PREREQUISITE-INDEPENDENT-REVIEW-20261026-R1",
+  "recordedAt": "2026-10-26T10:37:54Z",
+  "recordedBy": "INDEPENDENT_CENTRAL_AUTHORITY_REVIEW",
+  "state": "INDEPENDENT_REVIEW_COMPLETE_ZERO_FINDINGS_PHASE_A_CARRIER_COMMIT_PUSH_AUTHORIZED_WORKTREE_MATERIALIZATION_ELIGIBLE_AFTER_PUSH",
+  "sliceId": "BASE-TFR-HRM-013",
+  "scope": "Read-only review of the Phase A authority that may materialize exactly two fresh backend worktrees while every source, migration lease, executable token, test, commit, push, merge, module, UI, runtime, tenant and production authority remains withheld.",
+  "reviewMethod": [
+    "Recomputed every predecessor byte count and SHA-256 pin from the committed callback carrier.",
+    "Verified frontend and backend dwp-dev heads, trees and origin refs against the sealed baselines.",
+    "Verified Approval high-water V58 and People high-water V60 and absence of candidate or competing V59 and V61 migrations.",
+    "Verified the two planned worktree paths and branch names are distinct, fresh and absent before materialization.",
+    "Verified only worktree materialization flags are true and all source, SQL, lease, token, runtime, module and production authorities are false.",
+    "Reviewed the validator for fail-closed pin, baseline, migration, worktree and authority checks."
+  ],
+  "finalVerdict": {
+    "p0": 0,
+    "p1": 0,
+    "p2": 0
+  },
+  "decision": "GO_FOR_PHASE_A_CARRIER_COMMIT_AND_PUSH_THEN_EXACT_TWO_WORKTREE_MATERIALIZATION_ONLY",
+  "artifactPins": {
+    "authority": {
+      "path": "paired-prerequisite-execution-authority.v1.json",
+      "bytes": 10379,
+      "sha256": "0ee7f88c27d3fe7756ffca017b6126a41c92607ca23940d4c826d5f9d7049a90"
+    },
+    "validator": {
+      "path": "validate_hrm013_paired_prerequisite_authority.py",
+      "bytes": 10158,
+      "sha256": "514f74c65a1a5106440cdcc8ef368c8e974433d27d865cd06825a9ab63f46aeb"
+    }
+  },
+  "observedBaselines": {
+    "frontend": {
+      "head": "169052a5989e742e11cef19b87ce3fae31653bc4",
+      "tree": "4552b00699fc051673cf6f7ab0a513341e6743cc",
+      "originExact": true
+    },
+    "backend": {
+      "head": "fe2842a36d13709e6aecc27011a8f0ad3c770ce8",
+      "tree": "190636f40e29126970aaf1b68b85a94eaf49402d",
+      "originExact": true,
+      "clean": true
+    },
+    "approval": {
+      "highWater": "V58",
+      "candidateV59Present": false,
+      "competingV59Present": false
+    },
+    "people": {
+      "highWater": "V60",
+      "candidateV61Present": false,
+      "competingV61Present": false
+    }
+  },
+  "reviewedWorktreePlan": {
+    "approval": {
+      "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261026/batch06/hrm013-paired/approval",
+      "branch": "codex/hris-wave7-batch06-hrm013-approval-v59-prereq-backend-20261026-r1",
+      "existsAtReview": false
+    },
+    "people": {
+      "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261026/batch06/hrm013-paired/people",
+      "branch": "codex/hris-wave7-batch06-hrm013-people-v61-prereq-backend-20261026-r1",
+      "existsAtReview": false
+    }
+  },
+  "authority": {
+    "independentReviewComplete": true,
+    "carrierCommitAndPushAuthorized": true,
+    "worktreeMaterializationEligibleAfterCarrierPush": true,
+    "worktreeMaterialized": false,
+    "migrationReservationAuthorized": false,
+    "approvalV59LeaseActive": false,
+    "peopleV61LeaseActive": false,
+    "approvalTokenExecutable": false,
+    "peopleTokenExecutable": false,
+    "sourceAuthoringAuthorized": false,
+    "migrationSqlAuthoringAuthorized": false,
+    "testExecutionAuthorized": false,
+    "laneBranchCommitAuthorized": false,
+    "laneBranchPushAuthorized": false,
+    "directDwpDevMergeAuthorized": false,
+    "centralAdmissionAuthorized": false,
+    "moduleOwnerPacketAuthorized": false,
+    "moduleSourceAuthoringAuthorized": false,
+    "frontendSourceAuthoringAuthorized": false,
+    "routeOrMenuMountAuthorized": false,
+    "runtimeActivationAuthorized": false,
+    "featureEnablementAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "runtimeCredentialBindingAuthorized": false,
+    "productionBindingAuthorized": false,
+    "productionReleaseAuthorized": false,
+    "businessCompletionCredit": 0
+  },
+  "nonClaims": [
+    "This review does not record either worktree as materialized.",
+    "This review does not activate Approval V59 or People V61 leases.",
+    "This review does not issue an executable source or migration token.",
+    "This review does not authorize HRM-013 module, UI, runtime, tenant or production work."
+  ],
+  "nextAction": "COMMIT_AND_PUSH_THE_PHASE_A_CARRIER_THEN_MATERIALIZE_EXACTLY_TWO_FRESH_BACKEND_WORKTREES_AND_RETURN_A_HASHED_WORKTREE_RECEIPT_BEFORE_ANY_LEASE_OR_TOKEN"
+}

@@ -1,0 +1,208 @@
+{
+  "schema": "dwp.hris.wave7.r7-batch-06-hrm013-paired-prerequisite-execution-authority.v1",
+  "authorityId": "HRIS-WAVE7-R7-BATCH-06-HRM013-PAIRED-PREREQUISITE-AUTHORITY-20261026-R1",
+  "recordedAt": "2026-10-26T10:37:54Z",
+  "recordedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "state": "SEALED_PAIRED_WORKTREE_MATERIALIZATION_ONLY_SOURCE_LEASE_TOKEN_AND_RUNTIME_WITHHELD",
+  "sliceId": "BASE-TFR-HRM-013",
+  "module": "HRIS-HRM",
+  "controlScope": "CENTRAL_PAIRED_APPROVAL_AND_BOUNDED_PEOPLE_PREREQUISITE",
+  "purpose": "Authorize only the materialization of two fresh clean backend worktrees for the independently reviewed APR-002 and HRM-008 through HRM-010 prerequisite lanes. This carrier does not activate either migration lease and does not authorize source, SQL, tests, commits, pushes, merges, runtime binding or module work.",
+  "immutability": {
+    "sealed": true,
+    "amendmentPolicy": "APPEND_ONLY_SUCCESSOR_WITH_NEW_AUTHORITY_ID_AND_SHA256"
+  },
+  "preconditions": {
+    "callbackCarrier": {
+      "repository": "dwp-frontend",
+      "branch": "dwp-dev",
+      "commit": "169052a5989e742e11cef19b87ce3fae31653bc4",
+      "tree": "4552b00699fc051673cf6f7ab0a513341e6743cc",
+      "originRef": "origin/dwp-dev",
+      "originExactAtSeal": true
+    },
+    "currentAuthorityIndex": {
+      "path": "../../current-authority-index.v2.json",
+      "bytes": 13753,
+      "sha256": "1033c2b68df9fdb387a31ce578fb0f608b366046b24b6da585556b4810b2deea"
+    },
+    "centralIntegrationReceipt": {
+      "path": "../r7-batch-06-central-admission-r1/hrm-013-central-integration-receipt.v1.json",
+      "bytes": 9242,
+      "sha256": "488b11c28c39b8b80d47c57df8c963474583b6cdbedc281055d3d99c0cbebb6e"
+    },
+    "callbackIndependentReview": {
+      "path": "../r7-batch-06-hrm013-callback-binding-r1/independent-review.v1.json",
+      "bytes": 9581,
+      "sha256": "6b58d1708536e089722ca0b0028896e65e3c9eb790a9a40a082e01dfca12f99a",
+      "requiredState": "INDEPENDENT_REVIEW_COMPLETE_ZERO_FINDINGS_CARRIER_COMMIT_PUSH_AUTHORIZED_SOURCE_AND_MIGRATION_WITHHELD",
+      "requiredFinalFindings": {
+        "p0": 0,
+        "p1": 0,
+        "p2": 0
+      }
+    },
+    "trustedCallbackAuthority": {
+      "path": "../r7-batch-06-hrm013-callback-binding-r1/hrm-013-trusted-callback-service-binding-successor.v1.json",
+      "bytes": 50694,
+      "sha256": "56a27680c74e07967e4bf03c1984ac8d4786a1a0f4ef68c560363a41b1020be9"
+    },
+    "pairedApprovalBridge": {
+      "path": "../r7-batch-06-hrm013-callback-binding-r1/hrm-013-separation-waiver-approval-bridge-successor.v1.json",
+      "bytes": 39005,
+      "sha256": "43717d43a7aed49c56abe715188e5891d9c7da79d45125bfdc68acf0064ea7b5"
+    },
+    "peopleV61Manifest": {
+      "path": "../r7-batch-06-hrm013-callback-binding-r1/migration-manifests/base-tfr-hrm-013.people-v61-schema-manifest-successor.v2.json",
+      "bytes": 42115,
+      "sha256": "01aff4919302d2a5adc951f96b7dd513b752526c8e3066d4d0317d973c14d6a8"
+    },
+    "approvalV59Manifest": {
+      "path": "../r7-batch-06-hrm013-callback-binding-r1/migration-manifests/hrm-013.approval-v59-schema-manifest.v1.json",
+      "bytes": 25781,
+      "sha256": "8bec7573ed5453e2ca83b665d2824ae763a93703483ddf59063315cc7a8eff50"
+    },
+    "backendBaseline": {
+      "repository": "dwp-backend",
+      "branch": "dwp-dev",
+      "commit": "fe2842a36d13709e6aecc27011a8f0ad3c770ce8",
+      "tree": "190636f40e29126970aaf1b68b85a94eaf49402d",
+      "originRef": "origin/dwp-dev",
+      "originExactAtSeal": true,
+      "cleanAtSeal": true
+    }
+  },
+  "boundedLanes": {
+    "approval": {
+      "laneId": "HRM013-PREREQUISITE-APPROVAL-V59",
+      "service": "dwp-approval-server",
+      "bindings": [
+        "SVC-PEP-APR-002",
+        "SVC-PEP-HRM-010"
+      ],
+      "allowedPurpose": "Prepare grant, proof-replay, immutable waiver-request binding and terminal decision outbox prerequisites only after a later active lease and executable token.",
+      "migration": {
+        "stream": "APPROVAL_MAIN",
+        "observedHighWater": "V58",
+        "candidateVersion": "V59",
+        "exactCandidatePath": "dwp-approval-server/src/main/resources/db/migration/V59__bridge_hris_separation_task_waivers.sql",
+        "candidatePathPresentAtSeal": false,
+        "competingVersionPresentAtSeal": false
+      }
+    },
+    "people": {
+      "laneId": "HRM013-PREREQUISITE-PEOPLE-V61",
+      "service": "dwp-people-server",
+      "bindings": [
+        "SVC-PEP-APR-002",
+        "SVC-PEP-HRM-008",
+        "SVC-PEP-HRM-009",
+        "SVC-PEP-HRM-010"
+      ],
+      "allowedPurpose": "Prepare isolated callback proof replay, APR-002 request fence/outbox, callback authority fence and callback receipt ingress prerequisites only after a later active lease and executable token.",
+      "migration": {
+        "stream": "PEOPLE_MAIN",
+        "observedHighWater": "V60",
+        "candidateVersion": "V61",
+        "exactCandidatePath": "dwp-people-server/src/main/resources/db/migration/V61__hrm_base_tfr_hrm_013.sql",
+        "candidatePathPresentAtSeal": false,
+        "competingVersionPresentAtSeal": false
+      }
+    }
+  },
+  "plannedWorktrees": {
+    "approval": {
+      "repository": "dwp-backend",
+      "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261026/batch06/hrm013-paired/approval",
+      "branch": "codex/hris-wave7-batch06-hrm013-approval-v59-prereq-backend-20261026-r1",
+      "baseCommit": "fe2842a36d13709e6aecc27011a8f0ad3c770ce8",
+      "baseTree": "190636f40e29126970aaf1b68b85a94eaf49402d",
+      "mustBeFresh": true,
+      "mustHaveUpstreamAtMaterialization": false,
+      "materializedByThisAuthority": false
+    },
+    "people": {
+      "repository": "dwp-backend",
+      "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261026/batch06/hrm013-paired/people",
+      "branch": "codex/hris-wave7-batch06-hrm013-people-v61-prereq-backend-20261026-r1",
+      "baseCommit": "fe2842a36d13709e6aecc27011a8f0ad3c770ce8",
+      "baseTree": "190636f40e29126970aaf1b68b85a94eaf49402d",
+      "mustBeFresh": true,
+      "mustHaveUpstreamAtMaterialization": false,
+      "materializedByThisAuthority": false
+    }
+  },
+  "materializationConditions": [
+    "Create exactly the two planned backend worktrees from the exact backend dwp-dev commit and tree.",
+    "Each worktree must initially be clean, have no upstream and have no remote branch.",
+    "The two branches and absolute paths must be distinct and must not reuse the already consumed hrm013-central worktree or branch.",
+    "No source, migration, test, build, commit or push may occur during materialization.",
+    "Record the actual branch, path, head, tree, upstream, remote-branch absence and empty porcelain digest in one append-only worktree materialization receipt."
+  ],
+  "leasePlan": {
+    "activationByThisAuthority": false,
+    "futurePairRule": "After exact worktree materialization and receipt review, one exclusive Approval V59 lease and one exclusive People V61 lease may be activated together because they occupy different migration streams.",
+    "sameStreamSecondLeaseAuthorized": false,
+    "historicalMigrationEditAuthorized": false,
+    "secondMigrationPerLaneAuthorized": false,
+    "dataBackfillAuthorized": false
+  },
+  "tokenPlan": {
+    "tokensIssuedByThisAuthority": false,
+    "futureTokens": [
+      "hrm-013-approval-v59-prerequisite.start-token.v1.json",
+      "hrm-013-people-v61-prerequisite.start-token.v1.json"
+    ],
+    "rule": "Each future executable token must be hash-bound to this committed and pushed carrier, the exact worktree receipt, its matching exclusive lease, the relevant sealed migration manifest and a zero-finding review."
+  },
+  "authority": {
+    "authorityCarrierSealed": true,
+    "pairedPrerequisitePreparationAuthorized": true,
+    "approvalWorktreeMaterializationAuthorized": true,
+    "peopleWorktreeMaterializationAuthorized": true,
+    "additionalWorktreeMaterializationAuthorized": false,
+    "worktreeMaterialized": false,
+    "approvalV59ReservationAuthorized": false,
+    "peopleV61ReservationAuthorized": false,
+    "approvalV59LeaseActive": false,
+    "peopleV61LeaseActive": false,
+    "approvalTokenExecutable": false,
+    "peopleTokenExecutable": false,
+    "approvalSourceAuthoringAuthorized": false,
+    "peopleSourceAuthoringAuthorized": false,
+    "migrationSqlAuthoringAuthorized": false,
+    "testExecutionAuthorized": false,
+    "laneBranchCommitAuthorized": false,
+    "laneBranchPushAuthorized": false,
+    "directDwpDevMergeAuthorized": false,
+    "centralAdmissionAuthorized": false,
+    "moduleOwnerPacketAuthorized": false,
+    "moduleSourceAuthoringAuthorized": false,
+    "frontendSourceAuthoringAuthorized": false,
+    "routeOrMenuMountAuthorized": false,
+    "runtimeActivationAuthorized": false,
+    "featureEnablementAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "runtimeCredentialBindingAuthorized": false,
+    "productionBindingAuthorized": false,
+    "productionReleaseAuthorized": false,
+    "businessCompletionCredit": 0
+  },
+  "invalidationConditions": [
+    "Any pinned predecessor hash, byte count, commit or tree differs.",
+    "Either planned path or branch already exists before materialization.",
+    "The backend dwp-dev or origin/dwp-dev head differs from the pinned baseline before materialization.",
+    "Approval high-water differs from V58, People high-water differs from V60, or either exact candidate migration path already exists.",
+    "A worktree is created from another commit, contains changes, has an upstream or reuses a consumed branch.",
+    "Any source, SQL, test, commit, push, merge, module owner, UI, runtime, tenant or production action is attempted under this Phase A carrier."
+  ],
+  "nonClaims": [
+    "The two planned worktrees have been materialized.",
+    "Approval V59 or People V61 is reserved, active, authored or executed.",
+    "An executable implementation token has been issued.",
+    "APR-002 or HRM-008 through HRM-010 source exists.",
+    "The HRM-013 owner packet or full module source is authorized.",
+    "HRM-013, Batch-06 or HRIS is complete."
+  ],
+  "nextAction": "COMMIT_AND_PUSH_THIS_PHASE_A_CARRIER_THEN_MATERIALIZE_EXACTLY_TWO_FRESH_BACKEND_WORKTREES_RECORD_ONE_HASHED_RECEIPT_ACTIVATE_ONE_EXCLUSIVE_APPROVAL_V59_AND_ONE_EXCLUSIVE_PEOPLE_V61_LEASE_AND_ISSUE_TWO_HASH_BOUND_EXECUTABLE_PREREQUISITE_TOKENS"
+}
