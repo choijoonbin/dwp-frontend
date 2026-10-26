@@ -1,0 +1,51 @@
+{
+  "schema": "dwp.hris.wave7.hrm013-approval-readiness-central-integration-authority.v1",
+  "state": "INDEPENDENTLY_REVIEWED_HASH_BOUND_APPROVAL_READINESS_FAST_FORWARD_INTEGRATION_AUTHORITY",
+  "lane": "APPROVAL_PHASE4_READINESS_CORRECTION_INTEGRATION",
+  "carrier": {
+    "repository": "dwp-frontend",
+    "branch": "codex/hris-wave7-batch06-hrm013-approval-readiness-integration-frontend-20261027-r1",
+    "baseCommit": "2f4fccfebada4628145595ab65e48e270d28aedd",
+    "baseTree": "9d8600614fa00f575ce093443539beca607731fb",
+    "requiredDirectChild": true,
+    "exactChangedPathCount": 5
+  },
+  "backendIntegration": {
+    "repository": "dwp-backend",
+    "sourceBranch": "codex/hris-wave7-batch06-hrm013-approval-readiness-backend-20261027-r1",
+    "sourceCommit": "bed31127123a318358f495f66edced7b024469d8",
+    "sourceTree": "e5564ff7a81e5dd0a85d0e61f091ec0714a1f777",
+    "targetBranch": "dwp-dev",
+    "expectedTargetBefore": "a1c0d8ecdbc959d378ef04dc401ee0ff2348ef6c",
+    "operation": "FAST_FORWARD_ONLY",
+    "expectedTargetAfter": "bed31127123a318358f495f66edced7b024469d8",
+    "mergeCommitForbidden": true,
+    "rebaseForbidden": true
+  },
+  "sealedEvidence": [
+    {
+      "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261026/batch06/hrm013-owner-runtime/receipts/approval-readiness-targeted-verification-receipt.v1.json",
+      "bytes": 6023,
+      "sha256": "954728a1d81d24ae872eeb145b03077ac979c59363012416d33f9384f4196c92"
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261026/batch06/hrm013-owner-runtime/receipts/approval-readiness-post-implementation-review.v1.json",
+      "bytes": 2006,
+      "sha256": "97a7b31b7bb6010cbf74f6d3ed75658907725aab427b2366aaa45285e045541e"
+    }
+  ],
+  "authority": {
+    "independentReviewComplete": true,
+    "carrierCommitAndPushAuthorized": true,
+    "backendFastForwardIntegrationAuthorizedAfterCarrierPush": true,
+    "sourceBranchDeletionAuthorized": false,
+    "additionalBackendSourceChangesAuthorized": false,
+    "approvalRuntimeImplementationAuthorized": false,
+    "peopleOwnerRuntimeImplementationAuthorized": false,
+    "featureEnablementAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "productionReleaseAuthorized": false,
+    "businessCompletionCredit": 0
+  },
+  "next": "AFTER_EXACT_BACKEND_DWP_DEV_INTEGRATION_ISSUE_FRESH_PHASE4_APPROVAL_AND_PEOPLE_TOKENS_FROM_THE_SAME_CORRECTED_BASE"
+}

@@ -1,0 +1,65 @@
+{
+  "schema": "dwp.hris.wave7.hrm013-approval-readiness-central-integration-authority-independent-review.v1",
+  "reviewedAt": "2026-10-26T21:09:48Z",
+  "reviewer": "INDEPENDENT_HRM013_APPROVAL_READINESS_CENTRAL_INTEGRATION_REVIEW",
+  "scope": {
+    "authorityPath": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-approval-readiness-integration-r1/approval-readiness-central-integration-authority.v1.json",
+    "validatorPath": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-approval-readiness-integration-r1/validate_hrm013_approval_readiness_integration.py",
+    "successorValidatorPath": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-approval-readiness-successor-r1/validate_hrm013_approval_readiness_successor.py",
+    "packagePath": "package.json",
+    "reviewedBoundaries": [
+      "EXACT_FRONTEND_CARRIER_BASE_AND_FIVE_PATHS",
+      "EXACT_BACKEND_DIRECT_CHILD_COMMIT_TREE_AND_NINE_PATHS",
+      "HASH_BOUND_TARGETED_VERIFICATION_AND_POST_IMPLEMENTATION_REVIEW",
+      "FAST_FORWARD_ONLY_TO_EXACT_REVIEWED_BACKEND_COMMIT",
+      "NO_PHASE4_RUNTIME_ACTIVATION_TENANT_OR_PRODUCTION_AUTHORITY"
+    ]
+  },
+  "findings": {
+    "p0": [],
+    "p1": [],
+    "p2": [],
+    "notes": [
+      "The carrier permits only a direct fast-forward of the exact independently reviewed Approval readiness commit.",
+      "The targeted verification and post-implementation review receipts are owner-only and hash-bound.",
+      "No Phase 4 runtime implementation, feature activation, tenant enrollment or production release is authorized."
+    ]
+  },
+  "finalVerdict": {
+    "p0": 0,
+    "p1": 0,
+    "p2": 0,
+    "decision": "GO_FOR_APPROVAL_READINESS_CENTRAL_INTEGRATION_CARRIER_COMMIT_AND_PUSH_ONLY"
+  },
+  "authority": {
+    "independentReviewComplete": true,
+    "carrierCommitAndPushAuthorized": true,
+    "exactBackendFastForwardAuthorizedAfterCarrierPush": true,
+    "additionalBackendSourceChangesAuthorized": false,
+    "phase4RuntimeImplementationAuthorized": false,
+    "productionReleaseAuthorized": false,
+    "businessCompletionCredit": 0
+  },
+  "artifactPins": [
+    {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-approval-readiness-integration-r1/approval-readiness-central-integration-authority.v1.json",
+      "bytes": 2428,
+      "sha256": "5955415a993f0f19150c9e30490a9ab3126c1ee641a026b2f8d18e219bd608b3"
+    },
+    {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-approval-readiness-integration-r1/validate_hrm013_approval_readiness_integration.py",
+      "bytes": 16822,
+      "sha256": "422c9042f4417f1a9c1f6597706caad692bcb7b354380bfd35171045612a4fa2"
+    },
+    {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-approval-readiness-successor-r1/validate_hrm013_approval_readiness_successor.py",
+      "bytes": 12975,
+      "sha256": "0c4a79970ce663abb205a3ad1a7fb0365cc02d0145899e97c67b54060c647728"
+    },
+    {
+      "path": "package.json",
+      "bytes": 15873,
+      "sha256": "630bdb1c7633f9499356c2cb339aeb33440c475b51ac892027017c1225070aa1"
+    }
+  ]
+}

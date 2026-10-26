@@ -32,6 +32,8 @@ FRONTEND_BASE = "81df5a94b625a155dd8b0c6bc9d8cfb54e1a1b20"
 FRONTEND_TREE = "1b30154e25a00a2bf2b2c910fb3a01d9861441fd"
 BACKEND_BASE = "a1c0d8ecdbc959d378ef04dc401ee0ff2348ef6c"
 BACKEND_TREE = "b2173c7448d2e88b5a7f9278f0084d591c4462bf"
+LANE_COMMIT = "bed31127123a318358f495f66edced7b024469d8"
+LANE_TREE = "e5564ff7a81e5dd0a85d0e61f091ec0714a1f777"
 CARRIER_BRANCH = (
     "codex/hris-wave7-batch06-hrm013-approval-readiness-"
     "successor-frontend-20261027-r1"
@@ -47,6 +49,11 @@ AUTHORITY = f"{DIR}/approval-readiness-allowlist-successor.v1.json"
 TOKEN = f"{DIR}/tokens/approval-readiness-successor.start-token.v1.json"
 VALIDATOR = f"{DIR}/validate_hrm013_approval_readiness_successor.py"
 REVIEW = f"{DIR}/independent-review.v1.json"
+INTEGRATION_VALIDATOR = (
+    "docs/06-delivery/hris/wave7-2026-10-17/"
+    "r7-batch-06-hrm013-approval-readiness-integration-r1/"
+    "validate_hrm013_approval_readiness_integration.py"
+)
 PREDECESSOR_VALIDATOR = (
     "docs/06-delivery/hris/wave7-2026-10-17/"
     "r7-batch-06-hrm013-approval-readiness-authority-r1/"
@@ -185,6 +192,7 @@ def validate_content(c: Check, carrier: str | None) -> None:
     expected_command = (
         base_package["scripts"]["hris:current-contracts:check"]
         + " && python3 " + VALIDATOR
+        + " && python3 " + INTEGRATION_VALIDATOR
     )
     c.exact(
         package["scripts"]["hris:current-contracts:check"],
@@ -241,15 +249,38 @@ def main() -> int:
                 "successor carrier not pushed to frontend dwp-dev",
             )
             c.exact(text(LANE, "branch", "--show-current"), LANE_BRANCH, "lane branch")
-            c.exact(text(LANE, "rev-parse", "HEAD"), BACKEND_BASE, "lane head before commit")
-            paths = changed(LANE)
-            c.require(paths.issubset(set(ALLOWLIST)), "backend path outside successor allowlist")
-            c.require(not any("/db/migration/" in path for path in paths), "migration authored")
-            state = (
-                "APPROVAL_READINESS_SUCCESSOR_READY_FOR_FIXTURE_CORRECTION"
-                if len(paths) == 8 else
-                "BOUNDED_APPROVAL_READINESS_SUCCESSOR_IN_PROGRESS"
-            )
+            lane_head = text(LANE, "rev-parse", "HEAD")
+            c.require(lane_head in {BACKEND_BASE, LANE_COMMIT}, "unexpected lane head")
+            if lane_head == BACKEND_BASE:
+                paths = changed(LANE)
+                c.require(paths.issubset(set(ALLOWLIST)), "backend path outside successor allowlist")
+                c.require(not any("/db/migration/" in path for path in paths), "migration authored")
+                state = (
+                    "APPROVAL_READINESS_SUCCESSOR_READY_FOR_FIXTURE_CORRECTION"
+                    if len(paths) == 8 else
+                    "BOUNDED_APPROVAL_READINESS_SUCCESSOR_IN_PROGRESS"
+                )
+            else:
+                c.exact(text(LANE, "rev-parse", f"{LANE_COMMIT}^{{tree}}"), LANE_TREE, "lane tree")
+                c.exact(
+                    text(LANE, "rev-list", "--parents", "-n", "1", LANE_COMMIT).split(),
+                    [LANE_COMMIT, BACKEND_BASE], "lane commit is not direct child",
+                )
+                c.exact(changed(LANE), set(), "committed lane is dirty")
+                c.exact(diff_paths(LANE, BACKEND_BASE, LANE_COMMIT), set(ALLOWLIST), "lane committed paths")
+                c.exact(
+                    text(BACKEND, "rev-parse", f"origin/{LANE_BRANCH}"),
+                    LANE_COMMIT, "lane branch is not pushed",
+                )
+                backend_head = text(BACKEND, "rev-parse", "HEAD")
+                backend_origin = text(BACKEND, "rev-parse", "origin/dwp-dev")
+                c.require(backend_head in {BACKEND_BASE, LANE_COMMIT}, "unexpected backend dwp-dev head")
+                c.exact(backend_origin, backend_head, "backend dwp-dev origin drift")
+                state = (
+                    "REVIEWED_APPROVAL_READINESS_BRANCH_PUSHED_INTEGRATION_AUTHORITY_REQUIRED"
+                    if backend_head == BACKEND_BASE else
+                    "APPROVAL_READINESS_CORRECTION_INTEGRATED"
+                )
         print(f"PASS state={state} checks={c.count} receipt_issuance=external-only")
         return 0
     except (Error, OSError, KeyError, ValueError, json.JSONDecodeError) as exc:
