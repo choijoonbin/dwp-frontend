@@ -1,0 +1,349 @@
+{
+  "schema": "dwp.hris.wave7.r7-batch-05-sys008-module-source-admission-decision.v1",
+  "decisionId": "HRIS-WAVE7-R7-BATCH-05-SYS008-MODULE-SOURCE-ADMISSION-20261026-R1",
+  "issuedAt": "2026-10-26T14:19:27+09:00",
+  "issuedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "state": "EXACT_SYS008_MODULE_RESULTS_INDEPENDENTLY_ACCEPTED_NO_FF_EXACT_HEAD_SOURCE_ADMISSION_AUTHORIZED_DEFAULT_OFF_ZERO_ENROLLMENT_ZERO_PROVIDER",
+  "sliceId": "BASE-TFR-SYS-008",
+  "module": "SYS",
+  "moduleSession": "HRIS-SYS",
+  "immutability": {
+    "sealed": true,
+    "appendOnly": true,
+    "amendmentPolicy": "APPEND_ONLY_SUCCESSOR_WITH_NEW_DECISION_ID_AND_SHA256"
+  },
+  "authorityBasis": {
+    "batch05Preflight": {
+      "path": "../r7-batch-05-preflight-r1/semantic-dependency-migration-preflight.v1.json",
+      "sha256": "8f7a0d38c4dc86873e4930e5a21dcc0a269c39512508d86dd529b40015237e0f",
+      "bytes": 37443
+    },
+    "semanticDisposition": {
+      "path": "../r7-batch-05-module-start-r1/semantic-dispositions/base-tfr-sys-008.semantic-disposition.v1.json",
+      "sha256": "35e8b1ad256ad16ca8a653f0770366e5f58818a38f8da78c15774fd186eff65c",
+      "bytes": 68721
+    },
+    "ownerPacket": {
+      "path": "../r7-batch-05-module-start-r1/owner-packets/base-tfr-sys-008.owner-packet.v1.json",
+      "packetId": "HRIS-WAVE7-R7-BATCH-05-OWNER-BASE-TFR-SYS-008-20261026-R1",
+      "sha256": "d4abf69765ab4435f38435ba531db06802294af947d3154fa62c584cd590302c",
+      "bytes": 27798
+    },
+    "centralPrerequisiteIntegration": {
+      "path": "sys-008-central-integration-receipt.v1.json",
+      "receiptId": "HRIS-WAVE7-R7-BATCH-05-SYS008-CENTRAL-INTEGRATION-20261026-R1",
+      "sha256": "93a72c373ef19a5474924547012a5c243ab330ae5eb0b5eb1eeed5c93d63f0bf",
+      "bytes": 17116,
+      "requiredState": "EXACT_SYS008_CENTRAL_DELTA_COMMITTED_PUSHED_AND_ADMITTED_V60_V269_GATEWAY_IAQ_TYPED_EVENT_OPAQUE_SHARED_BRIDGE_DUAL_PROJECTION_DEFAULT_OFF_ZERO_ENROLLMENT_OWNER_PACKET_AND_RESERVED_NOT_ACTIVE_V334_MAY_BE_PREPARED"
+    },
+    "startToken": {
+      "path": "../r7-batch-05-module-start-r1/tokens/base-tfr-sys-008.start-token.v1.json",
+      "tokenId": "HRIS-WAVE7-R7-BATCH-05-START-BASE-TFR-SYS-008-20261026-R1",
+      "sha256": "c20d3101ead5aa8caf6460e28d4cf99c4d6b384c8ae3d69829c77e843cb1c067",
+      "bytes": 27322,
+      "requiredState": "ISSUED_EXECUTABLE_EXACT_MATERIALIZED_WORKTREES_ACTIVE_EXCLUSIVE_V334_BOUNDED_SOURCE_TEST_COMMIT_PUSH_ONLY_DEFAULT_OFF_ZERO_ENROLLMENT"
+    },
+    "materializationReceipt": {
+      "path": "../r7-batch-05-module-start-r1/worktree-materialization-receipts/base-tfr-sys-008.worktree-materialization-receipt.v1.json",
+      "sha256": "bc01d6f9b09e4d5a004e11cb69eaeb8cc48ad4fb0f56570b2bc24c2688b45e34",
+      "bytes": 7727
+    },
+    "activeMigrationLease": {
+      "path": "../r7-batch-05-module-start-r1/migration-lease-sys008-v334-activation.v1.json",
+      "activationId": "HRIS-WAVE7-R7-BATCH-05-MIGRATION-LEASE-ACTIVATION-SYS008-20261026-R1",
+      "sha256": "32e6f83758de1bdf88b259c0608ed10799c1fea0ecd9a29794b631734e6a50ba",
+      "bytes": 15716,
+      "requiredState": "ACTIVE_EXCLUSIVE_PLATFORM_V334"
+    },
+    "centralCarrierBeforeDecision": {
+      "repository": "dwp-frontend",
+      "branch": "dwp-dev",
+      "commit": "502e4ad86b4b2badf519675e7b629efa88f88f26",
+      "tree": "d81058a8f5cb15eae02dd11936e25c727d777f5c",
+      "originExact": true,
+      "committedTreeCleanBeforeDraft": true,
+      "expectedUntrackedOnly": [
+        "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-05-central-admission-r1/sys-008-module-source-admission-decision.v1.json"
+      ]
+    }
+  },
+  "targetStateBeforeDecision": {
+    "backend": {
+      "repository": "dwp-backend",
+      "branch": "dwp-dev",
+      "commit": "7406b9d6a4ba2c3f777fad3b9e9caa609ec9ff72",
+      "tree": "b701265b8b22c4a1ada559a702091344c0686b42",
+      "originExact": true,
+      "clean": true
+    },
+    "frontend": {
+      "repository": "dwp-frontend",
+      "branch": "dwp-dev",
+      "commit": "502e4ad86b4b2badf519675e7b629efa88f88f26",
+      "tree": "d81058a8f5cb15eae02dd11936e25c727d777f5c",
+      "originExact": true,
+      "committedTreeCleanBeforeDraft": true
+    }
+  },
+  "candidateAdmission": {
+    "backend": {
+      "repository": "dwp-backend",
+      "targetBranch": "dwp-dev",
+      "sourceBranch": "codex/hris-wave7-r7-batch05-sys-008-backend-20261026-r1",
+      "baseCommit": "7406b9d6a4ba2c3f777fad3b9e9caa609ec9ff72",
+      "baseTree": "b701265b8b22c4a1ada559a702091344c0686b42",
+      "mergeBaseWithTarget": "7406b9d6a4ba2c3f777fad3b9e9caa609ec9ff72",
+      "exactHead": "57deb1c07b92c3f0cd80d445980e6af31c01847e",
+      "exactTree": "130078cf93ec00996657ca8e0f361745e020cc45",
+      "commitCount": 1,
+      "changedPathCount": 30,
+      "insertions": 16850,
+      "deletions": 0,
+      "pathOnlyManifestSha256": "ded5a9811eecc3f4adebd69333d8b925c253e0a2c5860869e518fcf2effa4623",
+      "nameStatusManifestSha256": "a25f3323dfca9910c180a99e2feae9cbf7d815baec93416cafae2de049d5b5a3",
+      "authorizedPathAccounting": {
+        "integrationProductionAndTestPlusExactV334Paths": 30,
+        "outsideAuthorizedBoundaryChanges": 0,
+        "historicalMigrationChanges": 0,
+        "secondMigrationChanges": 0,
+        "seventhTableChanges": 0
+      },
+      "mergeTree": {
+        "conflictCount": 0,
+        "pathOverlapCount": 0,
+        "predictedTreeBeforeDecisionCommit": "130078cf93ec00996657ca8e0f361745e020cc45"
+      },
+      "originExact": true,
+      "clean": true
+    },
+    "frontend": {
+      "repository": "dwp-frontend",
+      "targetBranch": "dwp-dev",
+      "sourceBranch": "codex/hris-wave7-r7-batch05-sys-008-frontend-20261026-r1",
+      "baseCommit": "6dfbaa8f52954e53ca54a65c3f1e1fafca13c534",
+      "baseTree": "fdb2cc827bf4070d140684c1b88fa2477c3a0c32",
+      "mergeBaseWithCurrentTarget": "6dfbaa8f52954e53ca54a65c3f1e1fafca13c534",
+      "implementationHead": "8dd154e9280cde3e8e8afb331529d95d82ef906c",
+      "implementationTree": "821b8581429f6fe5d2ca78339f9e898a184350b4",
+      "exactEvidenceHead": "d7835dbd9388026070a360f7fe0e8fbf5c931933",
+      "exactTree": "d6f95ec59db9ca42703a372f1efa834e03028a4e",
+      "commitCount": 2,
+      "changedPathCount": 12,
+      "insertions": 4225,
+      "deletions": 0,
+      "pathOnlyManifestSha256": "93e8ba1b9f73d81cd2cee35cd7ed7277ae1d187d0eb3f7afda6f2dce22e67d58",
+      "nameStatusManifestSha256": "28bb477f9744f6684c904e16c8809a9728a77aa7b8a4af01420044f861c0be4f",
+      "authorizedPathAccounting": {
+        "integrationControlPlaneSourcePaths": 8,
+        "moduleResultEvidencePaths": 4,
+        "totalPaths": 12,
+        "outsideAuthorizedBoundaryChanges": 0,
+        "routeMenuSidebarShellI18nIndexOrMountChanges": 0
+      },
+      "targetChangesAfterCandidateBase": {
+        "centralAuthorityPaths": 3,
+        "candidatePathOverlapCount": 0,
+        "mergeTreeConflictCount": 0,
+        "predictedTreeBeforeDecisionCommit": "5ebf3d80dfe0c851fb62f10158a41f9fadeb1e9f"
+      },
+      "originExact": true,
+      "clean": true
+    }
+  },
+  "evidenceResolution": {
+    "candidateCommit": "d7835dbd9388026070a360f7fe0e8fbf5c931933",
+    "files": [
+      {
+        "path": "../r7-batch-05-module-results-r1/base-tfr-sys-008/acceptance-results.v1.json",
+        "sha256": "6ceaf13809ecf3d49c0c088cb10a5edf7fbfa83c884a844caa8a497b12bd200c",
+        "bytes": 13856,
+        "gitBlob": "1b9f2747464465d1df393cdb255dbe8a35218fcb"
+      },
+      {
+        "path": "../r7-batch-05-module-results-r1/base-tfr-sys-008/changed-path-and-no-recount.v1.json",
+        "sha256": "8940161ae261d0c904f4450fff6acc73feebb1f1c0a973605ec525cdf96c6701",
+        "bytes": 10777,
+        "gitBlob": "264da630809e1db55763e70a49681664fc6f4748"
+      },
+      {
+        "path": "../r7-batch-05-module-results-r1/base-tfr-sys-008/platform-v334-and-postgres-evidence.v1.json",
+        "sha256": "237d2f0912afcc9514bbaf922a076f78981334e9f81af669c5bab0f2b0d6c97b",
+        "bytes": 8736,
+        "gitBlob": "e96f4b40d16a796b192a41532e2c8c8038c88b40"
+      },
+      {
+        "path": "../r7-batch-05-module-results-r1/base-tfr-sys-008/module-result-evidence.v1.json",
+        "sha256": "096ef97f763567395aa9c30728e3e9cb6aac9584508bd18261271ecb99abd60e",
+        "bytes": 9419,
+        "gitBlob": "cdfe8bd7d766aee91562388af852ed98d9a783aa"
+      }
+    ]
+  },
+  "migrationAdmission": {
+    "stream": "PLATFORM_MAIN",
+    "predecessor": "V333",
+    "version": "V334",
+    "path": "dwp-platform-server/src/main/resources/db/migration/V334__create_hris_integration_control_plane.sql",
+    "sha256": "d4c3750ade0e6925378c8a8aa5093605891d5afe01b91e926c6485afb2f092d4",
+    "bytes": 131305,
+    "gitBlob": "8be6159394ea43561066ee715d9d2154a3e3456c",
+    "currentHighWaterBeforeAdmission": "V333",
+    "versionCollision": false,
+    "createdTableCount": 6,
+    "historicalMigrationModified": false
+  },
+  "independentReview": {
+    "backendSourceAndEvidence": {
+      "decision": "GO",
+      "p0": 0,
+      "p1": 0,
+      "p2": 0
+    },
+    "frontendSourceDesignAndEvidence": {
+      "decision": "GO",
+      "p0": 0,
+      "p1": 0,
+      "p2": 0
+    },
+    "finalCentralAdmission": {
+      "decision": "GO_SOURCE_ADMISSION_ONLY",
+      "p0": 0,
+      "p1": 0,
+      "p2": 0,
+      "routeMenuFeatureTenantProviderActivationReviewed": false
+    }
+  },
+  "verificationAccounting": {
+    "acceptanceCriteria": "15_OF_15_PASS",
+    "goldenScenarios": "13_OF_13_PASS",
+    "backend": {
+      "compileTestJava": "PASS",
+      "boundedNonDatabaseContracts": "36_PASS_ZERO_FAILURE_ZERO_SKIP",
+      "service": "14_OF_14_PASS",
+      "runtime": "17_OF_17_PASS",
+      "worker": "7_OF_7_PASS",
+      "jdbcPostgresqlEarlierBoundedClass": "7_OF_7_PASS_ZERO_SKIP",
+      "jdbcPostgresqlFinalAffectedMethods": "3_OF_3_PASS_ZERO_SKIP",
+      "migrationPostgresqlCumulative": "2_OF_2_PASS_ZERO_SKIP",
+      "requiredDatabaseCumulative": "8_OF_8_PASS_ZERO_SKIP"
+    },
+    "frontend": {
+      "targetedVitest": "4_FILES_74_OF_74_PASS",
+      "changedFileEslint": "8_FILES_PASS",
+      "prettier": "PASS",
+      "boundedTypeScript": "PASS"
+    },
+    "repositoryWideSuiteRun": false,
+    "fullBuildRun": false,
+    "browserRouteRun": false,
+    "moduleTestsRerunDuringAdmission": false,
+    "reason": "The exact candidates were already tested and independently reviewed. Central admission rechecks exact Git identity, hashes, authorized boundaries, default-off state and conflict-free mergeability only."
+  },
+  "acceptanceDisposition": {
+    "definedCriteria": 15,
+    "acceptedCriteria": 15,
+    "requiredGoldenScenarios": 13,
+    "acceptedGoldenScenarios": 13,
+    "criteria": [
+      { "id": "SYS008-AC-01", "result": "PASS_ADMITTED" },
+      { "id": "SYS008-AC-02", "result": "PASS_ADMITTED" },
+      { "id": "SYS008-AC-03", "result": "PASS_ADMITTED" },
+      { "id": "SYS008-AC-04", "result": "PASS_ADMITTED" },
+      { "id": "SYS008-AC-05", "result": "PASS_ADMITTED" },
+      { "id": "SYS008-AC-06", "result": "PASS_ADMITTED" },
+      { "id": "SYS008-AC-07", "result": "PASS_ADMITTED" },
+      { "id": "SYS008-AC-08", "result": "PASS_ADMITTED" },
+      { "id": "SYS008-AC-09", "result": "PASS_ADMITTED" },
+      { "id": "SYS008-AC-10", "result": "PASS_ADMITTED" },
+      { "id": "SYS008-AC-11", "result": "PASS_ADMITTED" },
+      { "id": "SYS008-AC-12", "result": "PASS_ADMITTED" },
+      { "id": "SYS008-AC-13", "result": "PASS_ADMITTED" },
+      { "id": "SYS008-AC-14", "result": "PASS_ADMITTED" },
+      { "id": "SYS008-AC-15", "result": "PASS_ADMITTED" }
+    ],
+    "goldenScenarios": [
+      { "id": "SYS-GOLD-003", "result": "PASS_ADMITTED" },
+      { "id": "SYS-GOLD-008", "result": "PASS_ADMITTED" },
+      { "id": "SYS-GOLD-020", "result": "PASS_ADMITTED" },
+      { "id": "SYS-GOLD-021", "result": "PASS_ADMITTED" },
+      { "id": "SYS-GOLD-022", "result": "PASS_ADMITTED" },
+      { "id": "SYS-GOLD-023", "result": "PASS_ADMITTED" },
+      { "id": "SYS-GOLD-024", "result": "PASS_ADMITTED" },
+      { "id": "SYS-GOLD-032", "result": "PASS_ADMITTED" },
+      { "id": "SYS-GOLD-040", "result": "PASS_ADMITTED" },
+      { "id": "SYS-GOLD-045", "result": "PASS_ADMITTED" },
+      { "id": "SYS-GOLD-054", "result": "PASS_ADMITTED" },
+      { "id": "SYS-GOLD-055", "result": "PASS_ADMITTED" },
+      { "id": "SYS-GOLD-056", "result": "PASS_ADMITTED" }
+    ],
+    "result": "15_OF_15_ACCEPTED_AND_13_OF_13_GOLDEN_ACCEPTED_FOR_SOURCE_ADMISSION"
+  },
+  "runtimeBoundary": {
+    "featureKey": "HRIS_INTEGRATION_CONTROL_PLANE",
+    "runtimeDefault": "OFF",
+    "matchIfMissing": false,
+    "enrolledTenants": [],
+    "productionProviderBound": false,
+    "productionSecretBound": false,
+    "productionSchedulerBound": false,
+    "productionBrokerBound": false,
+    "hrisSettingsProjectionMounted": false,
+    "dwpControlProjectionMounted": false,
+    "routeMounted": false,
+    "menuMounted": false,
+    "shellNodeMounted": false,
+    "featureActivationAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "browserAdmissionAuthorized": false,
+    "runtimeCallsWhenDisabled": 0,
+    "customerDataAuthorized": false,
+    "productionReleaseAuthorized": false,
+    "fallbackBehavior": "FAIL_CLOSED_ONLY",
+    "businessCompletionIncrement": 0
+  },
+  "mergeAuthorization": {
+    "strategy": "NO_FF_EXACT_HEAD_ONLY",
+    "headDriftPolicy": "ANY_SOURCE_OR_TARGET_HEAD_OR_TREE_DRIFT_INVALIDATES_THIS_DECISION",
+    "backend": {
+      "targetHeadBeforeMerge": "7406b9d6a4ba2c3f777fad3b9e9caa609ec9ff72",
+      "targetTreeBeforeMerge": "b701265b8b22c4a1ada559a702091344c0686b42",
+      "exactSourceHead": "57deb1c07b92c3f0cd80d445980e6af31c01847e",
+      "exactSourceTree": "130078cf93ec00996657ca8e0f361745e020cc45"
+    },
+    "frontend": {
+      "targetHeadBeforeDecisionCarrier": "502e4ad86b4b2badf519675e7b629efa88f88f26",
+      "targetTreeBeforeDecisionCarrier": "d81058a8f5cb15eae02dd11936e25c727d777f5c",
+      "requiredAncestorBeforeMerge": "502e4ad86b4b2badf519675e7b629efa88f88f26",
+      "requiredTargetHeadAtMerge": "THIS_DECISION_CARRIER_COMMIT_ON_DWP_DEV",
+      "decisionCarrierMustBeCurrentOriginExactDwpDevHead": true,
+      "exactSourceHead": "d7835dbd9388026070a360f7fe0e8fbf5c931933",
+      "exactSourceTree": "d6f95ec59db9ca42703a372f1efa834e03028a4e"
+    },
+    "stopOnConflict": true,
+    "automaticOrManualConflictResolutionAuthorized": false,
+    "squashAuthorized": false,
+    "cherryPickAuthorized": false,
+    "rebaseAuthorized": false,
+    "moduleTestRerunAuthorized": false,
+    "repositoryWideSuiteAuthorized": false,
+    "postMergeVerification": [
+      "Each merge commit has the exact target and authorized source parents in that order.",
+      "The exact source head remains an ancestor of the corresponding dwp-dev merge head.",
+      "All 30 backend and 12 frontend candidate paths are 42-of-42 blob-identical to the admitted source heads.",
+      "No merge conflict or path overlap was resolved automatically or manually.",
+      "V334 remains the single new Platform migration after V333 and retains its exact SHA-256.",
+      "Both dwp-dev repositories are origin-exact and clean after push."
+    ]
+  },
+  "decision": "AUTHORIZE_ONLY_BACKEND_57DEB1C0_AND_FRONTEND_D7835DBD_FOR_NO_FF_EXACT_HEAD_DWP_DEV_SOURCE_ADMISSION_STOP_ON_CONFLICT_NO_TEST_RERUN",
+  "nonClaims": [
+    "The exact module candidate heads have been merged by this decision itself.",
+    "A SYS-008 module-source integration receipt exists before the authorized merges complete.",
+    "Either frontend projection, route, shell node, sidebar, menu or tenant-visible page is mounted.",
+    "A production provider, secret, scheduler or broker is bound.",
+    "The feature is enabled or any tenant is enrolled.",
+    "Customer data, full-slice completion, production release or business-completion credit is authorized.",
+    "A repository-wide, full-build, browser or redundant module test rerun is authorized during admission."
+  ],
+  "nextAction": "Commit and push this exact decision carrier, then merge only the two pinned source heads with --no-ff. Stop on conflict, verify 42-of-42 admitted blob identity, record a separate module-source integration receipt and keep route, menu, feature, tenant, provider, secret and browser activation deferred."
+}
