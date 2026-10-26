@@ -1,0 +1,78 @@
+{
+  "schema": "dwp.hris.wave7.hrm013-approval-drain-root-terminal-clarification.v1",
+  "state": "INDEPENDENTLY_REVIEWED_APPEND_ONLY_APPROVAL_DRAIN_SEMANTIC_CLARIFICATION",
+  "sliceId": "BASE-TFR-HRM-013",
+  "lane": "APPROVAL_RUNTIME",
+  "carrier": {
+    "repository": "dwp-frontend",
+    "branch": "codex/hris-wave7-batch06-hrm013-approval-drain-clarification-frontend-20261027-r1",
+    "baseCommit": "431564c02500d40c3a4a1443d91fdf1f37aad5c8",
+    "baseTree": "c008e4937ec1a9c228990e73fbc6d1f4a9665c58",
+    "requiredDirectChild": true,
+    "exactChangedPathCount": 4
+  },
+  "backendBoundary": {
+    "repository": "dwp-backend",
+    "dwpDevCommit": "bed31127123a318358f495f66edced7b024469d8",
+    "dwpDevTree": "e5564ff7a81e5dd0a85d0e61f091ec0714a1f777",
+    "implementationBranch": "codex/hris-wave7-batch06-hrm013-approval-runtime-backend-20261026-r1",
+    "implementationWorktree": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261026/batch06/hrm013-owner-runtime/approval",
+    "implementationHeadMustRemainBaseBeforeCommit": true
+  },
+  "predecessors": {
+    "bindingGate": {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-owner-runtime-binding-gate-r1/hrm-013-owner-runtime-binding-gate.v1.json",
+      "bytes": 170804,
+      "sha256": "aa88b6116f2fa8ca4e96d85204414a737e763afa4e1bb01372e31fdaa59deb47"
+    },
+    "approvalToken": {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-owner-runtime-phase4-authority-r1/tokens/hrm-013-approval-runtime.start-token.v1.json",
+      "bytes": 11855,
+      "sha256": "402630c991fa01bbd5a0920769755764f9322f8fd30315ec32a464a48b06f6e4"
+    },
+    "cleanWorktreeReceipt": {
+      "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261026/batch06/hrm013-owner-runtime/receipts/approval-runtime-clean-worktree-receipt.v1.json",
+      "mode": "0600",
+      "bytes": 2407,
+      "sha256": "361539385a925a1b96e1a4bfbfa72bbaacac9f17a4eb63cc1dd18d9697cc368d"
+    }
+  },
+  "contradiction": {
+    "consumerRule": "The predecessor requires APR-002 and HRM-010 Auth admission and V59 comparison before APR-002 native creation.",
+    "terminalChildRule": "The predecessor also permits HRM-010 DRAIN_EXISTING only for its exact persisted root or deterministic terminal child, whose callbackEventId, occurredAt and payload digest do not exist at APR-002 root ingress.",
+    "unsafeInterpretationForbidden": "APR-002 approvalRequestId, requestedAt or payload digest must never be substituted as HRM-010 callback selectors or recorded as false HRM-010 drain activity."
+  },
+  "clarification": {
+    "newWorkApr002Ingress": [
+      "Resolve APR-002 and HRM-010 under NEW_WORK before native request creation.",
+      "Require the same grantSetId, tenantGrantRevision and authorizationRevision and exact-compare the immutable V59 two-member projection."
+    ],
+    "drainApr002RootIngress": [
+      "Resolve APR-002 as the exact DRAIN_EXISTING ROOT_DELIVERY and resolve SVC-AUT-HRM-013 only as the exact DEPENDENT_READ needed by that root.",
+      "Require both returned authorizations to identify the same old grantSetId, tenantGrantRevision, authorizationRevision and common quiesceEffectiveAt, and cap the dependent-read proof and local transaction by the earlier drainAuthorizationExpiresAt.",
+      "Exact-compare the current highest ADMIT V59 row common fields and APR-002 member with the Auth result and validate the row's immutable HRM-010 projection fields.",
+      "Rely only on the sealed Auth three-member waiver-group atomicity for the not-yet-materialized HRM-010 member; do not call HRM-010 with APR-002 root selectors and do not append HRM-010 drain activity at ingress."
+    ],
+    "terminalChildCreationAndDelivery": [
+      "Before every HRM-010 terminal outbox creation, resolve HRM-010 as its exact TERMINAL_CHILD and APR-002 as the exact ROOT_DELIVERY under the same old grantSetId, revisions and common quiesceEffectiveAt.",
+      "Exact-compare both Auth results to the same immutable V59 row and fail before commit if either authorization is mismatched, changed or expired.",
+      "Before every HRM-010 delivery attempt, freshly repeat both exact resolutions and comparisons, cap the business-proof expiry by the earlier drainAuthorizationExpiresAt, then fail before proof signing or network send if either result changed or expired."
+    ],
+    "scope": "This clarification applies only to APR-002 DRAIN_EXISTING root ingress and its deterministic HRM-010 terminal child. It does not relax NEW_WORK, requester identity, replay, proof, V59 immutability, TLS, credential, step-up, maker-checker, audit or fail-closed rules."
+  },
+  "authority": {
+    "independentReviewComplete": true,
+    "carrierCommitAndPushAuthorized": true,
+    "approvalImplementationMayContinueAfterCarrierPush": true,
+    "approvalSourceOrTestAllowlistExpanded": false,
+    "peopleRuntimeAuthorityChanged": false,
+    "migrationAuthoringAuthorized": false,
+    "featureEnablementAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "runtimeCredentialProvisioningAuthorized": false,
+    "directBackendDwpDevIntegrationAuthorized": false,
+    "productionReleaseAuthorized": false,
+    "businessCompletionCredit": 0
+  },
+  "next": "COMMIT_AND_PUSH_THIS_EXACT_FOUR_PATH_CARRIER_THEN_COMPLETE_APPROVAL_UNDER_THE_UNCHANGED_PHASE4_TOKEN_AND_THIS_CLARIFICATION"
+}

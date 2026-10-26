@@ -1,0 +1,54 @@
+{
+  "schema": "dwp.hris.wave7.hrm013-approval-drain-root-terminal-clarification-independent-review.v1",
+  "state": "INDEPENDENT_ZERO_FINDING_REVIEW_OF_EXACT_APPEND_ONLY_CLARIFICATION_CARRIER",
+  "reviewScope": {
+    "semantics": [
+      "APR-002 NEW_WORK dual binding closure is unchanged",
+      "APR-002 DRAIN root ingress uses APR-002 ROOT_DELIVERY plus SVC-AUT-HRM-013 DEPENDENT_READ under one old grant set and never fabricates HRM-010 selectors or activity",
+      "HRM-010 terminal child creation and every delivery re-resolve HRM-010 TERMINAL_CHILD plus APR-002 ROOT_DELIVERY and use the earlier authorization expiry"
+    ],
+    "lifecycle": [
+      "uncommitted Approval candidate is restricted to the exact token allowlist at the pinned backend base",
+      "committed Approval candidate is clean, one direct child of the pinned backend base and remote-equal once published",
+      "Approval V60, scope expansion, feature activation and backend dwp-dev integration remain forbidden"
+    ]
+  },
+  "findings": {
+    "p0": [],
+    "p1": [],
+    "p2": []
+  },
+  "finalVerdict": {
+    "p0": 0,
+    "p1": 0,
+    "p2": 0,
+    "decision": "GO_FOR_APPROVAL_DRAIN_CLARIFICATION_CARRIER_COMMIT_AND_PUSH_ONLY"
+  },
+  "authority": {
+    "independentReviewComplete": true,
+    "carrierCommitAndPushAuthorized": true,
+    "approvalImplementationMayContinueAfterCarrierPush": true,
+    "sourceOrTestScopeExpanded": false,
+    "migrationOrActivationAuthority": false,
+    "businessCompletionCredit": 0
+  },
+  "artifactPins": [
+    {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-approval-drain-clarification-r1/approval-drain-root-terminal-clarification.v1.json",
+      "bytes": 5363,
+      "sha256": "4b44a5994fee40f518c4dfdb31ecd5ff865bc269c9cdcc83f8b19326334a1958"
+    },
+    {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-approval-drain-clarification-r1/validate_hrm013_approval_drain_clarification.py",
+      "bytes": 17785,
+      "sha256": "f2dfcfe1180b13d6ab6c4aeb86bffbd59ea700c72a1965f802299b6b7d6f9f96"
+    },
+    {
+      "path": "package.json",
+      "bytes": 16175,
+      "sha256": "059b0a66e01b2dc14173deffb703d6eb8d8c59c1bf40314ae56303e2ae3f1f4e"
+    }
+  ],
+  "reviewedAt": "2026-10-26T22:27:06Z",
+  "reviewedBy": "INDEPENDENT_HRM013_APPROVAL_RUNTIME_POST_REVIEW_AGENT"
+}
