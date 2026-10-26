@@ -1,0 +1,284 @@
+{
+  "schema": "dwp.hris.wave7.r7-batch-05-sys008-migration-lease-activation.v1",
+  "activationId": "HRIS-WAVE7-R7-BATCH-05-MIGRATION-LEASE-ACTIVATION-SYS008-20261026-R1",
+  "activatedAt": "2026-10-26T10:10:27+09:00",
+  "activatedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "state": "ACTIVE_EXCLUSIVE_PLATFORM_V334",
+  "moduleSession": "HRIS-SYS",
+  "moduleThreadId": "01a0f53d-d62d-7971-81f7-1822b513ccb4",
+  "sliceId": "BASE-TFR-SYS-008",
+  "successorOf": {
+    "path": "migration-lease-sys008-v334-reservation.v1.json",
+    "sha256": "73413bc7dbaa21f456949ecc0d96ad5ec65351ab8f38f3a95dd97b791414b27d",
+    "bytes": 14400,
+    "reservationId": "HRIS-WAVE7-R7-BATCH-05-MIGRATION-LEASE-RESERVATION-SYS008-20261026-R1",
+    "requiredState": "RESERVED_NOT_ACTIVE",
+    "supersededField": "state and reservation.authoringAllowedNow",
+    "supersession": "RESERVED_NOT_ACTIVE_TO_ACTIVE_EXCLUSIVE_AFTER_EXACT_CLEAN_WORKTREE_MATERIALIZATION"
+  },
+  "purpose": "Activate exactly one exclusive Platform main V334 authoring lease for SYS-008 after the sealed owner packet, zero-finding independent review and exact clean worktree materialization. This lease grants no migration, source, test, commit or push authority by itself and becomes authoring authority only together with the matching executable SYS-008 start token v1.",
+  "immutability": {
+    "sealed": true,
+    "amendmentPolicy": "APPEND_ONLY_SUCCESSOR_WITH_NEW_ACTIVATION_ID_AND_SHA256"
+  },
+  "authorityBasis": {
+    "roadmap": {
+      "path": "../execution-roadmap-successor.v19.json",
+      "sha256": "7fd14919598aadf20ea083dd11d693f4774fe803224b799935e284b858525ed0",
+      "bytes": 18404,
+      "requiredState": "R7_BATCH_04_SEQUENCING_CLOSED_DEFAULT_OFF_ZERO_BUSINESS_CREDIT_BATCH_05_PREFLIGHT_NEXT_ZERO_TENANT_ENROLLMENT"
+    },
+    "batch05Preflight": {
+      "path": "../r7-batch-05-preflight-r1/semantic-dependency-migration-preflight.v1.json",
+      "sha256": "8f7a0d38c4dc86873e4930e5a21dcc0a269c39512508d86dd529b40015237e0f",
+      "bytes": 37443,
+      "requiredState": "PREFLIGHT_COMPLETE_FIXED_ORDER_FIVE_CONDITIONAL_LANES_NO_PACKETS_NO_TOKENS_NO_WORKTREES_NO_LEASES_NO_SOURCE"
+    },
+    "semanticDisposition": {
+      "path": "semantic-dispositions/base-tfr-sys-008.semantic-disposition.v1.json",
+      "sha256": "35e8b1ad256ad16ca8a653f0770366e5f58818a38f8da78c15774fd186eff65c",
+      "bytes": 68721,
+      "requiredState": "SYS008_INTEGRATION_CONTROL_PLANE_BOUNDARY_SEALED_V334_REQUIRED_CENTRAL_SUCCESSOR_BEFORE_SOURCE"
+    },
+    "semanticReview": {
+      "path": "semantic-dispositions/base-tfr-sys-008.semantic-review.v1.json",
+      "sha256": "b4f341d6b8642693577f6cda8053ed5dfd02a90ed2d1b8001138a26d15060438",
+      "bytes": 5767,
+      "requiredState": "SYS008_SEMANTIC_DISPOSITION_INDEPENDENTLY_REVIEWED_PASS_ZERO_P0_ZERO_P1_ZERO_P2_CENTRAL_SUCCESSOR_MAY_PROCEED"
+    },
+    "centralSuccessor": {
+      "path": "sys-008-iaq-transport-event-and-central-authorization-successor.v1.json",
+      "sha256": "1f88dd3999c6609451914c43ffdd2fafdfa83a1bd004e1fc0199ad925135836b",
+      "bytes": 66315,
+      "requiredState": "SEALED_EXACT_SYS008_IAQ057_IAQ062_TRANSPORT_SYSEVT005_V60_V269_V334_GATEWAY_SHARED_BRIDGE_DUAL_PROJECTION_AUTHORITY_DEFAULT_OFF_ZERO_ENROLLMENT"
+    },
+    "centralSuccessorReview": {
+      "path": "sys-008-iaq-transport-event-and-central-authorization-review.v1.json",
+      "sha256": "6775e774a805eb9df8c82fce7a433f1c8fb828153f451a76fd691cd24f102a9d",
+      "bytes": 8705,
+      "requiredState": "SYS008_IAQ_TRANSPORT_EVENT_AND_CENTRAL_AUTHORIZATION_INDEPENDENTLY_REVIEWED_PASS_ZERO_P0_ZERO_P1_ZERO_P2_BOUNDED_CENTRAL_IMPLEMENTATION_MAY_PROCEED"
+    },
+    "centralIntegrationReceipt": {
+      "path": "../r7-batch-05-central-admission-r1/sys-008-central-integration-receipt.v1.json",
+      "sha256": "93a72c373ef19a5474924547012a5c243ab330ae5eb0b5eb1eeed5c93d63f0bf",
+      "bytes": 17116,
+      "requiredState": "EXACT_SYS008_CENTRAL_DELTA_COMMITTED_PUSHED_AND_ADMITTED_V60_V269_GATEWAY_IAQ_TYPED_EVENT_OPAQUE_SHARED_BRIDGE_DUAL_PROJECTION_DEFAULT_OFF_ZERO_ENROLLMENT_OWNER_PACKET_AND_RESERVED_NOT_ACTIVE_V334_MAY_BE_PREPARED"
+    },
+    "reservation": {
+      "path": "migration-lease-sys008-v334-reservation.v1.json",
+      "sha256": "73413bc7dbaa21f456949ecc0d96ad5ec65351ab8f38f3a95dd97b791414b27d",
+      "bytes": 14400,
+      "requiredState": "RESERVED_NOT_ACTIVE"
+    },
+    "ownerPacket": {
+      "path": "owner-packets/base-tfr-sys-008.owner-packet.v1.json",
+      "sha256": "d4abf69765ab4435f38435ba531db06802294af947d3154fa62c584cd590302c",
+      "bytes": 27798,
+      "packetId": "HRIS-WAVE7-R7-BATCH-05-OWNER-BASE-TFR-SYS-008-20261026-R1",
+      "requiredState": "SEALED_EXACT_SYS008_OWNER_AUTHORITY_PACKET_READY_FOR_INDEPENDENT_REVIEW_AND_FRESH_WORKTREES_EXECUTABLE_TOKEN_WITHHELD_PENDING_ACTIVE_V334_LEASE"
+    },
+    "ownerPacketAndReservationReview": {
+      "path": "sys-008-owner-packet-and-v334-reservation-review.v1.json",
+      "sha256": "f39fdf2577584b7825d33c1128f5cc68685041ace45765968fb7a454e89c0bf2",
+      "bytes": 8568,
+      "requiredState": "SYS008_OWNER_PACKET_AND_RESERVED_V334_INDEPENDENTLY_REVIEWED_PASS_ZERO_P0_ZERO_P1_ZERO_P2_AUTHORITY_CARRIER_MAY_BE_PUSHED"
+    },
+    "worktreeMaterializationReceipt": {
+      "path": "worktree-materialization-receipts/base-tfr-sys-008.worktree-materialization-receipt.v1.json",
+      "sha256": "bc01d6f9b09e4d5a004e11cb69eaeb8cc48ad4fb0f56570b2bc24c2688b45e34",
+      "bytes": 7727,
+      "receiptId": "HRIS-WAVE7-R7-BATCH-05-SYS008-WORKTREE-MATERIALIZATION-20261026-R1",
+      "requiredState": "MATERIALIZED_CLEAN_EXACT_REVIEWED_AUTHORITY_CARRIER_PINS_NO_SOURCE_EDITS_NO_UPSTREAM"
+    }
+  },
+  "lease": {
+    "leaseId": "HRIS-WAVE7-R7-BATCH-05-PLATFORM-MAIN-V334-SYS008-20261026-R1",
+    "moduleSession": "HRIS-SYS",
+    "moduleThreadId": "01a0f53d-d62d-7971-81f7-1822b513ccb4",
+    "sliceId": "BASE-TFR-SYS-008",
+    "canonicalFeature": "HRIS_INTEGRATION_CONTROL_PLANE",
+    "stream": "PLATFORM_MAIN",
+    "version": "V334",
+    "predecessorHighWater": "V333",
+    "exactPath": "dwp-platform-server/src/main/resources/db/migration/V334__create_hris_integration_control_plane.sql",
+    "manifestAuthority": "migration-lease-sys008-v334-reservation.v1.json#/exactMigrationManifest",
+    "manifestAuthoritySha256": "73413bc7dbaa21f456949ecc0d96ad5ec65351ab8f38f3a95dd97b791414b27d",
+    "state": "ACTIVE_EXCLUSIVE",
+    "activeLeaseCountForPlatformV334": 1,
+    "authoringCondition": "MATCHING_EXECUTABLE_SYS008_START_TOKEN_V1_REQUIRED",
+    "secondMigrationAuthorized": false,
+    "existingMigrationEditAuthorized": false,
+    "seventhSys008TableAuthorized": false,
+    "dataBackfillAuthorized": false,
+    "automaticPrivilegeGrantAuthorized": false,
+    "globalSharedReceiptNarrowingAuthorized": false,
+    "realProviderSecretOrCustomerDataBindingAuthorized": false
+  },
+  "materializedBindings": {
+    "backend": {
+      "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261026/r7-batch05/sys-008/backend",
+      "branch": "codex/hris-wave7-r7-batch05-sys-008-backend-20261026-r1",
+      "headAtActivation": "7406b9d6a4ba2c3f777fad3b9e9caa609ec9ff72",
+      "treeAtActivation": "b701265b8b22c4a1ada559a702091344c0686b42",
+      "porcelainSha256AtActivation": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "upstreamAtActivation": null,
+      "remoteBranchAtActivation": null,
+      "exact": true,
+      "clean": true
+    },
+    "frontend": {
+      "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261026/r7-batch05/sys-008/frontend",
+      "branch": "codex/hris-wave7-r7-batch05-sys-008-frontend-20261026-r1",
+      "headAtActivation": "6dfbaa8f52954e53ca54a65c3f1e1fafca13c534",
+      "treeAtActivation": "fdb2cc827bf4070d140684c1b88fa2477c3a0c32",
+      "porcelainSha256AtActivation": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "upstreamAtActivation": null,
+      "remoteBranchAtActivation": null,
+      "exact": true,
+      "clean": true
+    }
+  },
+  "activationConditionsSatisfied": {
+    "authorityCarrierAndMaterializationReceiptPushedAndOriginExact": true,
+    "ownerPacketAndReservationIndependentReviewZeroP0P1P2": true,
+    "materializedBackendWorktreeExactAndClean": true,
+    "materializedFrontendWorktreeExactAndClean": true,
+    "platformHighWaterIsV333": true,
+    "exactV334PathAbsent": true,
+    "competingPlatformV334Absent": true,
+    "reservedManifestUnchanged": true,
+    "sourceChangesBeforeActivation": 0,
+    "activeLeaseCountAfterActivation": 1
+  },
+  "resolvedAuthoringBoundary": {
+    "manifestSource": "migration-lease-sys008-v334-reservation.v1.json#/exactMigrationManifest",
+    "manifestSourceSha256": "73413bc7dbaa21f456949ecc0d96ad5ec65351ab8f38f3a95dd97b791414b27d",
+    "allowed": {
+      "createExactlySixTables": [
+        "sys_connector_definitions",
+        "sys_connector_definition_versions",
+        "sys_connector_mapping_versions",
+        "sys_connector_executions",
+        "sys_connector_execution_items",
+        "sys_connector_execution_attempts"
+      ],
+      "reuseOnlyStoresAndProjection": [
+        "sys_hris_command_receipts",
+        "sys_domain_event_outbox",
+        "sys_domain_event_inbox",
+        "sys_audit_outbox",
+        "sys_audit_events",
+        "shared operations exception projection"
+      ],
+      "definitionSplit": "sys_connector_definitions stores logical identity, active-version pointer and CAS aggregate revision only; sys_connector_definition_versions stores immutable definition subject fields and append-only lifecycle evidence.",
+      "historicalMutableFiveTableModel": "FORBIDDEN",
+      "requiredPhysicalControls": [
+        "tenant-first composite primary and foreign keys with ENABLE and FORCE RLS",
+        "PUBLIC privileges revoked and runtime roles NOINHERIT and NOBYPASSRLS",
+        "trusted gateway SET LOCAL tenant context only",
+        "one active definition version per logical connector",
+        "one active mapping version per connector and mapping key",
+        "checked state count and digest constraints",
+        "CAS revision on mutable aggregate pointer and lifecycle evidence",
+        "no raw secret mapping or provider payload columns",
+        "delete and subject-column update rejection on definition and mapping versions",
+        "tenant connector provider operation and provider idempotency key uniqueness with request digest match",
+        "monotonic attempt fences rejecting stale dispatch and receipt commit",
+        "exact execution item and attempt transition matrices with terminal immutability and compensation guards",
+        "atomic command receipt, audit and SYS-EVT-005 outbox persistence"
+      ],
+      "sharedReceiptCompatibility": {
+        "sys008OriginatingActionCount": 16,
+        "sys008OriginatingActions": [
+          "hris.action.sys.post.platform.v1.admin.hris.connectors",
+          "hris.action.sys.post.platform.v1.admin.hris.connectors.resource.test",
+          "hris.action.sys.post.platform.v1.admin.hris.connectors.resource.mappings.resource.dry-runs",
+          "hris.action.sys.post.platform.v1.admin.hris.connectors.resource.executions",
+          "hris.action.sys.post.platform.v1.admin.hris.connectors.resource.validate",
+          "hris.action.sys.post.platform.v1.admin.hris.connectors.resource.submit",
+          "hris.action.sys.post.platform.v1.admin.hris.connectors.resource.approve",
+          "hris.action.sys.post.platform.v1.admin.hris.connectors.resource.activate",
+          "hris.action.sys.post.platform.v1.admin.hris.connectors.resource.mappings",
+          "hris.action.sys.post.platform.v1.admin.hris.connectors.resource.mappings.resource.validate",
+          "hris.action.sys.post.platform.v1.admin.hris.connectors.resource.mappings.resource.submit",
+          "hris.action.sys.post.platform.v1.admin.hris.connectors.resource.mappings.resource.approve",
+          "hris.action.sys.post.platform.v1.admin.hris.connectors.resource.mappings.resource.activate",
+          "hris.action.sys.post.platform.v1.admin.hris.connector-executions.resource.reconcile",
+          "hris.action.sys.post.platform.v1.admin.hris.connector-executions.resource.retry",
+          "hris.action.sys.post.platform.v1.admin.hris.connector-executions.resource.cancel"
+        ],
+        "rule": "Apply SYS-008 terminal and immutable RESULT_UNKNOWN rules only to the exact sixteen sealed SYS-008 originatingAction values.",
+        "originalSys008ResultUnknownReceipt": "TERMINAL_IMMUTABLE",
+        "reconcileRule": "Create a new reconcile command receipt and never mutate the original RESULT_UNKNOWN receipt.",
+        "sys006ResultUnknownRecovery": "PRESERVE_VALUE_FOR_VALUE",
+        "otherAdmittedProducerContracts": "PRESERVE_VALUE_FOR_VALUE",
+        "v327Edit": "FORBIDDEN",
+        "v333Edit": "FORBIDDEN",
+        "unscopedGlobalNarrowing": "FORBIDDEN"
+      },
+      "forbidden": [
+        "a seventh SYS-008 table",
+        "a second Platform migration",
+        "historical migration edits",
+        "data backfill",
+        "automatic privilege grants",
+        "raw secrets, raw mapping data, provider payloads or employee identity persistence"
+      ]
+    }
+  },
+  "acceptanceCoverage": {
+    "requiredCount": 15,
+    "requiredIds": [
+      "SYS008-AC-01",
+      "SYS008-AC-02",
+      "SYS008-AC-03",
+      "SYS008-AC-04",
+      "SYS008-AC-05",
+      "SYS008-AC-06",
+      "SYS008-AC-07",
+      "SYS008-AC-08",
+      "SYS008-AC-09",
+      "SYS008-AC-10",
+      "SYS008-AC-11",
+      "SYS008-AC-12",
+      "SYS008-AC-13",
+      "SYS008-AC-14",
+      "SYS008-AC-15"
+    ],
+    "weakeningOrOmissionAuthorized": false
+  },
+  "verificationPolicy": {
+    "executionAuthorizedOnlyWithMatchingExecutableToken": true,
+    "targetedAffectedGroupsOnly": true,
+    "smallestFailingTargetRerun": true,
+    "repositoryWideSuitePerCorrection": false,
+    "fullSuiteAuthorized": false,
+    "realPostgreSqlRequiredForMigrationPass": true,
+    "databaseUnavailableRule": "BLOCKED_NOT_PASS"
+  },
+  "authority": {
+    "activeExclusiveV334LeaseSealed": true,
+    "matchingExecutableStartTokenMayBeIssued": true,
+    "v334AuthoringAuthorizedByLeaseAlone": false,
+    "sourceOrTestAuthoringAuthorizedByLeaseAlone": false,
+    "testExecutionAuthorizedByLeaseAlone": false,
+    "moduleBranchCommitOrPushAuthorizedByLeaseAlone": false,
+    "centralContractOrSharedSurfaceWriteAuthorized": false,
+    "routeSidebarMenuShellI18nOrMountAuthorized": false,
+    "featureEnablementAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "realProviderSecretOrCustomerDataAuthorized": false,
+    "directDwpDevMergeAuthorized": false,
+    "centralAdmissionAuthorized": false,
+    "productionReleaseAuthorized": false
+  },
+  "invalidationConditions": [
+    "Any predecessor path, SHA-256, byte count or required state differs.",
+    "Either materialized worktree path, branch, initial head, initial tree, initial upstream or initial porcelain digest differs before the first edit.",
+    "Platform high-water is not V333 before the first V334 edit or a competing V334 path exists.",
+    "The six-table manifest, SYS-008-only receipt rule or SYS-006 compatibility rule must weaken or expand.",
+    "An existing migration, central contract, route, menu, shell, shared bridge or provider binding must change.",
+    "A feature activation, tenant enrollment, customer database execution, direct dwp-dev merge, central admission or production release is attempted."
+  ],
+  "nextGate": "HASH_BIND_THIS_ACTIVE_EXCLUSIVE_V334_LEASE_IN_ONE_EXECUTABLE_SYS008_START_TOKEN_COMMIT_AND_PUSH_BOTH_IN_ONE_DWP_FRONTEND_DWP_DEV_AUTHORITY_CARRIER_VERIFY_ORIGIN_EXACT_THEN_IMPLEMENT_ONLY_INSIDE_THE_EXACT_MATERIALIZED_WORKTREES"
+}
