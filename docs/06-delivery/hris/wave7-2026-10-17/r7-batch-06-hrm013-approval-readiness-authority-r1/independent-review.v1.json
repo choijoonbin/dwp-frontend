@@ -1,0 +1,68 @@
+{
+  "schema": "dwp.hris.wave7.hrm013-approval-phase4-readiness-authority-independent-review.v1",
+  "reviewedAt": "2026-10-26T20:52:39Z",
+  "reviewer": "INDEPENDENT_HRM013_APPROVAL_PHASE4_READINESS_AUTHORITY_REVIEW",
+  "scope": {
+    "authorityPath": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-approval-readiness-authority-r1/approval-readiness-execution-authority.v1.json",
+    "tokenPath": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-approval-readiness-authority-r1/tokens/approval-readiness.start-token.v1.json",
+    "validatorPath": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-approval-readiness-authority-r1/validate_hrm013_approval_readiness_authority.py",
+    "packagePath": "package.json",
+    "reviewedBoundaries": [
+      "EXACT_FRONTEND_DIRECT_CHILD_AND_BACKEND_A1C0D8EC_BASE",
+      "EXACT_EIGHT_PATH_APPROVAL_READINESS_CORRECTION",
+      "EXACT_COMPILE_UNIT_AND_CROSS_SERVICE_COMMANDS",
+      "EXTERNAL_0600_CLEAN_WORKTREE_RECEIPT_REQUIRED",
+      "NO_MIGRATION_RUNTIME_ACTIVATION_OR_PHASE4_EXECUTION_AUTHORITY"
+    ]
+  },
+  "findings": {
+    "p0": [],
+    "p1": [],
+    "p2": [],
+    "notes": [
+      "The v62 generated projection exists but cannot become active until the loader, lineage and default registry are corrected together.",
+      "Release31, Release32 and ExtensionV9 regressions bind the previous default registry cardinality and therefore belong to the exact correction set.",
+      "The isolated crossServiceTest source set and task are required before WorkflowRuntimeActualAuthHttpTest can execute.",
+      "Fresh Approval and People Phase-4 runtime tokens must be issued only after this correction is integrated into a new backend base."
+    ]
+  },
+  "finalVerdict": {
+    "p0": 0,
+    "p1": 0,
+    "p2": 0,
+    "decision": "GO_FOR_APPROVAL_PHASE4_READINESS_AUTHORITY_CARRIER_COMMIT_AND_PUSH_ONLY"
+  },
+  "authority": {
+    "independentReviewComplete": true,
+    "carrierCommitAndPushAuthorized": true,
+    "correctionAuthoringAuthorizedAfterCleanReceipt": true,
+    "newMigrationAuthorized": false,
+    "approvalRuntimeImplementationAuthorized": false,
+    "peopleOwnerRuntimeImplementationAuthorized": false,
+    "directBackendDwpDevIntegrationAuthorized": false,
+    "productionReleaseAuthorized": false,
+    "businessCompletionCredit": 0
+  },
+  "artifactPins": [
+    {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-approval-readiness-authority-r1/approval-readiness-execution-authority.v1.json",
+      "bytes": 3840,
+      "sha256": "e48b1ea5b4686139afafc3c92ac3d03410780a237d2b4351f591ba8f4cffc24f"
+    },
+    {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-approval-readiness-authority-r1/tokens/approval-readiness.start-token.v1.json",
+      "bytes": 4435,
+      "sha256": "2d068d79dac96040dd4258db33e15a2b25ea57453548eab1777bba867b0695cd"
+    },
+    {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-approval-readiness-authority-r1/validate_hrm013_approval_readiness_authority.py",
+      "bytes": 16405,
+      "sha256": "6e68b10dbd4de822958c2218c362178f58eb32ccaedc9b9eac6eb67b06104225"
+    },
+    {
+      "path": "package.json",
+      "bytes": 15571,
+      "sha256": "a08581434f163dde019fb65fd1ac4030a652412bd1ac4096ce483e59ac9193ca"
+    }
+  ]
+}

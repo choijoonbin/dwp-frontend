@@ -1,0 +1,75 @@
+{
+  "schema": "dwp.hris.wave7.hrm013-approval-phase4-readiness-execution-authority.v1",
+  "state": "INDEPENDENTLY_REVIEWED_HASH_BOUND_APPROVAL_PHASE4_READINESS_CORRECTION_AUTHORITY",
+  "lane": "APPROVAL_PHASE4_READINESS_CORRECTION",
+  "carrier": {
+    "repository": "dwp-frontend",
+    "branch": "codex/hris-wave7-batch06-hrm013-approval-readiness-authority-frontend-20261027-r1",
+    "baseCommit": "3efa1e22243f37c9834a099dac32637191ac6f97",
+    "baseTree": "f4a984a6b20ce8b3bb1b18b4afa39d5c6d573278",
+    "requiredDirectChild": true,
+    "exactChangedPathCount": 5
+  },
+  "backendBase": {
+    "repository": "dwp-backend",
+    "branch": "dwp-dev",
+    "commit": "a1c0d8ecdbc959d378ef04dc401ee0ff2348ef6c",
+    "tree": "b2173c7448d2e88b5a7f9278f0084d591c4462bf",
+    "originMustMatch": true
+  },
+  "sealedPrerequisites": [
+    {
+      "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261026/batch06/hrm013-owner-runtime/receipts/auth-runtime-successor-delegation-authority.v1.json",
+      "bytes": 7234,
+      "sha256": "b39a7f825996291d5c50e03f6e2335649ca9b2fb9c7b509b0e4268fa0c5bd0d9"
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261026/batch06/hrm013-owner-runtime/receipts/backend-descendants/a1c0d8ecdbc959d378ef04dc401ee0ff2348ef6c.hrm013-shared-contract-governance.v1.json",
+      "bytes": 9260,
+      "sha256": "88b33f889471fd7568b1c01e8c8231374a5d92bb4612b58716efd2faa8993bd4"
+    }
+  ],
+  "sealedGateArtifacts": [
+    {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-owner-runtime-binding-gate-r1/hrm-013-owner-runtime-binding-gate.v1.json",
+      "bytes": 170804,
+      "sha256": "aa88b6116f2fa8ca4e96d85204414a737e763afa4e1bb01372e31fdaa59deb47"
+    },
+    {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-owner-runtime-binding-gate-r1/validate_hrm013_owner_runtime_binding_gate.py",
+      "bytes": 105034,
+      "sha256": "47387b5fa0f27be3e6e4944d0439678fc0b4f516ba0d97966bb958c2a9eb637b"
+    }
+  ],
+  "correction": {
+    "reason": "The generated Approval PEP v62 exists, but the active loader, lineage and registry remain pinned to v32, and the existing cross-service source tree has no executable Gradle source set or task.",
+    "tokenPath": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-approval-readiness-authority-r1/tokens/approval-readiness.start-token.v1.json",
+    "cleanWorktreeReceiptPath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261026/batch06/hrm013-owner-runtime/receipts/approval-readiness-clean-worktree-receipt.v1.json",
+    "newMigrationAuthorized": false,
+    "scopeExpansionAuthorized": false
+  },
+  "integrationOrder": [
+    "COMMIT_AND_PUSH_THIS_FRONTEND_AUTHORITY_CARRIER_ONLY",
+    "MATERIALIZE_THE_DEDICATED_BACKEND_CORRECTION_WORKTREE_AND_EXTERNAL_0600_CLEAN_RECEIPT",
+    "AUTHOR_EXACTLY_THE_EIGHT_ALLOWLISTED_READINESS_PATHS",
+    "RUN_THE_ONE_COMPILE_COMMAND_AND_TWO_EXACT_TEST_COMMANDS",
+    "COMMIT_PUSH_AND_INDEPENDENTLY_REVIEW_THE_CORRECTION_BRANCH",
+    "INTEGRATE_THE_CORRECTION_UNDER_A_SEPARATE_CENTRAL_AUTHORITY",
+    "ISSUE_FRESH_PHASE4_APPROVAL_AND_PEOPLE_TOKENS_FROM_THE_NEW_BACKEND_BASE"
+  ],
+  "authority": {
+    "independentReviewComplete": true,
+    "carrierCommitAndPushAuthorized": true,
+    "correctionAuthoringAuthorizedAfterMatchingCleanReceipt": true,
+    "correctionBranchCommitAndPushAuthorizedAfterTargetedVerification": true,
+    "newMigrationAuthorized": false,
+    "approvalRuntimeImplementationAuthorized": false,
+    "peopleOwnerRuntimeImplementationAuthorized": false,
+    "directBackendDwpDevIntegrationAuthorized": false,
+    "featureEnablementAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "runtimeCredentialBindingAuthorized": false,
+    "productionReleaseAuthorized": false,
+    "businessCompletionCredit": 0
+  }
+}

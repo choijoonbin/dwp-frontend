@@ -1,0 +1,62 @@
+{
+  "schema": "dwp.hris.wave7.hrm013-approval-phase4-readiness-start-token.v1",
+  "state": "HASH_BOUND_DEFAULT_OFF_APPROVAL_PHASE4_READINESS_START_TOKEN",
+  "lane": "APPROVAL_PHASE4_READINESS_CORRECTION",
+  "authorityPath": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-approval-readiness-authority-r1/approval-readiness-execution-authority.v1.json",
+  "executionCondition": "EXECUTABLE_ONLY_AFTER_AUTHORITY_CARRIER_IS_COMMITTED_PUSHED_TO_FRONTEND_DWP_DEV_AND_MATCHING_0600_CLEAN_WORKTREE_RECEIPT_VALIDATES",
+  "backend": {
+    "repository": "dwp-backend",
+    "branch": "codex/hris-wave7-batch06-hrm013-approval-readiness-backend-20261027-r1",
+    "worktree": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261026/batch06/hrm013-owner-runtime/approval-readiness",
+    "baseCommit": "a1c0d8ecdbc959d378ef04dc401ee0ff2348ef6c",
+    "baseTree": "b2173c7448d2e88b5a7f9278f0084d591c4462bf",
+    "originDwpDevCommit": "a1c0d8ecdbc959d378ef04dc401ee0ff2348ef6c"
+  },
+  "exactChangedPathAllowlist": [
+    "dwp-approval-server/build.gradle",
+    "dwp-approval-server/src/main/java/com/dwp/services/approval/security/ApprovalPepProjectionLoader.java",
+    "dwp-approval-server/src/main/java/com/dwp/services/approval/security/ApprovalPepProjectionLineage.java",
+    "dwp-approval-server/src/main/java/com/dwp/services/approval/security/ApprovalPilotPepRegistry.java",
+    "dwp-approval-server/src/test/java/com/dwp/services/approval/security/ApprovalRelease62PepContractTest.java",
+    "dwp-approval-server/src/test/java/com/dwp/services/approval/security/ApprovalRelease31PepContractTest.java",
+    "dwp-approval-server/src/test/java/com/dwp/services/approval/security/ApprovalRelease32PepContractTest.java",
+    "dwp-approval-server/src/test/java/com/dwp/services/approval/security/ApprovalExtensionV9PepRegistryTest.java"
+  ],
+  "exactTargetTestPaths": [
+    "dwp-approval-server/src/test/java/com/dwp/services/approval/security/ApprovalRelease62PepContractTest.java",
+    "dwp-approval-server/src/test/java/com/dwp/services/approval/security/ApprovalRelease31PepContractTest.java",
+    "dwp-approval-server/src/test/java/com/dwp/services/approval/security/ApprovalRelease32PepContractTest.java",
+    "dwp-approval-server/src/test/java/com/dwp/services/approval/security/ApprovalExtensionV9PepRegistryTest.java",
+    "dwp-approval-server/src/test/java/com/dwp/services/approval/security/ApprovalPilotPepRegistryTest.java",
+    "dwp-approval-server/src/crossServiceTest/java/com/dwp/services/approval/workflowauthority/WorkflowRuntimeActualAuthHttpTest.java"
+  ],
+  "verificationCommands": [
+    "./gradlew :dwp-approval-server:compileJava :dwp-approval-server:compileTestJava :dwp-approval-server:compileCrossServiceTestJava",
+    "./gradlew :dwp-approval-server:test --tests com.dwp.services.approval.security.ApprovalRelease62PepContractTest --tests com.dwp.services.approval.security.ApprovalRelease31PepContractTest --tests com.dwp.services.approval.security.ApprovalRelease32PepContractTest --tests com.dwp.services.approval.security.ApprovalExtensionV9PepRegistryTest --tests com.dwp.services.approval.security.ApprovalPilotPepRegistryTest",
+    "./gradlew :dwp-approval-server:crossServiceTest --tests com.dwp.services.approval.workflowauthority.WorkflowRuntimeActualAuthHttpTest -Ddwp.workflow.cross-service-gate=true"
+  ],
+  "crossServiceTestContract": {
+    "buildFile": "dwp-approval-server/build.gradle",
+    "sourceSet": "crossServiceTest",
+    "compileTask": ":dwp-approval-server:compileCrossServiceTestJava",
+    "testTask": ":dwp-approval-server:crossServiceTest",
+    "junitPlatformRequired": true,
+    "gateSystemProperty": "dwp.workflow.cross-service-gate=true"
+  },
+  "securityBoundary": {
+    "newMigrationAuthorized": false,
+    "runtimeImplementationAuthorized": false,
+    "featureEnablementAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "runtimeCredentialBindingAuthorized": false,
+    "directDwpDevIntegrationAuthorized": false,
+    "productionReleaseAuthorized": false
+  },
+  "cleanWorktreeReceipt": {
+    "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261026/batch06/hrm013-owner-runtime/receipts/approval-readiness-clean-worktree-receipt.v1.json",
+    "schema": "dwp.hris.wave7.hrm013-approval-readiness-clean-worktree-receipt.v1",
+    "state": "HASH_BOUND_FRESH_CLEAN_APPROVAL_READINESS_WORKTREE_RECEIPT",
+    "mode": "0600",
+    "externalOnly": true
+  }
+}
