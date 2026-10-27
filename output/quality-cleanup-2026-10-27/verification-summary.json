@@ -1,0 +1,97 @@
+{
+  "date": "2026-10-27",
+  "status": "passed",
+  "scope": "Remaining lint and source-size violations, TypeScript memory configuration, and regression verification",
+  "memory": {
+    "nodeVersion": "24.22.0",
+    "v8HeapLimitMiB": 8192,
+    "developmentWorkerCache": "node_modules/.tmp/tsconfig.watch.tsbuildinfo",
+    "standaloneTypecheckCache": "node_modules/.tmp/tsconfig.typecheck.tsbuildinfo",
+    "watchAndStandaloneRootFiles": 4518,
+    "sameFileScope": true,
+    "sameCompilerRules": true,
+    "strict": true
+  },
+  "frontend": {
+    "lint": {
+      "command": "yarn lint",
+      "exitCode": 0,
+      "errors": 0,
+      "warnings": 0,
+      "log": "lint-final.log"
+    },
+    "typecheck": {
+      "command": "yarn typecheck --extendedDiagnostics",
+      "scope": "Whole project, with the TypeScript incremental cache",
+      "exitCode": 0,
+      "diagnostics": 0,
+      "filesIncludingLibraries": 7530,
+      "log": "typecheck-final.log"
+    },
+    "sourceSize": {
+      "productionFiles": 3939,
+      "maintenanceFiles": 534,
+      "status": "passed"
+    },
+    "regressionTests": {
+      "files": 127,
+      "passed": 1061,
+      "failed": 0,
+      "skipped": 0,
+      "report": "frontend-regression-final.json"
+    },
+    "sharedDesignSystemTests": {
+      "files": 4,
+      "passed": 36,
+      "failed": 0,
+      "log": "design-system-tests.log"
+    },
+    "qualityRatchetTests": {
+      "passed": 43,
+      "failed": 0,
+      "log": "quality-ratchets.log"
+    },
+    "browserTests": {
+      "project": "chromium",
+      "passed": 22,
+      "failed": 0,
+      "journeys": ["Space", "Home launchpad", "HRIS Work Explorer"],
+      "coverage": [
+        "1440px, 1280px, 390px, and 320px layouts",
+        "Native 200 percent browser zoom",
+        "Light, dark, high contrast, and reduced motion",
+        "Keyboard navigation, visible focus, long Korean and English labels",
+        "Partial API failures, retries, and permission boundaries"
+      ],
+      "log": "e2e-final.log",
+      "screenshots": "e2e-final"
+    },
+    "governance": {
+      "sourceSizeAndDesignSystemLimitsRelaxed": false,
+      "designSystemGrandfatheredUsesRemoved": 63,
+      "governedVerificationRoots": 70,
+      "note": "Existing unshipped HRIS modules have exact owner, reason, and removal-condition entries in the reachability inventory. Their routes and feature activation remain governed."
+    }
+  },
+  "backend": {
+    "productionSourceSize": { "files": 3950, "status": "passed" },
+    "testSourceSize": { "files": 2245, "status": "passed" },
+    "unusedPrivateMethods": "passed",
+    "relatedRegressionTests": {
+      "contracts": 20,
+      "auth": 119,
+      "gateway": 180,
+      "approval": 77,
+      "people": 287,
+      "platform": 374,
+      "payroll": 136,
+      "time": 147,
+      "totalPassed": 1340,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "logs": "/Users/a10697/Work/DWP/dwp-backend/.dev-runtime/quality-cleanup-2026-10-27",
+    "existingFinding": "The separate Java dependency-cycle audit still reports existing cycles; review found no new or expanded components from these source splits. This is not a claim that every backend architecture or release gate passes."
+  }
+}

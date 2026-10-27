@@ -1,0 +1,53 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e2]:
+  - link "Skip to main content" [ref=e3] [cursor=pointer]:
+    - /url: "#dwp-main-content"
+  - generic [ref=e4]:
+    - banner [ref=e5]:
+      - generic [ref=e6]:
+        - link "Digital Workplace home" [ref=e7] [cursor=pointer]:
+          - /url: /
+          - generic [ref=e9]: DWP
+          - generic [ref=e12]: Digital Workplace
+        - generic "Current workspace" [ref=e14]:
+          - generic [ref=e16]: D
+          - generic [ref=e17]:
+            - generic [ref=e18]: DWP Workspace
+            - generic [ref=e19]: Current workspace
+        - generic [ref=e20]:
+          - button "Search DWP" [ref=e22] [cursor=pointer]:
+            - img [ref=e23]
+            - generic [ref=e26]: ⌘K
+          - button "Enter full screen" [ref=e28] [cursor=pointer]:
+            - img [ref=e29]
+          - 'button "Account: Admin, Platform administrator" [ref=e35] [cursor=pointer]':
+            - generic [ref=e36]: A
+            - generic [ref=e37]:
+              - generic [ref=e38]: Admin
+              - generic [ref=e39]: Platform administrator
+            - img [ref=e40]
+    - main [ref=e42]:
+      - generic [ref=e43]:
+        - alert [ref=e45]:
+          - img [ref=e47]
+          - heading "The requested data could not be loaded." [level=2] [ref=e49]
+          - paragraph [ref=e50]: An unexpected error occurred.
+          - button "Retry" [ref=e52] [cursor=pointer]
+        - generic [ref=e54]:
+          - generic [ref=e55]:
+            - img [ref=e56]
+            - generic [ref=e59]: Last refreshed - / Permission-scoped data
+          - generic [ref=e60]:
+            - link "Privacy Policy" [ref=e61] [cursor=pointer]:
+              - /url: /account/settings?view=privacy
+            - link "Terms of Service" [ref=e62] [cursor=pointer]:
+              - /url: /account/settings?view=terms
+            - link "Help Desk" [ref=e63] [cursor=pointer]:
+              - /url: /services
+            - link "System Status" [ref=e64] [cursor=pointer]:
+              - /url: /apps
+  - generic "Open DWAI·ON" [ref=e66]:
+    - button "Open DWAI·ON" [ref=e67] [cursor=pointer]
+```

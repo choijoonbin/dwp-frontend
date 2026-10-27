@@ -1,0 +1,177 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e1]:
+  - generic [ref=e2]:
+    - link "Skip to main content" [ref=e3] [cursor=pointer]:
+      - /url: "#dwp-main-content"
+    - generic [ref=e4]:
+      - complementary [ref=e5]:
+        - generic [ref=e6]:
+          - generic [ref=e7]:
+            - link "Digital Workplace home" [ref=e8] [cursor=pointer]:
+              - /url: /
+              - generic [ref=e10]: DWP
+              - generic [ref=e13]: Digital Workplace
+            - generic "Collapse navigation" [ref=e14]:
+              - button "Collapse navigation" [expanded] [ref=e15] [cursor=pointer]:
+                - img [ref=e17]
+                - img [ref=e20]
+          - separator [ref=e23]
+          - generic [ref=e24]:
+            - paragraph [ref=e25]: Overview
+            - paragraph [ref=e26]: SKAX
+          - navigation "Space navigation" [ref=e27]:
+            - generic [ref=e28]:
+              - paragraph [ref=e29]: Overview
+              - list [ref=e30]:
+                - listitem [ref=e31]:
+                  - link "Space home" [ref=e32] [cursor=pointer]:
+                    - /url: /spaces/home
+                    - img [ref=e34]
+                    - paragraph [ref=e38]: Space home
+            - generic [ref=e39]:
+              - paragraph [ref=e40]: My spaces
+              - list [ref=e41]:
+                - listitem [ref=e42]:
+                  - link "My spaces" [ref=e43] [cursor=pointer]:
+                    - /url: /spaces/my
+                    - img [ref=e45]
+                    - paragraph [ref=e50]: My spaces
+                - listitem [ref=e51]:
+                  - link "Discover" [ref=e52] [cursor=pointer]:
+                    - /url: /spaces/discover
+                    - img [ref=e54]
+                    - paragraph [ref=e58]: Discover
+                - listitem [ref=e59]:
+                  - link "My requests" [ref=e60] [cursor=pointer]:
+                    - /url: /spaces/requests
+                    - img [ref=e62]
+                    - paragraph [ref=e66]: My requests
+          - link "Return to apps" [ref=e68] [cursor=pointer]:
+            - /url: /apps
+            - img [ref=e70]
+            - text: Return to apps
+      - banner [ref=e72]:
+        - generic [ref=e73]:
+          - generic [ref=e74]:
+            - img [ref=e76]
+            - generic "Spaces" [ref=e81]
+          - generic [ref=e82]:
+            - button "Search DWP" [ref=e84] [cursor=pointer]:
+              - img [ref=e85]
+            - button "Enter full screen" [ref=e89] [cursor=pointer]:
+              - img [ref=e90]
+            - 'button "Account: Mina Kim, Network Operations Lead" [ref=e96] [cursor=pointer]':
+              - generic [ref=e97]: M
+              - img [ref=e98]
+      - main [ref=e100]:
+        - generic [ref=e101]:
+          - generic [ref=e103]:
+            - img [ref=e105]
+            - generic [ref=e108]:
+              - heading "Discover spaces" [level=1] [ref=e109]
+              - paragraph [ref=e110]: Find spaces that are open or available by request across your organization.
+          - region "Space directory" [ref=e111]:
+            - generic [ref=e112]:
+              - generic [ref=e113]:
+                - img [ref=e114]
+                - heading "Space directory" [level=2] [ref=e116]
+                - status [ref=e117]:
+                  - generic "5 results" [ref=e118]:
+                    - generic [ref=e119]: "5"
+              - generic [ref=e120]:
+                - generic [ref=e121]: Search space name or description
+                - generic [ref=e122]:
+                  - img [ref=e124]
+                  - textbox "Search space name or description" [ref=e127]
+                  - group:
+                    - generic: Search space name or description
+          - generic [ref=e128]:
+            - link "SKAX Town Square" [active] [ref=e129] [cursor=pointer]:
+              - /url: /spaces/company-square/overview
+              - generic [ref=e130]:
+                - img [ref=e132]
+                - generic [ref=e136]:
+                  - generic [ref=e138]: Organization open
+                  - generic [ref=e140]: Joined
+                  - generic "Unread Space activity" [ref=e141]:
+                    - generic [ref=e142]: "1"
+              - generic [ref=e143]:
+                - generic [ref=e144]:
+                  - heading "SKAX Town Square" [level=3] [ref=e145]
+                  - img [ref=e146]
+                - paragraph [ref=e148]: An open company space for news, questions, and participation.
+                - generic [ref=e149]:
+                  - generic [ref=e150]:
+                    - img [ref=e152]
+                    - generic [ref=e156]: 2 access subjects
+                  - generic [ref=e157]: Last activity Aug 18, 2026
+            - link "AI Transformation Program for Cross-Organization Decisions and Validation Evidence" [ref=e158] [cursor=pointer]:
+              - /url: /spaces/ai-transformation/overview
+              - generic [ref=e159]:
+                - img [ref=e161]
+                - generic [ref=e167]: Request to join
+              - generic [ref=e168]:
+                - generic [ref=e169]:
+                  - heading "AI Transformation Program for Cross-Organization Decisions and Validation Evidence" [level=3] [ref=e170]
+                  - img [ref=e171]
+                - paragraph [ref=e173]: Connect initiatives, decisions, and validation evidence across delivery teams.
+                - generic [ref=e174]:
+                  - generic [ref=e175]:
+                    - img [ref=e177]
+                    - generic [ref=e181]: 3 access subjects
+                  - generic [ref=e182]: Last activity Aug 18, 2026
+            - link "CustomerZeroOperationsAndIncidentResponseAcrossRegionalDeliveryTeams" [ref=e183] [cursor=pointer]:
+              - /url: /spaces/customer-zero-operations/overview
+              - generic [ref=e184]:
+                - img [ref=e186]
+                - generic [ref=e192]: Private
+              - generic [ref=e193]:
+                - generic [ref=e194]:
+                  - heading "CustomerZeroOperationsAndIncidentResponseAcrossRegionalDeliveryTeams" [level=3] [ref=e195]
+                  - img [ref=e196]
+                - paragraph [ref=e198]: Operate service response and prevention actions. Operate service response and prevention actions. Operate service response and prevention actions. Operate service response and prevention actions. Operate service response and prevention actions. Operate service response and prevention actions.
+                - generic [ref=e199]:
+                  - generic [ref=e200]:
+                    - img [ref=e202]
+                    - generic [ref=e206]: 2 access subjects
+                  - generic [ref=e207]: Last activity Aug 18, 2026
+            - link "Engineering Guild" [ref=e208] [cursor=pointer]:
+              - /url: /spaces/engineering-guild/overview
+              - generic [ref=e209]:
+                - img [ref=e211]
+                - generic [ref=e215]:
+                  - generic [ref=e217]: Organization open
+                  - generic [ref=e219]: Joined
+              - generic [ref=e220]:
+                - generic [ref=e221]:
+                  - heading "Engineering Guild" [level=3] [ref=e222]
+                  - img [ref=e223]
+                - paragraph [ref=e225]: Share engineering practices.
+                - generic [ref=e226]:
+                  - generic [ref=e227]:
+                    - img [ref=e229]
+                    - generic [ref=e233]: 2 access subjects
+                  - generic [ref=e234]: Last activity Aug 18, 2026
+            - link "Executive Briefing" [ref=e235] [cursor=pointer]:
+              - /url: /spaces/executive-briefing/overview
+              - generic [ref=e236]:
+                - img [ref=e238]
+                - generic [ref=e244]: Hidden
+              - generic [ref=e245]:
+                - generic [ref=e246]:
+                  - heading "Executive Briefing" [level=3] [ref=e247]
+                  - img [ref=e248]
+                - paragraph [ref=e250]: Restricted briefings for named audiences.
+                - generic [ref=e251]:
+                  - generic [ref=e252]:
+                    - img [ref=e254]
+                    - generic [ref=e258]: 1 access subject
+                  - generic [ref=e259]: Last activity Aug 18, 2026
+  - button "❗️4⚠️0" [ref=e260] [cursor=pointer]:
+    - generic [ref=e261]: ❗️4
+    - generic [ref=e262]: ⚠️0
+  - tooltip "SKAX Town Square" [ref=e263]:
+    - generic [ref=e264]: SKAX Town Square
+```
