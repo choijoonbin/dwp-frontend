@@ -33,6 +33,9 @@ APPROVAL_RESEAL_COMMIT = "3970b26c111c0492d7a7b637b8153f7a6844318d"
 APPROVAL_RESEAL_BRANCH = (
     "codex/hris-wave7-batch06-hrm013-approval-runtime-backend-20261027-r2"
 )
+PEOPLE_COMMIT = "8ccc7baeff43b60dc6cdf719449514f56b6dbca5"
+PEOPLE_TREE = "f17b244d9d47da035dfe09f7c9a604796f19eb74"
+PEOPLE_REBASE_BRANCH = "codex/hris-wave7-batch06-hrm013-people-owner-runtime-backend-20261027-r2"
 CARRIER_BRANCH = (
     "codex/hris-wave7-batch06-hrm013-owner-runtime-"
     "phase4-authority-frontend-20261027-r1"
@@ -347,8 +350,26 @@ def validate_backend(checks: Checks) -> None:
         APPROVAL_RESEAL_COMMIT,
         "Approval reseal branch is not pushed",
     )
+    checks.exact(
+        text(BACKEND, "rev-list", "--parents", "-n", "1", PEOPLE_COMMIT).split(),
+        [PEOPLE_COMMIT, APPROVAL_RESEAL_COMMIT],
+        "People successor topology",
+    )
+    checks.exact(text(BACKEND, "rev-parse", f"{PEOPLE_COMMIT}^{{tree}}"), PEOPLE_TREE, "People successor tree")
+    checks.exact(text(BACKEND, "rev-parse", f"origin/{PEOPLE_REBASE_BRANCH}"), PEOPLE_COMMIT, "People successor branch push")
+    people_paths = diff_paths(BACKEND, APPROVAL_RESEAL_COMMIT, PEOPLE_COMMIT)
+    checks.exact(len(people_paths), 46, "People successor path count")
+    checks.require(all(path.startswith("dwp-people-server/") for path in people_paths), "People successor path scope")
+    people_targeted = secure_receipt(checks, RECEIPTS / "people-owner-runtime-post-rebase-targeted-verification-receipt.v1.json", 7063, "d9768f87e11b6bfa516f79ed20423d33af7cfd5bd58aa059dd9d4d0c69c57881")
+    people_review = secure_receipt(checks, RECEIPTS / "people-owner-runtime-post-rebase-independent-review.v1.json", 7184, "52bd5980120e9c2c19df94ed8fc53eaf607687f426c69d4579fc8b4bd3648d38")
+    people_governance = secure_receipt(checks, RECEIPTS / "backend-descendants" / f"{PEOPLE_COMMIT}.hrm013-shared-contract-governance.v1.json", 10313, "51a0f53b0333c4a998a91c6a1e8eef3034cb5411af8cd640201c422010ef306f")
+    checks.exact(people_targeted["replay"]["testedSuccessor"]["commit"], PEOPLE_COMMIT, "People targeted commit")
+    checks.exact(people_review["findings"], {"p0": 0, "p1": 0, "p2": 0}, "People review findings")
+    checks.exact(people_review["decision"], "GO_FOR_EXACT_POST_REBASE_PEOPLE_OWNER_RUNTIME_BRANCH_COMMIT_PUSH_ONLY", "People review decision")
+    checks.exact(people_governance["descendantCommit"], PEOPLE_COMMIT, "People governance commit")
+    checks.exact(people_governance["decision"], "GO_FOR_EXACT_BACKEND_DESCENDANT_GOVERNANCE_ONLY", "People governance decision")
     checks.require(
-        backend_head in {BACKEND_BASE, APPROVAL_RESEAL_COMMIT},
+        backend_head in {APPROVAL_RESEAL_COMMIT, PEOPLE_COMMIT},
         "backend head is outside the authorized Approval integration lifecycle",
     )
     checks.exact(text(BACKEND, "rev-parse", "origin/dwp-dev"), backend_head, "backend origin")
@@ -357,21 +378,11 @@ def validate_backend(checks: Checks) -> None:
         BACKEND_TREE,
         "backend tree",
     )
-    if backend_head == APPROVAL_RESEAL_COMMIT:
+    if backend_head in {APPROVAL_RESEAL_COMMIT, PEOPLE_COMMIT}:
         checks.exact(
-            text(BACKEND, "rev-parse", f"{APPROVAL_RESEAL_COMMIT}^{{tree}}"),
-            APPROVAL_TREE,
-            "Approval integrated tree",
-        )
-        checks.exact(
-            text(BACKEND, "rev-list", "--parents", "-n", "1", APPROVAL_RESEAL_COMMIT).split(),
-            [APPROVAL_RESEAL_COMMIT, BACKEND_BASE],
-            "Approval integration is not a direct child",
-        )
-        checks.exact(
-            text(BACKEND, "rev-parse", f"origin/{APPROVAL_RESEAL_BRANCH}"),
-            APPROVAL_RESEAL_COMMIT,
-            "Approval branch is not pushed",
+            text(BACKEND, "rev-parse", f"{backend_head}^{{tree}}"),
+            APPROVAL_TREE if backend_head == APPROVAL_RESEAL_COMMIT else PEOPLE_TREE,
+            "current integrated tree",
         )
     checks.exact(changed(BACKEND), set(), "backend worktree is dirty")
     for path, size, sha in BACKEND_PINS:

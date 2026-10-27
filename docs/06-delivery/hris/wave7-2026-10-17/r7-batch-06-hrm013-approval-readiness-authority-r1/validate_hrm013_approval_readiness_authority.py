@@ -31,9 +31,18 @@ APPROVAL_RESEAL_TREE = "3b6033339058ae684dafe94361bc653d28d6fe75"
 APPROVAL_RESEAL_BRANCH = (
     "codex/hris-wave7-batch06-hrm013-approval-runtime-backend-20261027-r2"
 )
+PEOPLE_COMMIT = "8ccc7baeff43b60dc6cdf719449514f56b6dbca5"
+PEOPLE_TREE = "f17b244d9d47da035dfe09f7c9a604796f19eb74"
+PEOPLE_BRANCH = (
+    "codex/hris-wave7-batch06-hrm013-people-owner-runtime-backend-20261027-r2"
+)
+OWNER_RECEIPTS = Path(
+    "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261026/"
+    "batch06/hrm013-owner-runtime/receipts"
+)
 GOVERNED_BACKEND_DESCENDANTS = {
-    APPROVAL_READINESS_COMMIT: APPROVAL_READINESS_TREE,
     APPROVAL_RESEAL_COMMIT: APPROVAL_RESEAL_TREE,
+    PEOPLE_COMMIT: PEOPLE_TREE,
 }
 CARRIER_BRANCH = "codex/hris-wave7-batch06-hrm013-approval-readiness-authority-frontend-20261027-r1"
 LANE_BRANCH = "codex/hris-wave7-batch06-hrm013-approval-readiness-backend-20261027-r1"
@@ -152,6 +161,41 @@ def validate_approval_reseal(c: Check) -> None:
     c.exact(diff_paths(BACKEND, ORIGINAL_APPROVAL_COMMIT, APPROVAL_RESEAL_COMMIT), set(), "Approval reseal content diff")
     c.exact(git(BACKEND, "rev-parse", f"origin/{APPROVAL_RESEAL_BRANCH}"), APPROVAL_RESEAL_COMMIT, "Approval reseal branch push")
 
+def validate_people_successor(c: Check) -> None:
+    c.exact(
+        git(BACKEND, "rev-list", "--parents", "-n", "1", PEOPLE_COMMIT).split(),
+        [PEOPLE_COMMIT, APPROVAL_RESEAL_COMMIT],
+        "People successor topology",
+    )
+    c.exact(git(BACKEND, "rev-parse", f"{PEOPLE_COMMIT}^{{tree}}"), PEOPLE_TREE, "People successor tree")
+    c.exact(git(BACKEND, "rev-parse", f"origin/{PEOPLE_BRANCH}"), PEOPLE_COMMIT, "People successor branch push")
+    paths = diff_paths(BACKEND, APPROVAL_RESEAL_COMMIT, PEOPLE_COMMIT)
+    c.exact(len(paths), 46, "People successor path count")
+    c.require(all(path.startswith("dwp-people-server/") for path in paths), "People successor path scope")
+    evidence = [
+        (
+            OWNER_RECEIPTS / "people-owner-runtime-post-rebase-targeted-verification-receipt.v1.json",
+            7063, "d9768f87e11b6bfa516f79ed20423d33af7cfd5bd58aa059dd9d4d0c69c57881",
+        ),
+        (
+            OWNER_RECEIPTS / "people-owner-runtime-post-rebase-independent-review.v1.json",
+            7184, "52bd5980120e9c2c19df94ed8fc53eaf607687f426c69d4579fc8b4bd3648d38",
+        ),
+        (
+            OWNER_RECEIPTS / "backend-descendants" /
+            f"{PEOPLE_COMMIT}.hrm013-shared-contract-governance.v1.json",
+            10313, "51a0f53b0333c4a998a91c6a1e8eef3034cb5411af8cd640201c422010ef306f",
+        ),
+    ]
+    for path, size, digest in evidence:
+        secure(c, path, size, digest)
+    targeted, review, governance = [load(path) for path, _, _ in evidence]
+    c.exact(targeted["replay"]["testedSuccessor"]["commit"], PEOPLE_COMMIT, "People targeted commit")
+    c.exact(review["decision"], "GO_FOR_EXACT_POST_REBASE_PEOPLE_OWNER_RUNTIME_BRANCH_COMMIT_PUSH_ONLY", "People review decision")
+    c.exact(review["findings"], {"p0": 0, "p1": 0, "p2": 0}, "People review findings")
+    c.exact(governance["descendantCommit"], PEOPLE_COMMIT, "People governance commit")
+    c.exact(governance["decision"], "GO_FOR_EXACT_BACKEND_DESCENDANT_GOVERNANCE_ONLY", "People governance decision")
+
 def secure(c: Check, path: Path, size: int, digest: str):
     c.require(path.exists() and not path.is_symlink(), f"missing/symlinked prerequisite: {path}")
     info = path.stat()
@@ -249,6 +293,7 @@ def main() -> int:
         backend_origin = git(BACKEND, "rev-parse", "origin/dwp-dev")
         c.exact(backend_origin, backend_head, "backend origin")
         validate_approval_reseal(c)
+        validate_people_successor(c)
         allowed_heads = GOVERNED_BACKEND_DESCENDANTS
         c.require(backend_head in allowed_heads, "backend head is not an exact governed descendant")
         c.exact(

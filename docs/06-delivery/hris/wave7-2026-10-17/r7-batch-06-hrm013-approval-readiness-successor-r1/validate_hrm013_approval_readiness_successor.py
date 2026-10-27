@@ -41,6 +41,13 @@ APPROVAL_RESEAL_TREE = "3b6033339058ae684dafe94361bc653d28d6fe75"
 APPROVAL_RESEAL_BRANCH = (
     "codex/hris-wave7-batch06-hrm013-approval-runtime-backend-20261027-r2"
 )
+PEOPLE_COMMIT = "8ccc7baeff43b60dc6cdf719449514f56b6dbca5"
+PEOPLE_TREE = "f17b244d9d47da035dfe09f7c9a604796f19eb74"
+PEOPLE_BRANCH = "codex/hris-wave7-batch06-hrm013-people-owner-runtime-backend-20261027-r2"
+OWNER_RECEIPTS = Path(
+    "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261026/"
+    "batch06/hrm013-owner-runtime/receipts"
+)
 CARRIER_BRANCH = (
     "codex/hris-wave7-batch06-hrm013-approval-readiness-"
     "successor-frontend-20261027-r1"
@@ -178,6 +185,34 @@ def validate_approval_reseal(c: Check) -> None:
     c.exact(text(BACKEND, "rev-parse", f"origin/{APPROVAL_RESEAL_BRANCH}"), APPROVAL_RESEAL_COMMIT, "Approval reseal branch push")
 
 
+def validate_people_successor(c: Check) -> None:
+    c.exact(text(BACKEND, "rev-list", "--parents", "-n", "1", PEOPLE_COMMIT).split(), [PEOPLE_COMMIT, APPROVAL_RESEAL_COMMIT], "People successor topology")
+    c.exact(text(BACKEND, "rev-parse", f"{PEOPLE_COMMIT}^{{tree}}"), PEOPLE_TREE, "People successor tree")
+    c.exact(text(BACKEND, "rev-parse", f"origin/{PEOPLE_BRANCH}"), PEOPLE_COMMIT, "People successor branch push")
+    paths = diff_paths(BACKEND, APPROVAL_RESEAL_COMMIT, PEOPLE_COMMIT)
+    c.exact(len(paths), 46, "People successor path count")
+    c.require(all(path.startswith("dwp-people-server/") for path in paths), "People successor path scope")
+    pins = [
+        (OWNER_RECEIPTS / "people-owner-runtime-post-rebase-targeted-verification-receipt.v1.json", 7063, "d9768f87e11b6bfa516f79ed20423d33af7cfd5bd58aa059dd9d4d0c69c57881"),
+        (OWNER_RECEIPTS / "people-owner-runtime-post-rebase-independent-review.v1.json", 7184, "52bd5980120e9c2c19df94ed8fc53eaf607687f426c69d4579fc8b4bd3648d38"),
+        (OWNER_RECEIPTS / "backend-descendants" / f"{PEOPLE_COMMIT}.hrm013-shared-contract-governance.v1.json", 10313, "51a0f53b0333c4a998a91c6a1e8eef3034cb5411af8cd640201c422010ef306f"),
+    ]
+    values = []
+    for path, size, digest in pins:
+        c.require(path.exists() and not path.is_symlink(), f"People receipt missing/symlinked: {path}")
+        info = path.stat(); c.require(stat.S_ISREG(info.st_mode), f"People receipt non-regular: {path}")
+        c.exact(stat.S_IMODE(info.st_mode), 0o600, f"People receipt mode: {path}")
+        c.exact(info.st_uid, os.getuid(), f"People receipt owner: {path}")
+        data = path.read_bytes(); c.exact(len(data), size, f"People receipt bytes: {path}"); c.exact(sha(data), digest, f"People receipt hash: {path}")
+        values.append(load(path))
+    targeted, review, governance = values
+    c.exact(targeted["replay"]["testedSuccessor"]["commit"], PEOPLE_COMMIT, "People targeted commit")
+    c.exact(review["findings"], {"p0": 0, "p1": 0, "p2": 0}, "People review findings")
+    c.exact(review["decision"], "GO_FOR_EXACT_POST_REBASE_PEOPLE_OWNER_RUNTIME_BRANCH_COMMIT_PUSH_ONLY", "People review decision")
+    c.exact(governance["descendantCommit"], PEOPLE_COMMIT, "People governance commit")
+    c.exact(governance["decision"], "GO_FOR_EXACT_BACKEND_DESCENDANT_GOVERNANCE_ONLY", "People governance decision")
+
+
 def secure_receipt(c: Check) -> None:
     c.require(RECEIPT.exists() and not RECEIPT.is_symlink(), "clean receipt missing or symlinked")
     info = RECEIPT.stat()
@@ -291,6 +326,7 @@ def main() -> int:
     try:
         c.exact(text(ROOT, "rev-parse", f"{FRONTEND_BASE}^{{tree}}"), FRONTEND_TREE, "frontend base tree")
         validate_approval_reseal(c)
+        validate_people_successor(c)
         c.exact(text(BACKEND, "rev-parse", f"{BACKEND_BASE}^{{tree}}"), BACKEND_TREE, "backend base tree")
         secure_receipt(c)
         carrier = carrier_commit(c)
@@ -332,16 +368,16 @@ def main() -> int:
                 )
                 backend_head = text(BACKEND, "rev-parse", "HEAD")
                 backend_origin = text(BACKEND, "rev-parse", "origin/dwp-dev")
-                c.require(backend_head in {LANE_COMMIT, APPROVAL_RESEAL_COMMIT}, "unexpected backend dwp-dev head")
+                c.require(backend_head in {APPROVAL_RESEAL_COMMIT, PEOPLE_COMMIT}, "unexpected backend dwp-dev head")
                 c.exact(backend_origin, backend_head, "backend dwp-dev origin drift")
                 c.exact(
                     text(BACKEND, "rev-parse", f"{backend_head}^{{tree}}"),
-                    LANE_TREE if backend_head == LANE_COMMIT else APPROVAL_RESEAL_TREE,
+                    APPROVAL_RESEAL_TREE if backend_head == APPROVAL_RESEAL_COMMIT else PEOPLE_TREE,
                     "backend dwp-dev tree",
                 )
                 state = (
                     "REVIEWED_APPROVAL_READINESS_BRANCH_PUSHED_INTEGRATION_AUTHORITY_REQUIRED"
-                    if backend_head == LANE_COMMIT else
+                    if backend_head == APPROVAL_RESEAL_COMMIT else
                     "APPROVAL_READINESS_CORRECTION_INTEGRATED"
                 )
         print(f"PASS state={state} checks={c.count} receipt_issuance=external-only")

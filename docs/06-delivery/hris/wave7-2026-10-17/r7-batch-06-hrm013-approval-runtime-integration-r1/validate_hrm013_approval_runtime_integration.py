@@ -35,6 +35,13 @@ APPROVAL_RESEAL_COMMIT = "3970b26c111c0492d7a7b637b8153f7a6844318d"
 PEOPLE_BRANCH = "codex/hris-wave7-batch06-hrm013-people-owner-runtime-backend-20261026-r1"
 PEOPLE_COMMIT = "626e1de182678d28a82d6801855c039ed6f3f637"
 PEOPLE_TREE = "4366c40e6c2bec1b5ab6cb2f09b28bdd72754c08"
+PEOPLE_REBASE_BRANCH = "codex/hris-wave7-batch06-hrm013-people-owner-runtime-backend-20261027-r2"
+PEOPLE_REBASE_COMMIT = "8ccc7baeff43b60dc6cdf719449514f56b6dbca5"
+PEOPLE_REBASE_TREE = "f17b244d9d47da035dfe09f7c9a604796f19eb74"
+PEOPLE_GOVERNANCE_PARENT = "dca74e7fabc58651a40b2b9605b38da5adc1b9b8"
+PEOPLE_GOVERNANCE_BRANCH = "codex/hris-wave7-batch06-hrm013-people-governance-frontend-20261027-r1"
+PEOPLE_GOVERNANCE_COMMIT = "1b781cd368f1d1433b310606910e3f4e074bdb6c"
+PEOPLE_GOVERNANCE_TREE = "a076a61f790faba5102eccf4029a327aa40e12d3"
 GOVERNANCE_PARENT = "54f312dd799570da659cbc438a40af5495aa153c"
 GOVERNANCE_BRANCH = "codex/hris-wave7-batch06-hrm013-bed31127-governance-frontend-20261027-r1"
 GOVERNANCE_COMMIT = "189bb49645515bbd3e4423cfb93dcc53ff40ed75"
@@ -115,6 +122,33 @@ RESEAL_GOV_RECEIPT = (
     RECEIPTS / "backend-descendants" /
     f"{APPROVAL_RESEAL_COMMIT}.hrm013-shared-contract-governance.v1.json"
 )
+PEOPLE_TARGET_RECEIPT = (
+    RECEIPTS / "people-owner-runtime-post-rebase-targeted-verification-receipt.v1.json"
+)
+PEOPLE_POST_REBASE_REVIEW = (
+    RECEIPTS / "people-owner-runtime-post-rebase-independent-review.v1.json"
+)
+APPROVAL_INTEGRATION_RECEIPT = RECEIPTS / "approval-runtime-central-integration-receipt.v1.json"
+PEOPLE_GOVERNANCE_RECEIPT = (
+    RECEIPTS / "backend-descendants" /
+    f"{PEOPLE_REBASE_COMMIT}.hrm013-shared-contract-governance.v1.json"
+)
+PEOPLE_GOVERNANCE_ROOT = (
+    "docs/06-delivery/hris/wave7-2026-10-17/"
+    "r7-batch-06-hrm013-backend-descendant-governance/"
+    f"{PEOPLE_REBASE_COMMIT}"
+)
+PEOPLE_GOV_AUTHORITY = f"{PEOPLE_GOVERNANCE_ROOT}/authority.v1.json"
+PEOPLE_GOV_REVIEW = f"{PEOPLE_GOVERNANCE_ROOT}/independent-review.v1.json"
+PEOPLE_INTEGRATION_BASE = "91b47dda9a6692e7a6f827cbfc1f6a173cfc641c"
+PEOPLE_INTEGRATION_ROOT = (
+    "docs/06-delivery/hris/wave7-2026-10-17/"
+    "r7-batch-06-hrm013-people-rebase-integration-r1"
+)
+PEOPLE_INTEGRATION_AUTHORITY = (
+    f"{PEOPLE_INTEGRATION_ROOT}/people-rebase-central-integration-authority.v1.json"
+)
+PEOPLE_INTEGRATION_REVIEW = f"{PEOPLE_INTEGRATION_ROOT}/independent-review.v1.json"
 SHARED_VALIDATOR = (
     "docs/06-delivery/hris/wave7-2026-10-17/"
     "r7-batch-06-hrm013-shared-contract-integration-r1/"
@@ -533,10 +567,304 @@ def validate_reseal_governance(checks: Checks) -> datetime:
     return recorded_at
 
 
+def validate_people_rebase(checks: Checks, backend_head: str) -> datetime:
+    checks.exact(
+        text(BACKEND, "rev-list", "--parents", "-n", "1", PEOPLE_REBASE_COMMIT).split(),
+        [PEOPLE_REBASE_COMMIT, APPROVAL_RESEAL_COMMIT],
+        "People post-rebase successor topology",
+    )
+    checks.exact(
+        text(BACKEND, "rev-parse", f"{PEOPLE_REBASE_COMMIT}^{{tree}}"),
+        PEOPLE_REBASE_TREE,
+        "People post-rebase successor tree",
+    )
+    checks.exact(
+        text(BACKEND, "rev-parse", f"origin/{PEOPLE_REBASE_BRANCH}"),
+        PEOPLE_REBASE_COMMIT,
+        "People post-rebase branch push",
+    )
+    paths = diff_paths(BACKEND, APPROVAL_RESEAL_COMMIT, PEOPLE_REBASE_COMMIT)
+    historical_paths = diff_paths(BACKEND, BACKEND_BASE, PEOPLE_COMMIT)
+    checks.exact(len(paths), 46, "People post-rebase path count")
+    checks.exact(paths, historical_paths, "People replay path set")
+    checks.require(
+        all(path.startswith("dwp-people-server/") for path in paths),
+        "People post-rebase path escaped dwp-people-server",
+    )
+    status = text(
+        BACKEND, "diff", "--name-status", APPROVAL_RESEAL_COMMIT, PEOPLE_REBASE_COMMIT,
+    ).splitlines()
+    checks.exact(sum(line.startswith("A\t") for line in status), 37, "People added path count")
+    checks.exact(sum(line.startswith("M\t") for line in status), 9, "People modified path count")
+    checks.exact(
+        sum("/src/main/" in path for path in paths), 28,
+        "People main path count",
+    )
+    checks.exact(
+        sum("/src/test/" in path for path in paths), 18,
+        "People test path count",
+    )
+    manifest = ("\n".join(sorted(paths)) + "\n").encode()
+    checks.exact(
+        sha(manifest),
+        "944b6d8dffe4b94358cdf9d95058732034b2b7a1f81f692ba1548ef1ab27020d",
+        "People changed-path manifest",
+    )
+    for path in sorted(paths):
+        checks.exact(
+            output(BACKEND, "ls-tree", PEOPLE_REBASE_COMMIT, "--", path),
+            output(BACKEND, "ls-tree", PEOPLE_COMMIT, "--", path),
+            f"People replay mode/blob: {path}",
+        )
+    checks.exact(
+        text(BACKEND, "rev-parse", f"{PEOPLE_COMMIT}:dwp-people-server"),
+        "d640d14a1d495a1ea1143665c909aeeea1a06e61",
+        "historical People subtree",
+    )
+    checks.exact(
+        text(BACKEND, "rev-parse", f"{PEOPLE_REBASE_COMMIT}:dwp-people-server"),
+        "d640d14a1d495a1ea1143665c909aeeea1a06e61",
+        "post-rebase People subtree",
+    )
+    checks.exact(
+        text(BACKEND, "rev-parse", f"{APPROVAL_RESEAL_COMMIT}:dwp-approval-server"),
+        "b75127bf6629fb64354347025f63f864fb88da6b",
+        "Approval predecessor subtree",
+    )
+    checks.exact(
+        text(BACKEND, "rev-parse", f"{PEOPLE_REBASE_COMMIT}:dwp-approval-server"),
+        "b75127bf6629fb64354347025f63f864fb88da6b",
+        "Approval subtree after People replay",
+    )
+
+    approval_receipt = secure_receipt(
+        checks, APPROVAL_INTEGRATION_RECEIPT, 9407,
+        "f988c7bc9d72d7e34c22a0ae57684b347ab96d9be94cf7e088a9ba1cc5f0be3b",
+    )
+    targeted = secure_receipt(
+        checks, PEOPLE_TARGET_RECEIPT, 7063,
+        "d9768f87e11b6bfa516f79ed20423d33af7cfd5bd58aa059dd9d4d0c69c57881",
+    )
+    review = secure_receipt(
+        checks, PEOPLE_POST_REBASE_REVIEW, 7184,
+        "52bd5980120e9c2c19df94ed8fc53eaf607687f426c69d4579fc8b4bd3648d38",
+    )
+    governance = secure_receipt(
+        checks, PEOPLE_GOVERNANCE_RECEIPT, 10313,
+        "51a0f53b0333c4a998a91c6a1e8eef3034cb5411af8cd640201c422010ef306f",
+    )
+    checks.exact(
+        approval_receipt["backendIntegration"]["targetCommitAfter"],
+        APPROVAL_RESEAL_COMMIT,
+        "Approval prerequisite integrated commit",
+    )
+    checks.exact(
+        approval_receipt["state"],
+        "APPROVAL_RESEAL_INTEGRATION_SUCCESSOR_IN_FORCE_BACKEND_INTEGRATED",
+        "Approval prerequisite state",
+    )
+    checks.exact(
+        targeted["replay"]["testedSuccessor"],
+        {
+            "commit": PEOPLE_REBASE_COMMIT,
+            "parent": APPROVAL_RESEAL_COMMIT,
+            "tree": PEOPLE_REBASE_TREE,
+            "directChildOfApprovalIntegratedBase": True,
+        },
+        "People targeted successor identity",
+    )
+    checks.exact(
+        targeted["changedPathManifest"]["sha256"],
+        "944b6d8dffe4b94358cdf9d95058732034b2b7a1f81f692ba1548ef1ab27020d",
+        "People targeted path manifest",
+    )
+    checks.exact(
+        targeted["changedPathManifest"]["binaryFullIndexPatchSha256"],
+        "bb5f3e93b753a77db1514f8a02a149758ca244120ec09482905d10b78785570f",
+        "People targeted patch hash",
+    )
+    checks.exact(
+        targeted["changedPathManifest"]["stablePatchId"],
+        "a638c580b2cf09959469af80b1c27977473ff54d",
+        "People targeted stable patch id",
+    )
+    checks.exact(
+        (targeted["verification"]["tests"], targeted["verification"]["failures"],
+         targeted["verification"]["errors"], targeted["verification"]["skipped"]),
+        (69, 0, 0, 0),
+        "People targeted test result",
+    )
+    checks.exact(
+        review["reviewedReplay"]["commit"], PEOPLE_REBASE_COMMIT,
+        "People independent review commit",
+    )
+    checks.exact(review["findings"], {"p0": 0, "p1": 0, "p2": 0}, "People review findings")
+    checks.exact(
+        review["decision"],
+        "GO_FOR_EXACT_POST_REBASE_PEOPLE_OWNER_RUNTIME_BRANCH_COMMIT_PUSH_ONLY",
+        "People review decision",
+    )
+    checks.exact(
+        review["authority"]["backendDwpDevIntegrationAuthorized"], False,
+        "People review cannot integrate backend",
+    )
+
+    checks.exact(
+        text(ROOT, "rev-list", "--parents", "-n", "1", PEOPLE_GOVERNANCE_COMMIT).split(),
+        [PEOPLE_GOVERNANCE_COMMIT, PEOPLE_GOVERNANCE_PARENT],
+        "People governance carrier topology",
+    )
+    checks.exact(
+        text(ROOT, "rev-parse", f"{PEOPLE_GOVERNANCE_COMMIT}^{{tree}}"),
+        PEOPLE_GOVERNANCE_TREE,
+        "People governance carrier tree",
+    )
+    checks.exact(
+        text(ROOT, "rev-parse", f"origin/{PEOPLE_GOVERNANCE_BRANCH}"),
+        PEOPLE_GOVERNANCE_COMMIT,
+        "People governance carrier branch push",
+    )
+    checks.exact(
+        diff_paths(ROOT, PEOPLE_GOVERNANCE_PARENT, PEOPLE_GOVERNANCE_COMMIT),
+        {PEOPLE_GOV_AUTHORITY, PEOPLE_GOV_REVIEW},
+        "People governance carrier paths",
+    )
+    authority_data = output(ROOT, "show", f"{PEOPLE_GOVERNANCE_COMMIT}:{PEOPLE_GOV_AUTHORITY}")
+    review_data = output(ROOT, "show", f"{PEOPLE_GOVERNANCE_COMMIT}:{PEOPLE_GOV_REVIEW}")
+    checks.exact(pin(PEOPLE_GOV_AUTHORITY, authority_data), {
+        "path": PEOPLE_GOV_AUTHORITY, "bytes": 9928,
+        "sha256": "01b59c84d3ebedaa0081ac321432724128bf0ef3ea5f7eb8077ebf77f5faa05b",
+    }, "People governance authority pin")
+    checks.exact(pin(PEOPLE_GOV_REVIEW, review_data), {
+        "path": PEOPLE_GOV_REVIEW, "bytes": 2187,
+        "sha256": "849416fbf4ec8664ae8c999007be755a14e58158a10a0509d869fa14995eba42",
+    }, "People governance review pin")
+    checks.exact(governance["immediateParentCommit"], APPROVAL_RESEAL_COMMIT, "People governance parent")
+    checks.exact(governance["descendantCommit"], PEOPLE_REBASE_COMMIT, "People governance descendant")
+    checks.exact(governance["descendantTree"], PEOPLE_REBASE_TREE, "People governance descendant tree")
+    checks.exact(governance["descendantChangedPaths"], sorted(paths), "People governance paths")
+    checks.exact(governance["governingFrontendCarrierCommit"], PEOPLE_GOVERNANCE_COMMIT, "People governing carrier")
+    checks.exact(governance["governingFrontendCarrierTree"], PEOPLE_GOVERNANCE_TREE, "People governing tree")
+    checks.exact(governance["governingAuthorityArtifact"], pin(PEOPLE_GOV_AUTHORITY, authority_data), "People governing authority")
+    checks.exact(governance["governingIndependentReviewArtifact"], pin(PEOPLE_GOV_REVIEW, review_data), "People governing review")
+    checks.exact((governance["p0"], governance["p1"], governance["p2"]), (0, 0, 0), "People governance findings")
+    checks.exact(governance["decision"], "GO_FOR_EXACT_BACKEND_DESCENDANT_GOVERNANCE_ONLY", "People governance decision")
+    additions = [
+        list(filter(None, text(
+            ROOT, "log", "--diff-filter=A", "--format=%H", "--", path,
+        ).splitlines()))
+        for path in (PEOPLE_INTEGRATION_AUTHORITY, PEOPLE_INTEGRATION_REVIEW)
+    ]
+    if any(additions):
+        for path, found in zip(
+            (PEOPLE_INTEGRATION_AUTHORITY, PEOPLE_INTEGRATION_REVIEW), additions,
+        ):
+            checks.exact(len(found), 1, f"People integration introduction count: {path}")
+        introduced = [commit for found in additions for commit in found]
+        checks.exact(len(set(introduced)), 1, "People integration artifacts introduced separately")
+        people_carrier = introduced[0]
+        checks.exact(
+            text(ROOT, "rev-list", "--parents", "-n", "1", people_carrier).split(),
+            [people_carrier, PEOPLE_INTEGRATION_BASE],
+            "People integration carrier topology",
+        )
+        frontend_head = text(ROOT, "rev-parse", "HEAD")
+        frontend_origin = text(ROOT, "rev-parse", "origin/dwp-dev")
+        merged_head = run(
+            ROOT, "merge-base", "--is-ancestor", PEOPLE_GOVERNANCE_COMMIT, frontend_head,
+        ).returncode == 0
+        merged_origin = run(
+            ROOT, "merge-base", "--is-ancestor", PEOPLE_GOVERNANCE_COMMIT, frontend_origin,
+        ).returncode == 0
+        checks.exact(merged_head, merged_origin, "People governance HEAD/origin ancestry drift")
+        if merged_head:
+            candidates = []
+            for line in text(
+                ROOT, "rev-list", "--parents", f"{people_carrier}..{frontend_head}",
+            ).splitlines():
+                parts = line.split()
+                if len(parts) == 3 and parts[1:] == [people_carrier, PEOPLE_GOVERNANCE_COMMIT]:
+                    candidates.append(parts[0])
+            checks.exact(len(candidates), 1, "People governance requires one ordered two-parent merge")
+            merge_commit = candidates[0]
+            governance_paths = {PEOPLE_GOV_AUTHORITY, PEOPLE_GOV_REVIEW}
+            checks.exact(
+                diff_paths(ROOT, people_carrier, merge_commit), governance_paths,
+                "People governance merge first-parent path set",
+            )
+            for path in governance_paths:
+                entry = text(ROOT, "ls-tree", merge_commit, "--", path).split()
+                checks.require(len(entry) >= 4, f"People governance merge path absent: {path}")
+                checks.exact(entry[0], "100644", f"People governance merge regular non-symlink mode: {path}")
+                checks.exact(
+                    output(ROOT, "show", f"{merge_commit}:{path}"),
+                    output(ROOT, "show", f"{PEOPLE_GOVERNANCE_COMMIT}:{path}"),
+                    f"People governance merge blob drift: {path}",
+                )
+            expected = run(
+                ROOT, "merge-tree", "--write-tree", "--no-messages",
+                people_carrier, PEOPLE_GOVERNANCE_COMMIT,
+            )
+            checks.exact(expected.returncode, 0, "People governance clean three-way merge probe")
+            expected_trees = expected.stdout.decode("ascii", errors="strict").strip().splitlines()
+            checks.exact(len(expected_trees), 1, "People governance expected merge-tree output")
+            checks.exact(
+                text(ROOT, "rev-parse", f"{merge_commit}^{{tree}}"), expected_trees[0],
+                "People governance merge tree differs from clean three-way result",
+            )
+        if backend_head == PEOPLE_REBASE_COMMIT:
+            checks.require(merged_head, "People backend integrated before governance merge closure")
+    else:
+        checks.require(
+            backend_head != PEOPLE_REBASE_COMMIT,
+            "People backend integrated before central authority carrier",
+        )
+    if backend_head == PEOPLE_REBASE_COMMIT:
+        checks.require(
+            run(ROOT, "merge-base", "--is-ancestor", PEOPLE_GOVERNANCE_COMMIT, "HEAD").returncode == 0,
+            "People backend integrated before governance ancestry reached frontend HEAD",
+        )
+        checks.require(
+            run(ROOT, "merge-base", "--is-ancestor", PEOPLE_GOVERNANCE_COMMIT, "origin/dwp-dev").returncode == 0,
+            "People backend integrated before governance ancestry reached frontend origin/dwp-dev",
+        )
+
+    approval_at = parse_timestamp(approval_receipt.get("recordedAt"), "Approval integration recordedAt")
+    replay_at = parse_timestamp(
+        text(BACKEND, "show", "-s", "--format=%cI", PEOPLE_REBASE_COMMIT),
+        "People replay committedAt",
+    )
+    target_at = parse_timestamp(targeted.get("verifiedAt"), "People targeted verifiedAt")
+    review_at = parse_timestamp(review.get("reviewedAt"), "People review reviewedAt")
+    governance_review_at = parse_timestamp(
+        load(review_data, PEOPLE_GOV_REVIEW).get("reviewedAt"),
+        "People governance reviewedAt",
+    )
+    governance_commit_at = parse_timestamp(
+        text(ROOT, "show", "-s", "--format=%cI", PEOPLE_GOVERNANCE_COMMIT),
+        "People governance committedAt",
+    )
+    governance_at = parse_timestamp(governance.get("recordedAt"), "People governance recordedAt")
+    events = [approval_at, replay_at, target_at, review_at, governance_review_at,
+              governance_commit_at, governance_at]
+    checks.require(
+        all(left <= right for left, right in zip(events, events[1:])),
+        "People rebase evidence causal order",
+    )
+    checks.require(
+        governance_at <= datetime.now(timezone.utc) + timedelta(minutes=5),
+        "People governance receipt is in the future",
+    )
+    return governance_at
+
+
 def validate_backend(checks: Checks) -> str:
     checks.exact(text(BACKEND, "branch", "--show-current"), "dwp-dev", "backend branch")
     head = text(BACKEND, "rev-parse", "HEAD")
-    checks.require(head in {BACKEND_BASE, APPROVAL_RESEAL_COMMIT}, "unexpected backend dwp-dev head")
+    checks.require(
+        head in {APPROVAL_RESEAL_COMMIT, PEOPLE_REBASE_COMMIT},
+        "unexpected backend dwp-dev head",
+    )
     checks.exact(text(BACKEND, "rev-parse", "origin/dwp-dev"), head, "backend origin drift")
     checks.exact(changed(BACKEND), set(), "backend dwp-dev dirty")
     checks.exact(text(BACKEND, "rev-parse", f"{BACKEND_BASE}^{{tree}}"), BACKEND_TREE, "backend base tree")
@@ -558,6 +886,7 @@ def validate_backend(checks: Checks) -> str:
         run(BACKEND, "merge-base", "--is-ancestor", PEOPLE_COMMIT, head).returncode != 0,
         "People pre-rebase commit was integrated out of order",
     )
+    validate_people_rebase(checks, head)
     approval_paths = diff_paths(BACKEND, BACKEND_BASE, APPROVAL_COMMIT)
     checks.exact(len(approval_paths), 45, "Approval path count")
     checks.exact(

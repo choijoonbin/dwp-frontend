@@ -40,6 +40,9 @@ APPROVAL_RESEAL_TREE = "3b6033339058ae684dafe94361bc653d28d6fe75"
 APPROVAL_RESEAL_BRANCH = (
     "codex/hris-wave7-batch06-hrm013-approval-runtime-backend-20261027-r2"
 )
+PEOPLE_COMMIT = "8ccc7baeff43b60dc6cdf719449514f56b6dbca5"
+PEOPLE_TREE = "f17b244d9d47da035dfe09f7c9a604796f19eb74"
+PEOPLE_BRANCH = "codex/hris-wave7-batch06-hrm013-people-owner-runtime-backend-20261027-r2"
 CARRIER_BRANCH = (
     "codex/hris-wave7-batch06-hrm013-approval-readiness-"
     "integration-frontend-20261027-r1"
@@ -205,6 +208,23 @@ def validate_approval_reseal(c: Check) -> None:
     c.exact(text(BACKEND, "rev-parse", f"origin/{APPROVAL_RESEAL_BRANCH}"), APPROVAL_RESEAL_COMMIT, "Approval reseal branch push")
 
 
+def validate_people_successor(c: Check) -> None:
+    c.exact(text(BACKEND, "rev-list", "--parents", "-n", "1", PEOPLE_COMMIT).split(), [PEOPLE_COMMIT, APPROVAL_RESEAL_COMMIT], "People successor topology")
+    c.exact(text(BACKEND, "rev-parse", f"{PEOPLE_COMMIT}^{{tree}}"), PEOPLE_TREE, "People successor tree")
+    c.exact(text(BACKEND, "rev-parse", f"origin/{PEOPLE_BRANCH}"), PEOPLE_COMMIT, "People successor branch push")
+    paths = diff_paths(BACKEND, APPROVAL_RESEAL_COMMIT, PEOPLE_COMMIT)
+    c.exact(len(paths), 46, "People successor path count")
+    c.require(all(path.startswith("dwp-people-server/") for path in paths), "People successor path scope")
+    targeted = secure_receipt(c, RECEIPTS / "people-owner-runtime-post-rebase-targeted-verification-receipt.v1.json", 7063, "d9768f87e11b6bfa516f79ed20423d33af7cfd5bd58aa059dd9d4d0c69c57881")
+    review = secure_receipt(c, RECEIPTS / "people-owner-runtime-post-rebase-independent-review.v1.json", 7184, "52bd5980120e9c2c19df94ed8fc53eaf607687f426c69d4579fc8b4bd3648d38")
+    governance = secure_receipt(c, RECEIPTS / "backend-descendants" / f"{PEOPLE_COMMIT}.hrm013-shared-contract-governance.v1.json", 10313, "51a0f53b0333c4a998a91c6a1e8eef3034cb5411af8cd640201c422010ef306f")
+    c.exact(targeted["replay"]["testedSuccessor"]["commit"], PEOPLE_COMMIT, "People targeted commit")
+    c.exact(review["findings"], {"p0": 0, "p1": 0, "p2": 0}, "People review findings")
+    c.exact(review["decision"], "GO_FOR_EXACT_POST_REBASE_PEOPLE_OWNER_RUNTIME_BRANCH_COMMIT_PUSH_ONLY", "People review decision")
+    c.exact(governance["descendantCommit"], PEOPLE_COMMIT, "People governance commit")
+    c.exact(governance["decision"], "GO_FOR_EXACT_BACKEND_DESCENDANT_GOVERNANCE_ONLY", "People governance decision")
+
+
 def carrier_commit(c: Check) -> str | None:
     additions = list(filter(None, text(
         ROOT, "log", "--diff-filter=A", "--format=%H", "--", AUTHORITY
@@ -367,11 +387,11 @@ def validate_backend(c: Check) -> str:
     c.exact(text(BACKEND, "branch", "--show-current"), "dwp-dev", "backend target branch")
     c.exact(changed(BACKEND), set(), "backend target worktree is dirty")
     head = text(BACKEND, "rev-parse", "HEAD")
-    c.require(head in {LANE_COMMIT, APPROVAL_RESEAL_COMMIT}, "unexpected backend dwp-dev head")
+    c.require(head in {APPROVAL_RESEAL_COMMIT, PEOPLE_COMMIT}, "unexpected backend dwp-dev head")
     c.exact(text(BACKEND, "rev-parse", "origin/dwp-dev"), head, "backend dwp-dev origin drift")
     c.exact(
         text(BACKEND, "rev-parse", f"{head}^{{tree}}"),
-        LANE_TREE if head == LANE_COMMIT else APPROVAL_RESEAL_TREE,
+        APPROVAL_RESEAL_TREE if head == APPROVAL_RESEAL_COMMIT else PEOPLE_TREE,
         "backend dwp-dev tree",
     )
     return head
@@ -385,6 +405,7 @@ def main() -> int:
     try:
         c.exact(text(ROOT, "rev-parse", f"{FRONTEND_BASE}^{{tree}}"), FRONTEND_TREE, "frontend base tree")
         validate_approval_reseal(c)
+        validate_people_successor(c)
         validate_evidence(c)
         backend_head = validate_backend(c)
         carrier = carrier_commit(c)
@@ -394,7 +415,7 @@ def main() -> int:
             c.exact(text(ROOT, "rev-parse", "HEAD"), FRONTEND_BASE, "authoring head")
             c.exact(text(ROOT, "branch", "--show-current"), CARRIER_BRANCH, "authoring branch")
             c.exact(changed(ROOT), CARRIER_PATHS, "authoring paths")
-            c.exact(backend_head, LANE_COMMIT, "backend integrated before carrier")
+            c.exact(backend_head, APPROVAL_RESEAL_COMMIT, "backend integrated before carrier")
             state = "APPROVAL_READINESS_INTEGRATION_AUTHORITY_READY_TO_COMMIT_AND_PUSH"
         else:
             c.exact(text(ROOT, "rev-parse", f"origin/{CARRIER_BRANCH}"), carrier, "carrier branch not pushed")
@@ -404,7 +425,7 @@ def main() -> int:
             )
             state = (
                 "APPROVAL_READINESS_CORRECTION_READY_FOR_BACKEND_FAST_FORWARD"
-                if backend_head == LANE_COMMIT else
+                if backend_head == APPROVAL_RESEAL_COMMIT else
                 "APPROVAL_READINESS_CORRECTION_INTEGRATED"
             )
         print(f"PASS state={state} checks={c.count} receipt_issuance=external-only")
