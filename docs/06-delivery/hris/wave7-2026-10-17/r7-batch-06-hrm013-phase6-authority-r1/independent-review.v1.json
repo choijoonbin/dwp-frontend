@@ -1,0 +1,66 @@
+{
+  "schema": "dwp.hris.wave7.hrm013-phase6-task-owner-execution-authority-independent-review.v1",
+  "state": "INDEPENDENT_ZERO_FINDING_HASH_BOUND_PHASE6_AUTHORITY_REVIEW_COMPLETE",
+  "reviewedAt": "2026-10-27T03:04:16Z",
+  "recordedBy": "INDEPENDENT_HRM013_PHASE6_AUTHORITY_REVIEW",
+  "sliceId": "BASE-TFR-HRM-013",
+  "authorityPath": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-phase6-authority-r1/phase6-task-owner-execution-authority.v1.json",
+  "validatorPath": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-phase6-authority-r1/validate_hrm013_phase6_authority.py",
+  "reviewBoundaries": [
+    "EXACT_FRONTEND_7AE10685_AND_BACKEND_8CCC7BAE_BASES",
+    "HASH_BOUND_OWNER_RUNTIME_INTEGRATION_AND_TWENTY_METHOD_MATRIX_RECEIPTS",
+    "EXACT_GATE_COPIED_MAXIMUM_TIME_PAYROLL_AUTH_SOURCE_AND_TEST_ALLOWLISTS",
+    "EXCLUSIVE_TIME_V15_PAYROLL_V56_AUTH_V272_MIGRATION_RESERVATIONS",
+    "THREE_SEPARATE_CONDITIONAL_START_TOKENS_AND_CLEAN_WORKTREE_RECEIPTS",
+    "PARALLEL_AUTHORING_WITH_ORDERED_REBASE_AND_FAST_FORWARD_CENTRAL_INTEGRATION",
+    "COMPLETE_TWELVE_CONDITION_MATRIX_ONCE_AFTER_ALL_THREE_INTEGRATIONS",
+    "NO_PACKAGE_JSON_EXISTING_VALIDATOR_UI_FEATURE_TENANT_CREDENTIAL_OR_PRODUCTION_AUTHORITY"
+  ],
+  "reviewedFacts": {
+    "ownerRuntimeCentralIntegrationReceiptMatchesBackendAndFrontendHeads": true,
+    "boundedHandshakeMatrixPassesTwentyOfTwentyNamedMethods": true,
+    "phase6AuthorityAuthoringAllowedButImplementationNotPreviouslyAuthorized": true,
+    "timeMigrationHighWaterIsV14AndV15IsAbsent": true,
+    "payrollMigrationHighWaterIsV55AndV56IsAbsent": true,
+    "authMigrationHighWaterIsV271AndV272IsAbsent": true,
+    "copiedMainClassCount": 20,
+    "copiedExistingConfigurationPathCount": 3,
+    "reservedMigrationCount": 3,
+    "copiedTargetTestCount": 30,
+    "acceptanceConditionCount": 12,
+    "acceptanceMatrixCanonicalCompactJsonSha256": "72c40f9a0a7ec19cc4b27e3caec7443a4d653a2aa42546113601af32f64f383b",
+    "acceptanceDigestExcludesTrailingNewline": true,
+    "centralPeopleHandshakeTestAuthorizedOnlyByAuthTokenAfterTimeAndPayrollIntegration": true,
+    "validatorSealsAllTokenReservationAndTopLevelAuthorityFields": true,
+    "defaultOffAndZeroBusinessCompletionPreserved": true
+  },
+  "exactCarrierPaths": [
+    "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-phase6-authority-r1/independent-review.v1.json",
+    "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-phase6-authority-r1/phase6-task-owner-execution-authority.v1.json",
+    "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-phase6-authority-r1/reservations/auth-v272.migration-reservation.v1.json",
+    "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-phase6-authority-r1/reservations/payroll-v56.migration-reservation.v1.json",
+    "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-phase6-authority-r1/reservations/time-v15.migration-reservation.v1.json",
+    "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-phase6-authority-r1/tokens/hrm-013-auth-identity-task-owner.start-token.v1.json",
+    "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-phase6-authority-r1/tokens/hrm-013-payroll-task-owner.start-token.v1.json",
+    "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-phase6-authority-r1/tokens/hrm-013-time-task-owner.start-token.v1.json",
+    "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-phase6-authority-r1/validate_hrm013_phase6_authority.py"
+  ],
+  "findings": {
+    "p0": 0,
+    "p1": 0,
+    "p2": 0
+  },
+  "decision": "GO_FOR_EXACT_NINE_PATH_PHASE6_AUTHORITY_CARRIER_COMMIT_AND_PUSH_ONLY",
+  "authority": {
+    "independentReviewComplete": true,
+    "authorityCarrierCommitAndPushAuthorized": true,
+    "threeBackendWorktreesMayBeMaterializedAfterCarrierPush": true,
+    "sourceAuthoringRequiresMatchingExternalCleanWorktreeReceipt": true,
+    "directBackendDwpDevIntegrationAuthorized": false,
+    "featureEnablementAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "productionBindingAuthorized": false,
+    "productionReleaseAuthorized": false,
+    "businessCompletionCredit": 0
+  }
+}

@@ -1,0 +1,95 @@
+{
+  "schema": "dwp.hris.wave7.hrm013-payroll-task-owner-start-token.v1",
+  "state": "CONDITIONAL_EXECUTABLE_AFTER_CARRIER_PUSH_AND_MATCHING_EXTERNAL_CLEAN_WORKTREE_RECEIPT",
+  "sliceId": "BASE-TFR-HRM-013",
+  "lane": "PAYROLL_TASK_OWNER",
+  "authorityCarrier": {
+    "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-phase6-authority-r1/phase6-task-owner-execution-authority.v1.json",
+    "requiredCarrierBranch": "codex/hris-wave7-batch06-hrm013-phase6-authority-frontend-20261027-r1",
+    "requiredCarrierBase": "7ae106853d7110dde96da37e321757d15f6d3c33",
+    "carrierCommitAndRemotePushRequired": true
+  },
+  "backendBase": {
+    "repository": "dwp-backend",
+    "branch": "dwp-dev",
+    "commit": "8ccc7baeff43b60dc6cdf719449514f56b6dbca5",
+    "tree": "f17b244d9d47da035dfe09f7c9a604796f19eb74"
+  },
+  "prerequisiteReceiptPin": {
+    "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261026/batch06/hrm013-owner-runtime/receipts/people-owner-runtime-central-integration-receipt.v1.json",
+    "sha256": "f8bde1048167e6d2ae5a7f1d7522dec2c06b89b2d4c6823c3ad274269fdb3b91"
+  },
+  "migrationReservation": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-phase6-authority-r1/reservations/payroll-v56.migration-reservation.v1.json",
+  "worktree": {
+    "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261027/batch06/hrm013-phase6/payroll",
+    "branch": "codex/hris-wave7-batch06-hrm013-phase6-payroll-backend-20261027-r1",
+    "baseHead": "8ccc7baeff43b60dc6cdf719449514f56b6dbca5",
+    "baseTree": "f17b244d9d47da035dfe09f7c9a604796f19eb74",
+    "cleanReceiptPath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261027/batch06/hrm013-phase6/receipts/payroll-clean-worktree-receipt.v1.json",
+    "cleanReceiptSchema": "dwp.hris.wave7.hrm013-phase6-clean-worktree-receipt.v1",
+    "cleanAtIssueRequired": true,
+    "upstreamAbsentAtIssueRequired": true,
+    "remoteBranchAbsentAtIssueRequired": true
+  },
+  "sourceScope": {
+    "exactAuthorizedPaths": [
+      "dwp-payroll-server/src/main/java/com/dwp/services/payroll/hris/separation/hrm013/Hrm013PayrollTaskDispatchController.java",
+      "dwp-payroll-server/src/main/java/com/dwp/services/payroll/hris/separation/hrm013/Hrm013PayrollTaskDispatchService.java",
+      "dwp-payroll-server/src/main/java/com/dwp/services/payroll/hris/separation/hrm013/Hrm013PayrollTaskDispatchStore.java",
+      "dwp-payroll-server/src/main/java/com/dwp/services/payroll/hris/separation/hrm013/Hrm013PayrollTaskDispatchIngressFilter.java",
+      "dwp-payroll-server/src/main/java/com/dwp/services/payroll/hris/separation/hrm013/AuthHrm013ServiceAuthorityClient.java",
+      "dwp-payroll-server/src/main/java/com/dwp/services/payroll/hris/separation/hrm013/Hrm013PayrollTaskReceiptRelay.java",
+      "dwp-payroll-server/src/main/java/com/dwp/services/payroll/hris/separation/hrm013/Hrm013PayrollWorkloadCredentialProvider.java",
+      "dwp-payroll-server/src/main/resources/application.yml",
+      "dwp-payroll-server/src/main/resources/db/migration/V56__hrm013_payroll_task_dispatch_inbox.sql"
+    ],
+    "exactNewPaths": [
+      "dwp-payroll-server/src/main/java/com/dwp/services/payroll/hris/separation/hrm013/Hrm013PayrollTaskDispatchController.java",
+      "dwp-payroll-server/src/main/java/com/dwp/services/payroll/hris/separation/hrm013/Hrm013PayrollTaskDispatchService.java",
+      "dwp-payroll-server/src/main/java/com/dwp/services/payroll/hris/separation/hrm013/Hrm013PayrollTaskDispatchStore.java",
+      "dwp-payroll-server/src/main/java/com/dwp/services/payroll/hris/separation/hrm013/Hrm013PayrollTaskDispatchIngressFilter.java",
+      "dwp-payroll-server/src/main/java/com/dwp/services/payroll/hris/separation/hrm013/AuthHrm013ServiceAuthorityClient.java",
+      "dwp-payroll-server/src/main/java/com/dwp/services/payroll/hris/separation/hrm013/Hrm013PayrollTaskReceiptRelay.java",
+      "dwp-payroll-server/src/main/java/com/dwp/services/payroll/hris/separation/hrm013/Hrm013PayrollWorkloadCredentialProvider.java",
+      "dwp-payroll-server/src/main/resources/db/migration/V56__hrm013_payroll_task_dispatch_inbox.sql"
+    ],
+    "exactExistingMayModify": [
+      "dwp-payroll-server/src/main/resources/application.yml"
+    ]
+  },
+  "targetedVerification": {
+    "compileTask": ":dwp-payroll-server:compileJava",
+    "exactTestPaths": [
+      "dwp-payroll-server/src/test/java/com/dwp/services/payroll/hris/separation/hrm013/Hrm013PayrollTaskDispatchControllerTest.java",
+      "dwp-payroll-server/src/test/java/com/dwp/services/payroll/hris/separation/hrm013/Hrm013PayrollTaskDispatchIngressFilterTest.java",
+      "dwp-payroll-server/src/test/java/com/dwp/services/payroll/hris/separation/hrm013/Hrm013PayrollTaskDispatchStorePostgresTest.java",
+      "dwp-payroll-server/src/test/java/com/dwp/services/payroll/hris/separation/hrm013/Hrm013PayrollControlPlaneAuthorityClientTest.java",
+      "dwp-payroll-server/src/test/java/com/dwp/services/payroll/hris/separation/hrm013/Hrm013PayrollCallbackAuthorityTest.java",
+      "dwp-payroll-server/src/test/java/com/dwp/services/payroll/hris/separation/hrm013/Hrm013PayrollTaskReceiptRelayTest.java",
+      "dwp-payroll-server/src/test/java/com/dwp/services/payroll/hris/separation/hrm013/Hrm013PayrollWorkloadCredentialProviderTest.java",
+      "dwp-payroll-server/src/test/java/com/dwp/services/payroll/hris/separation/hrm013/Hrm013PayrollOutboundTlsBoundaryTest.java",
+      "dwp-payroll-server/src/test/java/com/dwp/services/payroll/hris/separation/hrm013/Hrm013PayrollTaskDispatchDefaultOffTest.java",
+      "dwp-payroll-server/src/test/java/com/dwp/services/payroll/hris/separation/hrm013/Hrm013PayrollDrainContinuationCallbackTest.java"
+    ],
+    "broadRepositoryRerunAuthorized": false
+  },
+  "integration": {
+    "branchCommitAndPushAfterIndependentReviewAuthorized": true,
+    "directDwpDevMergeAuthorized": false,
+    "requiredCentralOrder": 2,
+    "rebaseOnLatestDwpDevBeforeIntegrationRequired": true
+  },
+  "authority": {
+    "payrollTaskOwnerSourceAuthoringAuthorized": true,
+    "payrollV56MigrationAuthoringAuthorized": true,
+    "hrm008CallbackProducerImplementationAuthorized": true,
+    "centralPeopleHandshakeTestAuthoringAuthorized": false,
+    "otherPeopleSourceOrTestAuthoringAuthorized": false,
+    "otherModuleSourceAuthoringAuthorized": false,
+    "featureActivationAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "runtimeCredentialProvisioningAuthorized": false,
+    "productionReleaseAuthorized": false,
+    "businessCompletionCredit": 0
+  }
+}

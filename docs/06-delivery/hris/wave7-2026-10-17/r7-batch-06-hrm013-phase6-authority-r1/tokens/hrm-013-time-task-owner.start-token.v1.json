@@ -1,0 +1,94 @@
+{
+  "schema": "dwp.hris.wave7.hrm013-time-task-owner-start-token.v1",
+  "state": "CONDITIONAL_EXECUTABLE_AFTER_CARRIER_PUSH_AND_MATCHING_EXTERNAL_CLEAN_WORKTREE_RECEIPT",
+  "sliceId": "BASE-TFR-HRM-013",
+  "lane": "TIME_TASK_OWNER",
+  "authorityCarrier": {
+    "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-phase6-authority-r1/phase6-task-owner-execution-authority.v1.json",
+    "requiredCarrierBranch": "codex/hris-wave7-batch06-hrm013-phase6-authority-frontend-20261027-r1",
+    "requiredCarrierBase": "7ae106853d7110dde96da37e321757d15f6d3c33",
+    "carrierCommitAndRemotePushRequired": true
+  },
+  "backendBase": {
+    "repository": "dwp-backend",
+    "branch": "dwp-dev",
+    "commit": "8ccc7baeff43b60dc6cdf719449514f56b6dbca5",
+    "tree": "f17b244d9d47da035dfe09f7c9a604796f19eb74"
+  },
+  "prerequisiteReceiptPin": {
+    "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261026/batch06/hrm013-owner-runtime/receipts/people-owner-runtime-central-integration-receipt.v1.json",
+    "sha256": "f8bde1048167e6d2ae5a7f1d7522dec2c06b89b2d4c6823c3ad274269fdb3b91"
+  },
+  "migrationReservation": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-phase6-authority-r1/reservations/time-v15.migration-reservation.v1.json",
+  "worktree": {
+    "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261027/batch06/hrm013-phase6/time",
+    "branch": "codex/hris-wave7-batch06-hrm013-phase6-time-backend-20261027-r1",
+    "baseHead": "8ccc7baeff43b60dc6cdf719449514f56b6dbca5",
+    "baseTree": "f17b244d9d47da035dfe09f7c9a604796f19eb74",
+    "cleanReceiptPath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261027/batch06/hrm013-phase6/receipts/time-clean-worktree-receipt.v1.json",
+    "cleanReceiptSchema": "dwp.hris.wave7.hrm013-phase6-clean-worktree-receipt.v1",
+    "cleanAtIssueRequired": true,
+    "upstreamAbsentAtIssueRequired": true,
+    "remoteBranchAbsentAtIssueRequired": true
+  },
+  "sourceScope": {
+    "exactAuthorizedPaths": [
+      "dwp-time-server/src/main/java/com/dwp/services/time/hris/separation/hrm013/Hrm013TimeTaskDispatchController.java",
+      "dwp-time-server/src/main/java/com/dwp/services/time/hris/separation/hrm013/Hrm013TimeTaskDispatchService.java",
+      "dwp-time-server/src/main/java/com/dwp/services/time/hris/separation/hrm013/Hrm013TimeTaskDispatchStore.java",
+      "dwp-time-server/src/main/java/com/dwp/services/time/hris/separation/hrm013/Hrm013TimeTaskDispatchIngressFilter.java",
+      "dwp-time-server/src/main/java/com/dwp/services/time/hris/separation/hrm013/AuthHrm013ServiceAuthorityClient.java",
+      "dwp-time-server/src/main/java/com/dwp/services/time/hris/separation/hrm013/Hrm013TimeTaskReceiptRelay.java",
+      "dwp-time-server/src/main/java/com/dwp/services/time/hris/separation/hrm013/Hrm013TimeWorkloadCredentialProvider.java",
+      "dwp-time-server/src/main/resources/application.yml",
+      "dwp-time-server/src/main/resources/db/migration/V15__hrm013_time_task_dispatch_inbox.sql"
+    ],
+    "exactNewPaths": [
+      "dwp-time-server/src/main/java/com/dwp/services/time/hris/separation/hrm013/Hrm013TimeTaskDispatchController.java",
+      "dwp-time-server/src/main/java/com/dwp/services/time/hris/separation/hrm013/Hrm013TimeTaskDispatchService.java",
+      "dwp-time-server/src/main/java/com/dwp/services/time/hris/separation/hrm013/Hrm013TimeTaskDispatchStore.java",
+      "dwp-time-server/src/main/java/com/dwp/services/time/hris/separation/hrm013/Hrm013TimeTaskDispatchIngressFilter.java",
+      "dwp-time-server/src/main/java/com/dwp/services/time/hris/separation/hrm013/AuthHrm013ServiceAuthorityClient.java",
+      "dwp-time-server/src/main/java/com/dwp/services/time/hris/separation/hrm013/Hrm013TimeTaskReceiptRelay.java",
+      "dwp-time-server/src/main/java/com/dwp/services/time/hris/separation/hrm013/Hrm013TimeWorkloadCredentialProvider.java",
+      "dwp-time-server/src/main/resources/db/migration/V15__hrm013_time_task_dispatch_inbox.sql"
+    ],
+    "exactExistingMayModify": [
+      "dwp-time-server/src/main/resources/application.yml"
+    ]
+  },
+  "targetedVerification": {
+    "compileTask": ":dwp-time-server:compileJava",
+    "exactTestPaths": [
+      "dwp-time-server/src/test/java/com/dwp/services/time/hris/separation/hrm013/Hrm013TimeTaskDispatchControllerTest.java",
+      "dwp-time-server/src/test/java/com/dwp/services/time/hris/separation/hrm013/Hrm013TimeTaskDispatchIngressFilterTest.java",
+      "dwp-time-server/src/test/java/com/dwp/services/time/hris/separation/hrm013/Hrm013TimeTaskDispatchStorePostgresTest.java",
+      "dwp-time-server/src/test/java/com/dwp/services/time/hris/separation/hrm013/Hrm013TimeControlPlaneAuthorityClientTest.java",
+      "dwp-time-server/src/test/java/com/dwp/services/time/hris/separation/hrm013/Hrm013TimeCallbackAuthorityTest.java",
+      "dwp-time-server/src/test/java/com/dwp/services/time/hris/separation/hrm013/Hrm013TimeTaskReceiptRelayTest.java",
+      "dwp-time-server/src/test/java/com/dwp/services/time/hris/separation/hrm013/Hrm013TimeWorkloadCredentialProviderTest.java",
+      "dwp-time-server/src/test/java/com/dwp/services/time/hris/separation/hrm013/Hrm013TimeOutboundTlsBoundaryTest.java",
+      "dwp-time-server/src/test/java/com/dwp/services/time/hris/separation/hrm013/Hrm013TimeTaskDispatchDefaultOffTest.java",
+      "dwp-time-server/src/test/java/com/dwp/services/time/hris/separation/hrm013/Hrm013TimeDrainContinuationCallbackTest.java"
+    ],
+    "broadRepositoryRerunAuthorized": false
+  },
+  "integration": {
+    "branchCommitAndPushAfterIndependentReviewAuthorized": true,
+    "directDwpDevMergeAuthorized": false,
+    "requiredCentralOrder": 1
+  },
+  "authority": {
+    "timeTaskOwnerSourceAuthoringAuthorized": true,
+    "timeV15MigrationAuthoringAuthorized": true,
+    "hrm008CallbackProducerImplementationAuthorized": true,
+    "centralPeopleHandshakeTestAuthoringAuthorized": false,
+    "otherPeopleSourceOrTestAuthoringAuthorized": false,
+    "otherModuleSourceAuthoringAuthorized": false,
+    "featureActivationAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "runtimeCredentialProvisioningAuthorized": false,
+    "productionReleaseAuthorized": false,
+    "businessCompletionCredit": 0
+  }
+}

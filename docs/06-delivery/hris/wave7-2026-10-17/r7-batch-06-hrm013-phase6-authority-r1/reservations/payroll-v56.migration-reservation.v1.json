@@ -1,0 +1,36 @@
+{
+  "schema": "dwp.hris.wave7.hrm013-phase6-migration-reservation.v1",
+  "state": "EXCLUSIVE_HASH_BOUND_PAYROLL_MAIN_V56_RESERVATION",
+  "reservationId": "HRM013-PHASE6-PAYROLL-MAIN-V56-20261027-R1",
+  "reservedAt": "2026-10-27T03:04:16Z",
+  "sliceId": "BASE-TFR-HRM-013",
+  "lane": "PAYROLL_TASK_OWNER",
+  "authorityCarrier": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-phase6-authority-r1/phase6-task-owner-execution-authority.v1.json",
+  "backendBase": {
+    "commit": "8ccc7baeff43b60dc6cdf719449514f56b6dbca5",
+    "tree": "f17b244d9d47da035dfe09f7c9a604796f19eb74"
+  },
+  "stream": "PAYROLL_MAIN",
+  "predecessor": {
+    "version": "V55",
+    "path": "dwp-payroll-server/src/main/resources/db/migration/V55__pay_base_tfr_pay_004_retirement.sql",
+    "bytes": 44054,
+    "sha256": "7596e52c968d8a754f2fa8336260fc5aa790be8d02b97e6edd9aae56fd3f1f84"
+  },
+  "reservation": {
+    "version": "V56",
+    "path": "dwp-payroll-server/src/main/resources/db/migration/V56__hrm013_payroll_task_dispatch_inbox.sql",
+    "mustBeAbsentAtBase": true,
+    "exclusiveToTokenLane": "PAYROLL_TASK_OWNER",
+    "schemaOnlyDefaultOff": true,
+    "seedTenantGrantCredentialOrEnrollmentRowsAllowed": false
+  },
+  "authority": {
+    "migrationReservationActive": true,
+    "migrationAuthoringAuthorizedByMatchingConditionalToken": true,
+    "anyOtherPayrollMigrationAuthorized": false,
+    "featureActivationAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "productionReleaseAuthorized": false
+  }
+}

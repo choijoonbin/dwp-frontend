@@ -1,0 +1,36 @@
+{
+  "schema": "dwp.hris.wave7.hrm013-phase6-migration-reservation.v1",
+  "state": "EXCLUSIVE_HASH_BOUND_AUTH_MAIN_V272_RESERVATION",
+  "reservationId": "HRM013-PHASE6-AUTH-MAIN-V272-20261027-R1",
+  "reservedAt": "2026-10-27T03:04:16Z",
+  "sliceId": "BASE-TFR-HRM-013",
+  "lane": "AUTH_IDENTITY_TASK_OWNER",
+  "authorityCarrier": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-phase6-authority-r1/phase6-task-owner-execution-authority.v1.json",
+  "backendBase": {
+    "commit": "8ccc7baeff43b60dc6cdf719449514f56b6dbca5",
+    "tree": "f17b244d9d47da035dfe09f7c9a604796f19eb74"
+  },
+  "stream": "AUTH_MAIN",
+  "predecessor": {
+    "version": "V271",
+    "path": "dwp-auth-server/src/main/resources/db/migration/V271__create_hris_service_grant_authority.sql",
+    "bytes": 39093,
+    "sha256": "800abea33e1103790ef15065d74f05e589da66fd69c1346c875c0ea1461237a8"
+  },
+  "reservation": {
+    "version": "V272",
+    "path": "dwp-auth-server/src/main/resources/db/migration/V272__hrm013_identity_task_dispatch_inbox.sql",
+    "mustBeAbsentAtBase": true,
+    "exclusiveToTokenLane": "AUTH_IDENTITY_TASK_OWNER",
+    "schemaOnlyDefaultOff": true,
+    "seedTenantGrantCredentialOrEnrollmentRowsAllowed": false
+  },
+  "authority": {
+    "migrationReservationActive": true,
+    "migrationAuthoringAuthorizedByMatchingConditionalToken": true,
+    "anyOtherAuthMigrationAuthorized": false,
+    "featureActivationAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "productionReleaseAuthorized": false
+  }
+}

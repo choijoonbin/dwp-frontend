@@ -1,0 +1,36 @@
+{
+  "schema": "dwp.hris.wave7.hrm013-phase6-migration-reservation.v1",
+  "state": "EXCLUSIVE_HASH_BOUND_TIME_MAIN_V15_RESERVATION",
+  "reservationId": "HRM013-PHASE6-TIME-MAIN-V15-20261027-R1",
+  "reservedAt": "2026-10-27T03:04:16Z",
+  "sliceId": "BASE-TFR-HRM-013",
+  "lane": "TIME_TASK_OWNER",
+  "authorityCarrier": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-phase6-authority-r1/phase6-task-owner-execution-authority.v1.json",
+  "backendBase": {
+    "commit": "8ccc7baeff43b60dc6cdf719449514f56b6dbca5",
+    "tree": "f17b244d9d47da035dfe09f7c9a604796f19eb74"
+  },
+  "stream": "TIME_MAIN",
+  "predecessor": {
+    "version": "V14",
+    "path": "dwp-time-server/src/main/resources/db/migration/V14__tim_base_tfr_tim_003_employment_absence_projection.sql",
+    "bytes": 18812,
+    "sha256": "d442c9f6315cf01d60601694499d0cf79eff1d9f7d784b0fb162ec2a3aef66eb"
+  },
+  "reservation": {
+    "version": "V15",
+    "path": "dwp-time-server/src/main/resources/db/migration/V15__hrm013_time_task_dispatch_inbox.sql",
+    "mustBeAbsentAtBase": true,
+    "exclusiveToTokenLane": "TIME_TASK_OWNER",
+    "schemaOnlyDefaultOff": true,
+    "seedTenantGrantCredentialOrEnrollmentRowsAllowed": false
+  },
+  "authority": {
+    "migrationReservationActive": true,
+    "migrationAuthoringAuthorizedByMatchingConditionalToken": true,
+    "anyOtherTimeMigrationAuthorized": false,
+    "featureActivationAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "productionReleaseAuthorized": false
+  }
+}
