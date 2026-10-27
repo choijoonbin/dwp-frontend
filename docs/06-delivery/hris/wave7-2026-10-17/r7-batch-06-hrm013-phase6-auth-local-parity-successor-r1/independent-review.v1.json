@@ -1,0 +1,50 @@
+{
+  "schema": "dwp.hris.wave7.hrm013-auth-local-parity-successor-independent-review.v1",
+  "reviewedAt": "2026-10-27T04:00:26Z",
+  "reviewScope": "AUTH_LOCAL_DRAIN_PARITY_SUCCESSOR_AUTHORITY_ONLY",
+  "decision": "GO_FOR_EXACT_FOUR_PATH_AUTH_LOCAL_PARITY_REMEDIATION_ONLY",
+  "severityCounts": {
+    "P0": 0,
+    "P1": 0,
+    "P2": 0
+  },
+  "authorityPin": {
+    "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-phase6-auth-local-parity-successor-r1/auth-local-parity-successor-authority.v1.json",
+    "bytes": 9410,
+    "sha256": "df4cb80780774ee3707982e4905b3625a112571e678d4c7fbda3d24dde1b6833"
+  },
+  "validatorPin": {
+    "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-phase6-auth-local-parity-successor-r1/validate_hrm013_auth_local_parity_successor.py",
+    "bytes": 8064,
+    "sha256": "3946be8499130ecbb12ee74aad88e5f0edc84e57b31789b86cd6f233c7dda384"
+  },
+  "reviewedFacts": [
+    "The predecessor Phase-6 authority, AUTH start token and V272 reservation are hash and byte pinned.",
+    "The backend and frontend dwp-dev heads and trees are pinned to the observed clean integration bases.",
+    "The existing AUTH implementation branch is pinned to its pushed original commit and exact seventeen-path boundary.",
+    "Only two existing Auth control-plane source files and their two existing focused tests are added.",
+    "The prepare operation is explicitly read-only and may not append activity or grant admission.",
+    "Authorization occurs only after proof verification and must preserve the V271 DrainAdmission contract.",
+    "The current authority fence, credential lease, local role and workload binding must be rechecked before execution and callback.",
+    "No migration, People source, People handshake-before-order, menu, activation, tenant, credential or production authority is granted.",
+    "The AUTH branch may be amended and force-pushed only with force-with-lease after the named compile and tests pass.",
+    "Direct backend dwp-dev integration remains prohibited pending a separate central review."
+  ],
+  "residualSourceFindings": [
+    {
+      "severity": "P0",
+      "state": "OPEN_UNTIL_IMPLEMENTATION_AND_TARGETED_TESTS_PASS",
+      "finding": "The original AUTH implementation cannot yet perform a proof-first local DRAIN admission through the existing public control-plane contract."
+    },
+    {
+      "severity": "P1",
+      "state": "OPEN_UNTIL_IMPLEMENTATION_AND_TARGETED_TESTS_PASS",
+      "finding": "Current-lease, local-role and authority-fence parity must be demonstrated at both task execution and callback boundaries."
+    }
+  ],
+  "nonClaims": [
+    "This review does not claim that the source findings are fixed.",
+    "This review does not authorize central integration or completion credit.",
+    "This review does not claim that HRM-013 or HRIS menu development is complete."
+  ]
+}
