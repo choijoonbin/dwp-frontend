@@ -1,0 +1,54 @@
+{
+  "schema": "dwp.hris.wave7.hrm013-backend-descendant-governance-independent-review.v1",
+  "reviewedAt": "2026-10-27T00:12:14Z",
+  "reviewer": "INDEPENDENT_HRM013_BACKEND_DESCENDANT_GOVERNANCE_REVIEW",
+  "scope": {
+    "authorityPath": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-backend-descendant-governance/3970b26c111c0492d7a7b637b8153f7a6844318d/authority.v1.json",
+    "validatorPath": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-shared-contract-integration-r1/validate_hrm013_shared_contract_integration.py",
+    "packagePath": "package.json",
+    "backendDescendantCommit": "3970b26c111c0492d7a7b637b8153f7a6844318d",
+    "reviewedBoundaries": [
+      "EXACT_LINEAR_BACKEND_DESCENDANT_AND_IMMEDIATE_PARENT",
+      "SHARED_ELEVEN_BLOBS_BYTE_IDENTICAL_TO_INTEGRATION_COMMIT",
+      "PREVIOUS_GOVERNANCE_RECEIPT_HASH_CHAIN",
+      "ORDERED_TWO_PATH_FRONTEND_GOVERNANCE_CARRIER",
+      "NO_SHARED_BLOB_MUTATION_RUNTIME_OR_PRODUCTION_AUTHORITY"
+    ]
+  },
+  "findings": {
+    "p0": [],
+    "p1": [],
+    "p2": []
+  },
+  "finalVerdict": {
+    "p0": 0,
+    "p1": 0,
+    "p2": 0,
+    "decision": "GO_FOR_EXACT_BACKEND_DESCENDANT_GOVERNANCE_ONLY"
+  },
+  "authority": {
+    "independentReviewComplete": true,
+    "descendantGovernanceReceiptAuthorized": true,
+    "sharedElevenBlobsVerifiedImmutable": true,
+    "sharedBlobMutationAuthorized": false,
+    "productionReleaseAuthorized": false,
+    "businessCompletionCredit": 0
+  },
+  "artifactPins": [
+    {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-backend-descendant-governance/3970b26c111c0492d7a7b637b8153f7a6844318d/authority.v1.json",
+      "bytes": 9846,
+      "sha256": "61f0a6fbde31295d1f0ef91a7b2ce9be6a88ff0d0aa501cc7a4a0a55d50f4a80"
+    },
+    {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-shared-contract-integration-r1/validate_hrm013_shared_contract_integration.py",
+      "bytes": 78934,
+      "sha256": "d177b30ca101a1cc3fd69749ff064d5a8e73224ff308fe812f18690ef291d49e"
+    },
+    {
+      "path": "package.json",
+      "bytes": 14858,
+      "sha256": "ca2693e843d440191a84f29d417e553c8296b5b93a1dcdc8644b13d1a92eb1bb"
+    }
+  ]
+}
