@@ -1,11 +1,15 @@
-import { ActionButton, GuidedEmptyState, InlineFeedback } from '@dwp-frontend/design-system';
+import {
+  ActionButton,
+  FormField,
+  GuidedEmptyState,
+  InlineFeedback,
+  LoadingState,
+} from '@dwp-frontend/design-system';
 import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
 import Chip from '@mui/material/Chip';
 import Divider from '@mui/material/Divider';
 import Paper from '@mui/material/Paper';
 import Stack from '@mui/material/Stack';
-import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 
 import { timeCloseCommandAllowed } from '../model/time-close-model';
@@ -162,8 +166,8 @@ export function TimeCloseCommandCenter({
         </InlineFeedback>
       )}
       {workspace.kind === 'LOADING' && (
-        <Paper variant="outlined" sx={{ p: 3 }} role="status" aria-live="polite">
-          <Typography>Loading authorized time close evidence…</Typography>
+        <Paper variant="outlined" sx={{ p: 3 }}>
+          <LoadingState label="Loading authorized time close evidence…" embedded />
         </Paper>
       )}
       {workspace.kind === 'EMPTY' && (
@@ -192,7 +196,7 @@ export function TimeCloseCommandCenter({
               <Typography component="h2" variant="h6">
                 Periods
               </Typography>
-              <TextField
+              <FormField
                 fullWidth
                 size="small"
                 label="Filter periods"
@@ -205,10 +209,9 @@ export function TimeCloseCommandCenter({
             <Stack component="ul" gap={1} sx={{ listStyle: 'none', p: 1.5, m: 0 }}>
               {periods.map((period) => (
                 <Box component="li" key={period.periodId} minWidth={0}>
-                  <Button
+                  <ActionButton
                     fullWidth
-                    variant={period.periodId === selectedPeriodId ? 'contained' : 'outlined'}
-                    color="inherit"
+                    intent={period.periodId === selectedPeriodId ? 'primary' : 'secondary'}
                     aria-pressed={period.periodId === selectedPeriodId}
                     onClick={() => onSelect(period)}
                     sx={{
@@ -220,7 +223,7 @@ export function TimeCloseCommandCenter({
                     }}
                   >
                     <Box minWidth={0}>
-                      <Typography fontWeight={700} sx={{ overflowWrap: 'anywhere' }}>
+                      <Typography fontWeight="fontWeightBold" sx={{ overflowWrap: 'anywhere' }}>
                         {period.title}
                       </Typography>
                       <Typography variant="caption" color="text.secondary">
@@ -229,7 +232,7 @@ export function TimeCloseCommandCenter({
                       </Typography>
                     </Box>
                     <Chip size="small" label={period.closeStatus ?? period.statusCode} />
-                  </Button>
+                  </ActionButton>
                 </Box>
               ))}
             </Stack>
@@ -306,7 +309,7 @@ export function TimeCloseCommandCenter({
                   })}
                 </Stack>
                 <Divider />
-                <Typography component="h3" variant="subtitle1" fontWeight={700}>
+                <Typography component="h3" variant="subtitle1" fontWeight="fontWeightBold">
                   Payroll handoff status
                 </Typography>
                 <Stack
@@ -314,7 +317,7 @@ export function TimeCloseCommandCenter({
                   gap={1}
                   alignItems={{ sm: 'flex-start' }}
                 >
-                  <TextField
+                  <FormField
                     fullWidth
                     size="small"
                     label="Handoff ID"

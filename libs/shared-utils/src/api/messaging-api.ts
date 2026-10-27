@@ -166,6 +166,12 @@ export type MessagingConversationDetail = {
 
 export type MessagingHome = {
   generatedAt: string;
+  presence?: {
+    authority: 'LIVE' | 'UNAVAILABLE';
+    evaluatedAt: string;
+    leaseTtlSeconds: number;
+    refreshAfterSeconds: number;
+  };
   metrics: {
     unreadConversations: number;
     mentions: number;
@@ -817,6 +823,63 @@ export async function setMessagingTyping(conversationId: string, started: boolea
     `/api/messaging/v1/conversations/${encodeURIComponent(conversationId)}/typing`,
     { started }
   );
+}
+
+export const MESSAGING_PRESENCE_REQUEST_TIMEOUT_MS = 5_000;
+export const MESSAGING_PRESENCE_RENEWAL_SAFETY_MARGIN_MS = 5_000;
+export const MESSAGING_PRESENCE_DEFAULT_LEASE_TIMING = Object.freeze({
+  leaseTtlSeconds: 75,
+  refreshAfterSeconds: 20,
+});
+export const MESSAGING_PRESENCE_COMPATIBILITY_LEASE_TIMING = Object.freeze({
+  leaseTtlSeconds: 30,
+  refreshAfterSeconds: 5,
+});
+
+export type MessagingPresenceLeaseTiming = Readonly<{
+  leaseTtlSeconds: number;
+  refreshAfterSeconds: number;
+}>;
+
+const PRESENCE_LEASE_TTL_HEADER = 'X-DWP-Presence-Lease-TTL-Seconds';
+const PRESENCE_REFRESH_AFTER_HEADER = 'X-DWP-Presence-Refresh-After-Seconds';
+const PRESENCE_MINIMUM_TTL_SECONDS = 30;
+const PRESENCE_MAXIMUM_TTL_SECONDS = 300;
+const PRESENCE_MINIMUM_REFRESH_AFTER_SECONDS = 5;
+const PRESENCE_RENEWAL_RESERVE_SECONDS =
+  (MESSAGING_PRESENCE_REQUEST_TIMEOUT_MS * 2 + MESSAGING_PRESENCE_RENEWAL_SAFETY_MARGIN_MS) / 1_000;
+
+function positiveWholeSeconds(value: string | null): number | null {
+  if (!value || !/^[1-9]\d*$/u.test(value)) return null;
+  const parsed = Number(value);
+  return Number.isSafeInteger(parsed) ? parsed : null;
+}
+
+function messagingPresenceLeaseTiming(headers?: Headers): MessagingPresenceLeaseTiming {
+  const leaseTtlSeconds = positiveWholeSeconds(headers?.get(PRESENCE_LEASE_TTL_HEADER) ?? null);
+  const refreshAfterSeconds = positiveWholeSeconds(
+    headers?.get(PRESENCE_REFRESH_AFTER_HEADER) ?? null
+  );
+  if (
+    leaseTtlSeconds === null ||
+    refreshAfterSeconds === null ||
+    leaseTtlSeconds < PRESENCE_MINIMUM_TTL_SECONDS ||
+    leaseTtlSeconds > PRESENCE_MAXIMUM_TTL_SECONDS ||
+    refreshAfterSeconds < PRESENCE_MINIMUM_REFRESH_AFTER_SECONDS ||
+    refreshAfterSeconds + PRESENCE_RENEWAL_RESERVE_SECONDS > leaseTtlSeconds
+  ) {
+    return MESSAGING_PRESENCE_COMPATIBILITY_LEASE_TIMING;
+  }
+  return { leaseTtlSeconds, refreshAfterSeconds };
+}
+
+export async function refreshMessagingPresence(): Promise<MessagingPresenceLeaseTiming> {
+  const response = await axiosInstance.put<ApiResponse<void>, undefined>(
+    '/api/messaging/v1/presence/heartbeat',
+    undefined,
+    { timeoutMs: MESSAGING_PRESENCE_REQUEST_TIMEOUT_MS }
+  );
+  return messagingPresenceLeaseTiming(response.headers);
 }
 
 export async function addMessagingReaction(

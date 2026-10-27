@@ -2,6 +2,7 @@ import { lazy, Suspense, useEffect, useId, useRef, useState, type ReactNode } fr
 import { useTranslation } from 'react-i18next';
 import { ChevronDown, Clock3, Eye, ShieldAlert } from 'lucide-react';
 import { formatDate } from '@dwp-frontend/shared-i18n';
+import { foundationTokens } from '@dwp-frontend/design-system';
 import { useProductSurfaceTelemetry } from '../observability/product-surface-telemetry-context';
 
 import Box from '@mui/material/Box';
@@ -58,7 +59,7 @@ function SurfaceStatusBadge({
         bgcolor: outlined ? 'transparent' : 'action.selected',
         color: 'text.secondary',
         typography: 'caption',
-        fontWeight: 650,
+        fontWeight: foundationTokens.home.typography.weightSemibold,
         '@media (forced-colors: active)': {
           borderColor: 'CanvasText',
           color: 'CanvasText',
@@ -292,7 +293,7 @@ function SingleScopeDisclosure({
           py: 0,
           overflow: 'hidden',
           border: 0,
-          borderRadius: 0.5,
+          borderRadius: foundationTokens.radius.compact + 'px',
           color: 'text.secondary',
           bgcolor: 'transparent',
           typography: 'caption',
@@ -418,10 +419,10 @@ export function ProductSurfaceContextBar({
                 minWidth: 0,
                 minHeight: 40,
                 px: 1,
-                borderRadius: 1,
+                borderRadius: foundationTokens.radius.control + 'px',
                 color: 'text.secondary',
                 typography: 'caption',
-                fontWeight: 650,
+                fontWeight: foundationTokens.home.typography.weightSemibold,
                 cursor: 'pointer',
                 transition: (theme) =>
                   theme.transitions.create(['color', 'background-color'], {
@@ -466,13 +467,13 @@ export function ProductSurfaceContextBar({
                     pr: 2.25,
                     overflow: 'hidden',
                     border: 0,
-                    borderRadius: 0.5,
+                    borderRadius: foundationTokens.radius.compact + 'px',
                     outline: 0,
                     appearance: 'none',
                     color: 'text.primary',
                     bgcolor: 'transparent',
                     typography: 'caption',
-                    fontWeight: 700,
+                    fontWeight: 'fontWeightBold',
                     textOverflow: 'ellipsis',
                     whiteSpace: 'nowrap',
                     cursor: 'pointer',
@@ -539,7 +540,7 @@ export function ProductSurfaceContextBar({
                   minWidth: 0,
                   px: mobileRail ? 0.5 : 1,
                   border: 0,
-                  borderRadius: 1,
+                  borderRadius: foundationTokens.radius.control + 'px',
                   color: 'text.primary',
                   bgcolor: 'transparent',
                   font: 'inherit',

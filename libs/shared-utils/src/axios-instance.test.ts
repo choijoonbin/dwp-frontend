@@ -4,6 +4,7 @@ import {
   axiosInstance,
   classifyAuthorizationAccessFailure,
   getEventStream,
+  postEventStream,
   resetCsrfToken,
   sessionHttp,
   sessionNeutralHttp,
@@ -505,6 +506,241 @@ describe('axiosInstance browser session contract', () => {
     expect(accessFailure).not.toHaveBeenCalled();
   });
 
+  it('shares one CSRF refresh when concurrent mutations reject the same stale token', async () => {
+    const secondStaleResponse = deferred<Response>();
+    const freshCsrfResponse = deferred<Response>();
+    let csrfRequests = 0;
+    let staleMutations = 0;
+    const fetchMock = vi.fn((input: RequestInfo | URL, init?: RequestInit) => {
+      const url = String(input);
+      if (url.endsWith('/api/auth/csrf')) {
+        csrfRequests += 1;
+        if (csrfRequests === 1) {
+          return Promise.resolve(
+            jsonResponse(200, {
+              data: { token: 'stale-token', headerName: 'X-XSRF-TOKEN' },
+            })
+          );
+        }
+        if (csrfRequests === 2) return freshCsrfResponse.promise;
+        return Promise.resolve(
+          jsonResponse(200, {
+            data: { token: 'unexpected-extra-token', headerName: 'X-XSRF-TOKEN' },
+          })
+        );
+      }
+
+      const headers = init?.headers as Record<string, string>;
+      if (headers['X-XSRF-TOKEN'] === 'stale-token') {
+        staleMutations += 1;
+        if (staleMutations === 1) {
+          return Promise.resolve({
+            ok: false,
+            status: 403,
+            headers: new Headers(),
+            text: async () => '',
+          } as Response);
+        }
+        return secondStaleResponse.promise;
+      }
+
+      return Promise.resolve(jsonResponse(200, { data: { updated: url } }));
+    });
+    vi.stubGlobal('fetch', fetchMock);
+
+    const first = axiosInstance.post('/api/first', { value: 1 });
+    const second = axiosInstance.post('/api/second', { value: 2 });
+
+    await vi.waitFor(() => expect(csrfRequests).toBe(2));
+    secondStaleResponse.resolve({
+      ok: false,
+      status: 403,
+      headers: new Headers(),
+      text: async () => '',
+    } as Response);
+    await Promise.resolve();
+    freshCsrfResponse.resolve(
+      jsonResponse(200, {
+        data: { token: 'fresh-token', headerName: 'X-XSRF-TOKEN' },
+      })
+    );
+
+    await expect(Promise.all([first, second])).resolves.toHaveLength(2);
+    expect(csrfRequests).toBe(2);
+    const replayedMutations = fetchMock.mock.calls.filter(([, init]) => {
+      const headers = init?.headers as Record<string, string> | undefined;
+      return headers?.['X-XSRF-TOKEN'] === 'fresh-token';
+    });
+    expect(replayedMutations).toHaveLength(2);
+  });
+
+  it('keeps one absolute timeout deadline across a stale CSRF replay', async () => {
+    vi.useFakeTimers();
+    let requestNumber = 0;
+    let replaySignal: AbortSignal | undefined;
+    const fetchMock = vi.fn((_input: RequestInfo | URL, init?: RequestInit) => {
+      requestNumber += 1;
+      if (requestNumber === 1) {
+        return Promise.resolve(
+          jsonResponse(200, {
+            data: { token: 'stale-token', headerName: 'X-XSRF-TOKEN' },
+          })
+        );
+      }
+      if (requestNumber === 2) {
+        return new Promise<Response>((resolve) => {
+          globalThis.setTimeout(
+            () =>
+              resolve({
+                ok: false,
+                status: 403,
+                headers: new Headers(),
+                text: async () => '',
+              } as Response),
+            4_900
+          );
+        });
+      }
+      if (requestNumber === 3) {
+        return Promise.resolve(
+          jsonResponse(200, {
+            data: { token: 'fresh-token', headerName: 'X-XSRF-TOKEN' },
+          })
+        );
+      }
+
+      replaySignal = init?.signal ?? undefined;
+      return new Promise<Response>((resolve, reject) => {
+        const success = globalThis.setTimeout(
+          () => resolve(jsonResponse(200, { data: { updated: true } })),
+          1_000
+        );
+        replaySignal?.addEventListener(
+          'abort',
+          () => {
+            globalThis.clearTimeout(success);
+            reject(new DOMException('The operation was aborted.', 'AbortError'));
+          },
+          { once: true }
+        );
+      });
+    });
+    vi.stubGlobal('fetch', fetchMock);
+
+    const startedAt = Date.now();
+    let outcome: unknown;
+    let settledAt: number | undefined;
+    void axiosInstance.post('/api/example', { value: 'next' }, { timeoutMs: 5_000 }).then(
+      (response) => {
+        outcome = response;
+        settledAt = Date.now();
+      },
+      (error: unknown) => {
+        outcome = error;
+        settledAt = Date.now();
+      }
+    );
+
+    await vi.advanceTimersByTimeAsync(4_999);
+    expect(fetchMock).toHaveBeenCalledTimes(4);
+    expect(replaySignal?.aborted).toBe(false);
+    expect(outcome).toBeUndefined();
+
+    await vi.advanceTimersByTimeAsync(1);
+    expect(replaySignal?.aborted).toBe(true);
+    expect(outcome).toBeInstanceOf(HttpTransportError);
+    expect(outcome).toMatchObject({ reason: 'TIMEOUT' });
+    expect(settledAt).toBe(startedAt + 5_000);
+  });
+
+  it('keeps one absolute timeout deadline across an event stream CSRF replay', async () => {
+    vi.useFakeTimers();
+    let requestNumber = 0;
+    let replaySignal: AbortSignal | undefined;
+    const fetchMock = vi.fn((_input: RequestInfo | URL, init?: RequestInit) => {
+      requestNumber += 1;
+      if (requestNumber === 1) {
+        return Promise.resolve(
+          jsonResponse(200, {
+            data: { token: 'stale-token', headerName: 'X-XSRF-TOKEN' },
+          })
+        );
+      }
+      if (requestNumber === 2) {
+        return new Promise<Response>((resolve) => {
+          globalThis.setTimeout(
+            () =>
+              resolve({
+                ok: false,
+                status: 403,
+                headers: new Headers(),
+                text: async () => '',
+              } as Response),
+            4_900
+          );
+        });
+      }
+      if (requestNumber === 3) {
+        return Promise.resolve(
+          jsonResponse(200, {
+            data: { token: 'fresh-token', headerName: 'X-XSRF-TOKEN' },
+          })
+        );
+      }
+
+      replaySignal = init?.signal ?? undefined;
+      return new Promise<Response>((resolve, reject) => {
+        const success = globalThis.setTimeout(
+          () =>
+            resolve({
+              ok: true,
+              status: 200,
+              body: new ReadableStream({ start: (controller) => controller.close() }),
+            } as Response),
+          1_000
+        );
+        replaySignal?.addEventListener(
+          'abort',
+          () => {
+            globalThis.clearTimeout(success);
+            reject(new DOMException('The operation was aborted.', 'AbortError'));
+          },
+          { once: true }
+        );
+      });
+    });
+    vi.stubGlobal('fetch', fetchMock);
+
+    const startedAt = Date.now();
+    let outcome: unknown;
+    let settledAt: number | undefined;
+    void postEventStream(
+      '/api/agent/v1/stream',
+      { message: 'hello' },
+      { timeoutMs: 5_000, onMessage: vi.fn() }
+    ).then(
+      () => {
+        outcome = 'resolved';
+        settledAt = Date.now();
+      },
+      (error: unknown) => {
+        outcome = error;
+        settledAt = Date.now();
+      }
+    );
+
+    await vi.advanceTimersByTimeAsync(4_999);
+    expect(fetchMock).toHaveBeenCalledTimes(4);
+    expect(replaySignal?.aborted).toBe(false);
+    expect(outcome).toBeUndefined();
+
+    await vi.advanceTimersByTimeAsync(1);
+    expect(replaySignal?.aborted).toBe(true);
+    expect(outcome).toBeInstanceOf(HttpTransportError);
+    expect(outcome).toMatchObject({ reason: 'TIMEOUT' });
+    expect(settledAt).toBe(startedAt + 5_000);
+  });
+
   it('lets the browser set the multipart boundary for FormData mutations', async () => {
     const fetchMock = vi
       .fn()
@@ -646,6 +882,29 @@ describe('axiosInstance browser session contract', () => {
     await expect(request).resolves.toMatchObject({ reason: 'TIMEOUT' });
     const init = fetchMock.mock.calls[0]?.[1];
     expect(init?.signal?.aborted).toBe(true);
+  });
+
+  it('applies the request deadline while the initial CSRF token is still loading', async () => {
+    vi.useFakeTimers();
+    const fetchMock = vi.fn(
+      (_url: string, init?: RequestInit) =>
+        new Promise<Response>((_resolve, reject) => {
+          init?.signal?.addEventListener('abort', () => {
+            reject(new DOMException('The operation was aborted.', 'AbortError'));
+          });
+        })
+    );
+    vi.stubGlobal('fetch', fetchMock);
+
+    const request = axiosInstance
+      .put('/api/presence-heartbeat', undefined, { timeoutMs: 25 })
+      .catch((error: unknown) => error);
+    await vi.advanceTimersByTimeAsync(25);
+
+    await expect(request).resolves.toBeInstanceOf(HttpTransportError);
+    await expect(request).resolves.toMatchObject({ reason: 'TIMEOUT' });
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+    expect(String(fetchMock.mock.calls[0]?.[0])).toContain('/api/auth/csrf');
   });
 
   it('propagates caller cancellation to the active browser request', async () => {

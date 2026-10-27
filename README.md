@@ -60,6 +60,12 @@ corepack yarn license:check
 corepack yarn release:evidence:check
 ```
 
+개발 서버와 전체 타입 검사는 Node.js 24.18 이상, 25 미만에서 실행합니다. 두 실행 경로는
+각각 8GB의 V8 힙 한도를 사용하며, 개발 서버의 검사 워커에도 같은 한도가 적용됩니다.
+워커와 단독 검사는 별도 `.tsbuildinfo` 파일을 사용하므로 서로의 증분 캐시를 덮어쓰지
+않습니다. 검사 대상과 엄격한 타입 규칙은 동일합니다. 메모리가 제한된 환경에서는 전체
+타입 검사·빌드·내부 export 검사를 동시에 여러 개 실행하지 않고 순서대로 실행합니다.
+
 `corepack yarn build`는 production manifest를 분석해 초기 Entry, 정적 의존 청크와 가장 큰
 지연 청크의 raw/gzip 예산을 강제합니다. Pull Request에서는 Shell 접근성·반응형 계약과
 Shell 준비 시간, SPA 전환 시간, CLS 예산도 GitHub Actions가 검증합니다. 운영 환경에서

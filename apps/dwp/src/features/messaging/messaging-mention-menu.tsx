@@ -1,4 +1,5 @@
 import { AtSign, Megaphone } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 import Avatar from '@mui/material/Avatar';
 import Box from '@mui/material/Box';
@@ -40,6 +41,7 @@ export function MessagingMentionMenu({
   onSelect: (option: MessagingMentionOption) => void;
   onClose: () => void;
 }) {
+  const { t } = useTranslation('messaging');
   if (!open || !anchorEl) return null;
   return (
     <Popper
@@ -104,7 +106,14 @@ export function MessagingMentionMenu({
                     }
                     secondary={
                       <Typography variant="caption" color="text.secondary" noWrap>
-                        {option.all ? participantCountLabel(option.userIds.length) : option.detail}
+                        {option.all
+                          ? participantCountLabel(option.userIds.length)
+                          : [
+                              option.detail,
+                              t(`home.people.presence.${option.presenceState ?? 'UNKNOWN'}`),
+                            ]
+                              .filter(Boolean)
+                              .join(' · ')}
                       </Typography>
                     }
                   />

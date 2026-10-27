@@ -7,6 +7,8 @@ import {
   InlineFeedback,
   LiveStatus,
   OperationalContextBar,
+  FormField,
+  DatePickerField,
 } from '@dwp-frontend/design-system';
 import Box from '@mui/material/Box';
 import Checkbox from '@mui/material/Checkbox';
@@ -22,7 +24,6 @@ import TableCell from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
-import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 
 import { getCompensationPlanningCopy } from './compensation-planning-copy';
@@ -226,7 +227,7 @@ function field(
   options: Record<string, unknown> = {}
 ) {
   return (
-    <TextField
+    <FormField
       {...options}
       name={name}
       label={label}
@@ -521,7 +522,7 @@ export function CompensationPlanningWorkspace({
               </InlineFeedback>
             ) : null}
             {lastResult ? <ResultEvidence result={lastResult} /> : null}
-            <TextField size="small" label={copy.search} value={filter} onChange={(event) => onFilterChange?.(event.target.value)} sx={{ maxWidth: 420 }} />
+            <FormField size="small" label={copy.search} value={filter} onChange={(event) => onFilterChange?.(event.target.value)} sx={{ maxWidth: 420 }} />
 
             <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', lg: 'minmax(220px,.7fr) minmax(0,1.6fr) minmax(230px,.75fr)' }, gap: 2 }}>
               <Paper variant="outlined" className="compplan-semantic-panel" sx={{ minWidth: 0 }}>
@@ -569,7 +570,7 @@ export function CompensationPlanningWorkspace({
                         <Paper key={label} variant="outlined" sx={{ p: 1.5, bgcolor: 'action.hover' }}>
                           <Typography variant="caption" color="text.secondary">{label}</Typography>
                           <Typography
-                            fontWeight={700}
+                            fontWeight="fontWeightBold"
                             className={value.includes('SERVER_REVALIDATION_REQUIRED')
                               ? 'compplan-machine-status'
                               : undefined}
@@ -608,7 +609,7 @@ export function CompensationPlanningWorkspace({
                             {budgets.map((row) => (
                               <Paper key={`${row.organizationPublicId}:${row.currency}`} variant="outlined" sx={{ p: 1.5 }}>
                                 <Typography variant="caption" color="text.secondary">{copy.organizationCurrency}</Typography>
-                                <Typography variant="body2" fontWeight={700}><span className="compplan-identifier">{row.organizationPublicId}</span> · {row.currency}</Typography>
+                                <Typography variant="body2" fontWeight="fontWeightBold"><span className="compplan-identifier">{row.organizationPublicId}</span> · {row.currency}</Typography>
                                 <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: 'repeat(3,minmax(0,1fr))' }, gap: 1, mt: 1 }}>
                                   <Box><Typography variant="caption" color="text.secondary">{copy.total}</Typography><Typography variant="body2">{row.allocatedAmount}</Typography></Box>
                                   <Box><Typography variant="caption" color="text.secondary">{copy.used}</Typography><Typography variant="body2">{row.committedAmount}</Typography></Box>
@@ -670,7 +671,7 @@ export function CompensationPlanningWorkspace({
                             return (
                               <Paper key={proposal.proposalId} variant="outlined" sx={{ p: 1.5, bgcolor: proposal.proposalId === selectedProposalId ? 'action.selected' : 'background.paper' }}>
                                 <Stack direction="row" justifyContent="space-between" gap={1} alignItems="center">
-                                  <Typography fontWeight={700}>{proposal.componentCode}</Typography>
+                                  <Typography fontWeight="fontWeightBold">{proposal.componentCode}</Typography>
                                   <StatusChip status={proposal.status} copy={copy} />
                                 </Stack>
                                 <Typography variant="caption" color="text.secondary">{copy.workerAssignment}</Typography>
@@ -738,11 +739,26 @@ export function CompensationPlanningWorkspace({
             <>
               {dialog.kind === 'CREATE' ? field(fields, setFields, 'cycleCode', copy.cycleCode, { required: true }) : null}
               <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' }, gap: 1.5 }}>
-                {field(fields, setFields, 'effectiveFrom', copy.effectiveFrom, { required: true, type: 'date', InputLabelProps: { shrink: true } })}
-                {field(fields, setFields, 'effectiveTo', copy.effectiveTo, { type: 'date', InputLabelProps: { shrink: true } })}
+                <DatePickerField
+                  name="effectiveFrom"
+                  label={copy.effectiveFrom}
+                  required
+                  value={fields.effectiveFrom ?? ''}
+                  onValueChange={(value) =>
+                    setFields((current) => ({ ...current, effectiveFrom: value ?? '' }))
+                  }
+                />
+                <DatePickerField
+                  name="effectiveTo"
+                  label={copy.effectiveTo}
+                  value={fields.effectiveTo ?? ''}
+                  onValueChange={(value) =>
+                    setFields((current) => ({ ...current, effectiveTo: value ?? '' }))
+                  }
+                />
               </Box>
-              <TextField label={copy.budgetMode} value="HARD_CAP" disabled fullWidth />
-              <TextField
+              <FormField label={copy.budgetMode} value="HARD_CAP" disabled fullWidth />
+              <FormField
                 select
                 required
                 label={copy.guidelineComponent}
@@ -765,7 +781,7 @@ export function CompensationPlanningWorkspace({
                     {item.componentCode} · {item.currency}
                   </MenuItem>
                 ))}
-              </TextField>
+              </FormField>
               <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' }, gap: 1.5 }}>
                 {field(fields, setFields, 'guidelineMinimumAmount', copy.minimumAmount, { required: true })}
                 {field(fields, setFields, 'guidelineMaximumAmount', copy.maximumAmount, { required: true })}
@@ -793,13 +809,13 @@ export function CompensationPlanningWorkspace({
           ) : null}
           {dialog?.kind === 'BUDGET' ? (
             <>
-              <TextField select label={copy.ledgerOperation} value={fields.ledgerEntryType ?? 'ALLOCATE'} onChange={(event) => setFields((current) => ({ ...current, ledgerEntryType: event.target.value }))} fullWidth>
+              <FormField select label={copy.ledgerOperation} value={fields.ledgerEntryType ?? 'ALLOCATE'} onChange={(event) => setFields((current) => ({ ...current, ledgerEntryType: event.target.value }))} fullWidth>
                 <MenuItem value="ALLOCATE">ALLOCATE</MenuItem><MenuItem value="REVERSE">REVERSE</MenuItem>
-              </TextField>
+              </FormField>
               {field(fields, setFields, 'organizationPublicId', copy.organizationId, { required: true })}
               <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' }, gap: 1.5 }}>
                 {field(fields, setFields, 'currency', copy.currency, { required: true })}
-                {field(fields, setFields, 'amount', copy.canonicalAmount, { required: true, helperText: copy.canonicalAmountHelp })}
+                {field(fields, setFields, 'amount', copy.canonicalAmount, { required: true, supportingText: copy.canonicalAmountHelp })}
               </Box>
               {fields.ledgerEntryType === 'REVERSE' ? field(fields, setFields, 'reversesEntryPublicId', copy.reverseSourceEntryId, { required: true }) : null}
             </>
@@ -815,8 +831,23 @@ export function CompensationPlanningWorkspace({
                 {field(fields, setFields, 'proposalAmount', copy.canonicalAmount, { required: true })}
               </Box>
               <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' }, gap: 1.5 }}>
-                {field(fields, setFields, 'proposalFrom', copy.effectiveFrom, { required: true, type: 'date', InputLabelProps: { shrink: true } })}
-                {field(fields, setFields, 'proposalTo', copy.effectiveTo, { type: 'date', InputLabelProps: { shrink: true } })}
+                <DatePickerField
+                  name="proposalFrom"
+                  label={copy.effectiveFrom}
+                  required
+                  value={fields.proposalFrom ?? ''}
+                  onValueChange={(value) =>
+                    setFields((current) => ({ ...current, proposalFrom: value ?? '' }))
+                  }
+                />
+                <DatePickerField
+                  name="proposalTo"
+                  label={copy.effectiveTo}
+                  value={fields.proposalTo ?? ''}
+                  onValueChange={(value) =>
+                    setFields((current) => ({ ...current, proposalTo: value ?? '' }))
+                  }
+                />
               </Box>
               {field(fields, setFields, 'supersedesProposalPublicId', copy.supersedesProposalId)}
             </>
@@ -827,7 +858,14 @@ export function CompensationPlanningWorkspace({
                 <span className="compplan-identifier">{dialog.proposal?.proposalId}</span> · v{dialog.proposal?.aggregateVersion}<br />{copy.sourceDigest} <span className="compplan-identifier">{dialog.proposal?.contentDigest}</span>
               </InlineFeedback>
               {field(fields, setFields, 'submissionDigest', copy.submissionDigest, { required: true, disabled: true })}
-              {field(fields, setFields, 'submissionDate', copy.effectiveDate, { type: 'date', InputLabelProps: { shrink: true } })}
+              <DatePickerField
+                name="submissionDate"
+                label={copy.effectiveDate}
+                value={fields.submissionDate ?? ''}
+                onValueChange={(value) =>
+                  setFields((current) => ({ ...current, submissionDate: value ?? '' }))
+                }
+              />
             </>
           ) : null}
           {dialog?.kind === 'APPROVE' || dialog?.kind === 'PUBLISH' ? (
@@ -842,7 +880,7 @@ export function CompensationPlanningWorkspace({
                 <Typography variant="body2">{copy.lineageDescription}</Typography>
               </Paper>
               {dialog.kind === 'APPROVE'
-                ? field(fields, setFields, 'reasonCode', copy.approvalReasonCode, { required: true, helperText: copy.approvalReasonHelp })
+                ? field(fields, setFields, 'reasonCode', copy.approvalReasonCode, { required: true, supportingText: copy.approvalReasonHelp })
                 : field(fields, setFields, 'approvalReceiptId', copy.approvalReceiptId, { required: true })}
               <FormControlLabel control={<Checkbox checked={confirmed} onChange={(event) => setConfirmed(event.target.checked)} />} label={copy.immutable} sx={{ alignItems: 'flex-start' }} />
             </>

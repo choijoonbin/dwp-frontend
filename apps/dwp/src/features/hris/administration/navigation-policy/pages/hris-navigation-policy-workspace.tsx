@@ -88,7 +88,7 @@ function UnavailableBoundary() {
         can be submitted.
       </InlineFeedback>
       <Paper component="section" variant="outlined" sx={{ p: { xs: 2, sm: 2.5 } }}>
-        <Typography component="h2" variant="subtitle1" fontWeight={700}>
+        <Typography component="h2" variant="subtitle1" fontWeight="fontWeightBold">
           Activation remains centrally governed
         </Typography>
         <Typography color="text.secondary">

@@ -2,6 +2,8 @@
 import { act } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+
+import type * as DesignSystem from '@dwp-frontend/design-system';
 import { HttpError, HttpTransportError } from '@dwp-frontend/shared-utils';
 
 import type { ProductSurfaceGovernedMutationAuthority } from '@dwp-frontend/shared-utils';
@@ -12,6 +14,40 @@ vi.mock('@dwp-frontend/shared-utils', async (importOriginal) => ({
   ...(await importOriginal<object>()),
   axiosInstance: transport,
 }));
+
+// Domain assertions drive the scalar picker contract; DS tests cover section editing.
+vi.mock('@dwp-frontend/design-system', async (importOriginal) => {
+  const actual = await importOriginal<typeof DesignSystem>();
+  return {
+    ...actual,
+    DatePickerField: ({
+      id,
+      label,
+      value,
+      onValueChange,
+      disabled,
+      required,
+      size,
+      fullWidth,
+      errorMessage,
+      supportingText,
+    }: Parameters<typeof actual.DatePickerField>[0]) => (
+      <actual.FormField
+        id={id}
+        label={label}
+        type="date"
+        value={value ?? ''}
+        onChange={(event) => onValueChange(event.target.value || null)}
+        disabled={disabled}
+        required={required}
+        size={size}
+        fullWidth={fullWidth}
+        errorMessage={errorMessage}
+        supportingText={supportingText}
+      />
+    ),
+  };
+});
 
 import {
   HrisPayrollPopulationWorkspace,
@@ -678,6 +714,9 @@ describe('[SLICE:BASE-TFR-PAY-013] population workspace runtime', () => {
     expect(host.dataset.unused).toBeUndefined();
     expect(host.querySelector('[data-runtime-state="loading"]')).not.toBeNull();
     expect(effectiveOn.value).toBe('2026-10-31');
+    expect(read.mock.calls[0]?.[0]).toEqual(
+      expect.objectContaining({ filter: { effectiveOn: '2026-10-31' } })
+    );
     await act(async () => gate.resolve(projection({ state: 'EMPTY' })));
     await settle();
     expect(host.querySelector('[data-runtime-state="empty"]')).not.toBeNull();

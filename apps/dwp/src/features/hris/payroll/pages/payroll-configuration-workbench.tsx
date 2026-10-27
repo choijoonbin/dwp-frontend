@@ -2,6 +2,7 @@ import { Calculator, CheckCircle2, FlaskConical, RefreshCw, ShieldCheck } from '
 import {
   ActionButton,
   FormDialog,
+  FormField,
   GlyphSurface,
   GuidedEmptyState,
   InlineFeedback,
@@ -16,7 +17,6 @@ import ListItemButton from '@mui/material/ListItemButton';
 import ListItemText from '@mui/material/ListItemText';
 import Paper from '@mui/material/Paper';
 import Stack from '@mui/material/Stack';
-import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 
 import { usePayrollConfigurationWorkbench } from '../hooks/use-payroll-configuration-workbench';
@@ -490,7 +490,7 @@ function ItemDetail({
               gap: 1.25,
             }}
           >
-            <TextField
+            <FormField
               size="small"
               fullWidth
               label={copy.inputKey}
@@ -503,7 +503,7 @@ function ItemDetail({
                 }))
               }
             />
-            <TextField
+            <FormField
               size="small"
               fullWidth
               label={copy.inputValue}
@@ -517,7 +517,7 @@ function ItemDetail({
                 }))
               }
             />
-            <TextField
+            <FormField
               size="small"
               fullWidth
               label={copy.currency}

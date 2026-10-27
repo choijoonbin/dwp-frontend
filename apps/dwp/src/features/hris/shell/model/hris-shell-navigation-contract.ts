@@ -17,7 +17,6 @@ import {
 import type {
   ProductNavigationGroup,
   ProductNavigationItem,
-  ProductShellNavigationProjection,
 } from '../../../../components/product-manifest';
 
 type HrisShellEntry = Readonly<{
@@ -229,9 +228,3 @@ export function resolveHrisShellSelectedView(pathname: string): string | undefin
   if (compatibilityOwner) return compatibilityOwner;
   return resolveProductNavigationSelection(normalizedPath, HRIS_SHELL_OWNERSHIP)?.view;
 }
-
-export const HRIS_SHELL_NAVIGATION_PROJECTION: ProductShellNavigationProjection = Object.freeze({
-  hideSurfaceNavigation: true,
-  project: projectHrisShellNavigation,
-  resolveSelectedView: resolveHrisShellSelectedView,
-});

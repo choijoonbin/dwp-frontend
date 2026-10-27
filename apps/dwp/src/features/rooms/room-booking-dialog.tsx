@@ -25,11 +25,13 @@ import Chip from '@mui/material/Chip';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
+import { useProductActionMutation } from '../../components/use-product-action-mutation';
 import {
   DEFAULT_ROOM_POLICY,
   roomDefaultRange,
   validateRoomBookingRange,
 } from './room-availability-model';
+import { ROOM_BOOKING_ACTION_CONTRACTS } from './room-booking-action-contracts';
 import { useRoomsCapabilities } from './rooms-capabilities';
 import { roomBookingActionPolicy } from './room-booking-action-policy';
 import { RoomsPermissionNotice } from './rooms-ui';
@@ -87,6 +89,8 @@ export function RoomBookingDialog({
   const queryClient = useQueryClient();
   const capabilities = useRoomsCapabilities();
   const auth = useAuth();
+  const authorizeCreate = useProductActionMutation(ROOM_BOOKING_ACTION_CONTRACTS.create);
+  const authorizeUpdate = useProductActionMutation(ROOM_BOOKING_ACTION_CONTRACTS.update);
   const identityKey = `${auth.user?.tenantId ?? 'anonymous'}:${auth.user?.userId ?? 'anonymous'}`;
   const effectivePolicy = policy ?? DEFAULT_ROOM_POLICY;
   const policyAvailable = Boolean(policy);
@@ -365,10 +369,16 @@ export function RoomBookingDialog({
         attendees: attendeeInput,
         resourceId: room.resourceId,
       };
-      if (event) return updateRoomBooking(event.eventId, { ...input, version: event.version });
+      if (event) {
+        return authorizeUpdate((authority) =>
+          updateRoomBooking(event.eventId, { ...input, version: event.version }, authority)
+        );
+      }
       const intent = resolveIdempotentMutationIntent(createIntent.current, input);
       createIntent.current = intent;
-      return createRoomBooking({ ...input, idempotencyKey: intent.key });
+      return authorizeCreate((authority) =>
+        createRoomBooking({ ...input, idempotencyKey: intent.key }, authority)
+      );
     },
     onSuccess: async (saved) => {
       await Promise.all([

@@ -51,9 +51,23 @@ describe('workplace planner URL state', () => {
     expect(state.resourceTypes).toEqual(['DESK', 'PARKING', 'LOCKER']);
   });
 
+  it('keeps the route authority scope in an already canonical planner URL', () => {
+    const canonical = new URLSearchParams(
+      'v=1&week=2026-09-14&dates=2026-09-14%2C2026-09-15&start=09%3A00' +
+        '&duration=540&tz=Asia%2FSeoul&target=SELF&types=DESK&step=PLAN' +
+        '&scope=scope%3Aworkplace%3Aself'
+    );
+
+    const parsed = parseWorkplacePlannerUrl(canonical, { referenceDate });
+
+    expect(parsed.state.scope).toBe('scope:workplace:self');
+    expect(parsed.canonicalSearchParams.get('scope')).toBe('scope:workplace:self');
+    expect(parsed.corrected).toBe(false);
+  });
+
   it('preserves server recovery references while changing plan filters', () => {
     const current = new URLSearchParams(
-      'v=1&week=2026-09-14&dates=2026-09-14&start=09%3A00&duration=540&tz=Asia%2FSeoul&target=SELF&types=DESK&step=RESULT&intent=intent-1&batch=batch-1&item=item-1'
+      'v=1&week=2026-09-14&dates=2026-09-14&start=09%3A00&duration=540&tz=Asia%2FSeoul&target=SELF&types=DESK&step=RESULT&intent=intent-1&batch=batch-1&item=item-1&scope=scope%3Aworkplace%3Aself'
     );
     const next = updateWorkplacePlannerUrl(
       current,
@@ -65,13 +79,15 @@ describe('workplace planner URL state', () => {
       intentId: 'intent-1',
       batchId: 'batch-1',
       selectedItemId: 'item-1',
+      scope: 'scope:workplace:self',
     });
+    expect(next.get('scope')).toBe('scope:workplace:self');
   });
 
   it('migrates the legacy Find mode once and keeps only recognized planner scope', () => {
     const migrated = migrateLegacyWorkplacePlannerUrl(
       new URLSearchParams(
-        'mode=PLANNER&date=2026-09-16&start=10%3A30&duration=180&tz=Asia%2FSeoul&sites=site-1&floors=floor-1&types=ALL&q=quiet&resource=desk-1'
+        'mode=PLANNER&date=2026-09-16&start=10%3A30&duration=180&tz=Asia%2FSeoul&sites=site-1&floors=floor-1&types=ALL&q=quiet&resource=desk-1&scope=legacy-team'
       ),
       { referenceDate }
     );

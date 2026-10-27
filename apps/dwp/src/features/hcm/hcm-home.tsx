@@ -66,7 +66,7 @@ import {
   PRODUCT_PAGE_SHORTCUT_TARGETS,
   useProductPageShortcutAccess,
 } from '../../components/product-page-shortcut-access';
-import { useWorkExplorerShortcutAccess } from '../hris/explorer/work-explorer-access';
+import { useWorkExplorerShortcutAccess } from '../../components/work-explorer-shortcut-access';
 
 import type {
   HomePresentation,

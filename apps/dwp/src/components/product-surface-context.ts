@@ -1,4 +1,5 @@
 export type {
+  ProductAccessMode,
   AllowedSurfaceDecision,
   EffectiveCapabilityGrant,
   EffectiveGrant,

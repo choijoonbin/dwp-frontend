@@ -1,5 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import {
+  ArrowRight,
   Blocks,
   BriefcaseBusiness,
   Building2,
@@ -10,15 +11,16 @@ import {
   Sparkles,
   UsersRound,
 } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { Link as RouterLink } from 'react-router-dom';
 import { formatDate } from '@dwp-frontend/shared-i18n';
 
 import Box from '@mui/material/Box';
-import ButtonBase from '@mui/material/ButtonBase';
 import Chip from '@mui/material/Chip';
 import Paper from '@mui/material/Paper';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
+import Tooltip from '@mui/material/Tooltip';
+import { alpha } from '@mui/material/styles';
 
 import type { LucideIcon } from 'lucide-react';
 import type { SpaceSummary } from '@dwp-frontend/shared-utils';
@@ -93,115 +95,138 @@ export function localizedSpace(
 
 export function SpaceCard({ space }: { space: SpaceSummary }) {
   const { t, i18n } = useTranslation('spaces');
-  const navigate = useNavigate();
   const label = localizedSpace(space, i18n.resolvedLanguage ?? i18n.language);
   const tone = getSpaceTone(space.accentToken);
   return (
-    <Paper
-      component={ButtonBase}
-      onClick={() => navigate(`/spaces/${space.spaceKey}/overview`)}
-      elevation={0}
-      sx={{
-        width: 1,
-        minHeight: 194,
-        display: 'grid',
-        gridTemplateRows: '60px 1fr',
-        overflow: 'hidden',
-        textAlign: 'left',
-        alignItems: 'stretch',
-        border: 1,
-        borderColor: 'divider',
-        borderRadius: 1,
-        bgcolor: 'background.paper',
-        transition: (theme) =>
-          theme.transitions.create(['transform', 'border-color', 'box-shadow']),
-        '&:hover': {
-          transform: 'translateY(-2px)',
-          borderColor: tone.strong,
-          boxShadow: `0 14px 34px ${tone.strong}1f`,
-        },
-        '&:focus-visible': { outline: `3px solid ${tone.strong}55`, outlineOffset: 2 },
-      }}
-    >
-      <Box
+    <Tooltip title={label.name} describeChild enterDelay={600}>
+      <Paper
+        component={RouterLink}
+        to={`/spaces/${space.spaceKey}/overview`}
+        aria-label={label.name}
+        elevation={0}
         sx={{
-          px: 1.75,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          color: tone.ink,
-          bgcolor: tone.soft,
-          borderBottom: 1,
+          width: 1,
+          minWidth: 0,
+          minHeight: 194,
+          display: 'grid',
+          gridTemplateColumns: 'minmax(0, 1fr)',
+          gridTemplateRows: '60px 1fr',
+          textAlign: 'left',
+          textDecoration: 'none',
+          color: 'text.primary',
+          alignItems: 'stretch',
+          border: 1,
           borderColor: 'divider',
+          borderRadius: 1,
+          bgcolor: 'background.paper',
+          transition: (theme) => theme.transitions.create(['border-color', 'box-shadow']),
+          '&:hover': {
+            borderColor: tone.strong,
+            boxShadow: `0 3px 12px ${tone.strong}1f`,
+          },
+          '&:focus-visible': {
+            outline: (theme) => `3px solid ${theme.palette.primary.main}`,
+            outlineOffset: 3,
+          },
+          '@media (prefers-reduced-motion: reduce)': { transition: 'none' },
+          '@media (forced-colors: active)': {
+            '&:focus-visible': { outlineColor: 'Highlight' },
+          },
         }}
       >
-        <SpaceGlyph iconKey={space.iconKey} accentToken={space.accentToken} size={36} />
-        <Stack direction="row" gap={0.75}>
-          <Chip
-            size="small"
-            label={t(`visibility.${space.visibility}`)}
-            sx={{ bgcolor: 'rgba(255,255,255,0.64)' }}
-          />
-          {space.unreadCount > 0 && (
-            <Chip
-              size="small"
-              color="primary"
-              label={space.unreadCount}
-              aria-label={t('card.unread')}
-            />
-          )}
-        </Stack>
-      </Box>
-      <Box sx={{ p: 1.75, minWidth: 0 }}>
-        <Typography component="h3" variant="h6" noWrap>
-          {label.name}
-        </Typography>
-        <Typography
-          variant="body2"
-          color="text.secondary"
+        <Box
           sx={{
-            mt: 0.65,
-            minHeight: 36,
-            display: '-webkit-box',
-            WebkitLineClamp: 2,
-            WebkitBoxOrient: 'vertical',
-            overflow: 'hidden',
+            px: 1.75,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            gap: 1,
+            color: tone.ink,
+            bgcolor: (theme) =>
+              theme.palette.mode === 'dark' ? alpha(tone.strong, 0.24) : tone.soft,
+            minWidth: 0,
+            borderBottom: 1,
+            borderColor: 'divider',
+            borderTopLeftRadius: 'inherit',
+            borderTopRightRadius: 'inherit',
           }}
         >
-          {label.summary}
-        </Typography>
-        <Stack
-          direction="row"
-          alignItems="center"
-          justifyContent="space-between"
-          gap={1}
-          sx={{ mt: 1.5 }}
-        >
-          <Stack direction="row" gap={1.25} alignItems="center">
-            <Box
-              aria-hidden="true"
-              sx={{
-                width: 24,
-                height: 24,
-                display: 'grid',
-                placeItems: 'center',
-                borderRadius: '50%',
-                color: tone.ink,
-                bgcolor: tone.soft,
-              }}
-            >
-              <UsersRound size={14} strokeWidth={1.9} />
-            </Box>
-            <Typography variant="caption" color="text.secondary">
-              {t('card.members', { count: space.memberCount })}
+          <SpaceGlyph iconKey={space.iconKey} accentToken={space.accentToken} size={36} />
+          <Stack direction="row" gap={0.75} flexWrap="wrap" justifyContent="flex-end">
+            <Chip
+              size="small"
+              label={t(`visibility.${space.visibility}`)}
+              sx={{ bgcolor: 'background.paper' }}
+            />
+            {space.memberRole && <Chip size="small" variant="outlined" label={t('card.joined')} />}
+            {space.unreadCount > 0 && (
+              <Chip
+                size="small"
+                color="primary"
+                label={space.unreadCount}
+                aria-label={t('card.unread')}
+              />
+            )}
+          </Stack>
+        </Box>
+        <Box sx={{ p: 1.75, minWidth: 0, display: 'flex', flexDirection: 'column' }}>
+          <Stack direction="row" alignItems="center" gap={1}>
+            <Typography component="h3" variant="h6" noWrap sx={{ flex: 1, minWidth: 0 }}>
+              {label.name}
+            </Typography>
+            <ArrowRight size={16} aria-hidden="true" style={{ flexShrink: 0 }} />
+          </Stack>
+          <Typography
+            variant="body2"
+            color="text.secondary"
+            sx={{
+              mt: 0.65,
+              minHeight: 36,
+              display: '-webkit-box',
+              WebkitLineClamp: 2,
+              WebkitBoxOrient: 'vertical',
+              overflow: 'hidden',
+              overflowWrap: 'anywhere',
+            }}
+          >
+            {label.summary}
+          </Typography>
+          <Stack
+            direction="row"
+            alignItems="center"
+            justifyContent="space-between"
+            gap={1}
+            flexWrap="wrap"
+            sx={{ mt: 'auto', pt: 1.5 }}
+          >
+            <Stack direction="row" gap={1.25} alignItems="center">
+              <Box
+                aria-hidden="true"
+                sx={{
+                  width: 24,
+                  height: 24,
+                  display: 'grid',
+                  placeItems: 'center',
+                  borderRadius: '50%',
+                  color: tone.ink,
+                  bgcolor: tone.soft,
+                }}
+              >
+                <UsersRound size={14} strokeWidth={1.9} />
+              </Box>
+              <Typography variant="caption" color="text.secondary">
+                {t('card.members', { count: space.memberCount })}
+              </Typography>
+            </Stack>
+            <Typography variant="caption" color="text.secondary" sx={{ overflowWrap: 'anywhere' }}>
+              {t('card.lastActivity', {
+                date: formatDate(space.lastActivityAt, { dateStyle: 'medium' }),
+              })}
             </Typography>
           </Stack>
-          <Typography variant="caption" color="text.secondary">
-            {formatDate(space.lastActivityAt, { dateStyle: 'medium' })}
-          </Typography>
-        </Stack>
-      </Box>
-    </Paper>
+        </Box>
+      </Paper>
+    </Tooltip>
   );
 }
 

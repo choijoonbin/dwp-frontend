@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import {
   ActionButton,
+  DatePickerField,
+  FormField,
   GuidedEmptyState,
   InlineFeedback,
   LoadingState,
@@ -16,7 +18,6 @@ import ListItemText from '@mui/material/ListItemText';
 import MenuItem from '@mui/material/MenuItem';
 import Paper from '@mui/material/Paper';
 import Stack from '@mui/material/Stack';
-import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 
 import {
@@ -373,7 +374,7 @@ function PopulationDetail({
             <Typography id="prepare-help" variant="body2" color="text.secondary">
               {copy.prepareHelp}
             </Typography>
-            <TextField
+            <FormField
               select
               fullWidth
               size="small"
@@ -391,8 +392,8 @@ function PopulationDetail({
                   {value}
                 </MenuItem>
               ))}
-            </TextField>
-            <TextField
+            </FormField>
+            <FormField
               fullWidth
               size="small"
               label={copy.payrollEntity}
@@ -400,7 +401,7 @@ function PopulationDetail({
               onChange={(event) => onDraftChange({ ...draft, payrollEntityId: event.target.value })}
               inputProps={{ autoComplete: 'off', spellCheck: false }}
             />
-            <TextField
+            <FormField
               fullWidth
               size="small"
               label={copy.payrollGroup}
@@ -408,7 +409,7 @@ function PopulationDetail({
               onChange={(event) => onDraftChange({ ...draft, payGroupId: event.target.value })}
               inputProps={{ autoComplete: 'off', spellCheck: false }}
             />
-            <TextField
+            <FormField
               fullWidth
               size="small"
               label={copy.payPeriod}
@@ -601,16 +602,14 @@ export function PayrollPopulationWorkspaceView({
                 alignItems: 'start',
               }}
             >
-              <TextField
+              <DatePickerField
                 fullWidth
                 size="small"
-                type="date"
                 label={`${copy.effectiveOn} (${copy.optional})`}
-                value={effectiveOn}
-                onChange={(event) => setEffectiveOn(event.target.value)}
-                InputLabelProps={{ shrink: true }}
+                value={effectiveOn || null}
+                onValueChange={(value) => setEffectiveOn(value ?? '')}
               />
-              <TextField
+              <FormField
                 fullWidth
                 size="small"
                 type="number"
@@ -619,7 +618,7 @@ export function PayrollPopulationWorkspaceView({
                 onChange={(event) => setMinimumItems(event.target.value)}
                 inputProps={{ min: 0, step: 1 }}
               />
-              <TextField
+              <FormField
                 fullWidth
                 size="small"
                 type="number"

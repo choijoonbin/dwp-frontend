@@ -4,6 +4,26 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { createRoot, type Root } from 'react-dom/client';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
+import type * as DesignSystem from '@dwp-frontend/design-system';
+
+vi.mock('@dwp-frontend/design-system', async (importOriginal) => ({
+  ...(await importOriginal<typeof DesignSystem>()),
+  LocalDateTimePickerField: ({
+    label,
+    value,
+    onValueChange,
+  }: Pick<LocalDateTimePickerFieldProps, 'label' | 'value' | 'onValueChange'>) => (
+    <label>
+      {label}
+      <input
+        type="datetime-local"
+        value={value ?? ''}
+        onChange={(event) => onValueChange(event.target.value || null)}
+      />
+    </label>
+  ),
+}));
+
 import { HRIS_APPROVAL_SHARED_API_CONTRACTS, HrisWorkflowPolicyWorkspace } from '../../workflow';
 import { HrisTeamDelegationWorkspace } from '../../../team/delegation';
 import {
@@ -16,6 +36,7 @@ import {
 } from '../../workflow/testing/hris-approval-adapter-fixtures.test-support';
 
 import type { ApprovalMutationExecution } from '@dwp-frontend/shared-utils';
+import type { LocalDateTimePickerFieldProps } from '@dwp-frontend/design-system';
 import type { HrisWorkflowPolicyDataSource } from '../../workflow';
 import type { HrisDelegationDataSource } from '../../../team/delegation';
 import type { HrisApprovalCommandRunner } from '../../workflow';

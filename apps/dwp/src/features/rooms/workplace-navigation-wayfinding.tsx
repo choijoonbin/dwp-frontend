@@ -9,7 +9,6 @@ import {
   MapPin,
   Navigation,
   RefreshCw,
-  Route,
 } from 'lucide-react';
 import {
   getWorkplaceNavigationPois,
@@ -38,6 +37,7 @@ import { formatDate } from '@dwp-frontend/shared-i18n';
 import { workplaceMemberCard, workplaceMemberSoftSurface } from './workplace-member-surfaces';
 import { WorkplaceAccessPassPanel } from './workplace-access-pass';
 import { WorkplaceCanonicalDeepLinkActions } from './workplace-canonical-deep-link-actions';
+import { WorkplaceNavigationRouteMap } from './workplace-navigation-route-map';
 import {
   workplaceNavigationCanRenderGuidedRoute,
   workplaceNavigationCopy,
@@ -142,13 +142,20 @@ export function WorkplaceWayfinding({
       setOriginPoiId((requestedOrigin ?? fallback)?.poiId ?? '');
     }
     if (!validDestination) {
-      const booked = pois.find((poi) => poi.resourceId === defaultDestinationResourceId);
-      const fallback = pois.find((poi) => poi.category === 'ROOM') ?? pois.at(1) ?? pois[0];
+      const booked = pois.find(
+        (poi) =>
+          poi.resourceId === defaultDestinationResourceId && poi.poiId !== effectiveOriginPoiId
+      );
+      const fallback =
+        pois.find((poi) => poi.category === 'ROOM' && poi.poiId !== effectiveOriginPoiId) ??
+        pois.find((poi) => Boolean(poi.resourceId) && poi.poiId !== effectiveOriginPoiId) ??
+        pois.find((poi) => poi.poiId !== effectiveOriginPoiId);
       setDestinationPoiId((requestedDestination ?? booked ?? fallback)?.poiId ?? '');
     }
   }, [
     defaultDestinationResourceId,
     destinationPoiId,
+    effectiveOriginPoiId,
     initialDestinationPoiId,
     initialOriginPoiId,
     originPoiId,
@@ -403,127 +410,15 @@ export function WorkplaceWayfinding({
                 </Stack>
               </Stack>
 
-              <Box
-                data-testid="workplace-wayfinding-map"
-                aria-hidden="true"
-                sx={{
-                  minHeight: { xs: 210, sm: 300 },
-                  position: 'relative',
-                  overflow: 'hidden',
-                  borderRadius: 2.5,
-                  border: '1px solid',
-                  borderColor: 'divider',
-                  bgcolor: 'rgba(37, 99, 235, .045)',
-                  backgroundImage:
-                    'linear-gradient(rgba(37,99,235,.08) 1px, transparent 1px), linear-gradient(90deg, rgba(37,99,235,.08) 1px, transparent 1px)',
-                  backgroundSize: '28px 28px',
-                  mb: 2,
-                }}
-              >
-                <Box
-                  sx={{
-                    position: 'absolute',
-                    left: '10%',
-                    top: '22%',
-                    width: '30%',
-                    height: '28%',
-                    border: '1px solid',
-                    borderColor: 'divider',
-                    bgcolor: 'background.paper',
-                    borderRadius: 1.5,
-                    display: 'grid',
-                    placeItems: 'center',
-                    p: 1,
-                  }}
-                >
-                  <Typography variant="caption" fontWeight={700}>
-                    {workplaceNavigationPoiName(route.origin!, locale)}
-                  </Typography>
-                </Box>
-                <Box
-                  sx={{
-                    position: 'absolute',
-                    right: '8%',
-                    bottom: '15%',
-                    width: '30%',
-                    height: '30%',
-                    border: '2px solid',
-                    borderColor: 'primary.main',
-                    bgcolor: 'primary.50',
-                    borderRadius: 1.5,
-                    display: 'grid',
-                    placeItems: 'center',
-                    p: 1,
-                  }}
-                >
-                  <Typography variant="caption" color="primary.main" fontWeight={850}>
-                    {workplaceNavigationPoiName(route.destination!, locale)}
-                  </Typography>
-                </Box>
-                <Box
-                  sx={{
-                    position: 'absolute',
-                    left: '35%',
-                    top: '43%',
-                    width: '35%',
-                    borderTop: '4px dashed',
-                    borderColor: 'primary.main',
-                    transform: 'rotate(18deg)',
-                    transformOrigin: 'left center',
-                  }}
-                />
-                <Box
-                  sx={{
-                    position: 'absolute',
-                    left: '34%',
-                    top: '40%',
-                    width: 18,
-                    height: 18,
-                    borderRadius: '50%',
-                    bgcolor: 'success.main',
-                    border: '3px solid white',
-                    boxShadow: 2,
-                  }}
-                />
-                <Box
-                  sx={{
-                    position: 'absolute',
-                    right: '22%',
-                    bottom: '37%',
-                    width: 18,
-                    height: 18,
-                    borderRadius: '50%',
-                    bgcolor: 'error.main',
-                    border: '3px solid white',
-                    boxShadow: 2,
-                  }}
-                />
-                <Box
-                  sx={{
-                    position: 'absolute',
-                    top: 12,
-                    left: 12,
-                    right: 12,
-                    p: 1,
-                    borderRadius: 1.5,
-                    bgcolor: 'rgba(15, 39, 71, .92)',
-                    color: '#fff',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: 1,
-                  }}
-                >
-                  <Route size={18} />
-                  <Typography variant="body2" fontWeight={750} noWrap>
-                    {workplaceNavigationDirection(route.steps[0]!, locale)}
-                  </Typography>
-                </Box>
-              </Box>
+              <WorkplaceNavigationRouteMap
+                route={route}
+                locale={locale}
+                originName={workplaceNavigationPoiName(route.origin!, locale)}
+                destinationName={workplaceNavigationPoiName(route.destination!, locale)}
+              />
 
               <Typography component="h3" variant="subtitle1" fontWeight={800} sx={{ mb: 1 }}>
-                {locale === 'ko'
-                  ? '도면 대체 순차 텍스트 안내'
-                  : 'Accessible turn-by-turn directions'}
+                {locale === 'ko' ? '순차 텍스트 안내' : 'Accessible turn-by-turn directions'}
               </Typography>
               <Box
                 component="ol"

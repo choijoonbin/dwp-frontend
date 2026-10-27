@@ -8,9 +8,9 @@ import {
   FormField,
   LoadingState,
   SelectField,
+  InlineFeedback,
 } from '@dwp-frontend/design-system';
 
-import Alert from '@mui/material/Alert';
 import Chip from '@mui/material/Chip';
 import Divider from '@mui/material/Divider';
 import Stack from '@mui/material/Stack';
@@ -510,7 +510,7 @@ export function EmploymentEventWorkspace({
         </Typography>
 
         {failure ? (
-          <Alert
+          <InlineFeedback
             severity={failure.kind === 'DENIED' ? 'warning' : 'error'}
             action={
               failure.receiptId || (failure.kind === 'RESULT_UNKNOWN' && pendingCommand) ? (
@@ -536,10 +536,10 @@ export function EmploymentEventWorkspace({
             }
           >
             {failureMessage(failure)}
-          </Alert>
+          </InlineFeedback>
         ) : null}
         {receiptUnsettled ? (
-          <Alert
+          <InlineFeedback
             severity="warning"
             action={
               <ActionButton intent="quiet" size="small" onClick={() => void reconcile()}>
@@ -550,46 +550,46 @@ export function EmploymentEventWorkspace({
             {receiptDisposition === 'RESULT_UNKNOWN'
               ? 'The command result is unknown. Reconcile this receipt; do not submit a duplicate.'
               : 'The command is still processing. Refresh this receipt before continuing.'}
-          </Alert>
+          </InlineFeedback>
         ) : null}
         {receiptDisposition === 'REJECTED' ? (
-          <Alert severity="error">
+          <InlineFeedback severity="error">
             The command receipt was rejected. No later action is enabled.
-          </Alert>
+          </InlineFeedback>
         ) : null}
         {stage?.lifecycleState === 'PENDING_APPROVAL' ? (
-          <Alert severity="info">
+          <InlineFeedback severity="info">
             Approval is pending. Refresh the same event; do not create or submit a duplicate.
-          </Alert>
+          </InlineFeedback>
         ) : null}
         {stage?.lifecycleState === 'APPROVED' && !publishEvent ? (
-          <Alert severity="warning">
+          <InlineFeedback severity="warning">
             Approval is complete. Publishing remains unavailable until a current step-up authority
             is supplied.
-          </Alert>
+          </InlineFeedback>
         ) : null}
         {stage?.lifecycleState === 'PUBLISHED' ? (
-          <Alert severity="success">
+          <InlineFeedback severity="success">
             The employment event was published to the assignment ledger.
-          </Alert>
+          </InlineFeedback>
         ) : null}
 
         {!stage && selection.eventType === 'CONCURRENT_EMPLOYMENT' ? (
           assignments.isLoading ? (
             <LoadingState label="Loading current worker ownership…" size="compact" />
           ) : assignments.isError ? (
-            <Alert severity="warning">
+            <InlineFeedback severity="warning">
               Current assignment ownership is unavailable in this scope. The command is disabled.
-            </Alert>
+            </InlineFeedback>
           ) : !sourceAssignment ? (
-            <Alert severity="warning">
+            <InlineFeedback severity="warning">
               No disclosed worker assignment matches this event. The command is disabled.
-            </Alert>
+            </InlineFeedback>
           ) : workbenchStale ? (
-            <Alert severity="warning">
+            <InlineFeedback severity="warning">
               The worker is now version {sourceAssignment.workerVersion}. Reopen the event from the
               current workbench row.
-            </Alert>
+            </InlineFeedback>
           ) : null
         ) : null}
 
@@ -666,17 +666,19 @@ export function EmploymentEventWorkspace({
           <Stack gap={1}>
             <Typography variant="subtitle2">Validation impact</Typography>
             {impact.blockingIssues.map((issue) => (
-              <Alert severity="error" key={issue}>
+              <InlineFeedback severity="error" key={issue}>
                 {issue}
-              </Alert>
+              </InlineFeedback>
             ))}
             {impact.warnings.map((warning) => (
-              <Alert severity="warning" key={warning}>
+              <InlineFeedback severity="warning" key={warning}>
                 {warning}
-              </Alert>
+              </InlineFeedback>
             ))}
             {!impact.blockingIssues.length && !impact.warnings.length ? (
-              <Alert severity="success">No blocking assignment impact was found.</Alert>
+              <InlineFeedback severity="success">
+                No blocking assignment impact was found.
+              </InlineFeedback>
             ) : null}
           </Stack>
         ) : null}

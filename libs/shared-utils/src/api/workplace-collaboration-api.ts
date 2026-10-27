@@ -57,7 +57,8 @@ export type WorkplaceConnectorKind =
 export type WorkplaceConnectorStatus = {
   kind: WorkplaceConnectorKind;
   provider: string | null;
-  status: 'NOT_CONFIGURED' | 'DISABLED' | 'CONFIGURED_UNVERIFIED';
+  status:
+    'NOT_CONFIGURED' | 'DISABLED' | 'CONFIGURED_UNVERIFIED' | 'HEALTHY' | 'DEGRADED' | 'STALE';
   configurationReference: string | null;
   lastVerifiedAt: string | null;
   version: number;

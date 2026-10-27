@@ -5,8 +5,11 @@ const owner = vi.hoisted(() => ({
   publish: vi.fn(),
 }));
 
-vi.mock('@dwp-frontend/shared-utils/api/approval-api', () => ({
+vi.mock('@dwp-frontend/shared-utils/api/approval-management-api', () => ({
   getApprovalPolicies: owner.list,
+}));
+
+vi.mock('@dwp-frontend/shared-utils/api/approval-api', () => ({
   publishApprovalPolicy: owner.publish,
 }));
 

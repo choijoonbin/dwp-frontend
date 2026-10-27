@@ -140,6 +140,7 @@
     "loadError": "메신저 홈 정보를 불러오지 못했습니다.",
     "sync": {
       "stale": "새로고침 필요",
+      "presenceUnavailable": "연결 상태 확인 불가",
       "current": "최신 상태",
       "refreshing": "업데이트 중",
       "updated": "{{time}} 조회"
@@ -236,8 +237,13 @@
       "startDirect": "구성원을 찾아 새 DM 시작"
     },
     "people": {
-      "availableSnapshot": "조회 시 연결 가능 상태 {{count}}명",
-      "messagePerson": "{{name}}님에게 메시지 보내기",
+      "availableSnapshot": "현재 연결 가능한 구성원 {{count}}명 표시",
+      "unavailableSnapshot": "실시간 연결 상태를 확인하지 못했습니다",
+      "unavailableTitle": "연결 상태를 일시적으로 확인할 수 없습니다",
+      "unavailableDescription": "현재 연결 가능한 구성원을 확인하지 못했습니다. 마지막 확인 {{time}}.",
+      "emptyTitle": "현재 연결 가능한 구성원이 없습니다",
+      "emptyDescription": "구성원이 메신저를 열면 이곳에 표시됩니다.",
+      "messagePerson": "{{name}}님에게 메시지 보내기, {{presence}}",
       "presence": {
         "AVAILABLE": "연결 가능",
         "BUSY": "다른 업무 중",
@@ -644,14 +650,14 @@
   "people": {
     "eyebrow": "조직 디렉터리",
     "title": "구성원을 찾아 바로 대화하세요",
-    "description": "SKAX 인사 디렉터리와 현재 상태를 기반으로 안전한 DM을 시작합니다.",
+    "description": "SKAX 인사 디렉터리와 실시간 연결 상태를 기반으로 안전한 DM을 시작합니다.",
     "search": "이름, 이메일, 직책 검색",
     "openError": "DM을 열지 못했습니다.",
     "loadError": "구성원 목록을 불러오지 못했습니다.",
     "message": "대화",
     "emptyTitle": "구성원이 없습니다",
     "emptyDescription": "검색어를 줄이거나 다른 이름으로 찾아보세요.",
-    "directoryNote": "구성원 정보는 인사 디렉터리 스냅샷에서 동기화됩니다."
+    "directoryNote": "구성원 정보는 인사 디렉터리에서, 연결 상태는 자동 갱신됩니다."
   },
   "admin": {
     "eyebrow": "메신저 관리",

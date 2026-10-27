@@ -21,6 +21,7 @@ import {
   getCalendarHome,
   getRoomBookings,
   getRoomsPolicy,
+  getWorkplaceCollaborationOverview,
   getWorkplaceBookings,
   getWorkplaceExplore,
   useAuth,
@@ -38,6 +39,7 @@ import { useWorkplaceDecisionClock } from './workplace-decision-clock';
 import { workplaceHomeDecisionDeadline } from './workplace-home-decision-clock';
 import { useWorkplaceDecisionStatus } from './workplace-decision-status';
 import { buildWorkplaceHomeModel, workplaceHomeQueryRange } from './workplace-home-model';
+import { workplacePresenceSource } from './workplace-presence-source';
 import {
   workplaceHomeSourceComplete,
   workplaceHomeSourceData,
@@ -240,6 +242,24 @@ export function WorkplaceHome() {
   const activeRange =
     exploreSnapshot?.range ?? workplaceHomeQueryRange(new Date(homeDecisionInstant), timeZone);
   const homeDecisionNow = new Date(homeDecisionInstant).toISOString();
+  const presenceDate = Temporal.Instant.from(homeDecisionNow)
+    .toZonedDateTimeISO(timeZone)
+    .toPlainDate()
+    .toString();
+  const presenceSourceRequired = capabilities.isLoaded && capabilities.canViewWorkplace;
+  const presenceQuery = useQuery({
+    queryKey: ['workplace', 'home', identityKey, 'external-presence', presenceDate],
+    queryFn: () => getWorkplaceCollaborationOverview(presenceDate, presenceDate),
+    enabled: presenceSourceRequired,
+    staleTime: 30_000,
+    refetchInterval: REFRESH_INTERVAL,
+    retry: retryRecoverableWorkplaceRead,
+  });
+  const presenceSource = workplacePresenceSource(
+    presenceQuery.data?.actualPresence,
+    presenceQuery.isPending,
+    presenceQuery.isError || presenceQuery.failureCount > 0
+  );
   const bookability = useMemo(
     () => ({
       canCreateRoomBooking: capabilities.canCreateRoomBooking,
@@ -366,7 +386,8 @@ export function WorkplaceHome() {
     bookingsQuery.isFetching ||
     (roomSourceRequired && roomBookingsQuery.isFetching) ||
     (roomPolicyRequired && roomPolicyQuery.isFetching) ||
-    (calendarSourceRequired && calendarQuery.isFetching);
+    (calendarSourceRequired && calendarQuery.isFetching) ||
+    (presenceSourceRequired && presenceQuery.isFetching);
   const agendaComplete =
     workplaceHomeSourceComplete(bookingsState) &&
     workplaceHomeSourceComplete(roomBookingsState) &&
@@ -432,6 +453,7 @@ export function WorkplaceHome() {
   const { refetch: refetchRoomBookings } = roomBookingsQuery;
   const { refetch: refetchRoomPolicy } = roomPolicyQuery;
   const { refetch: refetchCalendar } = calendarQuery;
+  const { refetch: refetchPresence } = presenceQuery;
 
   const refreshHome = useCallback(() => {
     void refetchExplore();
@@ -439,11 +461,14 @@ export function WorkplaceHome() {
     if (roomSourceRequired) void refetchRoomBookings();
     if (roomPolicyRequired) void refetchRoomPolicy();
     if (calendarSourceRequired) void refetchCalendar();
+    if (presenceSourceRequired) void refetchPresence();
   }, [
     calendarSourceRequired,
+    presenceSourceRequired,
     refetchBookings,
     refetchCalendar,
     refetchExplore,
+    refetchPresence,
     refetchRoomBookings,
     refetchRoomPolicy,
     roomPolicyRequired,
@@ -669,8 +694,11 @@ export function WorkplaceHome() {
       <WorkplaceHomeSourceSummary
         workspaceState={exploreState === 'READY' ? bookingsState : exploreState}
         calendarState={calendarState}
+        externalPresenceState={presenceSource.state}
         workspaceUpdatedAt={explore?.generatedAt}
         calendarUpdatedAt={calendar?.generatedAt}
+        externalPresenceUpdatedAt={presenceSource.updatedAt}
+        externalPresenceProvider={presenceSource.provider}
       />
     </PageCanvas>
   );

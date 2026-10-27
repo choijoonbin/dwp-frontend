@@ -3,6 +3,7 @@ import { AuthGuard } from '@dwp-frontend/shared-utils/auth/auth-guard';
 import { Outlet, type RouteObject } from 'react-router-dom';
 
 import { MESSAGING_PRODUCT_MANIFEST } from '../features/messaging/messaging-product-manifest';
+import { MessagingPresenceRouteRuntime } from '../features/messaging/messaging-presence-route-runtime';
 import { MessagingLayout } from '../layouts/messaging-layout';
 import {
   authenticationFallback,
@@ -57,7 +58,12 @@ export const messagingRoutes: RouteObject[] = [
       managementLegacyShell,
       areaKey: 'messaging',
       translationNamespace: 'messaging',
-      renderPage: () => page,
+      renderPage: (route) =>
+        route.surfaceId === 'messaging.work' ? (
+          <MessagingPresenceRouteRuntime>{page}</MessagingPresenceRouteRuntime>
+        ) : (
+          page
+        ),
       legacyUnknown: page,
     }),
   },

@@ -285,6 +285,8 @@ export type LoadingStateProps = {
   skeleton?: React.ReactNode;
   /** Removes panel chrome when the status region is embedded in an existing product surface. */
   embedded?: boolean;
+  /** Inline spinner size when the loading state sits in an existing status row. */
+  spinnerSize?: number;
   size?: StatePanelSize;
 };
 
@@ -299,8 +301,26 @@ export function LoadingState({
   skeletonPadding = 0,
   skeleton,
   embedded = false,
+  spinnerSize = 24,
   size = 'standard',
 }: LoadingStateProps) {
+  if (embedded && variant === 'spinner') {
+    return (
+      <Stack direction="row" alignItems="center" gap={1} role="status" aria-label={label}>
+        <CircularProgress
+          size={spinnerSize}
+          aria-hidden="true"
+          sx={{
+            '@media (prefers-reduced-motion: reduce)': {
+              animation: 'none',
+              '& .MuiCircularProgress-circle': { animation: 'none' },
+            },
+          }}
+        />
+        <Typography variant="body2">{label}</Typography>
+      </Stack>
+    );
+  }
   if (variant === 'skeleton') {
     return (
       <Box

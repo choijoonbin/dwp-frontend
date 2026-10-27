@@ -6,6 +6,8 @@ import {
   GuidedEmptyState,
   InlineFeedback,
   LocalErrorState,
+  FormField,
+  foundationTokens,
 } from '@dwp-frontend/design-system';
 
 import Box from '@mui/material/Box';
@@ -14,7 +16,6 @@ import Divider from '@mui/material/Divider';
 import MenuItem from '@mui/material/MenuItem';
 import Paper from '@mui/material/Paper';
 import Stack from '@mui/material/Stack';
-import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
@@ -129,7 +130,7 @@ function FieldDecision({
       <Typography
         component="dd"
         variant="body2"
-        fontWeight={600}
+        fontWeight="subtitle2.fontWeight"
         sx={{ m: 0, mt: 0.25, overflowWrap: 'anywhere' }}
       >
         {display}
@@ -209,7 +210,7 @@ function CertificateRequestForm({
   return (
     <Box component="form" onSubmit={submit} noValidate sx={{ mt: 2 }}>
       <Divider sx={{ mb: 2 }} />
-      <Typography component="h3" variant="subtitle1" fontWeight={700}>
+      <Typography component="h3" variant="subtitle1" fontWeight="fontWeightBold">
         {contract.framing.primaryAction}
       </Typography>
       <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
@@ -225,7 +226,7 @@ function CertificateRequestForm({
           minWidth: 0,
         }}
       >
-        <TextField
+        <FormField
           required
           fullWidth
           size="small"
@@ -235,7 +236,7 @@ function CertificateRequestForm({
           onChange={(event) => setPersonPublicId(event.target.value)}
           inputProps={{ autoComplete: 'off', spellCheck: false }}
         />
-        <TextField
+        <FormField
           required
           select
           fullWidth
@@ -248,8 +249,8 @@ function CertificateRequestForm({
           <MenuItem value="EMPLOYMENT_CERTIFICATE">Employment certificate</MenuItem>
           <MenuItem value="CAREER_CERTIFICATE">Career certificate</MenuItem>
           <MenuItem value="INCOME_CERTIFICATE">Income certificate</MenuItem>
-        </TextField>
-        <TextField
+        </FormField>
+        <FormField
           required
           fullWidth
           size="small"
@@ -342,7 +343,7 @@ function WorkList({
                   p: 1.25,
                   border: 1,
                   borderColor: active ? 'primary.main' : 'divider',
-                  borderRadius: 1.5,
+                  borderRadius: foundationTokens.radius.surface + 'px',
                   bgcolor: active ? 'action.selected' : 'background.paper',
                   color: 'text.primary',
                   textAlign: 'left',
@@ -355,7 +356,7 @@ function WorkList({
                 <Typography
                   component="span"
                   variant="body2"
-                  fontWeight={700}
+                  fontWeight="fontWeightBold"
                   display="block"
                   sx={{ overflowWrap: 'anywhere' }}
                 >
@@ -497,7 +498,7 @@ function OperationsFocusForm({
           </Typography>
         </Box>
 
-        <TextField
+        <FormField
           select
           fullWidth
           size="small"
@@ -515,14 +516,14 @@ function OperationsFocusForm({
               {candidate.title}
             </MenuItem>
           ))}
-        </TextField>
+        </FormField>
 
         <Box
           component="section"
           aria-label="Selected certificate metadata"
           sx={{
             bgcolor: 'action.hover',
-            borderRadius: 1.5,
+            borderRadius: foundationTokens.radius.surface + 'px',
             p: { xs: 1.25, sm: 1.75 },
             minWidth: 0,
           }}
@@ -532,7 +533,7 @@ function OperationsFocusForm({
               <Typography
                 component="h3"
                 variant="subtitle1"
-                fontWeight={700}
+                fontWeight="fontWeightBold"
                 sx={{ overflowWrap: 'anywhere' }}
               >
                 {item.title}
@@ -695,10 +696,9 @@ function ActiveCertificateWorkbench({
         },
         '@media (prefers-reduced-motion: reduce)': {
           '& *, & *::before, & *::after': {
-            animationDuration: '0.01ms !important',
-            animationIterationCount: '1 !important',
+            animation: 'none !important',
             scrollBehavior: 'auto !important',
-            transitionDuration: '0.01ms !important',
+            transition: 'none !important',
           },
         },
       }}

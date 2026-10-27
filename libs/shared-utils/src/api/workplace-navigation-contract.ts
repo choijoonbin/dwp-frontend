@@ -46,6 +46,12 @@ export type WorkplaceNavigationStep = Readonly<{
   fromNodeId: string;
   toNodeId: string;
   floorId: string;
+  fromFloorId: string | null;
+  toFloorId: string | null;
+  fromPositionX: number | null;
+  fromPositionY: number | null;
+  toPositionX: number | null;
+  toPositionY: number | null;
   travelMode: WorkplaceNavigationTravelMode;
   travelSeconds: number;
   directionKo: string;
@@ -256,6 +262,16 @@ function number(value: unknown, label: string): number {
   return value;
 }
 
+function coordinate(value: unknown, label: string): number {
+  const parsed = number(value, label);
+  if (parsed < 0 || parsed > 100) throw new Error(`${label} must be between 0 and 100.`);
+  return parsed;
+}
+
+function optionalCoordinate(value: unknown, label: string): number | null {
+  return value === null || value === undefined ? null : coordinate(value, label);
+}
+
 function boolean(value: unknown, label: string): boolean {
   if (typeof value !== 'boolean') throw new Error(`${label} must be a boolean.`);
   return value;
@@ -336,6 +352,16 @@ export function parseWorkplaceNavigationRoute(value: unknown): WorkplaceNavigati
         fromNodeId: text(step.fromNodeId, 'From node id'),
         toNodeId: text(step.toNodeId, 'To node id'),
         floorId: text(step.floorId, 'Step floor id'),
+        // Floor endpoints were added additively with coordinates. A null value
+        // suppresses ambiguous cross-floor drawing while text guidance remains usable.
+        fromFloorId: nullableText(step.fromFloorId, 'From floor id'),
+        toFloorId: nullableText(step.toFloorId, 'To floor id'),
+        // Coordinates were added additively.  Keep the text route usable while
+        // an older backend revision is being drained during a rolling deploy.
+        fromPositionX: optionalCoordinate(step.fromPositionX, 'From node X'),
+        fromPositionY: optionalCoordinate(step.fromPositionY, 'From node Y'),
+        toPositionX: optionalCoordinate(step.toPositionX, 'To node X'),
+        toPositionY: optionalCoordinate(step.toPositionY, 'To node Y'),
         travelMode: enumValue(
           step.travelMode,
           ['WALK', 'STAIR', 'ELEVATOR', 'RAMP'] as const,

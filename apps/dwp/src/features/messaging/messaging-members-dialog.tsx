@@ -81,7 +81,8 @@ export function MessagingMembersDialog({
     queryKey: ['messaging', 'people', 'membership', peopleSearch.trim()],
     queryFn: () => searchMessagingPeople(peopleSearch.trim()),
     enabled: open && canManage && peopleSearch.trim().length >= 2,
-    staleTime: 30_000,
+    staleTime: 10_000,
+    refetchInterval: 15_000,
     retry: 1,
   });
   const candidates = useMemo(() => {

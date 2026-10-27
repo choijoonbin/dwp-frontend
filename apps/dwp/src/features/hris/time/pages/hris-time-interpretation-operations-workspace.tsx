@@ -1,10 +1,14 @@
 import { useCallback, useMemo, useState } from 'react';
-import { ActionButton, InlineFeedback } from '@dwp-frontend/design-system';
+import {
+  ActionButton,
+  DatePickerField,
+  FormField,
+  InlineFeedback,
+} from '@dwp-frontend/design-system';
 import { resolveSupportedLocale } from '@dwp-frontend/shared-i18n';
 import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
 import Stack from '@mui/material/Stack';
-import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import { useTranslation } from 'react-i18next';
 
@@ -151,31 +155,27 @@ export function HrisTimeInterpretationOperationsWorkspace() {
               run command.
             </Typography>
           </Box>
-          <TextField
+          <FormField
             label="Worker public IDs"
             value={draft.workerIds}
             onChange={(event) => updateDraft({ workerIds: event.target.value })}
-            helperText="Separate UUIDs with commas, spaces, or new lines. Duplicate IDs are rejected."
+            supportingText="Separate UUIDs with commas, spaces, or new lines. Duplicate IDs are rejected."
             multiline
             minRows={2}
             fullWidth
             inputProps={{ spellCheck: false }}
           />
           <Stack direction={{ xs: 'column', sm: 'row' }} gap={2}>
-            <TextField
+            <DatePickerField
               label="Period start"
-              type="date"
               value={draft.periodStart}
-              onChange={(event) => updateDraft({ periodStart: event.target.value })}
-              InputLabelProps={{ shrink: true }}
+              onValueChange={(value) => updateDraft({ periodStart: value ?? '' })}
               fullWidth
             />
-            <TextField
+            <DatePickerField
               label="Period end"
-              type="date"
               value={draft.periodEnd}
-              onChange={(event) => updateDraft({ periodEnd: event.target.value })}
-              InputLabelProps={{ shrink: true }}
+              onValueChange={(value) => updateDraft({ periodEnd: value ?? '' })}
               fullWidth
             />
           </Stack>

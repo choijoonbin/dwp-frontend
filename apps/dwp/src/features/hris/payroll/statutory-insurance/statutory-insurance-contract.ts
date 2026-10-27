@@ -1,3 +1,16 @@
+import {
+  date,
+  exact,
+  instant,
+  integer,
+  invalid,
+  record,
+  text,
+  uuid,
+} from './statutory-insurance-validation';
+
+export { StatutoryInsuranceContractError } from './statutory-insurance-validation';
+
 export const STATUTORY_INSURANCE_FEATURE = 'HRIS_PAYROLL_STATUTORY_INSURANCE' as const;
 export const STATUTORY_INSURANCE_DEFAULT_ENABLED = false as const;
 export const STATUTORY_INSURANCE_DEFAULT_ENROLLED_TENANTS = Object.freeze([] as readonly string[]);
@@ -288,7 +301,6 @@ export type PayrollCommandReceipt = Readonly<{
   resultRef?: string;
 }>;
 
-const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/u;
 const PUBLIC_ID = /^[A-Za-z0-9._:-]{1,128}$/u;
 const CODE = /^[A-Z][A-Z0-9_]{1,63}$/u;
 const DISPLAY_KEY = /^[a-z][a-z0-9._-]{1,127}$/u;
@@ -296,86 +308,8 @@ const COMPONENT_KEY = /^[a-z][a-z0-9._-]{0,127}$/u;
 const POLICY_KEY = /^[a-z][a-z0-9._-]{1,127}$/u;
 const DIGEST = /^[0-9a-f]{64}$/u;
 const CURSOR = /^[A-Za-z0-9_-]{16,1024}$/u;
-const DATE = /^\d{4}-\d{2}-\d{2}$/u;
-const INSTANT = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{1,9})?(?:Z|[+-]\d{2}:\d{2})$/u;
 const MONEY = /^(?:0|[1-9][0-9]{0,14})(?:\.[0-9]{1,4})?$/u;
 const CURRENCY = /^[A-Z]{3}$/u;
-
-export class StatutoryInsuranceContractError extends Error {
-  readonly kind = 'PAY003_CONTRACT_ERROR' as const;
-
-  constructor(path: string) {
-    super(`Invalid PAY-003 contract: ${path}`);
-    this.name = 'StatutoryInsuranceContractError';
-  }
-}
-
-function invalid(path: string): never {
-  throw new StatutoryInsuranceContractError(path);
-}
-
-function record(value: unknown, path: string): Record<string, unknown> {
-  if (!value || typeof value !== 'object' || Array.isArray(value)) return invalid(path);
-  const prototype = Object.getPrototypeOf(value);
-  if (prototype !== Object.prototype && prototype !== null) return invalid(path);
-  return value as Record<string, unknown>;
-}
-
-function exact(
-  value: unknown,
-  path: string,
-  allowed: readonly string[],
-  required: readonly string[] = allowed
-) {
-  const source = record(value, path);
-  const keys = Object.keys(source);
-  if (
-    keys.some((key) => !allowed.includes(key)) ||
-    required.some((key) => !Object.prototype.hasOwnProperty.call(source, key))
-  ) {
-    return invalid(path);
-  }
-  return source;
-}
-
-function text(value: unknown, path: string, maximum: number, pattern?: RegExp): string {
-  if (
-    typeof value !== 'string' ||
-    !value ||
-    value !== value.trim() ||
-    Array.from(value).length > maximum ||
-    (pattern && !pattern.test(value))
-  ) {
-    return invalid(path);
-  }
-  return value;
-}
-
-function integer(value: unknown, path: string, minimum = 0, maximum = Number.MAX_SAFE_INTEGER) {
-  if (!Number.isSafeInteger(value) || Number(value) < minimum || Number(value) > maximum) {
-    return invalid(path);
-  }
-  return Number(value);
-}
-
-function uuid(value: unknown, path: string): string {
-  return text(value, path, 36, UUID);
-}
-
-function date(value: unknown, path: string): string {
-  const candidate = text(value, path, 10, DATE);
-  const parsed = new Date(`${candidate}T00:00:00Z`);
-  if (Number.isNaN(parsed.valueOf()) || parsed.toISOString().slice(0, 10) !== candidate) {
-    return invalid(path);
-  }
-  return candidate;
-}
-
-function instant(value: unknown, path: string): string {
-  const candidate = text(value, path, 100, INSTANT);
-  if (Number.isNaN(Date.parse(candidate))) return invalid(path);
-  return candidate;
-}
 
 function metadata(value: unknown, path: string): MetadataValue {
   const source = exact(value, path, ['key', 'version', 'digest']);
@@ -600,10 +534,13 @@ function activationAction(value: unknown, itemPublicId: string): CountryPackActi
     'items.availableActions[].targetResourcePublicId'
   );
   const href = text(source.resolvedHref, 'items.availableActions[].resolvedHref', 128);
-  const expectedHref = `/api/payroll/v1/country-packs/${itemPublicId}/activate`;
+  const expectedHref = COUNTRY_PACK_ACTIVATE_OPERATION.pathTemplate.replace(
+    '{packId}',
+    itemPublicId
+  );
   if (
-    source.actionKey !== COUNTRY_PACK_ACTIVATE_ACTION_KEY ||
-    source.method !== 'POST' ||
+    source.actionKey !== COUNTRY_PACK_ACTIVATE_OPERATION.actionKey ||
+    source.method !== COUNTRY_PACK_ACTIVATE_OPERATION.method ||
     source.targetResourceType !== 'COUNTRY_PACK' ||
     source.idempotencyPolicy !== 'REQUIRED_IDEMPOTENCY_KEY' ||
     source.stepUpPolicy !== 'OWNER_PEP_RISK_POLICY_DECISION_REQUIRED' ||
@@ -636,11 +573,19 @@ export function parseStatutoryConfigurationProjection(
     'queryState',
     'items',
   ]);
-  if (source.projectionVersion !== '2' || source.variantKey !== 'STATUTORY') {
+  if (
+    source.projectionVersion !== '2' ||
+    source.variantKey !== STATUTORY_CONFIGURATION_ENTRY_QUERY.variantKey
+  ) {
     return invalid('projection.identity');
   }
   const state = queryState(source.queryState);
-  if (!Array.isArray(source.items) || source.items.length > 100) return invalid('items');
+  if (
+    !Array.isArray(source.items) ||
+    source.items.length > STATUTORY_CONFIGURATION_ENTRY_QUERY.pageLimit
+  ) {
+    return invalid('items');
+  }
   const items = source.items.map((entry, index): StatutoryConfigurationItem => {
     const path = `items[${index}]`;
     const item = exact(entry, path, [
@@ -655,7 +600,7 @@ export function parseStatutoryConfigurationProjection(
     const groups = exact(
       item.fieldGroups,
       `${path}.fieldGroups`,
-      ['COUNTRY_PACK_METADATA', 'STATUTORY_RULE', 'ACTIVATION_STATUS'],
+      STATUTORY_CONFIGURATION_ENTRY_QUERY.fieldGroups,
       []
     );
     if (Object.keys(groups).length === 0) return invalid(`${path}.fieldGroups`);
@@ -733,7 +678,7 @@ export function parseStatutoryConfigurationProjection(
   assertFieldDecisionSummary(
     state,
     items.map((item) => item.fieldGroups as Readonly<Record<string, FieldDecision<unknown>>>),
-    3
+    STATUTORY_CONFIGURATION_ENTRY_QUERY.fieldGroups.length
   );
   return Object.freeze({
     projectionVersion: '2',
@@ -752,11 +697,16 @@ export function parseSocialInsuranceProjection(value: unknown): SocialInsuranceP
     'queryState',
     'items',
   ]);
-  if (source.projectionVersion !== '1' || source.variantKey !== 'TAX_SOCIAL_INSURANCE') {
+  if (
+    source.projectionVersion !== '1' ||
+    source.variantKey !== SOCIAL_INSURANCE_ENTRY_QUERY.variantKey
+  ) {
     return invalid('projection.identity');
   }
   const state = queryState(source.queryState);
-  if (!Array.isArray(source.items) || source.items.length > 100) return invalid('items');
+  if (!Array.isArray(source.items) || source.items.length > SOCIAL_INSURANCE_ENTRY_QUERY.pageLimit) {
+    return invalid('items');
+  }
   const items = source.items.map((entry, index): SocialInsuranceItem => {
     const path = `items[${index}]`;
     const item = exact(entry, path, [
@@ -771,7 +721,7 @@ export function parseSocialInsuranceProjection(value: unknown): SocialInsuranceP
     const groups = exact(
       item.fieldGroups,
       `${path}.fieldGroups`,
-      ['SOCIAL_INSURANCE', 'POLICY_VERSION'],
+      SOCIAL_INSURANCE_ENTRY_QUERY.fieldGroups,
       []
     );
     if (Object.keys(groups).length === 0) return invalid(`${path}.fieldGroups`);
@@ -829,7 +779,7 @@ export function parseSocialInsuranceProjection(value: unknown): SocialInsuranceP
   assertFieldDecisionSummary(
     state,
     items.map((item) => item.fieldGroups as Readonly<Record<string, FieldDecision<unknown>>>),
-    2
+    SOCIAL_INSURANCE_ENTRY_QUERY.fieldGroups.length
   );
   return Object.freeze({
     projectionVersion: '1',
@@ -932,7 +882,7 @@ export function parsePayrollCommandReceipt(value: unknown): PayrollCommandReceip
   if (
     source.commandType !== 'COUNTRY_PACK_ACTIVATE' ||
     source.originatingAction !== 'PAY_COUNTRY_PACK_ACTIVATE' ||
-    source.purposeCode !== 'STATUTORY_CONFIGURATION' ||
+    source.purposeCode !== COUNTRY_PACK_ACTIVATE_OPERATION.purpose ||
     !['ACCEPTED', 'SUCCEEDED'].includes(String(source.status))
   ) {
     return invalid('receipt.binding');

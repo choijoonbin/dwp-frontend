@@ -4,8 +4,8 @@
   min-width: 0;
   margin-inline: auto;
   padding: clamp(1rem, 2.5vw, 2rem);
-  color: var(--mui-palette-text-primary, CanvasText);
-  background: var(--mui-palette-background-default, Canvas);
+  color: var(--dwp-palette-text-primary, CanvasText);
+  background: var(--dwp-palette-background-default, Canvas);
 }
 
 .per004-workspace *,
@@ -16,8 +16,8 @@
 
 .per004-workspace__header h1 {
   margin: 0 0 1.5rem;
-  font-size: clamp(1.5rem, 2.5vw, 2.1rem);
-  line-height: 1.25;
+  font-size: var(--dwp-type-page-size);
+  line-height: var(--dwp-type-title-line-height);
   overflow-wrap: anywhere;
 }
 
@@ -25,9 +25,9 @@
 .per004-workspace__item {
   min-width: 0;
   padding: clamp(1rem, 2vw, 1.5rem);
-  border: 1px solid var(--mui-palette-divider, #8a8a8a);
-  border-radius: 0.75rem;
-  background: var(--mui-palette-background-paper, Canvas);
+  border: 1px solid var(--dwp-palette-divider, CanvasText);
+  border-radius: var(--dwp-radius-surface);
+  background: var(--dwp-palette-background-paper, Canvas);
 }
 
 .per004-workspace__notice p,
@@ -47,8 +47,8 @@
 
 .per004-workspace__item h2 {
   margin: 0 0 0.75rem;
-  font-size: 1.125rem;
-  line-height: 1.35;
+  font-size: var(--dwp-type-subheading-size);
+  line-height: var(--dwp-type-card-line-height);
   overflow-wrap: anywhere;
 }
 
@@ -67,8 +67,8 @@
 
 .per004-workspace__fields dt {
   margin-bottom: 0.15rem;
-  font-size: 0.8rem;
-  font-weight: 700;
+  font-size: var(--dwp-type-small-size);
+  font-weight: var(--dwp-type-weight-bold);
   text-transform: none;
 }
 
@@ -77,11 +77,11 @@
   max-width: 100%;
   padding: 0.5rem 1rem;
   border: 1px solid currentColor;
-  border-radius: 0.4rem;
+  border-radius: var(--dwp-radius-control);
   background: transparent;
   color: inherit;
   font: inherit;
-  font-weight: 700;
+  font-weight: var(--dwp-type-weight-bold);
   cursor: pointer;
   overflow-wrap: anywhere;
 }
@@ -92,7 +92,7 @@
 }
 
 .per004-workspace button:focus-visible {
-  outline: 3px solid var(--mui-palette-primary-main, Highlight);
+  outline: 3px solid var(--dwp-palette-primary-main, Highlight);
   outline-offset: 3px;
 }
 
@@ -101,7 +101,7 @@
   .per004-workspace__items { grid-template-columns: minmax(0, 1fr); }
   .per004-workspace__notice,
   .per004-workspace__item { padding: 0.75rem; }
-  .per004-workspace button { width: 100%; font-size: 0.875rem; }
+  .per004-workspace button { width: 100%; font-size: var(--dwp-type-body-size); }
 }
 
 @media (forced-colors: active) {

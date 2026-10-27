@@ -2,7 +2,7 @@ import { createHash } from 'node:crypto';
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 
-import { HRIS_R7_GOVERNED_PAGE_CATALOG } from '../../../hcm/hcm-navigation';
+import { HRIS_R7_GOVERNED_PAGE_CATALOG } from '../../../../components/hris-governed-page-catalog';
 import {
   countHrisCatalogByInventoryGroup,
   filterHrisCatalog,
@@ -173,9 +173,10 @@ describe('HRIS target product map catalog', () => {
       new URL('../../../hcm/hcm-navigation.ts', import.meta.url),
       'utf8'
     );
-    const governed = [...navigationSource.matchAll(/path: '(\/hr\/[^']+)'/gu)].map(
-      (match) => match[1]!
-    );
+    const governed = [
+      ...[...navigationSource.matchAll(/path: '(\/hr\/[^']+)'/gu)].map((match) => match[1]!),
+      ...HRIS_R7_GOVERNED_PAGE_CATALOG.map((item) => item.path),
+    ];
     const legacyMapped = HRIS_PRODUCT_MAP_CATALOG.flatMap((item) => item.legacyPaths);
     const currentPartialMapped = HRIS_PRODUCT_MAP_CATALOG.flatMap(
       (item) => item.currentPartialPaths

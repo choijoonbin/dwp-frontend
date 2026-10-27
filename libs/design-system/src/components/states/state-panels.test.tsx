@@ -4,6 +4,15 @@ import { describe, expect, it } from 'vitest';
 import { GuidedEmptyState, LoadingState, LocalErrorState } from './state-panels';
 
 describe('LoadingState accessibility contract', () => {
+  it('keeps an embedded spinner in a named row', () => {
+    const markup = renderToStaticMarkup(
+      <LoadingState label="Refreshing workspace" embedded spinnerSize={16} />
+    );
+    expect(markup).toContain('role="status"');
+    expect(markup).toContain('aria-label="Refreshing workspace"');
+    expect(markup).toContain('aria-hidden="true"');
+    expect(markup).toContain('>Refreshing workspace</');
+  });
   it('keeps a custom loading silhouette inside a named status region', () => {
     const markup = renderToStaticMarkup(
       <LoadingState

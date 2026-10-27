@@ -1,7 +1,13 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useQuery } from '@tanstack/react-query';
-import { ActionButton, GuidedEmptyState, InlineFeedback } from '@dwp-frontend/design-system';
+import {
+  ActionButton,
+  GuidedEmptyState,
+  InlineFeedback,
+  FormField,
+  foundationTokens,
+} from '@dwp-frontend/design-system';
 import { formatCivilDate, formatDate } from '@dwp-frontend/shared-i18n';
 import { BriefcaseBusiness, RefreshCw, ShieldCheck, Workflow } from 'lucide-react';
 
@@ -10,7 +16,6 @@ import ButtonBase from '@mui/material/ButtonBase';
 import Chip from '@mui/material/Chip';
 import Paper from '@mui/material/Paper';
 import Stack from '@mui/material/Stack';
-import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 
 import { HcmQueryState } from '../../../../components/hcm-query-state';
@@ -128,7 +133,7 @@ function DefinitionField({
           m: 0,
           mt: 0.25,
           overflowWrap: 'anywhere',
-          ...(mono ? { fontFamily: 'monospace' } : {}),
+          ...(mono ? { fontFamily: foundationTokens.font.mono } : {}),
         }}
       >
         {value}
@@ -181,7 +186,7 @@ function AssignmentChoice({
               id={titleId}
               component="h3"
               variant="subtitle2"
-              fontWeight={700}
+              fontWeight="fontWeightBold"
               flex={1}
               sx={{ overflowWrap: 'anywhere' }}
             >
@@ -223,7 +228,7 @@ function OwnerEvidence({
 }>) {
   return (
     <Paper component="article" variant="outlined" sx={{ p: 1.5, minWidth: 0 }}>
-      <Typography component="h4" variant="subtitle2" fontWeight={700}>
+      <Typography component="h4" variant="subtitle2" fontWeight="fontWeightBold">
         {title}
       </Typography>
       {!owner ? (
@@ -406,7 +411,7 @@ export function EmploymentAssignmentsRuntime({
     retry: false,
   });
   const workbench = query.data;
-  const assignments = workbench?.assignments ?? [];
+  const assignments = useMemo(() => workbench?.assignments ?? [], [workbench?.assignments]);
   const normalizedSearch = search.trim().toLocaleLowerCase();
   const visibleAssignments = useMemo(
     () =>
@@ -521,7 +526,7 @@ export function EmploymentAssignmentsRuntime({
                 id="employment-assignments-question"
                 component="h2"
                 variant="subtitle1"
-                fontWeight={700}
+                fontWeight="fontWeightBold"
                 sx={{ overflowWrap: 'anywhere' }}
               >
                 {copy.question}
@@ -610,11 +615,11 @@ export function EmploymentAssignmentsRuntime({
                   {copy.listDescription}
                 </Typography>
               </Box>
-              <TextField
+              <FormField
                 label={copy.searchLabel}
                 value={search}
                 onChange={(event) => setSearch(event.target.value)}
-                helperText={copy.searchHelp}
+                supportingText={copy.searchHelp}
                 fullWidth
                 size="small"
                 inputProps={{ spellCheck: false }}

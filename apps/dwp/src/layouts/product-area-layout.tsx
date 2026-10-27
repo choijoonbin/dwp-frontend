@@ -1,13 +1,4 @@
-import {
-  useCallback,
-  useEffect,
-  useId,
-  useLayoutEffect,
-  useRef,
-  useState,
-  type FocusEvent,
-  type MouseEvent,
-} from 'react';
+import { useEffect, useId, useState, type MouseEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ArrowLeft, ChevronDown, ChevronRight, Home, LifeBuoy, Settings2 } from 'lucide-react';
 import { Link, NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom';
@@ -39,13 +30,6 @@ import { ShellHeader, shellMobileContextRailHeight } from '../components/shell-h
 import { productSurfaceContentInstanceKey } from '../components/product-surface-content-instance-key';
 import ProductSurfaceHeaderControls from '../components/product-surface-header-controls';
 import { ProductSurfaceContextBarSlot } from '../components/product-surface-context-bar-slot';
-import {
-  clearProductSurfaceFocusAfterNavigation,
-  clearProductSurfaceFocus,
-  deferProductSurfaceFocusClear,
-  recordProductSurfaceFocus,
-  synchronizeProductSurfaceFocus,
-} from '../components/product-surface-focus-handoff';
 import { shellHeaderHeight, shellRegistry } from '../features/shell/shell-registry';
 import { getProductExperienceProfile } from '../features/shell/product-experience-registry';
 import { buildLegacyProductSurfacePresentation } from '../features/shell/legacy-product-surface-presentation';
@@ -81,6 +65,8 @@ import {
   useProductAreaTaskNavigator,
   useProductAreaTaskNavigatorLifecycle,
 } from './product-area-task-navigator';
+
+import { useProductAreaFocusHandoff } from './use-product-area-focus-handoff';
 
 export * from './product-area-layout-contract';
 
@@ -237,109 +223,22 @@ export function ProductAreaLayout({
     : (surface?.entryPoints ?? legacyPresentation?.headerEntryPoints);
   const currentSurfaceId =
     surface?.decision.context.surfaceKey ?? legacyPresentation?.currentSurface.id;
-  const focusLocation = `${location.pathname}${location.search}${location.hash}`;
-  const focusIdentityKey = `${auth.user?.identityPlane ?? 'anonymous'}:${auth.user?.tenantId ?? ''}:${auth.user?.userId ?? ''}`;
-  const shellRef = useRef<HTMLDivElement>(null);
-  const mobileNavigationTargetRef = useRef<{
-    resolveTarget: () => HTMLElement | null;
-    originLocation: string;
-    expectedLocation?: string;
-  } | null>(null);
-  const focusLocationRef = useRef(focusLocation);
-  const focusIdentityRef = useRef(focusIdentityKey);
-  focusLocationRef.current = focusLocation;
-  useLayoutEffect(() => {
-    const shell = shellRef.current;
-    if (focusIdentityRef.current !== focusIdentityKey) {
-      clearProductSurfaceFocus();
-      focusIdentityRef.current = focusIdentityKey;
-    } else if (shell && (presentationPlane === 'work' || presentationPlane === 'management')) {
-      synchronizeProductSurfaceFocus(shell, presentationPlane, focusIdentityKey, focusLocation);
-    }
-  }, [focusIdentityKey, focusLocation, presentationPlane]);
-  useLayoutEffect(
-    () => () => clearProductSurfaceFocusAfterNavigation(focusLocationRef.current),
-    []
-  );
-  const recordSurfaceFocus = (event: FocusEvent<HTMLElement>) => {
-    if (presentationPlane !== 'work' && presentationPlane !== 'management') return;
-    if (event.target instanceof HTMLElement) {
-      recordProductSurfaceFocus(
-        event.currentTarget,
-        event.target,
-        presentationPlane,
-        focusIdentityKey,
-        focusLocation
-      );
-    }
-  };
-  const deferSurfaceFocusClear = (event: FocusEvent<HTMLElement>) => {
-    if (event.target instanceof HTMLElement) {
-      deferProductSurfaceFocusClear(event.currentTarget, event.target, event.relatedTarget);
-    }
-  };
-  const dismissMobileNavigation = () => {
-    mobileNavigationTargetRef.current = null;
-    clearProductSurfaceFocus();
-    mobileNavigation.dismiss();
-  };
-  const navigateMobileNavigation = () => {
-    mobileNavigationTargetRef.current = null;
-    clearProductSurfaceFocus();
-    mobileNavigation.navigate();
-  };
-  const queueNavigationTarget = (
-    resolveTarget: () => HTMLElement | null,
-    expectedLocation?: string
-  ) => {
-    mobileNavigationTargetRef.current = {
-      resolveTarget,
-      originLocation: focusLocationRef.current,
-      expectedLocation,
-    };
-    clearProductSurfaceFocus();
-  };
-  const navigateMobileNavigationToTarget = (
-    resolveTarget: () => HTMLElement | null,
-    expectedLocation?: string
-  ) => {
-    queueNavigationTarget(resolveTarget, expectedLocation);
-    mobileNavigation.navigate();
-  };
-  const focusMobileNavigationTarget = useCallback(() => {
-    const pendingTarget = mobileNavigationTargetRef.current;
-    if (
-      !pendingTarget ||
-      (pendingTarget.expectedLocation
-        ? pendingTarget.expectedLocation !== focusLocationRef.current
-        : pendingTarget.originLocation === focusLocationRef.current)
-    ) {
-      return false;
-    }
-    const target = pendingTarget.resolveTarget();
-    if (!target?.isConnected) return false;
-    target.focus({ preventScroll: true });
-    if (document.activeElement !== target) return false;
-    mobileNavigationTargetRef.current = null;
-    return true;
-  }, []);
-  useEffect(() => {
-    const pendingTarget = mobileNavigationTargetRef.current;
-    if (mobileNavigation.open || !pendingTarget) return undefined;
-    let frame = 0;
-    let remainingFrames = 120;
-    const transferFocus = () => {
-      if (focusMobileNavigationTarget() || !mobileNavigationTargetRef.current) return;
-      remainingFrames -= 1;
-      if (remainingFrames <= 0) {
-        mobileNavigationTargetRef.current = null;
-        return;
-      }
-      frame = window.requestAnimationFrame(transferFocus);
-    };
-    frame = window.requestAnimationFrame(transferFocus);
-    return () => window.cancelAnimationFrame(frame);
-  }, [focusLocation, focusMobileNavigationTarget, mobileNavigation.open, taskNavigator.path]);
+  const {
+    shellRef,
+    recordSurfaceFocus,
+    deferSurfaceFocusClear,
+    dismissMobileNavigation,
+    navigateMobileNavigation,
+    queueNavigationTarget,
+    navigateMobileNavigationToTarget,
+    focusMobileNavigationTarget,
+  } = useProductAreaFocusHandoff({
+    focusLocation: `${location.pathname}${location.search}${location.hash}`,
+    focusIdentityKey: `${auth.user?.identityPlane ?? 'anonymous'}:${auth.user?.tenantId ?? ''}:${auth.user?.userId ?? ''}`,
+    presentationPlane,
+    mobileNavigation,
+    taskNavigatorPath: taskNavigator.path,
+  });
   const productLabel = t(`shell.${areaKey}.name`);
   const headerContextLabel =
     presentationPlane === 'management'
@@ -721,7 +620,7 @@ export function ProductAreaLayout({
                                 borderRadius: '50%',
                                 bgcolor: panelOpen ? 'var(--dwp-product-selection)' : 'transparent',
                                 transform: panelOpen ? 'rotate(180deg)' : undefined,
-                                transition: 'transform 150ms ease',
+                                transition: (theme) => theme.transitions.create('transform'),
                                 '@media (prefers-reduced-motion: reduce)': {
                                   transition: 'none',
                                 },

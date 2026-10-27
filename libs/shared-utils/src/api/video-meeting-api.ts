@@ -604,10 +604,12 @@ export async function searchVideoMeetingPeople(
 }
 
 export async function getVideoMeetingHome(
-  timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone
+  timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone,
+  options: { signal?: AbortSignal } = {}
 ): Promise<VideoMeetingHome> {
   const response = await axiosInstance.get<ApiResponse<WireHome>>(
-    `${VIDEO_MEETING_API_BASE}/home?timeZone=${encodeURIComponent(timeZone)}`
+    `${VIDEO_MEETING_API_BASE}/home?timeZone=${encodeURIComponent(timeZone)}`,
+    { signal: options.signal, timeoutMs: 10_000 }
   );
   const home = response.data.data;
   return {

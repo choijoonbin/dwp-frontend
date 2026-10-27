@@ -33,6 +33,7 @@ import {
 import { useMeetingHomeManualOutcomes } from './use-meeting-home-manual-outcomes';
 import { homeFocusMeeting, homeUnavailableReason } from './meeting-home-model';
 import { meetingHomeInset } from './meeting-home-presentation';
+import { meetingHomeQueryRetryDelay, retryMeetingHomeQuery } from './meeting-home-query-policy';
 
 export function MeetingHome() {
   const { user, isAuthenticated } = useAuth();
@@ -102,11 +103,12 @@ function MeetingHomeContent({
   }, []);
   const query = useQuery({
     queryKey: ['meetings', 'home', 'snapshot', scope, timeZone],
-    queryFn: () => getVideoMeetingHome(timeZone),
+    queryFn: ({ signal }) => getVideoMeetingHome(timeZone, { signal }),
     enabled: authenticated,
     staleTime: 30_000,
     refetchInterval: 60_000,
-    retry: false,
+    retry: retryMeetingHomeQuery,
+    retryDelay: meetingHomeQueryRetryDelay,
     gcTime: 0,
     meta: { accessSensitive: true },
   });

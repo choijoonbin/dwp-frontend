@@ -30,6 +30,7 @@ import {
   messagingThread,
   upsertMessagingMessage,
 } from './messaging-model';
+import { maskMessagingPresence, useBrowserOnlineState } from './messaging-presence-freshness';
 import {
   resolveMessagingTransport,
   useMessagingRealtime,
@@ -66,6 +67,7 @@ export function useMessagingWorkspaceController(scope: MessagingScope) {
   const auth = useAuth();
   const toast = useToast();
   const queryClient = useQueryClient();
+  const browserOnline = useBrowserOnlineState();
   const [params, setParams] = useSearchParams();
   const activeScope: MessagingScope =
     scope === 'ALL' && params.get('attention')?.toLowerCase() === 'mentions' ? 'MENTIONS' : scope;
@@ -174,7 +176,7 @@ export function useMessagingWorkspaceController(scope: MessagingScope) {
     enabled: Boolean(selectedId),
     staleTime: 8_000,
     refetchInterval: (query) =>
-      resolveMessagingTransport(query.state.data?.realtime) === 'polling' ? 12_000 : 60_000,
+      resolveMessagingTransport(query.state.data?.realtime) === 'polling' ? 12_000 : 15_000,
     retry: 1,
   });
   const messageHistoryQuery = useInfiniteQuery({
@@ -318,7 +320,14 @@ export function useMessagingWorkspaceController(scope: MessagingScope) {
     [conversationsQuery.data?.pages]
   );
   const selectedConversation = conversations.find((item) => item.conversationId === selectedId);
-  const detail = detailQuery.data;
+  const detail = useMemo(() => {
+    const cached = detailQuery.data;
+    if (!cached || browserOnline) return cached;
+    return {
+      ...cached,
+      members: maskMessagingPresence(cached.members, false),
+    };
+  }, [browserOnline, detailQuery.data]);
   const historyMessages = useMemo(
     () => messageHistoryQuery.data?.pages.flatMap((page) => page.items) ?? [],
     [messageHistoryQuery.data?.pages]

@@ -1,6 +1,6 @@
 import { GuidedEmptyState, LocalErrorState } from '@dwp-frontend/design-system';
 
-import { OrganizationExplorer } from '../../../people/organization/organization-chart-manager';
+import { HrisOrganizationPositionsBranch } from './organization-positions-explorer';
 import {
   HRIS_ORGANIZATION_POSITIONS_ADAPTER_KIND,
   HRIS_ORGANIZATION_POSITIONS_DEFAULT_GATE,
@@ -60,5 +60,5 @@ export function HrisOrganizationPositionsWorkspace({
       </div>
     );
   }
-  return <OrganizationExplorer hrisOrganizationPositionsAdapter={adapter} now={now} />;
+  return <HrisOrganizationPositionsBranch adapter={adapter} now={now} />;
 }

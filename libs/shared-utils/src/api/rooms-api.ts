@@ -11,7 +11,9 @@ import type {
   CreateCalendarEventInput,
   UpdateCalendarEventInput,
 } from './calendar-api';
+import { productSurfaceGovernedMutationConfig } from './product-surface-governed-mutation';
 import type { ApiResponse } from '../types';
+import type { ProductSurfaceGovernedMutationAuthority } from './product-surface-governed-mutation';
 
 export type RoomOccupancy = {
   resourceId: string;
@@ -72,42 +74,58 @@ export async function getRoomBookings(from: string, to: string): Promise<Calenda
   return response.data.data;
 }
 
-export async function createRoomBooking(input: CreateCalendarEventInput): Promise<CalendarEvent> {
+export async function createRoomBooking(
+  input: CreateCalendarEventInput,
+  authority: ProductSurfaceGovernedMutationAuthority
+): Promise<CalendarEvent> {
   const response = await axiosInstance.post<ApiResponse<CalendarEvent>, CreateCalendarEventInput>(
     '/api/platform/v1/rooms/bookings',
-    input
+    input,
+    productSurfaceGovernedMutationConfig(authority)
   );
   return response.data.data;
 }
 
 export async function updateRoomBooking(
   eventId: string,
-  input: UpdateCalendarEventInput
+  input: UpdateCalendarEventInput,
+  authority: ProductSurfaceGovernedMutationAuthority
 ): Promise<CalendarEvent> {
   const response = await axiosInstance.put<ApiResponse<CalendarEvent>, UpdateCalendarEventInput>(
     `/api/platform/v1/rooms/bookings/${encodeURIComponent(eventId)}`,
-    input
+    input,
+    productSurfaceGovernedMutationConfig(authority)
   );
   return response.data.data;
 }
 
 export async function respondToRoomBooking(
   eventId: string,
-  responseStatus: Exclude<CalendarResponseStatus, 'NEEDS_ACTION'>
+  responseStatus: Exclude<CalendarResponseStatus, 'NEEDS_ACTION'>,
+  authority: ProductSurfaceGovernedMutationAuthority
 ): Promise<CalendarEvent> {
   const response = await axiosInstance.post<
     ApiResponse<CalendarEvent>,
     { response: Exclude<CalendarResponseStatus, 'NEEDS_ACTION'> }
-  >(`/api/platform/v1/rooms/bookings/${encodeURIComponent(eventId)}/response`, {
-    response: responseStatus,
-  });
+  >(
+    `/api/platform/v1/rooms/bookings/${encodeURIComponent(eventId)}/response`,
+    {
+      response: responseStatus,
+    },
+    productSurfaceGovernedMutationConfig(authority)
+  );
   return response.data.data;
 }
 
-export async function cancelRoomBooking(eventId: string, version: number): Promise<void> {
+export async function cancelRoomBooking(
+  eventId: string,
+  version: number,
+  authority: ProductSurfaceGovernedMutationAuthority
+): Promise<void> {
   await axiosInstance.post<ApiResponse<void>, { version: number }>(
     `/api/platform/v1/rooms/bookings/${encodeURIComponent(eventId)}/cancel`,
-    { version }
+    { version },
+    productSurfaceGovernedMutationConfig(authority)
   );
 }
 

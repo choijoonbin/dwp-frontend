@@ -3,6 +3,7 @@ import { act, createElement, StrictMode } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { HttpError, HttpTransportError } from '@dwp-frontend/shared-utils';
 import type * as SharedUtils from '@dwp-frontend/shared-utils';
 import type * as MeetingApi from '@dwp-frontend/shared-utils/api/video-meeting-api';
 import type * as ReactI18next from 'react-i18next';
@@ -118,15 +119,10 @@ let root: Root | null = null;
 let container: HTMLDivElement;
 let client: QueryClient;
 
-async function renderHome() {
+async function renderHome(strict = true) {
   await act(async () => {
-    root?.render(
-      createElement(
-        StrictMode,
-        null,
-        createElement(QueryClientProvider, { client }, createElement(MeetingHome))
-      )
-    );
+    const home = createElement(QueryClientProvider, { client }, createElement(MeetingHome));
+    root?.render(strict ? createElement(StrictMode, null, home) : home);
   });
 }
 
@@ -134,6 +130,12 @@ async function waitForText(text: string) {
   await act(async () => {
     await vi.waitFor(() => expect(container.textContent).toContain(text));
   });
+}
+
+async function flushFakeTimerUpdates() {
+  for (let index = 0; index < 3; index += 1) {
+    await act(async () => vi.advanceTimersByTimeAsync(1));
+  }
 }
 
 function button(label: string) {
@@ -169,6 +171,7 @@ describe('meeting home identity, recovery and regional preferences', () => {
     container.remove();
     window.localStorage.clear();
     vi.restoreAllMocks();
+    vi.useRealTimers();
   });
 
   it.each(['tenantId', 'userId'] as const)(
@@ -224,9 +227,12 @@ describe('meeting home identity, recovery and regional preferences', () => {
     const oldRequest = deferred<VideoMeetingHome>();
     runtime.home.mockReturnValue(oldRequest.promise);
     await renderHome();
+    const oldSignal = runtime.home.mock.calls.at(-1)?.[1]?.signal as AbortSignal | undefined;
+    expect(oldSignal?.aborted).toBe(false);
     runtime.auth.userId = 8;
     runtime.home.mockResolvedValue(snapshot('Current actor meeting'));
     await renderHome();
+    expect(oldSignal?.aborted).toBe(true);
     await waitForText('Current actor meeting');
     await act(async () => oldRequest.resolve(snapshot('Late old actor meeting')));
     expect(container.textContent).toContain('Current actor meeting');
@@ -238,7 +244,10 @@ describe('meeting home identity, recovery and regional preferences', () => {
     runtime.home.mockResolvedValue(snapshot('Regional meeting', 'UTC'));
     await renderHome();
     await waitForText('Regional meeting');
-    expect(runtime.home).toHaveBeenLastCalledWith('Asia/Seoul');
+    expect(runtime.home).toHaveBeenLastCalledWith(
+      'Asia/Seoul',
+      expect.objectContaining({ signal: expect.any(AbortSignal) })
+    );
     expect(
       container.querySelector('[data-testid="home-header"]')?.getAttribute('data-time-zone')
     ).toBe('Asia/Seoul');
@@ -249,7 +258,10 @@ describe('meeting home identity, recovery and regional preferences', () => {
       writeRegionalPreference({ ...defaultRegionalPreference, timeZone: 'Asia/Tokyo' })
     );
     await waitForText('Regional meeting');
-    expect(runtime.home).toHaveBeenLastCalledWith('Asia/Tokyo');
+    expect(runtime.home).toHaveBeenLastCalledWith(
+      'Asia/Tokyo',
+      expect.objectContaining({ signal: expect.any(AbortSignal) })
+    );
     expect(
       container.querySelector('[data-testid="home-header"]')?.getAttribute('data-time-zone')
     ).toBe('Asia/Tokyo');
@@ -259,29 +271,84 @@ describe('meeting home identity, recovery and regional preferences', () => {
     runtime.home.mockResolvedValue(snapshot('System meeting', 'Europe/London'));
     await renderHome();
     await waitForText('System meeting');
-    expect(runtime.home).toHaveBeenLastCalledWith(resolveSystemTimeZone('UTC'));
+    expect(runtime.home).toHaveBeenLastCalledWith(
+      resolveSystemTimeZone('UTC'),
+      expect.objectContaining({ signal: expect.any(AbortSignal) })
+    );
     expect(
       container.querySelector('[data-testid="home-header"]')?.getAttribute('data-time-zone')
     ).toBe('Europe/London');
   });
 
-  it('hides stale snapshot and commands on refresh failure, then recovers only after a successful retry', async () => {
-    runtime.home.mockResolvedValue(snapshot('Previously authorized meeting'));
-    await renderHome();
-    await waitForText('Previously authorized meeting');
-    runtime.home.mockRejectedValue({ status: 403 });
-    const priorRequests = runtime.home.mock.calls.length;
+  it.each([
+    ['forbidden', new HttpError('Forbidden', 403)],
+    [
+      'authority resolution unavailable',
+      new HttpError('Authority resolution unavailable', 503, {
+        errorCode: 'AUTHORITY_RESOLUTION_UNAVAILABLE',
+      }),
+    ],
+  ])(
+    'hides stale snapshot and commands when refresh is %s, then recovers only after a successful retry',
+    async (_scenario, failure) => {
+      runtime.home.mockResolvedValue(snapshot('Previously authorized meeting'));
+      await renderHome();
+      await waitForText('Previously authorized meeting');
+      runtime.home.mockRejectedValue(failure);
+      const priorRequests = runtime.home.mock.calls.length;
+      await act(async () => {
+        await client.refetchQueries({ queryKey: ['meetings', 'home', 'snapshot'] });
+      });
+      await waitForText('errors.loadTitle');
+      expect(runtime.home.mock.calls.length).toBe(priorRequests + 1);
+      expect(container.textContent).not.toContain('Previously authorized meeting');
+      expect(container.querySelector('[data-testid="home-header"]')).toBeNull();
+      expect(container.querySelector('[data-testid="meeting-home-stale"]')).not.toBeNull();
+      runtime.home.mockResolvedValue(snapshot('Recovered authorized meeting'));
+      await act(async () => button('actions.retry').click());
+      await waitForText('Recovered authorized meeting');
+      expect(container.querySelector('[data-testid="meeting-home-stale"]')).toBeNull();
+    }
+  );
+
+  it('recovers from bounded transient failures before showing the error state', async () => {
+    vi.useFakeTimers();
+    runtime.home
+      .mockRejectedValueOnce(new HttpTransportError('NETWORK'))
+      .mockRejectedValueOnce(new HttpError('Gateway unavailable', 503))
+      .mockResolvedValueOnce(snapshot('Recovered automatically'));
+
+    // Keep the retry budget independent from StrictMode's intentional mount probe.
+    await renderHome(false);
+    expect(runtime.home).toHaveBeenCalledTimes(1);
+    expect(container.textContent).not.toContain('errors.loadTitle');
+
     await act(async () => {
-      await client.refetchQueries({ queryKey: ['meetings', 'home', 'snapshot'] });
+      await vi.advanceTimersByTimeAsync(999);
     });
-    await waitForText('errors.loadTitle');
-    expect(runtime.home.mock.calls.length).toBe(priorRequests + 1);
-    expect(container.textContent).not.toContain('Previously authorized meeting');
-    expect(container.querySelector('[data-testid="home-header"]')).toBeNull();
-    expect(container.querySelector('[data-testid="meeting-home-stale"]')).not.toBeNull();
-    runtime.home.mockResolvedValue(snapshot('Recovered authorized meeting'));
-    await act(async () => button('actions.retry').click());
-    await waitForText('Recovered authorized meeting');
+    expect(runtime.home).toHaveBeenCalledTimes(1);
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(1);
+    });
+    expect(runtime.home).toHaveBeenCalledTimes(2);
+    expect(container.textContent).not.toContain('errors.loadTitle');
+
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(1_999);
+    });
+    expect(runtime.home).toHaveBeenCalledTimes(2);
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(1);
+    });
+    expect(runtime.home).toHaveBeenCalledTimes(3);
+    expect(
+      client
+        .getQueryCache()
+        .getAll()
+        .find((query) => query.getObserversCount() > 0)?.state.status
+    ).toBe('success');
+    await flushFakeTimerUpdates();
+    expect(container.textContent).toContain('Recovered automatically');
     expect(container.querySelector('[data-testid="meeting-home-stale"]')).toBeNull();
   });
 });

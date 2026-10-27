@@ -19,9 +19,9 @@ import {
 } from '@tanstack/react-query';
 import { getHcmAuditEvidence, HttpError, listHcmAuditEvidence } from '@dwp-frontend/shared-utils';
 import { formatDate } from '@dwp-frontend/shared-i18n';
+import { ActionButton, FormField, foundationTokens } from '@dwp-frontend/design-system';
 
 import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
 import Chip from '@mui/material/Chip';
 import Divider from '@mui/material/Divider';
 import List from '@mui/material/List';
@@ -29,7 +29,6 @@ import ListItemButton from '@mui/material/ListItemButton';
 import ListItemText from '@mui/material/ListItemText';
 import MenuItem from '@mui/material/MenuItem';
 import Stack from '@mui/material/Stack';
-import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 
 import {
@@ -148,7 +147,7 @@ function ContextHeader({ actions }: { actions?: ReactNode }) {
             width: 40,
             height: 40,
             flex: '0 0 auto',
-            borderRadius: 2,
+            borderRadius: foundationTokens.radius.surface + 'px',
             bgcolor: 'success.light',
             color: 'success.dark',
           }}
@@ -157,7 +156,11 @@ function ContextHeader({ actions }: { actions?: ReactNode }) {
         </Box>
         <Box minWidth={0}>
           <Stack direction="row" alignItems="center" gap={1} flexWrap="wrap">
-            <Typography component="h2" variant="h6" fontWeight={760}>
+            <Typography
+              component="h2"
+              variant="h6"
+              fontWeight={foundationTokens.home.typography.weightEmphasis}
+            >
               {t('auditControl.hcmEvidence.title')}
             </Typography>
             <Chip size="small" color="success" label={t('auditControl.hcmEvidence.context')} />
@@ -169,14 +172,14 @@ function ContextHeader({ actions }: { actions?: ReactNode }) {
       </Stack>
       <Stack direction="row" alignItems="center" gap={1} flexWrap="wrap">
         {actions}
-        <Button
+        <ActionButton
           component={RouterLink}
           to={HCM_AUDIT_SAFE_RETURN_PATH}
-          variant="outlined"
+          intent="secondary"
           startIcon={<ArrowLeft size={17} />}
         >
           {t('auditControl.hcmEvidence.backToHris')}
-        </Button>
+        </ActionButton>
       </Stack>
     </Stack>
   );
@@ -237,7 +240,7 @@ function FilterPanel({
           gap: 1.25,
         }}
       >
-        <TextField
+        <FormField
           select
           size="small"
           label={t('auditControl.hcmEvidence.filters.window')}
@@ -249,8 +252,8 @@ function FilterPanel({
               {t(`auditControl.windows.${option}`)}
             </MenuItem>
           ))}
-        </TextField>
-        <TextField
+        </FormField>
+        <FormField
           select
           size="small"
           label={t('auditControl.hcmEvidence.filters.category')}
@@ -264,8 +267,8 @@ function FilterPanel({
               {t(`auditControl.hcmEvidence.category.${option}`)}
             </MenuItem>
           ))}
-        </TextField>
-        <TextField
+        </FormField>
+        <FormField
           select
           size="small"
           label={t('auditControl.hcmEvidence.filters.severity')}
@@ -279,8 +282,8 @@ function FilterPanel({
               {t(`auditControl.hcmEvidence.severity.${option}`)}
             </MenuItem>
           ))}
-        </TextField>
-        <TextField
+        </FormField>
+        <FormField
           select
           size="small"
           label={t('auditControl.hcmEvidence.filters.outcome')}
@@ -294,15 +297,15 @@ function FilterPanel({
               {t(`auditControl.hcmEvidence.outcome.${option}`)}
             </MenuItem>
           ))}
-        </TextField>
-        <TextField
+        </FormField>
+        <FormField
           size="small"
           label={t('auditControl.hcmEvidence.filters.sourceService')}
           value={value.sourceService}
           inputProps={{ maxLength: 128 }}
           onChange={(event) => onChange({ ...value, sourceService: event.target.value })}
         />
-        <TextField
+        <FormField
           size="small"
           label={t('auditControl.hcmEvidence.filters.query')}
           value={value.query}
@@ -311,12 +314,12 @@ function FilterPanel({
         />
       </Box>
       <Stack direction="row" justifyContent="flex-end" gap={1} sx={{ mt: 1.5 }}>
-        <Button type="button" onClick={onReset}>
+        <ActionButton intent="quiet" type="button" onClick={onReset}>
           {t('auditControl.hcmEvidence.filters.reset')}
-        </Button>
-        <Button type="submit" variant="contained">
+        </ActionButton>
+        <ActionButton intent="primary" type="submit">
           {t('auditControl.hcmEvidence.filters.apply')}
-        </Button>
+        </ActionButton>
       </Stack>
     </Box>
   );
@@ -367,7 +370,7 @@ function EvidenceList({
                 {formatDate(item.occurredAt, { dateStyle: 'medium', timeStyle: 'short' })}
               </>
             }
-            primaryTypographyProps={{ fontWeight: 720, noWrap: true }}
+            primaryTypographyProps={{ fontWeight: 'fontWeightBold', noWrap: true }}
             secondaryTypographyProps={{ component: 'span' }}
           />
           <Chip
@@ -385,7 +388,12 @@ function EvidenceList({
 function EvidenceField({ label, children }: { label: string; children: ReactNode }) {
   return (
     <Box component="div" sx={{ minWidth: 0 }}>
-      <Typography component="dt" variant="caption" color="text.secondary" fontWeight={700}>
+      <Typography
+        component="dt"
+        variant="caption"
+        color="text.secondary"
+        fontWeight="fontWeightBold"
+      >
         {label}
       </Typography>
       <Typography component="dd" variant="body2" sx={{ m: 0, mt: 0.25, overflowWrap: 'anywhere' }}>
@@ -412,13 +420,17 @@ function EvidenceDetail({
           <Typography id="hcm-audit-detail-title" component="h3" variant="subtitle1">
             {t('auditControl.hcmEvidence.detailTitle')}
           </Typography>
-          <Typography variant="body2" fontWeight={720} sx={{ mt: 0.5, overflowWrap: 'anywhere' }}>
+          <Typography
+            variant="body2"
+            fontWeight="fontWeightBold"
+            sx={{ mt: 0.5, overflowWrap: 'anywhere' }}
+          >
             {evidence.action}
           </Typography>
         </Box>
-        <Button size="small" startIcon={<X size={16} />} onClick={onClose}>
+        <ActionButton intent="quiet" size="small" startIcon={<X size={16} />} onClick={onClose}>
           {t('auditControl.hcmEvidence.closeDetail')}
-        </Button>
+        </ActionButton>
       </Stack>
       <Stack direction="row" gap={1} flexWrap="wrap" sx={{ mt: 1.5 }}>
         <Chip
@@ -589,14 +601,15 @@ function HcmAuditEvidenceQueryBoundary({
           <EvidenceList items={items} selectedEventId={focusedEventId} onSelect={onFocus} />
           {listQuery.hasNextPage && (
             <Box sx={{ p: 1.5, textAlign: 'center' }}>
-              <Button
+              <ActionButton
+                intent="quiet"
                 onClick={() => void listQuery.fetchNextPage()}
                 disabled={listQuery.isFetchingNextPage}
               >
                 {listQuery.isFetchingNextPage
                   ? t('auditControl.hcmEvidence.loadingMore')
                   : t('auditControl.hcmEvidence.loadMore')}
-              </Button>
+              </ActionButton>
             </Box>
           )}
         </Box>
@@ -699,7 +712,8 @@ export function HcmAuditEvidenceOverview() {
     >
       <ContextHeader
         actions={
-          <Button
+          <ActionButton
+            intent="quiet"
             type="button"
             onClick={() => {
               if (boundaryFailure) retryFromCleanCache();
@@ -713,7 +727,7 @@ export function HcmAuditEvidenceOverview() {
             disabled={!cacheReady || hcmFetchCount > 0}
           >
             {t('auditControl.hcmEvidence.refresh')}
-          </Button>
+          </ActionButton>
         }
       />
       <FilterPanel

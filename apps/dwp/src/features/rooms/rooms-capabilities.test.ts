@@ -27,8 +27,35 @@ describe('rooms capabilities', () => {
       canUpdateWorkplaceAdmin: true,
       canManageWorkplaceAdmin: false,
       canViewRooms: true,
-      canCreateRoomBooking: false,
+      canCreateRoomBooking: true,
+      canUpdateRoomBooking: false,
       canManageRoomsAdmin: true,
+    });
+  });
+
+  it('authorizes room reads and mutations from the canonical Workplace grant alone', () => {
+    const grants = new Set(['APP.WORKPLACE:VIEW', 'APP.WORKPLACE:CREATE', 'APP.WORKPLACE:UPDATE']);
+    const capabilities = resolveRoomsCapabilities((resource, permission) =>
+      grants.has(`${resource}:${permission}`)
+    );
+
+    expect(capabilities).toMatchObject({
+      canViewRooms: true,
+      canCreateRoomBooking: true,
+      canUpdateRoomBooking: true,
+    });
+  });
+
+  it('does not let legacy room grants bypass the canonical Workplace booking contract', () => {
+    const grants = new Set(['APP.ROOMS:VIEW', 'APP.ROOMS:CREATE', 'APP.ROOMS:UPDATE']);
+    const capabilities = resolveRoomsCapabilities((resource, permission) =>
+      grants.has(`${resource}:${permission}`)
+    );
+
+    expect(capabilities).toMatchObject({
+      canViewRooms: false,
+      canCreateRoomBooking: false,
+      canUpdateRoomBooking: false,
     });
   });
 

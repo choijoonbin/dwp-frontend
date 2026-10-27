@@ -1,6 +1,7 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { resetCsrfToken } from '../axios-instance';
+import { HttpTransportError } from '../http-error';
 import {
   VIDEO_MEETING_API_BASE,
   confirmVideoMeetingConnected,
@@ -285,9 +286,11 @@ describe('video meeting API boundary', () => {
   afterEach(() => {
     resetCsrfToken();
     vi.unstubAllGlobals();
+    vi.useRealTimers();
   });
 
   it('uses the gateway root for home and capability truth', async () => {
+    const controller = new AbortController();
     const home = {
       serverNow: '2026-08-27T00:30:00.000Z',
       timeZone: 'Asia/Seoul',
@@ -312,7 +315,7 @@ describe('video meeting API boundary', () => {
     });
     vi.stubGlobal('fetch', fetchMock);
 
-    const result = await getVideoMeetingHome('Asia/Seoul');
+    const result = await getVideoMeetingHome('Asia/Seoul', { signal: controller.signal });
 
     expect(VIDEO_MEETING_API_BASE).toBe('/api/meetings/v1');
     expect(result.nextMeeting).toMatchObject({ meetingId: 'meeting-1', durationMinutes: 50 });
@@ -323,8 +326,65 @@ describe('video meeting API boundary', () => {
     });
     expect(fetchMock).toHaveBeenCalledWith(
       '/api/meetings/v1/home?timeZone=Asia%2FSeoul',
-      expect.objectContaining({ method: 'GET', credentials: 'include' })
+      expect.objectContaining({
+        method: 'GET',
+        credentials: 'include',
+        signal: expect.any(AbortSignal),
+      })
     );
+  });
+
+  it('cancels the current home transport when its query scope is aborted', async () => {
+    const caller = new AbortController();
+    let transportSignal: AbortSignal | null | undefined;
+    const fetchMock = vi.fn((_path: string, request: RequestInit) => {
+      transportSignal = request.signal;
+      return new Promise<Response>((_resolve, reject) => {
+        transportSignal?.addEventListener(
+          'abort',
+          () => reject(new DOMException('Cancelled', 'AbortError')),
+          { once: true }
+        );
+      });
+    });
+    vi.stubGlobal('fetch', fetchMock);
+
+    const pending = getVideoMeetingHome('Asia/Seoul', { signal: caller.signal });
+    const rejected = expect(pending).rejects.toMatchObject({ reason: 'ABORT' });
+    await vi.waitFor(() => expect(transportSignal).toBeDefined());
+    caller.abort('meeting-home-scope-changed');
+
+    await rejected;
+    expect(transportSignal?.aborted).toBe(true);
+    expect(transportSignal?.reason).toBe('meeting-home-scope-changed');
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+  });
+
+  it('times out a stalled home transport after the bounded ten-second deadline', async () => {
+    vi.useFakeTimers();
+    let transportSignal: AbortSignal | null | undefined;
+    const fetchMock = vi.fn((_path: string, request: RequestInit) => {
+      transportSignal = request.signal;
+      return new Promise<Response>((_resolve, reject) => {
+        transportSignal?.addEventListener(
+          'abort',
+          () => reject(new DOMException('Timed out', 'AbortError')),
+          { once: true }
+        );
+      });
+    });
+    vi.stubGlobal('fetch', fetchMock);
+
+    const result = getVideoMeetingHome('Asia/Seoul').catch((error: unknown) => error);
+    await vi.advanceTimersByTimeAsync(9_999);
+    expect(transportSignal?.aborted).toBe(false);
+    await vi.advanceTimersByTimeAsync(1);
+
+    await expect(result).resolves.toBeInstanceOf(HttpTransportError);
+    await expect(result).resolves.toMatchObject({ reason: 'TIMEOUT' });
+    expect(transportSignal?.aborted).toBe(true);
+    expect(transportSignal?.reason).toBe('request-timeout');
+    expect(fetchMock).toHaveBeenCalledTimes(1);
   });
 
   it('loads the canonical meeting list endpoint with server paging', async () => {

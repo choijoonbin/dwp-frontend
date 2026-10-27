@@ -121,6 +121,14 @@ sequenceDiagram
 4. Redis Pub/Sub 유실과 장애는 허용한다. 원장은 PostgreSQL이며 Client는 cursor로 복구한다.
 5. Presence와 Typing은 TTL이 있는 일시 Event로만 처리하고 Message 원장에 남기지 않는다.
 
+현재 R1 Presence 입력은 목표 WebSocket Protocol이 아니라 인증된 REST
+`PUT /api/messaging/v1/presence/heartbeat`다. 허용된 Messenger Surface의 visible·online Browser가
+성공 Response Header의 서버 권고 주기(기본 20초)마다 갱신하며, Tenant별 Redis Sorted Set의
+Redis Server Time 기반 Lease가 기본 75초 뒤
+만료된다. Directory `presence_state`는 Authority로 사용하지 않는다. 조회 결과는
+`LIVE | UNAVAILABLE` Authority와 평가 시각을 함께 전달하여 Redis 장애를 온라인 0명으로
+표현하지 않는다. 다중 Tab 안전성을 위해 Tab 종료 시 강제 Offline Command는 보내지 않는다.
+
 Kafka 기반 파생 처리와 전용 Realtime Gateway를 도입하더라도 Redis에는 wake-up/ephemeral
 신호만 두며, Client 복구 계약은 같은 durable cursor를 유지한다.
 

@@ -1,9 +1,8 @@
 import { useEffect, useState } from 'react';
-import { FormDialog } from '@dwp-frontend/design-system';
+import { DatePickerField, FormDialog, FormField } from '@dwp-frontend/design-system';
 
 import MenuItem from '@mui/material/MenuItem';
 import Stack from '@mui/material/Stack';
-import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 
 import type { ReactNode } from 'react';
@@ -116,33 +115,32 @@ export function TimecardCommandDialogs({
             Existing ledger rows are never replaced. Use a negative value to reverse minutes and a
             positive value to add minutes.
           </Typography>
-          <TextField
+          <DatePickerField
             autoFocus
             fullWidth
             label="Work date"
-            type="date"
             value={workDate}
-            onChange={(event) => setWorkDate(event.target.value)}
-            InputLabelProps={{ shrink: true }}
-            inputProps={{ min: timecard.periodStart, max: timecard.periodEnd }}
+            onValueChange={(value) => setWorkDate(value ?? '')}
+            minDate={timecard.periodStart}
+            maxDate={timecard.periodEnd}
           />
-          <TextField
+          <FormField
             fullWidth
             label="Pay code"
             value={payCode}
             onChange={(event) => setPayCode(event.target.value)}
             inputProps={{ maxLength: 64 }}
           />
-          <TextField
+          <FormField
             fullWidth
             label="Minute adjustment"
             type="number"
             value={minutes}
             onChange={(event) => setMinutes(event.target.value)}
-            helperText="Enter a whole number from -1440 to 1440, excluding zero."
+            supportingText="Enter a whole number from -1440 to 1440, excluding zero."
             inputProps={{ min: -1_440, max: 1_440, step: 1 }}
           />
-          <TextField
+          <FormField
             fullWidth
             label="Correction reason code"
             value={correctionReason}
@@ -171,7 +169,7 @@ export function TimecardCommandDialogs({
       >
         <Stack gap={2}>
           {notice}
-          <TextField
+          <FormField
             autoFocus
             fullWidth
             label="Submission reason code (optional)"
@@ -205,7 +203,7 @@ export function TimecardCommandDialogs({
       >
         <Stack gap={2}>
           {notice}
-          <TextField
+          <FormField
             autoFocus
             select
             fullWidth
@@ -216,22 +214,22 @@ export function TimecardCommandDialogs({
             <MenuItem value="APPROVE">Approve</MenuItem>
             <MenuItem value="REJECT">Reject</MenuItem>
             <MenuItem value="REQUIRE_CORRECTION">Require correction</MenuItem>
-          </TextField>
-          <TextField
+          </FormField>
+          <FormField
             fullWidth
             label="Decision reason code"
             value={decisionReason}
             onChange={(event) => setDecisionReason(event.target.value)}
             inputProps={{ maxLength: 64 }}
           />
-          <TextField
+          <FormField
             fullWidth
             multiline
             minRows={3}
             label="Restricted audit comment (optional)"
             value={comment}
             onChange={(event) => setComment(event.target.value)}
-            helperText={`${comment.length}/1000. This comment is not included in the domain event.`}
+            supportingText={`${comment.length}/1000. This comment is not included in the domain event.`}
             inputProps={{ maxLength: 1_000 }}
           />
         </Stack>

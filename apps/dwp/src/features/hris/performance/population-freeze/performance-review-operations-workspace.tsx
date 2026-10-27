@@ -8,19 +8,17 @@ import {
   InlineFeedback,
   LiveStatus,
   OperationalContextBar,
+  FormDialog,
+  FormField,
+  foundationTokens,
 } from '@dwp-frontend/design-system';
 
 import Box from '@mui/material/Box';
 import Checkbox from '@mui/material/Checkbox';
-import Dialog from '@mui/material/Dialog';
-import DialogActions from '@mui/material/DialogActions';
-import DialogContent from '@mui/material/DialogContent';
-import DialogTitle from '@mui/material/DialogTitle';
 import Divider from '@mui/material/Divider';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Paper from '@mui/material/Paper';
 import Stack from '@mui/material/Stack';
-import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 
 import { HrisQueryBoundary } from '../../shared';
@@ -147,7 +145,7 @@ function OperationList({
                   p: 1.25,
                   border: 1,
                   borderColor: selected ? 'primary.main' : 'divider',
-                  borderRadius: 1.5,
+                  borderRadius: foundationTokens.radius.control + 'px',
                   bgcolor: selected ? 'action.selected' : 'background.paper',
                   color: 'text.primary',
                   textAlign: 'left',
@@ -155,7 +153,12 @@ function OperationList({
                   '&:focus-visible': { outline: '2px solid', outlineColor: 'primary.main' },
                 }}
               >
-                <Typography component="span" variant="body2" fontWeight={700} display="block">
+                <Typography
+                  component="span"
+                  variant="body2"
+                  fontWeight="fontWeightBold"
+                  display="block"
+                >
                   {item.title}
                 </Typography>
                 <Typography
@@ -181,7 +184,11 @@ function DetailValue({ label, value }: { label: string; value: string }) {
       <Typography variant="caption" color="text.secondary">
         {label}
       </Typography>
-      <Typography variant="body2" fontWeight={600} sx={{ overflowWrap: 'anywhere' }}>
+      <Typography
+        variant="body2"
+        fontWeight="subtitle2.fontWeight"
+        sx={{ overflowWrap: 'anywhere' }}
+      >
         {value}
       </Typography>
     </Box>
@@ -292,7 +299,12 @@ function OperationDetail({
         <Box
           component="section"
           aria-label={copy.previewEvidence}
-          sx={{ mt: 2, p: 1.5, bgcolor: 'action.hover', borderRadius: 1.5 }}
+          sx={{
+            mt: 2,
+            p: 1.5,
+            bgcolor: 'action.hover',
+            borderRadius: foundationTokens.radius.control + 'px',
+          }}
         >
           <Typography component="h4" variant="subtitle2">
             {copy.previewEvidence}
@@ -535,57 +547,44 @@ export function PerformanceReviewOperationsWorkspaceView({
         </ActionButton>
       </Stack>
 
-      <Dialog
+      <FormDialog
         open={freezeOpen}
-        onClose={commandBusy ? undefined : closeFreeze}
-        fullWidth
+        title={copy.freezeTitle}
+        description={copy.freezeDescription}
+        cancelLabel={copy.cancel}
+        submitLabel={copy.freeze}
+        busy={commandBusy}
+        submitDisabled={!confirmed || reason.trim().length < 10}
+        onClose={closeFreeze}
+        onSubmit={() => {
+          onFreeze(reason);
+          closeFreeze();
+        }}
         maxWidth="sm"
+        mobileFullScreen
       >
-        <DialogTitle>{copy.freezeTitle}</DialogTitle>
-        <DialogContent>
-          <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-            {copy.freezeDescription}
-          </Typography>
-          <TextField
-            autoFocus
-            fullWidth
-            multiline
-            minRows={3}
-            label={copy.reason}
-            helperText={copy.reasonHelp}
-            value={reason}
-            slotProps={{ htmlInput: { maxLength: 500 } }}
-            onChange={(event) => setReason(event.target.value)}
-          />
-          <FormControlLabel
-            sx={{ mt: 1, alignItems: 'flex-start' }}
-            control={
-              <Checkbox
-                checked={confirmed}
-                onChange={(event) => setConfirmed(event.target.checked)}
-              />
-            }
-            label={copy.immutableConfirmation}
-          />
-        </DialogContent>
-        <DialogActions>
-          <ActionButton intent="quiet" disabled={commandBusy} onClick={closeFreeze}>
-            {copy.cancel}
-          </ActionButton>
-          <ActionButton
-            intent="primary"
-            loading={commandBusy}
-            disabled={!confirmed || reason.trim().length < 10}
-            startIcon={<Snowflake size={16} aria-hidden="true" />}
-            onClick={() => {
-              onFreeze(reason);
-              closeFreeze();
-            }}
-          >
-            {copy.freeze}
-          </ActionButton>
-        </DialogActions>
-      </Dialog>
+        <FormField
+          autoFocus
+          fullWidth
+          multiline
+          minRows={3}
+          label={copy.reason}
+          supportingText={copy.reasonHelp}
+          value={reason}
+          slotProps={{ htmlInput: { maxLength: 500 } }}
+          onChange={(event) => setReason(event.target.value)}
+        />
+        <FormControlLabel
+          sx={{ mt: 1, alignItems: 'flex-start' }}
+          control={
+            <Checkbox
+              checked={confirmed}
+              onChange={(event) => setConfirmed(event.target.checked)}
+            />
+          }
+          label={copy.immutableConfirmation}
+        />
+      </FormDialog>
     </Stack>
   );
 }

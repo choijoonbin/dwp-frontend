@@ -1,16 +1,15 @@
+import { ActionIconButton } from '@dwp-frontend/design-system';
 import { ArrowDown, ArrowUp } from 'lucide-react';
 import Box from '@mui/material/Box';
 import Checkbox from '@mui/material/Checkbox';
 import Chip from '@mui/material/Chip';
 import FormControl from '@mui/material/FormControl';
 import FormControlLabel from '@mui/material/FormControlLabel';
-import IconButton from '@mui/material/IconButton';
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import Paper from '@mui/material/Paper';
 import Select from '@mui/material/Select';
 import Stack from '@mui/material/Stack';
-import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
 
 import {
@@ -118,7 +117,7 @@ export function NavigationPolicyEditor({
                       <Stack direction="row" gap={1} alignItems="center" flexWrap="wrap">
                         <Typography
                           component="span"
-                          fontWeight={700}
+                          fontWeight="fontWeightBold"
                           sx={{ wordBreak: 'keep-all' }}
                         >
                           {group.label}
@@ -191,7 +190,11 @@ export function NavigationPolicyEditor({
                                   alignItems="center"
                                   flexWrap="wrap"
                                 >
-                                  <Typography component="span" variant="body2" fontWeight={600}>
+                                  <Typography
+                                    component="span"
+                                    variant="body2"
+                                    fontWeight="subtitle2.fontWeight"
+                                  >
                                     {node.label}
                                   </Typography>
                                   {overlayCeiling ? (
@@ -280,30 +283,22 @@ function OrderButtons({
 }>) {
   return (
     <Stack direction="row" alignItems="center" justifyContent="flex-end">
-      <Tooltip title={`${copy.moveUp}: ${label}`}>
-        <span>
-          <IconButton
-            size="small"
-            aria-label={`${copy.moveUp}: ${label}`}
-            disabled={disabled || first}
-            onClick={() => onMove(-1)}
-          >
-            <ArrowUp size={compact ? 16 : 18} aria-hidden="true" />
-          </IconButton>
-        </span>
-      </Tooltip>
-      <Tooltip title={`${copy.moveDown}: ${label}`}>
-        <span>
-          <IconButton
-            size="small"
-            aria-label={`${copy.moveDown}: ${label}`}
-            disabled={disabled || last}
-            onClick={() => onMove(1)}
-          >
-            <ArrowDown size={compact ? 16 : 18} aria-hidden="true" />
-          </IconButton>
-        </span>
-      </Tooltip>
+      <ActionIconButton
+        size="small"
+        label={`${copy.moveUp}: ${label}`}
+        disabled={disabled || first}
+        onClick={() => onMove(-1)}
+      >
+        <ArrowUp size={compact ? 16 : 18} aria-hidden="true" />
+      </ActionIconButton>
+      <ActionIconButton
+        size="small"
+        label={`${copy.moveDown}: ${label}`}
+        disabled={disabled || last}
+        onClick={() => onMove(1)}
+      >
+        <ArrowDown size={compact ? 16 : 18} aria-hidden="true" />
+      </ActionIconButton>
     </Stack>
   );
 }

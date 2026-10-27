@@ -1,4 +1,5 @@
 const WORKPLACE_RESERVATIONS_URL_VERSION = '1' as const;
+const SAFE_SCOPE_TOKEN = /^[A-Za-z0-9._:-]{1,160}$/u;
 
 export const WORKPLACE_RESERVATION_PERIODS = ['TODAY', 'WEEK', 'UPCOMING', 'PAST'] as const;
 type WorkplaceReservationPeriod = (typeof WORKPLACE_RESERVATION_PERIODS)[number];
@@ -46,6 +47,7 @@ type WorkplaceReservationsUrlState = Readonly<{
   reservationId: string | null;
   reservationAuthority: Exclude<WorkplaceReservationAuthorityFilter, 'ALL'> | null;
   detailTab: WorkplaceReservationDetailTab | null;
+  scope: string | null;
 }>;
 
 export type WorkplaceReservationsUrlPatch = Partial<{
@@ -68,6 +70,7 @@ const DEFAULT_STATE: WorkplaceReservationsUrlState = Object.freeze({
   reservationId: null,
   reservationAuthority: null,
   detailTab: null,
+  scope: null,
 });
 
 function enumValue<const T extends readonly string[]>(
@@ -90,6 +93,10 @@ function safeText(value: string | null, maxLength: number): string {
     .slice(0, maxLength);
 }
 
+function safeScopeToken(value: string | null): string | null {
+  return value && SAFE_SCOPE_TOKEN.test(value) ? value : null;
+}
+
 function appendCanonical(state: WorkplaceReservationsUrlState): URLSearchParams {
   const next = new URLSearchParams();
   next.set('v', WORKPLACE_RESERVATIONS_URL_VERSION);
@@ -103,6 +110,7 @@ function appendCanonical(state: WorkplaceReservationsUrlState): URLSearchParams 
     next.set('reservationAuthority', state.reservationAuthority);
   }
   if (state.reservationId && state.detailTab) next.set('tab', state.detailTab);
+  if (state.scope) next.set('scope', state.scope);
   return next;
 }
 
@@ -139,6 +147,7 @@ export function parseWorkplaceReservationsUrl(searchParams: URLSearchParams) {
       )
         ? (requestedDetailTab as WorkplaceReservationDetailTab)
         : null,
+    scope: safeScopeToken(searchParams.get('scope')),
   };
   const canonicalSearchParams = appendCanonical(state);
   return {
@@ -173,6 +182,7 @@ export function updateWorkplaceReservationsUrl(
         : patch.detailTab === undefined
           ? parsed.detailTab
           : patch.detailTab,
+    scope: parsed.scope,
   };
   return appendCanonical(next);
 }

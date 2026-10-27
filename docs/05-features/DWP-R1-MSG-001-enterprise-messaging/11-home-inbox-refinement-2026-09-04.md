@@ -151,8 +151,11 @@ the production application still uses real APIs.
 The recent-message brief is not an AI TL;DR and does not summarize unrequested history.
 AI-generated reply drafts, cross-app action execution, and live meeting transcription need
 their own consent, authorization, provider and audit contracts. No inert AI button suggests
-they have shipped. Presence is not proof of an active socket. This change does not certify
-production media infrastructure, end-to-end encryption, compliance retention or load capacity.
+they have shipped. Presence now means a verified Messenger browser renewed a Tenant-scoped Redis
+lease within the configured TTL; it is not proof of a persistent socket, user attention, or device
+activity outside Messenger. `UNAVAILABLE` authority is rendered separately from zero online users. This
+change does not certify production media infrastructure, end-to-end encryption, compliance
+retention or load capacity.
 
 E2E fixtures are test-only; production Home reads real authorized APIs. Shared Gateway/OpenAPI,
 menu, global design-system allowance and unrelated Home/Calendar/Mail/Notification files were

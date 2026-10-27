@@ -43,7 +43,7 @@ export default defineConfig(({ command, mode }) => {
       !runningTests &&
         command === 'serve' &&
         checker({
-          typescript: true,
+          typescript: { root: workspaceRoot, tsconfigPath: 'tsconfig.watch.json' },
           eslint: {
             useFlatConfig: true,
             lintCommand: `eslint --no-error-on-unmatched-pattern "${path.join(workspaceRoot, 'apps')}/**/*.{js,jsx,ts,tsx}" "${path.join(workspaceRoot, 'libs')}/**/*.{js,jsx,ts,tsx}"`,

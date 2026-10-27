@@ -8,11 +8,13 @@ import { HRIS_RUNTIME_NAVIGATION_MANIFEST } from '../model/hris-runtime-navigati
 import {
   buildHrisCrossLayerReadinessReport,
   validateHrisRuntimeTaskGroupClosure,
-} from './hris-cross-layer-readiness';
+} from '../../../../test-utils/hris-cross-layer-readiness';
 
-import type { HcmView } from '../../../hcm/hcm-navigation';
-import type { AdminView } from '../../../admin/admin-navigation';
-import type { HrisTenantActivationEvidence } from './hris-cross-layer-readiness';
+import type {
+  HcmView,
+  AdminView,
+  HrisTenantActivationEvidence,
+} from '../../../../test-utils/hris-cross-layer-readiness';
 
 type Roadmap = Readonly<{
   tenantFeatureActivationLane: Omit<HrisTenantActivationEvidence, 'evidenceSource'>;

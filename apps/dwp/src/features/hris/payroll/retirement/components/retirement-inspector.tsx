@@ -30,7 +30,7 @@ function DetailValue({ label, value }: Readonly<{ label: string; value: string }
       <Typography
         component="dd"
         variant="body2"
-        fontWeight={650}
+        fontWeight="subtitle2.fontWeight"
         sx={{ m: 0, mt: 0.25, overflowWrap: 'anywhere' }}
       >
         {value}
@@ -102,7 +102,7 @@ function DecisionCard({
 }>) {
   return (
     <Paper component="section" variant="outlined" sx={{ p: 1.5, minWidth: 0 }}>
-      <Typography component="h3" variant="subtitle2" fontWeight={750}>
+      <Typography component="h3" variant="subtitle2" fontWeight="fontWeightBold">
         {copy.fieldLabels[group]}
       </Typography>
       <Divider sx={{ my: 1 }} />
@@ -111,12 +111,7 @@ function DecisionCard({
           {copy.masked}
         </Typography>
       ) : (
-        <ViewedDecision
-          group={group}
-          decision={decision}
-          copy={copy}
-          locale={locale}
-        />
+        <ViewedDecision group={group} decision={decision} copy={copy} locale={locale} />
       )}
     </Paper>
   );

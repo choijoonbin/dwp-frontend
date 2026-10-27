@@ -19,21 +19,24 @@ export const EMPTY_WORK_EXPLORER_QUERY_STATE: WorkExplorerQueryState = Object.fr
 const ROUTE_KEY = /^hris\.explorer\.[a-z0-9.-]{3,80}$/;
 
 export function parseWorkExplorerQueryState(search: URLSearchParams): WorkExplorerQueryState {
-  const rawQuery = (search.get('q') ?? '').slice(0, 200);
+  const rawQuery = (search.get('q') ?? EMPTY_WORK_EXPLORER_QUERY_STATE.query).slice(0, 200);
   const rawModule = search.get('module');
   const rawWorkbench = search.get('workbench');
   const rawSelected = search.get('selected');
   return Object.freeze({
-    query: rawQuery.trim() ? rawQuery : '',
+    query: rawQuery.trim() ? rawQuery : EMPTY_WORK_EXPLORER_QUERY_STATE.query,
     module:
       rawModule && EXPLORER_MODULES.includes(rawModule as ExplorerModule)
         ? (rawModule as ExplorerModule)
-        : 'ALL',
+        : EMPTY_WORK_EXPLORER_QUERY_STATE.module,
     workbench:
       rawWorkbench && EXPLORER_WORKBENCHES.includes(rawWorkbench as ExplorerWorkbench)
         ? (rawWorkbench as ExplorerWorkbench)
-        : 'ALL',
-    selected: rawSelected && ROUTE_KEY.test(rawSelected) ? rawSelected : null,
+        : EMPTY_WORK_EXPLORER_QUERY_STATE.workbench,
+    selected:
+      rawSelected && ROUTE_KEY.test(rawSelected)
+        ? rawSelected
+        : EMPTY_WORK_EXPLORER_QUERY_STATE.selected,
   });
 }
 

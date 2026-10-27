@@ -455,5 +455,3 @@ export function parsePer008Release(wire: unknown): Per008FeedbackRelease {
       !uuid(release.correlationId)) invalid();
   return release as Per008FeedbackRelease;
 }
-
-export function isPer008Date(value: string): boolean { return date(value); }

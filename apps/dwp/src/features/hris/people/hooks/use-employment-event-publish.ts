@@ -77,9 +77,10 @@ export function useEmploymentEventPublish(): EmploymentEventPublishRuntime {
     operation: EMPLOYMENT_EVENT_PUBLISH_OPERATION,
     buildCommand: employmentEventPublishCommand,
   });
+  const execute = publish.execute;
   const publishEvent = useCallback<EmploymentEventPublish>(
     (binding) =>
-      publish.execute((authority, descriptor) => {
+      execute((authority, descriptor) => {
         if (authority.mode !== 'SECURE' || !authority.stepUp) {
           throw new HttpError('Step-up authority is required to publish an employment event.', 403);
         }
@@ -88,7 +89,7 @@ export function useEmploymentEventPublish(): EmploymentEventPublishRuntime {
           authority
         );
       }, binding),
-    [publish.execute]
+    [execute]
   );
   return useMemo(
     () => ({ publishEvent, controller: publish.controller }),

@@ -4,6 +4,7 @@ import { formatDate, resolveSupportedLocale } from '@dwp-frontend/shared-i18n';
 import {
   ActionButton,
   EnterpriseDataGrid,
+  foundationTokens,
   GuidedEmptyState,
   InlineFeedback,
   LiveStatus,
@@ -80,7 +81,7 @@ function CompactList({
                   p: 1.25,
                   border: 1,
                   borderColor: active ? 'primary.main' : 'divider',
-                  borderRadius: 1.5,
+                  borderRadius: foundationTokens.radius.control + 'px',
                   bgcolor: active ? 'action.selected' : 'background.paper',
                   color: 'text.primary',
                   textAlign: 'left',
@@ -90,7 +91,12 @@ function CompactList({
                   '&:focus-visible': { outline: '3px solid', outlineOffset: 2 },
                 }}
               >
-                <Typography component="span" variant="body2" fontWeight={750} display="block">
+                <Typography
+                  component="span"
+                  variant="body2"
+                  fontWeight="fontWeightBold"
+                  display="block"
+                >
                   {item.title}
                 </Typography>
                 <Typography component="span" variant="caption" color="text.secondary">
@@ -229,10 +235,9 @@ export function RetirementCommandCenter({
         '@media (forced-colors: active)': { outline: '1px solid CanvasText', outlineOffset: 2 },
         '@media (prefers-reduced-motion: reduce)': {
           '& *, & *::before, & *::after': {
-            animationDuration: '0.01ms !important',
-            animationIterationCount: '1 !important',
+            animation: 'none !important',
             scrollBehavior: 'auto !important',
-            transitionDuration: '0.01ms !important',
+            transition: 'none !important',
           },
         },
       }}
@@ -340,9 +345,7 @@ export function RetirementCommandCenter({
                 onRowClick={({ row }) => select(row)}
                 onRowSelectionModelChange={(model) => {
                   const id = model.ids.values().next().value;
-                  const item = projection.items.find(
-                    (candidate) => candidate.itemPublicId === id
-                  );
+                  const item = projection.items.find((candidate) => candidate.itemPublicId === id);
                   if (item) select(item);
                 }}
                 onCellKeyDown={({ row }, event) => {

@@ -18,6 +18,7 @@ import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
 import { MessagingPageHeading, MessagingPersonLine } from './messaging-components';
+import { maskMessagingPresence, useBrowserOnlineState } from './messaging-presence-freshness';
 
 export function MessagingPeople() {
   const { t } = useTranslation('messaging');
@@ -25,12 +26,15 @@ export function MessagingPeople() {
   const toast = useToast();
   const [search, setSearch] = useState('');
   const [debouncedSearch, setDebouncedSearch] = useState('');
+  const browserOnline = useBrowserOnlineState();
   const query = useQuery({
     queryKey: ['messaging', 'people', debouncedSearch],
     queryFn: () => searchMessagingPeople(debouncedSearch),
-    staleTime: 20_000,
+    staleTime: 10_000,
+    refetchInterval: 15_000,
     retry: 1,
   });
+  const people = maskMessagingPresence(query.data ?? [], browserOnline);
   const directMutation = useMutation({
     mutationFn: createDirectMessagingConversation,
     onSuccess: (conversation) => {
@@ -89,9 +93,9 @@ export function MessagingPeople() {
             <Alert severity="error" sx={{ m: 2 }}>
               {t('people.loadError')}
             </Alert>
-          ) : query.data?.length ? (
+          ) : people.length ? (
             <Stack divider={<Box sx={{ borderBottom: 1, borderColor: 'divider' }} />}>
-              {query.data.map((person) => (
+              {people.map((person) => (
                 <Box key={person.userId} sx={{ px: 2, py: 1.4 }}>
                   <MessagingPersonLine
                     person={person}

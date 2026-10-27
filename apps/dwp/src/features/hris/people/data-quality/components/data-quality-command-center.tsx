@@ -9,6 +9,7 @@ import {
   LiveStatus,
   OperationalContextBar,
   ResourcePageHeader,
+  foundationTokens,
 } from '@dwp-frontend/design-system';
 
 import Box from '@mui/material/Box';
@@ -72,7 +73,7 @@ function MobileList({
                   p: 1.25,
                   border: 1,
                   borderColor: active ? 'primary.main' : 'divider',
-                  borderRadius: 1.5,
+                  borderRadius: foundationTokens.radius.surface + 'px',
                   bgcolor: active ? 'action.selected' : 'background.paper',
                   color: 'text.primary',
                   textAlign: 'left',
@@ -85,7 +86,7 @@ function MobileList({
                 <Typography
                   component="span"
                   variant="body2"
-                  fontWeight={750}
+                  fontWeight={foundationTokens.home.typography.weightEmphasis}
                   display="block"
                   sx={{ overflowWrap: 'anywhere' }}
                 >
@@ -229,10 +230,10 @@ export function DataQualityCommandCenter({
         '@media (forced-colors: active)': { outline: '1px solid CanvasText', outlineOffset: 2 },
         '@media (prefers-reduced-motion: reduce)': {
           '& *, & *::before, & *::after': {
-            animationDuration: '0.01ms !important',
-            animationIterationCount: '1 !important',
+            animationDuration: '0s !important',
+            animationIterationCount: foundationTokens.home.motion.reducedIterationCount,
             scrollBehavior: 'auto !important',
-            transitionDuration: '0.01ms !important',
+            transitionDuration: '0s !important',
           },
         },
       }}

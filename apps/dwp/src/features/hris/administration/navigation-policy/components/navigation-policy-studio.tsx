@@ -1,15 +1,12 @@
 import { useEffect, useMemo, useState } from 'react';
-import { InlineFeedback } from '@dwp-frontend/design-system';
-import Button from '@mui/material/Button';
+import { InlineFeedback, ActionButton, FormField, LoadingState } from '@dwp-frontend/design-system';
 import Chip from '@mui/material/Chip';
-import CircularProgress from '@mui/material/CircularProgress';
 import FormControl from '@mui/material/FormControl';
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import Paper from '@mui/material/Paper';
 import Select from '@mui/material/Select';
 import Stack from '@mui/material/Stack';
-import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 
 import { NavigationPolicyEditor } from './navigation-policy-editor';
@@ -71,8 +68,7 @@ export function NavigationPolicyStudio({
   if (state === 'LOADING') {
     return (
       <Stack alignItems="center" justifyContent="center" minHeight={320} gap={2} role="status">
-        <CircularProgress size={28} />
-        <Typography>{copy.loadingTitle}</Typography>
+        <LoadingState embedded spinnerSize={28} label={copy.loadingTitle} />
       </Stack>
     );
   }
@@ -199,9 +195,9 @@ export function NavigationPolicyStudio({
             {copy.description}
           </Typography>
         </Stack>
-        <Button variant="outlined" onClick={onRefresh} sx={{ flexShrink: 0 }}>
+        <ActionButton intent="secondary" onClick={onRefresh} sx={{ flexShrink: 0 }}>
           {copy.refresh}
-        </Button>
+        </ActionButton>
       </Stack>
 
       <Stack direction="row" gap={1} flexWrap="wrap" aria-label="Policy evidence summary">
@@ -223,7 +219,7 @@ export function NavigationPolicyStudio({
       <Paper component="section" variant="outlined" sx={{ p: { xs: 2, sm: 2.5 } }}>
         <Stack direction={{ xs: 'column', md: 'row' }} gap={2.5}>
           <Stack gap={0.5} flex={1} minWidth={0}>
-            <Typography component="h2" variant="subtitle1" fontWeight={700}>
+            <Typography component="h2" variant="subtitle1" fontWeight="fontWeightBold">
               {copy.impactTitle}
             </Typography>
             <Typography color="text.secondary" variant="body2">
@@ -235,7 +231,7 @@ export function NavigationPolicyStudio({
             </Typography>
           </Stack>
           <Stack gap={0.5} flex={1} minWidth={0}>
-            <Typography component="h2" variant="subtitle1" fontWeight={700}>
+            <Typography component="h2" variant="subtitle1" fontWeight="fontWeightBold">
               {copy.recoveryTitle}
             </Typography>
             <Typography color="text.secondary" variant="body2">
@@ -307,14 +303,15 @@ export function NavigationPolicyStudio({
       ) : null}
 
       {actions.some(isHighRiskAction) ? (
-        <TextField
+        <FormField
+          fullWidth={false}
           label="Decision justification"
           value={reason}
           required
           multiline
           minRows={2}
           inputProps={{ minLength: 12, maxLength: 500 }}
-          helperText="Required for approve, publish, and restore. Stored with the immutable audit receipt."
+          supportingText="Required for approve, publish, and restore. Stored with the immutable audit receipt."
           disabled={evidenceUnsafe || command.state === 'RUNNING'}
           onChange={(event) => {
             setReason(event.target.value);
@@ -331,9 +328,9 @@ export function NavigationPolicyStudio({
         justifyContent="flex-end"
       >
         {actions.map((action) => (
-          <Button
+          <ActionButton
             key={action}
-            variant={primaryAction(action) ? 'contained' : 'outlined'}
+            intent={primaryAction(action) ? 'primary' : 'secondary'}
             disabled={
               !commandOwner ||
               evidenceUnsafe ||
@@ -345,7 +342,7 @@ export function NavigationPolicyStudio({
             onClick={() => void execute(action)}
           >
             {action.replaceAll('_', ' ')}
-          </Button>
+          </ActionButton>
         ))}
       </Stack>
     </Stack>

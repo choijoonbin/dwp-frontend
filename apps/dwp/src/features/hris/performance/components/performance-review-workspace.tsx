@@ -6,16 +6,12 @@ import {
   InlineFeedback,
   LiveStatus,
   OperationalContextBar,
+  FormDialog,
+  foundationTokens,
 } from '@dwp-frontend/design-system';
 
 import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
 import Checkbox from '@mui/material/Checkbox';
-import Dialog from '@mui/material/Dialog';
-import DialogActions from '@mui/material/DialogActions';
-import DialogContent from '@mui/material/DialogContent';
-import DialogContentText from '@mui/material/DialogContentText';
-import DialogTitle from '@mui/material/DialogTitle';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Paper from '@mui/material/Paper';
 import Stack from '@mui/material/Stack';
@@ -135,15 +131,15 @@ function ReviewForm({
         </Typography>
         <Stack gap={0.5}>
           {(sections.length > 0 ? sections : review.form.items.slice(0, 1)).map((item) => (
-            <Button
+            <ActionButton
               key={item.itemKey}
               component="a"
               href={'#performance-review-sequence-' + String(item.sequence)}
-              color="inherit"
+              intent="quiet"
               sx={{ justifyContent: 'flex-start', textAlign: 'left', overflowWrap: 'anywhere' }}
             >
               {item.label}
-            </Button>
+            </ActionButton>
           ))}
         </Stack>
       </Paper>
@@ -309,10 +305,10 @@ export function PerformanceReviewWorkspaceView(props: PerformanceReviewWorkspace
         overflowWrap: 'anywhere',
         '@media (prefers-reduced-motion: reduce)': {
           '& *, & *::before, & *::after': {
-            animationDuration: '0.01ms !important',
-            animationIterationCount: '1 !important',
+            animationDuration: foundationTokens.duration.instant + 'ms !important',
+            animationIterationCount: foundationTokens.home.motion.reducedIterationCount,
             scrollBehavior: 'auto !important',
-            transitionDuration: '0.01ms !important',
+            transitionDuration: foundationTokens.duration.instant + 'ms !important',
           },
         },
         '@media (forced-colors: active)': {
@@ -339,7 +335,12 @@ export function PerformanceReviewWorkspaceView(props: PerformanceReviewWorkspace
           <Typography
             component="span"
             variant="caption"
-            sx={{ px: 1.25, py: 0.75, borderRadius: 1, bgcolor: 'action.hover' }}
+            sx={{
+              px: 1.25,
+              py: 0.75,
+              borderRadius: foundationTokens.radius.compact + 'px',
+              bgcolor: 'action.hover',
+            }}
           >
             {review.state.replaceAll('_', ' ')}
           </Typography>
@@ -411,7 +412,7 @@ export function PerformanceReviewWorkspaceView(props: PerformanceReviewWorkspace
             p: 2,
             border: 1,
             borderColor: 'error.main',
-            borderRadius: 1.5,
+            borderRadius: foundationTokens.radius.control + 'px',
             '&:focus-visible': { outline: '3px solid', outlineColor: 'primary.main' },
           }}
         >
@@ -506,32 +507,20 @@ export function PerformanceReviewWorkspaceView(props: PerformanceReviewWorkspace
           </Stack>
         </Stack>
       </Paper>
-      <Dialog
+      <FormDialog
         open={discardDialogOpen}
-        onClose={discarding ? undefined : () => setDiscardDialogOpen(false)}
-        aria-labelledby="performance-review-discard-title"
-        aria-describedby="performance-review-discard-description"
+        title="Discard unsaved changes?"
+        description="Reloading replaces your unsaved answers with the latest authoritative draft."
+        cancelLabel="Keep editing"
+        submitLabel="Discard changes and reload"
+        onClose={() => setDiscardDialogOpen(false)}
+        onSubmit={discardAndReload}
+        busy={discarding}
+        submitIntent="danger"
+        mobileFullScreen
       >
-        <DialogTitle id="performance-review-discard-title">Discard unsaved changes?</DialogTitle>
-        <DialogContent>
-          <DialogContentText id="performance-review-discard-description">
-            Reloading replaces your unsaved answers with the latest authoritative draft.
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button disabled={discarding} onClick={() => setDiscardDialogOpen(false)}>
-            Keep editing
-          </Button>
-          <Button
-            color="error"
-            variant="contained"
-            disabled={discarding}
-            onClick={() => void discardAndReload()}
-          >
-            Discard changes and reload
-          </Button>
-        </DialogActions>
-      </Dialog>
+        <></>
+      </FormDialog>
     </Stack>
   );
 }

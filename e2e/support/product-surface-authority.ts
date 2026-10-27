@@ -431,12 +431,15 @@ export async function mockLegacyProductSurfaceAuthority(page: Page) {
 
   await page.route('**/api/auth/product-surface-contexts', (route) =>
     success(route, {
-      contractVersion: 'product-surfaces/v3',
+      contractVersion: '2',
       decisionRevision: 'e2e-product-authority-baseline',
       sourceRevisions: {
         auth: 'auth-baseline',
         policy: 'policy-baseline',
         productRelationship: 'relationship-baseline',
+        targetPopulation: 'target-population-baseline',
+        support: null,
+        tenantControl: 'tenant-control-baseline',
       },
       activeAccessMode: 'NORMAL',
       generatedAt: GENERATED_AT,

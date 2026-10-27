@@ -73,7 +73,7 @@ import {
   resolveHrisFeaturePageAdmission,
 } from './hris-feature-route-admission';
 
-import type { AllowedSurfaceDecision } from '../../shell/product-surface-context';
+import type { AllowedSurfaceDecision } from '../../../components/product-surface-context';
 import type { HrisOperationsDataSource } from '../administration/operations';
 import type { PayrollPopulationDataSource } from '../payroll/population';
 

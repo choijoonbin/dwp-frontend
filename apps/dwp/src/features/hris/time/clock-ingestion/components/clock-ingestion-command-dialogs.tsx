@@ -1,8 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
-import { FormDialog, InlineFeedback } from '@dwp-frontend/design-system';
+import { FormDialog, FormField, InlineFeedback } from '@dwp-frontend/design-system';
 import MenuItem from '@mui/material/MenuItem';
 import Stack from '@mui/material/Stack';
-import TextField from '@mui/material/TextField';
 
 import type { ClockEvent, RecordClockEventRequest } from '../model/clock-ingestion-model';
 import type { ClockIngestionCopy } from '../model/clock-ingestion-copy';
@@ -141,7 +140,7 @@ export function ClockRecordDialog({
     label: string,
     options: Readonly<{ type?: string; required?: boolean; disabled?: boolean }> = {}
   ) => (
-    <TextField
+    <FormField
       key={key}
       label={label}
       value={draft[key]}
@@ -160,7 +159,7 @@ export function ClockRecordDialog({
     label: string,
     values: readonly RecordDraft[K][]
   ) => (
-    <TextField
+    <FormField
       key={key}
       select
       label={label}
@@ -175,7 +174,7 @@ export function ClockRecordDialog({
           {String(value)}
         </MenuItem>
       ))}
-    </TextField>
+    </FormField>
   );
 
   return (
@@ -295,7 +294,7 @@ export function ClockVoidDialog({
             {copy.resultUnknownDescription}
           </InlineFeedback>
         )}
-        <TextField
+        <FormField
           autoFocus
           fullWidth
           required
@@ -303,7 +302,7 @@ export function ClockVoidDialog({
           label={copy.voidReasonCode}
           value={reasonCode}
           disabled={busy || retryExact}
-          helperText={copy.voidReasonHelp}
+          supportingText={copy.voidReasonHelp}
           onChange={(event) => setReasonCode(event.target.value.toUpperCase())}
         />
       </Stack>

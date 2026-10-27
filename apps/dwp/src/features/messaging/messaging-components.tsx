@@ -358,6 +358,7 @@ export function MessagingPersonLine({
   person: MessagingPerson | MessagingMember;
   action?: ReactNode;
 }) {
+  const { t } = useTranslation('messaging');
   const visualTone = messagingVisualTone(person.userId);
   return (
     <Stack direction="row" spacing={1.2} alignItems="center" sx={{ minWidth: 0 }}>
@@ -380,6 +381,9 @@ export function MessagingPersonLine({
             {person.displayName}
           </Typography>
           <PresenceDot state={person.presenceState} />
+          <Typography component="span" variant="caption" color="text.secondary" noWrap>
+            {t(`home.people.presence.${person.presenceState}`)}
+          </Typography>
         </Stack>
         <Typography variant="caption" color="text.secondary" noWrap>
           {person.jobTitle || person.emailAddress}

@@ -18,8 +18,8 @@ import {
   HRIS_APPROVAL_SHARED_API_CONTRACTS,
 } from '../administration/workflow';
 import { HrisTeamDelegationWorkspace } from '../team/delegation';
-import { isAllowedCanaryDecisionTrusted } from '../../shell/product-surface-canary-runtime';
-import { mapProductSurfaceDirectEvaluation } from '../../shell/product-surface-context';
+import { isAllowedCanaryDecisionTrusted } from '../../../components/product-surface-canary-runtime';
+import { mapProductSurfaceDirectEvaluation } from '../../../components/product-surface-context';
 
 import type {
   ProductSurfaceEffectiveContext,
@@ -30,7 +30,7 @@ import type {
   EffectiveProductSurfaceContext,
   EffectiveProductSurfaceContextEnvelope,
   ProductSurfaceDirectEvaluation,
-} from '../../shell/product-surface-context';
+} from '../../../components/product-surface-context';
 import type { HrisApprovalAdapterAdmission } from '../administration/workflow';
 
 export const HRIS_SYS_003_PAGE_ROUTE_CONTRACTS = Object.freeze({

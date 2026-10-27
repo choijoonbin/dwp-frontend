@@ -1,12 +1,12 @@
+import { ActionButton, FormField } from '@dwp-frontend/design-system';
+
 import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
 import FormControl from '@mui/material/FormControl';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import FormHelperText from '@mui/material/FormHelperText';
 import FormLabel from '@mui/material/FormLabel';
 import Radio from '@mui/material/Radio';
 import RadioGroup from '@mui/material/RadioGroup';
-import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 
 import type {
@@ -24,13 +24,6 @@ export type PerformanceReviewAnswerFieldProps = Readonly<{
   disabled: boolean;
   onChange: (answer: PerformanceReviewAnswer | null) => void;
 }>;
-
-function helperText(
-  item: PerformanceReviewFormItem,
-  issue: PerformanceReviewValidationIssue | undefined
-): string | undefined {
-  return issue?.message ?? item.helpText ?? undefined;
-}
 
 export function PerformanceReviewAnswerField({
   item,
@@ -56,18 +49,18 @@ export function PerformanceReviewAnswerField({
         >
           {label}
         </FormLabel>
-        <TextField
+        <FormField
           id={controlId}
           name={item.itemKey}
           fullWidth
           required={item.required}
           disabled={disabled}
-          error={Boolean(issue)}
+          errorMessage={issue?.message}
           value={value}
           multiline={item.answerConstraints.multiline}
           minRows={item.answerConstraints.multiline ? 4 : undefined}
           inputProps={{ maxLength: item.answerConstraints.maxLength }}
-          helperText={helperText(item, issue)}
+          supportingText={item.helpText ?? undefined}
           onChange={(event) =>
             onChange(
               event.target.value === ''
@@ -99,16 +92,16 @@ export function PerformanceReviewAnswerField({
         >
           {label}
         </FormLabel>
-        <TextField
+        <FormField
           id={controlId}
           name={item.itemKey}
           fullWidth
           required={item.required}
           disabled={disabled}
-          error={Boolean(issue)}
+          errorMessage={issue?.message}
           value={value}
           inputProps={{ inputMode: 'decimal' }}
-          helperText={helperText(item, issue) ?? range}
+          supportingText={item.helpText ?? range}
           onChange={(event) =>
             onChange(
               event.target.value === ''
@@ -170,7 +163,8 @@ export function PerformanceReviewAnswerField({
           ))}
         </RadioGroup>
         {!item.required && (
-          <Button
+          <ActionButton
+            intent="quiet"
             type="button"
             size="small"
             disabled={disabled || value === ''}
@@ -179,7 +173,7 @@ export function PerformanceReviewAnswerField({
             sx={{ alignSelf: 'flex-start', mt: 0.5 }}
           >
             Clear response
-          </Button>
+          </ActionButton>
         )}
         {issue && <FormHelperText id={errorId}>{issue.message}</FormHelperText>}
       </FormControl>
@@ -233,7 +227,8 @@ export function PerformanceReviewAnswerField({
           ))}
         </RadioGroup>
         {!item.required && (
-          <Button
+          <ActionButton
+            intent="quiet"
             type="button"
             size="small"
             disabled={disabled || value === ''}
@@ -242,7 +237,7 @@ export function PerformanceReviewAnswerField({
             sx={{ alignSelf: 'flex-start', mt: 0.5 }}
           >
             Clear response
-          </Button>
+          </ActionButton>
         )}
         {issue && <FormHelperText id={errorId}>{issue.message}</FormHelperText>}
       </FormControl>

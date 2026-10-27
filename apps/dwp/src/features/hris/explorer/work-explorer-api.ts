@@ -161,11 +161,3 @@ export async function queryWorkExplorerActivityReceipt(
   }
   return projection;
 }
-
-export const workExplorerDataSource = {
-  query: queryWorkExplorer,
-  replacePreferences: replaceWorkExplorerPreferences,
-  recordRecent: recordWorkExplorerRecent,
-  receipt: queryWorkExplorerReceipt,
-  activityReceipt: queryWorkExplorerActivityReceipt,
-} as const;

@@ -6,7 +6,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import type { ProductSurfaceEvaluationData } from '@dwp-frontend/shared-utils/api/auth-api';
 import type { TrustedProductSurfaceAuthoritySnapshot } from '@dwp-frontend/shared-utils/auth/product-surface-authority-model';
-import type { AllowedSurfaceDecision } from '../../shell/product-surface-context';
+import type { AllowedSurfaceDecision } from '../../../components/product-surface-context';
 import type { Hrm009QueryId } from '../employee-services/certificates';
 
 const state = vi.hoisted(() => ({

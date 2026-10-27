@@ -1,16 +1,19 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { CheckCircle2, Plus, RefreshCw, UserRoundX } from 'lucide-react';
-import { ActionButton, InlineFeedback } from '@dwp-frontend/design-system';
+import {
+  ActionButton,
+  FormField,
+  InlineFeedback,
+  LoadingState,
+  LocalDateTimePickerField,
+} from '@dwp-frontend/design-system';
 import { HttpError } from '@dwp-frontend/shared-utils';
 
 import Box from '@mui/material/Box';
-import ButtonBase from '@mui/material/ButtonBase';
 import Chip from '@mui/material/Chip';
 import Paper from '@mui/material/Paper';
-import Skeleton from '@mui/material/Skeleton';
 import Stack from '@mui/material/Stack';
-import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 
 import { hrisDelegationDataSource } from '../api/hris-delegation-adapter';
@@ -75,7 +78,7 @@ function DisabledDelegation({ invalid }: Readonly<{ invalid: boolean }>) {
   return (
     <Stack
       data-testid="hris-team-delegation-workspace"
-      data-runtime-state="OFF"
+      data-runtime-state={HRIS_TEAM_DELEGATION_RUNTIME_STATE}
       data-feature={HRIS_APPROVAL_ADAPTER_FEATURE}
       gap={2}
       sx={{ minWidth: 0 }}
@@ -281,31 +284,27 @@ function ActiveDelegation({
                 gap: 1.5,
               }}
             >
-              <TextField
+              <FormField
                 label="Delegate user ID"
                 value={draft.delegateUserId}
                 onChange={(event) => setDraft({ ...draft, delegateUserId: event.target.value })}
                 inputMode="numeric"
               />
-              <TextField
+              <FormField
                 label="Reason"
                 value={draft.reason}
                 onChange={(event) => setDraft({ ...draft, reason: event.target.value })}
                 inputProps={{ maxLength: 500 }}
               />
-              <TextField
+              <LocalDateTimePickerField
                 label="Starts at"
-                type="datetime-local"
-                value={draft.startsAt}
-                onChange={(event) => setDraft({ ...draft, startsAt: event.target.value })}
-                InputLabelProps={{ shrink: true }}
+                value={draft.startsAt || null}
+                onValueChange={(value) => setDraft({ ...draft, startsAt: value ?? '' })}
               />
-              <TextField
+              <LocalDateTimePickerField
                 label="Ends at"
-                type="datetime-local"
-                value={draft.endsAt}
-                onChange={(event) => setDraft({ ...draft, endsAt: event.target.value })}
-                InputLabelProps={{ shrink: true }}
+                value={draft.endsAt || null}
+                onValueChange={(value) => setDraft({ ...draft, endsAt: value ?? '' })}
               />
             </Box>
             <ActionButton
@@ -323,10 +322,13 @@ function ActiveDelegation({
       ) : null}
 
       {delegations.isLoading ? (
-        <Stack aria-busy="true" aria-label="Loading Approval delegations" gap={1}>
-          <Skeleton variant="rounded" height={96} />
-          <Skeleton variant="rounded" height={320} />
-        </Stack>
+        <LoadingState
+          label="Loading Approval delegations"
+          variant="skeleton"
+          skeletonHeights={[96, 320]}
+          skeletonGap={1}
+          embedded
+        />
       ) : delegations.isError ? (
         <InlineFeedback
           severity={denied(delegations.error) ? 'error' : 'warning'}
@@ -355,7 +357,8 @@ function ActiveDelegation({
             <Stack component="ul" sx={{ p: 0, m: 0, listStyle: 'none' }}>
               {rows.map((delegation) => (
                 <Box component="li" key={delegation.delegationId}>
-                  <ButtonBase
+                  <ActionButton
+                    intent="quiet"
                     onClick={() => select(delegation.delegationId)}
                     aria-current={
                       selected?.delegationId === delegation.delegationId ? 'true' : undefined
@@ -371,7 +374,7 @@ function ActiveDelegation({
                     }}
                   >
                     <Stack direction="row" justifyContent="space-between" gap={1}>
-                      <Typography fontWeight={700} sx={{ overflowWrap: 'anywhere' }}>
+                      <Typography fontWeight="fontWeightBold" sx={{ overflowWrap: 'anywhere' }}>
                         {delegation.delegateDisplayName}
                       </Typography>
                       <Chip size="small" label={delegation.lifecycleState} />
@@ -379,7 +382,7 @@ function ActiveDelegation({
                     <Typography variant="caption" color="text.secondary">
                       {delegation.direction} · {delegation.scopeType} · v{delegation.version}
                     </Typography>
-                  </ButtonBase>
+                  </ActionButton>
                 </Box>
               ))}
             </Stack>

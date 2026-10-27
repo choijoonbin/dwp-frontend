@@ -14,6 +14,7 @@ import {
   getMessagingThread,
   leaveMessagingConversation,
   parseMessagingRealtimeSignal,
+  refreshMessagingPresence,
   removeMessagingConversationMember,
   saveMessagingMessage,
   searchMessaging,
@@ -184,6 +185,88 @@ describe('messaging API boundary', () => {
     );
     expect(JSON.parse(String((fetchMock.mock.calls[1]?.[1] as RequestInit).body))).toEqual({
       started: true,
+    });
+  });
+
+  it('refreshes presence with an empty heartbeat request', async () => {
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValueOnce(jsonResponse({ token: 'csrf-token', headerName: 'X-XSRF-TOKEN' }))
+      .mockResolvedValueOnce({
+        ok: true,
+        status: 204,
+        headers: new Headers({
+          'X-DWP-Presence-Lease-TTL-Seconds': '75',
+          'X-DWP-Presence-Refresh-After-Seconds': '20',
+        }),
+        text: async () => '',
+      } as Response);
+    vi.stubGlobal('fetch', fetchMock);
+
+    await expect(refreshMessagingPresence()).resolves.toEqual({
+      leaseTtlSeconds: 75,
+      refreshAfterSeconds: 20,
+    });
+
+    const request = fetchMock.mock.calls[1]?.[1] as RequestInit;
+    expect(fetchMock.mock.calls[1]?.[0]).toBe('/api/messaging/v1/presence/heartbeat');
+    expect(request.method).toBe('PUT');
+    expect(request.body).toBeUndefined();
+    expect(request.signal).toBeInstanceOf(AbortSignal);
+  });
+
+  it('uses authoritative presence lease timing response headers', async () => {
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValueOnce(jsonResponse({ token: 'csrf-token', headerName: 'X-XSRF-TOKEN' }))
+      .mockResolvedValueOnce({
+        ok: true,
+        status: 204,
+        headers: new Headers({
+          'X-DWP-Presence-Lease-TTL-Seconds': '60',
+          'X-DWP-Presence-Refresh-After-Seconds': '15',
+        }),
+        text: async () => '',
+      } as Response);
+    vi.stubGlobal('fetch', fetchMock);
+
+    await expect(refreshMessagingPresence()).resolves.toEqual({
+      leaseTtlSeconds: 60,
+      refreshAfterSeconds: 15,
+    });
+  });
+
+  it.each([
+    ['missing headers', undefined],
+    [
+      'malformed headers',
+      new Headers({
+        'X-DWP-Presence-Lease-TTL-Seconds': '75.5',
+        'X-DWP-Presence-Refresh-After-Seconds': '20',
+      }),
+    ],
+    [
+      'an unsafe renewal window',
+      new Headers({
+        'X-DWP-Presence-Lease-TTL-Seconds': '30',
+        'X-DWP-Presence-Refresh-After-Seconds': '20',
+      }),
+    ],
+  ])('falls back to conservative presence timing for %s', async (_label, headers) => {
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValueOnce(jsonResponse({ token: 'csrf-token', headerName: 'X-XSRF-TOKEN' }))
+      .mockResolvedValueOnce({
+        ok: true,
+        status: 204,
+        ...(headers ? { headers } : {}),
+        text: async () => '',
+      } as Response);
+    vi.stubGlobal('fetch', fetchMock);
+
+    await expect(refreshMessagingPresence()).resolves.toEqual({
+      leaseTtlSeconds: 30,
+      refreshAfterSeconds: 5,
     });
   });
 

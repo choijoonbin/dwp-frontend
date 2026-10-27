@@ -1,8 +1,6 @@
 import { useEffect, useState } from 'react';
-import { InlineFeedback } from '@dwp-frontend/design-system';
-import Button from '@mui/material/Button';
+import { InlineFeedback, ActionButton, LoadingState } from '@dwp-frontend/design-system';
 import Chip from '@mui/material/Chip';
-import CircularProgress from '@mui/material/CircularProgress';
 import Divider from '@mui/material/Divider';
 import FormControl from '@mui/material/FormControl';
 import InputLabel from '@mui/material/InputLabel';
@@ -117,8 +115,7 @@ export function ReferenceConfigurationStudio({
   if (state === 'LOADING') {
     return (
       <Stack alignItems="center" justifyContent="center" minHeight={280} gap={2} role="status">
-        <CircularProgress size={28} />
-        <Typography color="text.secondary">Loading reference-configuration evidence…</Typography>
+        <LoadingState embedded spinnerSize={28} label="Loading reference-configuration evidence…" />
       </Stack>
     );
   }
@@ -170,9 +167,9 @@ export function ReferenceConfigurationStudio({
             color={workbench?.queryState.freshness === 'CURRENT' ? 'success' : 'warning'}
             label={`Evidence: ${workbench?.queryState.freshness ?? 'UNAVAILABLE'}`}
           />
-          <Button variant="outlined" onClick={onRefresh}>
+          <ActionButton intent="secondary" onClick={onRefresh}>
             Refresh
-          </Button>
+          </ActionButton>
         </Stack>
       </Stack>
 
@@ -238,10 +235,7 @@ export function ReferenceConfigurationStudio({
             sx={{ p: { xs: 2, sm: 2.5 }, minWidth: 0, flex: 1 }}
           >
             {detailLoading ? (
-              <Stack direction="row" gap={1.5} alignItems="center" role="status">
-                <CircularProgress size={22} />
-                <Typography>Loading immutable version evidence…</Typography>
-              </Stack>
+              <LoadingState embedded spinnerSize={22} label="Loading immutable version evidence…" />
             ) : detail ? (
               <Stack gap={2}>
                 <Stack direction="row" gap={1} alignItems="center" flexWrap="wrap">
@@ -310,15 +304,15 @@ export function ReferenceConfigurationStudio({
                   ) : null}
                   <Stack direction="row" gap={1} flexWrap="wrap">
                     {lifecycleActions.map((action) => (
-                      <Button
+                      <ActionButton
                         key={action}
-                        variant="outlined"
+                        intent="secondary"
                         aria-label={`${action} reference configuration`}
                         disabled={!commandOwner || commandState === 'RUNNING'}
                         onClick={() => void executeAction(action)}
                       >
                         {action.replaceAll('_', ' ')}
-                      </Button>
+                      </ActionButton>
                     ))}
                     {lifecycleActions.length === 0 ? (
                       <Typography color="text.secondary" variant="body2">

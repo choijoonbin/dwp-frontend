@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 
-import { createProductSurfaceQueryContract } from '../../../shell/product-surface-cache';
+import { createProductSurfaceQueryContract } from '../../../../components/product-surface-cache';
 
 import {
   HRM007_ADAPTER_KIND,

@@ -27,10 +27,8 @@ import {
   ActionButton,
   ConfirmDialog,
   EmptyState,
-  FilterBar,
   LoadingState,
   PageCanvas,
-  SelectField,
 } from '@dwp-frontend/design-system';
 import { resolveSupportedLocale } from '@dwp-frontend/shared-i18n';
 import Box from '@mui/material/Box';
@@ -41,6 +39,8 @@ import Tab from '@mui/material/Tab';
 import Tabs from '@mui/material/Tabs';
 import Typography from '@mui/material/Typography';
 import useMediaQuery from '@mui/material/useMediaQuery';
+import { useProductActionMutation } from '../../components/use-product-action-mutation';
+import { ROOM_BOOKING_ACTION_CONTRACTS } from './room-booking-action-contracts';
 import { roomBookingActionPolicy } from './room-booking-action-policy';
 import { RoomBookingDialog } from './room-booking-dialog';
 import { useRoomsCapabilities } from './rooms-capabilities';
@@ -55,13 +55,10 @@ import { WorkplaceReservationDetailTabContent } from './workplace-reservation-de
 import { resolveReservationSourceState } from './workplace-reservation-source-status';
 import { WorkplaceReservationSourceSummary } from './workplace-reservation-source-summary';
 import { WorkplaceReservationPermissionNotices } from './workplace-reservation-permission-notices';
+import { WorkplaceReservationsFilters } from './workplace-reservations-filters';
 import { WorkplaceReservationsNextAction } from './workplace-reservations-next-action';
 import { useWorkplaceReservationConfirmationValidity } from './use-workplace-reservation-confirmation-validity';
 import {
-  WORKPLACE_RESERVATION_AUTHORITIES,
-  WORKPLACE_RESERVATION_PERIODS,
-  WORKPLACE_RESERVATION_STATUSES,
-  WORKPLACE_RESERVATION_TYPES,
   parseWorkplaceReservationsUrl,
   updateWorkplaceReservationsUrl,
   workplaceReservationsRange,
@@ -96,6 +93,8 @@ export function WorkplaceUnifiedReservations() {
   const capabilities = useRoomsCapabilities();
   const toast = useToast();
   const queryClient = useQueryClient();
+  const authorizeRoomCancellation = useProductActionMutation(ROOM_BOOKING_ACTION_CONTRACTS.cancel);
+  const authorizeRoomResponse = useProductActionMutation(ROOM_BOOKING_ACTION_CONTRACTS.respond);
   const mobileInspector = useMediaQuery('(max-width:899.95px)');
   const identityKey = `${auth.user?.tenantId ?? 'anonymous'}:${auth.user?.userId ?? 'anonymous'}`;
   const activeIdentityRef = useRef(identityKey);
@@ -328,15 +327,21 @@ export function WorkplaceUnifiedReservations() {
       }
       const policy = roomBookingActionPolicy(current, capabilities.canUpdateRoomBooking);
       if (action === 'cancel' && policy.canCancel) {
-        await cancelRoomBooking(current.eventId, current.version);
+        await authorizeRoomCancellation((authority) =>
+          cancelRoomBooking(current.eventId, current.version, authority)
+        );
         return;
       }
       if (action === 'accept' && policy.canRespond) {
-        await respondToRoomBooking(current.eventId, 'ACCEPTED');
+        await authorizeRoomResponse((authority) =>
+          respondToRoomBooking(current.eventId, 'ACCEPTED', authority)
+        );
         return;
       }
       if (action === 'decline' && policy.canRespond) {
-        await respondToRoomBooking(current.eventId, 'DECLINED');
+        await authorizeRoomResponse((authority) =>
+          respondToRoomBooking(current.eventId, 'DECLINED', authority)
+        );
         return;
       }
       throw new Error(t('permissions.roomUpdateReadOnly'));
@@ -465,85 +470,12 @@ export function WorkplaceUnifiedReservations() {
         notYetVerified={t('workplace.reservations.notYetVerified')}
       />
 
-      <Box
-        data-testid="workplace-reservations-filters"
-        sx={(theme) => ({ ...workplaceMemberCard(theme), p: 2, mb: 2 })}
-      >
-        <FilterBar
-          ariaLabel={t('workplace.reservations.filters.label')}
-          searchLabel={t('workplace.reservations.filters.search')}
-          searchValue={parsedUrl.state.query}
-          onSearchChange={(value) => updateParams({ q: value, reservation: null })}
-          searchPlaceholder={t('workplace.reservations.filters.searchPlaceholder')}
-          resetLabel={t('actions.resetFilters')}
-          onReset={resetFilters}
-          resultLabel={t('workplace.reservations.resultCount', { count: filteredItems.length })}
-          filters={
-            <>
-              <SelectField
-                size="small"
-                fullWidth={false}
-                label={t('workplace.reservations.filters.period')}
-                value={parsedUrl.state.period}
-                options={WORKPLACE_RESERVATION_PERIODS.map((value) => ({
-                  value,
-                  label: t(`workplace.reservations.periods.${value}`),
-                }))}
-                onValueChange={(value) =>
-                  value &&
-                  updateParams({ period: value, reservation: null, reservationAuthority: null })
-                }
-                sx={{ width: { xs: 1, sm: 140 } }}
-              />
-              <SelectField
-                size="small"
-                fullWidth={false}
-                label={t('workplace.reservations.filters.type')}
-                value={parsedUrl.state.type}
-                options={WORKPLACE_RESERVATION_TYPES.map((value) => ({
-                  value,
-                  label: t(`workplace.reservations.types.${value}`),
-                }))}
-                onValueChange={(value) =>
-                  value &&
-                  updateParams({ types: value, reservation: null, reservationAuthority: null })
-                }
-                sx={{ width: { xs: 1, sm: 150 } }}
-              />
-              <SelectField
-                size="small"
-                fullWidth={false}
-                label={t('workplace.reservations.filters.status')}
-                value={parsedUrl.state.status}
-                options={WORKPLACE_RESERVATION_STATUSES.map((value) => ({
-                  value,
-                  label: t(`workplace.reservations.statuses.${value}`),
-                }))}
-                onValueChange={(value) =>
-                  value &&
-                  updateParams({ status: value, reservation: null, reservationAuthority: null })
-                }
-                sx={{ width: { xs: 1, sm: 150 } }}
-              />
-              <SelectField
-                size="small"
-                fullWidth={false}
-                label={t('workplace.reservations.filters.authority')}
-                value={parsedUrl.state.authority}
-                options={WORKPLACE_RESERVATION_AUTHORITIES.map((value) => ({
-                  value,
-                  label: t(`workplace.reservations.authorities.${value}`),
-                }))}
-                onValueChange={(value) =>
-                  value &&
-                  updateParams({ authority: value, reservation: null, reservationAuthority: null })
-                }
-                sx={{ width: { xs: 1, sm: 160 } }}
-              />
-            </>
-          }
-        />
-      </Box>
+      <WorkplaceReservationsFilters
+        state={parsedUrl.state}
+        resultCount={filteredItems.length}
+        onReset={resetFilters}
+        onUpdate={updateParams}
+      />
 
       {projection.partial && anySourceVisible && (
         <Box role="status" sx={{ mb: 2 }}>

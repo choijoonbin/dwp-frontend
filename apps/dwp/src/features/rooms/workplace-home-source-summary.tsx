@@ -8,17 +8,24 @@ import Typography from '@mui/material/Typography';
 
 import { workplaceMemberCard } from './workplace-member-surfaces';
 import type { WorkplaceHomeSourceState } from './workplace-home-source-state';
+import type { WorkplacePresenceSourceState } from './workplace-presence-source';
 
 export function WorkplaceHomeSourceSummary({
   workspaceState,
   calendarState,
+  externalPresenceState,
   workspaceUpdatedAt,
   calendarUpdatedAt,
+  externalPresenceUpdatedAt,
+  externalPresenceProvider,
 }: {
   workspaceState: WorkplaceHomeSourceState;
   calendarState: WorkplaceHomeSourceState;
+  externalPresenceState: WorkplacePresenceSourceState;
   workspaceUpdatedAt?: string | null;
   calendarUpdatedAt?: string | null;
+  externalPresenceUpdatedAt?: string | null;
+  externalPresenceProvider?: string | null;
 }) {
   const { t, i18n } = useTranslation('rooms');
   const locale = resolveSupportedLocale(i18n.resolvedLanguage);
@@ -40,6 +47,7 @@ export function WorkplaceHomeSourceSummary({
           state: workspaceState,
           description: 'workspaceDescription',
           updatedAt: workspaceUpdatedAt,
+          provider: null,
         },
         {
           key: 'calendar',
@@ -47,15 +55,24 @@ export function WorkplaceHomeSourceSummary({
           state: calendarState,
           description: 'calendarDescription',
           updatedAt: calendarUpdatedAt,
+          provider: null,
         },
         {
           key: 'externalPresence',
           icon: ShieldCheck,
-          state: 'SKIPPED',
-          description: 'externalDescription',
-          updatedAt: null,
+          state: externalPresenceState,
+          description:
+            externalPresenceState === 'READY'
+              ? 'externalVerifiedDescription'
+              : externalPresenceState === 'DEGRADED'
+                ? 'externalDegradedDescription'
+                : externalPresenceState === 'STALE'
+                  ? 'externalStaleDescription'
+                  : 'externalDescription',
+          updatedAt: externalPresenceUpdatedAt,
+          provider: externalPresenceProvider,
         },
-      ].map(({ key, icon: Icon, state, description, updatedAt }) => (
+      ].map(({ key, icon: Icon, state, description, updatedAt, provider }) => (
         <Box
           key={key}
           sx={(theme) => ({
@@ -76,7 +93,7 @@ export function WorkplaceHomeSourceSummary({
               color={
                 state === 'READY'
                   ? 'success.main'
-                  : state === 'STALE'
+                  : state === 'STALE' || state === 'DEGRADED'
                     ? 'warning.main'
                     : 'text.secondary'
               }
@@ -85,9 +102,13 @@ export function WorkplaceHomeSourceSummary({
               {t(
                 state === 'READY'
                   ? 'workplace.home.live'
-                  : state === 'STALE'
-                    ? 'workplace.home.status.stale'
-                    : 'workplace.home.sources.unverified'
+                  : state === 'DEGRADED'
+                    ? 'workplace.home.sources.degraded'
+                    : state === 'STALE'
+                      ? 'workplace.home.status.stale'
+                      : state === 'LOADING'
+                        ? 'workplace.home.loading'
+                        : 'workplace.home.sources.unverified'
               )}
             </Typography>
           </Stack>
@@ -99,9 +120,11 @@ export function WorkplaceHomeSourceSummary({
               mt: 1,
             }}
           >
-            {t(`workplace.home.sources.${description}`)}
+            {t(`workplace.home.sources.${description}`, {
+              provider: provider ?? t('workplace.home.sources.providerUnknown'),
+            })}
           </Typography>
-          {state === 'READY' && updatedAt ? (
+          {(state === 'READY' || state === 'DEGRADED' || state === 'STALE') && updatedAt ? (
             <Typography
               color="text.secondary"
               sx={{

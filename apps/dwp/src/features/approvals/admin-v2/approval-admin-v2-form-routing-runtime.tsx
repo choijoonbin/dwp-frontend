@@ -136,7 +136,7 @@ function TemplateLibraryRuntime() {
     setDetailLoading(true);
     setComparison(null);
     void getApprovalTemplateWorkspaceDetail(selectedTemplateId, {
-      ...requestOptions(source),
+      contextScopeKey: source.requestScope.contextScopeKey || undefined,
       signal: abort.signal,
     })
       .then((value) => {
@@ -362,7 +362,7 @@ function FormStudioRuntime() {
     let current = true;
     setEditorLoadFailed(false);
     void getApprovalFormStudioDraftInput(data.formId, {
-      ...requestOptions(source),
+      contextScopeKey: source.requestScope.contextScopeKey || undefined,
       signal: abort.signal,
     })
       .then((input) => {
@@ -385,7 +385,7 @@ function FormStudioRuntime() {
       current = false;
       abort.abort();
     };
-  }, [formIdentity, source.requestScope.contextScopeKey, source.state]);
+  }, [data?.formId, formIdentity, source.requestScope.contextScopeKey, source.state]);
 
   const editorFields = useMemo(
     () => (editor ? readFormStudioV3EditorFields(editor.schema) : []),
@@ -830,7 +830,7 @@ function DelegationGovernanceRuntime() {
     setDetailLoading(true);
     setDetailFailed(false);
     void getApprovalDelegationGovernanceEvidence(selectedDelegationId, {
-      ...requestOptions(source),
+      contextScopeKey: source.requestScope.contextScopeKey || undefined,
       signal: abort.signal,
     })
       .then((evidence) => {

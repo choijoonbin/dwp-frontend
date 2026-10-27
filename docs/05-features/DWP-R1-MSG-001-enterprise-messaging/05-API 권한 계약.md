@@ -32,6 +32,7 @@
 | `POST`            | `/scheduled-messages`                                            | 예약 발송                                     |
 | `GET/POST/DELETE` | `/saved-items`                                                   | Later와 Reminder                              |
 | `GET`             | `/search`                                                        | ACL 적용 메시지·파일·대화 검색                |
+| `PUT`             | `/presence/heartbeat`                                            | 현재 사용자 Presence Lease 갱신               |
 | `POST`            | `/conversations/{id}/attachments/uploads`                        | 격리 업로드 세션과 10분 단일 사용 Token 발급  |
 | `PUT`             | `/conversations/{id}/attachments/{attachmentId}/content`         | Binary 업로드와 동기 검사 실행                |
 | `GET`             | `/conversations/{id}/attachments/{attachmentId}`                 | 검사 상태와 안전한 Metadata 조회              |
@@ -43,6 +44,32 @@
 `POST /direct-conversations`는 `personPublicId`만 받고 기존 1:1 Fingerprint가 있으면 같은 대화를
 반환한다. 상대가 없거나 정책상 보이지 않는 경우를 구분해 공격자가 Directory 존재 여부를
 추측하지 못하게 한다.
+
+### R1 Presence REST 계약
+
+- `PUT /presence/heartbeat`는 `APP.MESSAGING:VIEW`가 있는 인증된 현재 사용자만 호출한다.
+- Request Body와 사용자·Tenant 식별자는 받지 않는다. Gateway가 검증한 Subject만 사용한다.
+- Browser가 `/messages`의 허용된 Surface에 있고 `visible`·`online`일 때 즉시 호출한 뒤 성공
+  Response가 지시한 간격(기본 20초)으로 갱신한다. 숨김·오프라인·Unmount에서는 명시적
+  Offline Command를 보내지 않는다.
+  다중 Tab 중 하나가 계속 갱신할 수 있기 때문이다.
+- 성공은 `204 No Content`이며 `X-DWP-Presence-Lease-TTL-Seconds`(기본 `75`)와
+  `X-DWP-Presence-Refresh-After-Seconds`(기본 `20`) Response Header를 반환한다. Presence 저장소가
+  갱신을 수락하지 못하면 시간 Header 없이 `503 Service Unavailable`을 반환한다.
+- 두 Header는 초 단위 양의 정수이다. TTL은 30~300초, 갱신 권고는 최소 5초이며
+  `refresh + 15초 <= TTL`을 만족해야 한다. Client는 누락·잘못된·불안전한 Header를 무시하고
+  최소 안전 Compatibility 값인 30/5초를 사용한다.
+- Client는 최근 성공 Lease를 Request 시작 시각부터 보수적으로 계산한다. 첫 실패 후
+  Retry 시작은 `Lease 시작 + TTL - 5초 Timeout - 5초 Safety Margin`을 넘지 않는다.
+- 5초 Heartbeat Request Deadline은 CSRF Bootstrap·최초 Dispatch·단 한 번의 Stale-CSRF Replay를
+  포함하는 하나의 절대 예산이다. Replay에서 5초를 새로 시작하지 않는다.
+- 기본 Lease TTL은 75초다. Lease가 없거나 만료되면 `OFFLINE`, Redis Authority가 비활성·장애
+  상태이면 `UNKNOWN`으로 판정하며 Directory Seed 값을 Fallback으로 사용하지 않는다.
+- `GET /home`은 `presence.authority`, `presence.evaluatedAt`, `presence.leaseTtlSeconds`,
+  `presence.refreshAfterSeconds`를 반환한다. `UNAVAILABLE`은 온라인 0명과 다른 상태이며 Client는
+  이를 `상태 확인 불가`로 표시한다.
+- 현재 계약은 연결 가능 여부를 위한 `AVAILABLE | OFFLINE | UNKNOWN`이다. `BUSY`, `AWAY`,
+  `FOCUS` 같은 사용자 선언 상태는 별도 정책·만료 계약 없이는 생성하지 않는다.
 
 ## 3. 관리자와 Compliance API
 
@@ -63,7 +90,11 @@ Compliance API는 일반 Admin Route와 Controller, Service, DB Role을 분리�
 Retention 단축, Legal Hold 해제, Export는 사유와 Re-authentication을 요구하고 Tenant 정책에
 따라 Dual Approval을 적용한다.
 
-## 4. WebSocket 계약
+## 4. 목표 WebSocket 계약
+
+아래 계약은 전용 Realtime Gateway 단계의 목표 계약이다. 현재 R1 Runtime은 Durable 변경 Event에
+SSE를 사용하고 Presence 입력은 위 REST Heartbeat를 사용한다. 구현되지 않은 WebSocket Event를
+현재 동작으로 간주하지 않는다.
 
 Endpoint: `/api/messaging/v1/realtime`
 

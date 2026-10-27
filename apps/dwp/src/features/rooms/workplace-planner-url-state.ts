@@ -31,6 +31,7 @@ export type WorkplacePlannerUrlState = Readonly<{
   intentId: string | null;
   batchId: string | null;
   selectedItemId: string | null;
+  scope: string | null;
 }>;
 
 export type WorkplacePlannerUrlPatch = Partial<{
@@ -189,6 +190,7 @@ function appendCanonical(state: WorkplacePlannerUrlState) {
   if (state.intentId) params.set('intent', state.intentId);
   if (state.batchId) params.set('batch', state.batchId);
   if (state.selectedItemId) params.set('item', state.selectedItemId);
+  if (state.scope) params.set('scope', state.scope);
   return params;
 }
 
@@ -220,6 +222,7 @@ export function parseWorkplacePlannerUrl(
     intentId: safeOptionalToken(input.get('intent')),
     batchId: safeOptionalToken(input.get('batch')),
     selectedItemId: safeOptionalToken(input.get('item')),
+    scope: safeOptionalToken(input.get('scope')),
   };
   const canonicalSearchParams = appendCanonical(state);
   return {
@@ -269,6 +272,7 @@ export function updateWorkplacePlannerUrl(
     intentId: patch.intent === null ? null : (patch.intent ?? parsed.intentId),
     batchId: patch.batch === null ? null : (patch.batch ?? parsed.batchId),
     selectedItemId: patch.item === null ? null : (patch.item ?? parsed.selectedItemId),
+    scope: parsed.scope,
   };
   return parseWorkplacePlannerUrl(appendCanonical(next), options).canonicalSearchParams;
 }

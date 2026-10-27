@@ -1,4 +1,7 @@
 import { useTranslation } from 'react-i18next';
+import { foundationTokens } from '@dwp-frontend/design-system';
+import { alpha } from '@mui/material/styles';
+import type { Theme } from '@mui/material/styles';
 import { DragOverlay, useDroppable } from '@dnd-kit/core';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
@@ -53,8 +56,11 @@ const launchpadRemoveControlSx = {
     bgcolor: 'background.paper',
     border: 1,
     borderColor: 'divider',
-    boxShadow: '0 3px 10px rgba(15,23,42,0.16)',
-    transition: 'transform 120ms ease, background-color 120ms ease',
+    boxShadow: (theme: Theme) => theme.shadows[2],
+    transition: (theme: Theme) =>
+      theme.transitions.create(['transform', 'background-color'], {
+        duration: theme.transitions.duration.shortest,
+      }),
   },
   '& > svg': { position: 'relative', zIndex: 1 },
   '&:hover': { color: 'error.main' },
@@ -86,9 +92,12 @@ const launchpadMoreControlSx = {
   borderColor: 'divider',
   color: 'text.secondary',
   bgcolor: 'background.paper',
-  boxShadow: '0 3px 10px rgba(15,23,42,0.14)',
+  boxShadow: (theme: Theme) => theme.shadows[2],
   cursor: 'pointer',
-  transition: 'color 120ms ease, background-color 120ms ease, transform 120ms ease',
+  transition: (theme: Theme) =>
+    theme.transitions.create(['color', 'background-color', 'transform'], {
+      duration: theme.transitions.duration.shortest,
+    }),
   '&:hover': {
     color: 'primary.main',
     bgcolor: 'action.hover',
@@ -190,13 +199,13 @@ function FolderDropFeedback({
         border: 1,
         borderStyle: ready ? 'solid' : 'dashed',
         borderColor: ready ? 'primary.main' : 'divider',
-        borderRadius: 999,
+        borderRadius: foundationTokens.home.radius.surface,
         color: ready ? 'primary.main' : 'text.secondary',
         bgcolor: 'background.paper',
-        boxShadow: ready ? '0 6px 18px rgba(15,23,42,0.20)' : '0 4px 12px rgba(15,23,42,0.12)',
-        fontSize: 10,
-        fontWeight: 800,
-        lineHeight: 1.2,
+        boxShadow: (theme: Theme) => theme.shadows[ready ? 3 : 1],
+        fontSize: foundationTokens.home.typography.compactSize,
+        fontWeight: foundationTokens.home.typography.weightHeavy,
+        lineHeight: foundationTokens.home.typography.tightLineHeight,
         whiteSpace: 'nowrap',
         transform: 'translateX(-50%)',
         pointerEvents: 'none',
@@ -284,10 +293,10 @@ function SortableItemShell({
         transition,
         zIndex: isDragging ? 2 : 1,
         '&[data-launchpad-drop-preview="true"] [data-launchpad-edit-frame]': {
-          bgcolor: 'rgba(78,165,255,0.18)',
-          borderColor: '#8DB8FF',
+          bgcolor: alpha(foundationTokens.home.color.heroFocus, 0.18),
+          borderColor: foundationTokens.home.color.heroFocus,
           borderStyle: 'dashed',
-          boxShadow: '0 0 0 3px rgba(78,165,255,0.18), inset 0 1px 0 rgba(255,255,255,0.30)',
+          boxShadow: (theme: Theme) => theme.shadows[2],
         },
         '&[data-launchpad-reorder-indicator="true"]::before': {
           content: '""',
@@ -296,9 +305,9 @@ function SortableItemShell({
           bottom: 18,
           left: -4,
           width: 4,
-          borderRadius: 999,
+          borderRadius: foundationTokens.home.radius.surface,
           bgcolor: 'primary.main',
-          boxShadow: '0 0 0 3px rgba(78,165,255,0.18)',
+          boxShadow: (theme: Theme) => theme.shadows[2],
           pointerEvents: 'none',
         },
         '@media (forced-colors: active)': {
@@ -331,15 +340,15 @@ function SortableItemShell({
             minWidth: 'max-content',
             px: 0.75,
             py: 0.25,
-            borderRadius: 999,
+            borderRadius: foundationTokens.home.radius.surface,
             color: 'primary.main',
             bgcolor: 'background.paper',
             border: 1,
             borderColor: 'primary.main',
-            boxShadow: '0 4px 12px rgba(15,23,42,0.12)',
-            fontSize: 10,
-            fontWeight: 800,
-            lineHeight: 1.2,
+            boxShadow: (theme: Theme) => theme.shadows[2],
+            fontSize: foundationTokens.home.typography.compactSize,
+            fontWeight: foundationTokens.home.typography.weightHeavy,
+            lineHeight: foundationTokens.home.typography.tightLineHeight,
             whiteSpace: 'nowrap',
             transform: 'translateX(-50%)',
             pointerEvents: 'none',
@@ -483,17 +492,17 @@ export function AppTile({
                       display: 'inline-flex',
                       alignItems: 'center',
                       justifyContent: 'center',
-                      borderRadius: 9,
+                      borderRadius: foundationTokens.home.radius.surface,
                       bgcolor: 'background.paper',
                       border: 1,
                       borderColor: 'divider',
                       color: 'text.primary',
-                      fontSize: 9,
-                      fontWeight: 800,
-                      lineHeight: 1,
+                      fontSize: foundationTokens.home.typography.compactSize,
+                      fontWeight: foundationTokens.home.typography.weightHeavy,
+                      lineHeight: foundationTokens.home.typography.tightLineHeight,
                       textAlign: 'center',
                       fontVariantNumeric: 'tabular-nums',
-                      boxShadow: '0 3px 8px rgba(15,23,42,0.16)',
+                      boxShadow: (theme: Theme) => theme.shadows[2],
                       zIndex: 2,
                     }}
                   >
@@ -532,7 +541,7 @@ export function AppTile({
               component="span"
               data-launchpad-item-label
               variant="caption"
-              fontWeight={700}
+              fontWeight="fontWeightBold"
               sx={{
                 width: 1,
                 height: editing ? 'var(--launchpad-label-height, 24px)' : 28,
@@ -543,7 +552,9 @@ export function AppTile({
                 overflow: 'hidden',
                 WebkitLineClamp: 2,
                 WebkitBoxOrient: 'vertical',
-                lineHeight: editing ? 'var(--launchpad-label-line-height, 12px)' : 1.2,
+                lineHeight: editing
+                  ? 'var(--launchpad-label-line-height, 12px)'
+                  : foundationTokens.home.typography.tightLineHeight,
                 wordBreak: 'normal',
                 overflowWrap: 'anywhere',
                 '& [data-launchpad-label-full]': { display: 'none' },
@@ -688,9 +699,9 @@ export function FolderTile({
                   gap: 0.5,
                   border: 1,
                   borderColor: folderDropState !== 'idle' ? 'primary.main' : 'divider',
-                  borderRadius: 1,
+                  borderRadius: foundationTokens.radius.control + 'px',
                   bgcolor: folderDropState !== 'idle' ? 'action.selected' : 'action.hover',
-                  boxShadow: '0 7px 18px rgba(15,23,42,0.10)',
+                  boxShadow: (theme: Theme) => theme.shadows[2],
                 }}
               >
                 {folderApps.slice(0, 4).map((app) => (
@@ -705,7 +716,7 @@ export function FolderTile({
               component="span"
               data-launchpad-item-label
               variant="caption"
-              fontWeight={700}
+              fontWeight="fontWeightBold"
               sx={{
                 width: 1,
                 height: editing ? 'var(--launchpad-label-height, 24px)' : 28,
@@ -713,7 +724,9 @@ export function FolderTile({
                 overflow: 'hidden',
                 WebkitLineClamp: 2,
                 WebkitBoxOrient: 'vertical',
-                lineHeight: editing ? 'var(--launchpad-label-line-height, 12px)' : 1.2,
+                lineHeight: editing
+                  ? 'var(--launchpad-label-line-height, 12px)'
+                  : foundationTokens.home.typography.tightLineHeight,
               }}
             >
               {folder.name}
@@ -782,19 +795,21 @@ export function AppLaunchpadDragOverlay({
             gap: 0.25,
             overflow: 'visible',
             border: 1,
-            borderColor: immersive ? 'rgba(141,184,255,0.82)' : 'primary.main',
-            borderRadius: 1,
-            bgcolor: immersive ? 'rgba(8,20,48,0.94)' : 'background.paper',
-            color: immersive ? '#FFFFFF' : 'text.primary',
+            borderColor: immersive
+              ? alpha(foundationTokens.home.color.heroFocus, 0.82)
+              : 'primary.main',
+            borderRadius: foundationTokens.radius.control + 'px',
+            bgcolor: immersive
+              ? alpha(foundationTokens.home.color.heroBase, 0.94)
+              : 'background.paper',
+            color: immersive ? foundationTokens.home.color.heroOn : 'text.primary',
             backdropFilter: immersive ? 'blur(18px) saturate(145%)' : 'none',
             WebkitBackdropFilter: immersive ? 'blur(18px) saturate(145%)' : 'none',
-            boxShadow: immersive
-              ? '0 18px 42px rgba(0,7,24,0.42), inset 0 1px 0 rgba(255,255,255,0.20)'
-              : '0 18px 40px rgba(15,23,42,0.22)',
+            boxShadow: (theme: Theme) => theme.shadows[immersive ? 8 : 6],
             pointerEvents: 'none',
             '@media (prefers-reduced-transparency: reduce), (forced-colors: active)': immersive
               ? {
-                  bgcolor: '#12264B',
+                  bgcolor: foundationTokens.color.neutral[900],
                   backdropFilter: 'none',
                   WebkitBackdropFilter: 'none',
                 }
@@ -806,7 +821,7 @@ export function AppLaunchpadDragOverlay({
               <AppGlyph app={appById.get(activeId) as HomeAppDefinition} />
               <Typography
                 variant="caption"
-                fontWeight={700}
+                fontWeight="fontWeightBold"
                 textAlign="center"
                 sx={{
                   width: 1,
@@ -818,7 +833,7 @@ export function AppLaunchpadDragOverlay({
                   overflow: 'hidden',
                   WebkitLineClamp: 2,
                   WebkitBoxOrient: 'vertical',
-                  lineHeight: 1.2,
+                  lineHeight: foundationTokens.home.typography.tightLineHeight,
                   wordBreak: 'normal',
                   overflowWrap: 'normal',
                   color: 'inherit',
@@ -832,7 +847,7 @@ export function AppLaunchpadDragOverlay({
               <Folder size={34} strokeWidth={1.7} />
               <Typography
                 variant="caption"
-                fontWeight={700}
+                fontWeight="fontWeightBold"
                 textAlign="center"
                 sx={{
                   width: 1,
@@ -841,7 +856,7 @@ export function AppLaunchpadDragOverlay({
                   overflow: 'hidden',
                   WebkitLineClamp: 2,
                   WebkitBoxOrient: 'vertical',
-                  lineHeight: 1.2,
+                  lineHeight: foundationTokens.home.typography.tightLineHeight,
                   wordBreak: 'keep-all',
                   overflowWrap: 'break-word',
                   color: 'inherit',

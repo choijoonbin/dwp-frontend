@@ -29,9 +29,12 @@ export function resolveRoomsCapabilities(hasPermission: PermissionCheck) {
     canCreateWorkplaceAdmin: hasPermission('ADMIN.WORKPLACE', 'CREATE'),
     canUpdateWorkplaceAdmin: hasPermission('ADMIN.WORKPLACE', 'UPDATE'),
     canManageWorkplaceAdmin: hasPermission('ADMIN.WORKPLACE', 'MANAGE'),
-    canViewRooms: hasPermission('APP.ROOMS', 'VIEW'),
-    canCreateRoomBooking: hasPermission('APP.ROOMS', 'CREATE'),
-    canUpdateRoomBooking: hasPermission('APP.ROOMS', 'UPDATE'),
+    // Room booking is a Workplace product surface. Keep the UI gate on the
+    // same canonical authority that the gateway contract and Platform PEP
+    // enforce instead of relying on the legacy APP.ROOMS compatibility grant.
+    canViewRooms: hasPermission('APP.WORKPLACE', 'VIEW'),
+    canCreateRoomBooking: hasPermission('APP.WORKPLACE', 'CREATE'),
+    canUpdateRoomBooking: hasPermission('APP.WORKPLACE', 'UPDATE'),
     canViewRoomsAdmin: hasPermission('ADMIN.ROOMS', 'VIEW'),
     canCreateRoomsAdmin: hasPermission('ADMIN.ROOMS', 'CREATE'),
     canUpdateRoomsAdmin: hasPermission('ADMIN.ROOMS', 'UPDATE'),

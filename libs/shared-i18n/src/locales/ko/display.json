@@ -386,7 +386,18 @@
     "SIGNED_CERTIFICATE": "서명 인증서 발급",
     "SKIP_QUARANTINED_AND_CONTINUE": "격리 항목을 건너뛰고 계속 실행",
     "SUBMIT": "제출",
-    "UPDATE": "변경"
+    "UPDATE": "변경",
+    "COMMAND": "명령",
+    "CREATE_DRAFT": "초안 생성",
+    "SAVE_DRAFT": "초안 저장",
+    "VALIDATE": "검증",
+    "RESTORE": "복원",
+    "HIRE": "입사",
+    "CONCURRENT_EMPLOYMENT": "겸직",
+    "IN": "출근",
+    "OUT": "퇴근",
+    "BREAK_START": "휴게 시작",
+    "BREAK_END": "휴게 종료"
   },
   "sourceTypes": {
     "CALENDAR": "일정",
@@ -469,7 +480,8 @@
     "WP_DELEGATION": "근무공간 관리 위임",
     "APPROVAL_TASK": "결재 작업",
     "OUTBOX_EVENT": "아웃박스 이벤트",
-    "POLICY": "정책"
+    "POLICY": "정책",
+    "PAYROLL_FORMULA": "급여 수식"
   },
   "relationTypes": {
     "CONSUMES": "소비",

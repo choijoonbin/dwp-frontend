@@ -1,4 +1,7 @@
 import { useTranslation } from 'react-i18next';
+import { foundationTokens } from '@dwp-frontend/design-system';
+import { alpha } from '@mui/material/styles';
+import type { Theme } from '@mui/material/styles';
 import { Folder } from 'lucide-react';
 
 import Box from '@mui/material/Box';
@@ -62,9 +65,9 @@ export function AppLaunchpadCrossGroupPreview({
           bottom: 18,
           left: -4,
           width: 4,
-          borderRadius: 999,
+          borderRadius: foundationTokens.home.radius.surface,
           bgcolor: 'primary.main',
-          boxShadow: '0 0 0 3px rgba(78,165,255,0.18)',
+          boxShadow: (theme: Theme) => theme.shadows[2],
         },
         '@media (forced-colors: active)': {
           '&::before': { bgcolor: 'Highlight', boxShadow: 'none' },
@@ -80,12 +83,12 @@ export function AppLaunchpadCrossGroupPreview({
           display: 'grid',
           placeItems: 'center',
           border: '1.5px dashed',
-          borderColor: immersive ? '#B7D2FF' : 'primary.main',
-          borderRadius: 1,
-          bgcolor: immersive ? 'rgba(78,165,255,0.18)' : 'action.selected',
-          boxShadow: immersive
-            ? '0 0 0 3px rgba(78,165,255,0.16), inset 0 1px 0 rgba(255,255,255,0.24)'
-            : '0 0 0 3px rgba(37,99,235,0.10)',
+          borderColor: immersive ? foundationTokens.home.color.heroFocus : 'primary.main',
+          borderRadius: foundationTokens.radius.control + 'px',
+          bgcolor: immersive
+            ? alpha(foundationTokens.home.color.heroFocus, 0.18)
+            : 'action.selected',
+          boxShadow: (theme: Theme) => theme.shadows[1],
         }}
       >
         {app ? (
@@ -99,7 +102,7 @@ export function AppLaunchpadCrossGroupPreview({
       <Typography
         component="span"
         variant="caption"
-        fontWeight={700}
+        fontWeight="fontWeightBold"
         sx={{ maxWidth: 72, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}
       >
         {label}
@@ -117,13 +120,13 @@ export function AppLaunchpadCrossGroupPreview({
           py: 0.25,
           border: 1,
           borderColor: 'primary.main',
-          borderRadius: 999,
+          borderRadius: foundationTokens.home.radius.surface,
           color: 'primary.main',
           bgcolor: 'background.paper',
-          boxShadow: '0 4px 12px rgba(15,23,42,0.12)',
-          fontSize: 10,
-          fontWeight: 800,
-          lineHeight: 1.2,
+          boxShadow: (theme: Theme) => theme.shadows[2],
+          fontSize: foundationTokens.home.typography.compactSize,
+          fontWeight: foundationTokens.home.typography.weightHeavy,
+          lineHeight: foundationTokens.home.typography.tightLineHeight,
           whiteSpace: 'nowrap',
           transform: 'translateX(-50%)',
           '@media (forced-colors: active)': {

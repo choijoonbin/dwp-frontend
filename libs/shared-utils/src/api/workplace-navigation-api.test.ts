@@ -56,6 +56,12 @@ function route(outcome: 'GUIDED' | 'GRAPH_MISSING' = 'GUIDED') {
               fromNodeId: ORIGIN_ID,
               toNodeId: DESTINATION_ID,
               floorId: FLOOR_ID,
+              fromFloorId: FLOOR_ID,
+              toFloorId: FLOOR_ID,
+              fromPositionX: 10,
+              fromPositionY: 85,
+              toPositionX: 80,
+              toPositionY: 20,
               travelMode: 'ELEVATOR',
               travelSeconds: 90,
               directionKo: '엘리베이터를 이용하세요.',
@@ -162,6 +168,12 @@ describe('Workplace navigation API contract', () => {
     });
 
     expect(result.steps[0]?.travelMode).toBe('ELEVATOR');
+    expect(result.steps[0]).toMatchObject({
+      fromPositionX: 10,
+      fromPositionY: 85,
+      toPositionX: 80,
+      toPositionY: 20,
+    });
     expect(fetchMock.mock.calls[0]?.[0]).toContain(
       `siteId=${SITE_ID}&originPoiId=${ORIGIN_ID}&destinationPoiId=${DESTINATION_ID}&accessible=true&avoidStairs=true`
     );
@@ -174,6 +186,43 @@ describe('Workplace navigation API contract', () => {
         steps: route().steps,
       })
     ).toThrow(/must not contain an invented guided route/u);
+  });
+
+  it('keeps text directions during a rolling deploy when coordinates are absent', () => {
+    const legacy = route();
+    const parsed = parseWorkplaceNavigationRoute({
+      ...legacy,
+      steps: legacy.steps.map(
+        ({
+          fromFloorId: _fromFloorId,
+          toFloorId: _toFloorId,
+          fromPositionX: _fromPositionX,
+          fromPositionY: _fromPositionY,
+          toPositionX: _toPositionX,
+          toPositionY: _toPositionY,
+          ...step
+        }) => step
+      ),
+    });
+
+    expect(parsed.steps[0]).toMatchObject({
+      fromFloorId: null,
+      toFloorId: null,
+      fromPositionX: null,
+      fromPositionY: null,
+      toPositionX: null,
+      toPositionY: null,
+    });
+  });
+
+  it('rejects graph coordinates outside the floor-plan coordinate system', () => {
+    const invalid = route();
+    expect(() =>
+      parseWorkplaceNavigationRoute({
+        ...invalid,
+        steps: invalid.steps.map((step) => ({ ...step, toPositionX: 101 })),
+      })
+    ).toThrow(/between 0 and 100/u);
   });
 
   it('executes once with command identity and recovers RESULT_UNKNOWN by GET only', async () => {

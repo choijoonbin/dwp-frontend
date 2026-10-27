@@ -1,16 +1,14 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { CheckCircle2, RefreshCw, ShieldCheck } from 'lucide-react';
-import { ActionButton, InlineFeedback } from '@dwp-frontend/design-system';
+import { ActionButton, InlineFeedback, FormField, LoadingState } from '@dwp-frontend/design-system';
 import { HttpError } from '@dwp-frontend/shared-utils';
 
 import Box from '@mui/material/Box';
 import ButtonBase from '@mui/material/ButtonBase';
 import Chip from '@mui/material/Chip';
 import Paper from '@mui/material/Paper';
-import Skeleton from '@mui/material/Skeleton';
 import Stack from '@mui/material/Stack';
-import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 
 import {
@@ -61,7 +59,7 @@ function DisabledWorkflow({ invalid }: Readonly<{ invalid: boolean }>) {
   return (
     <Stack
       data-testid="hris-workflow-policy-workspace"
-      data-runtime-state="OFF"
+      data-runtime-state={HRIS_WORKFLOW_POLICY_RUNTIME_STATE}
       data-feature={HRIS_APPROVAL_ADAPTER_FEATURE}
       gap={2}
       sx={{ minWidth: 0 }}
@@ -202,8 +200,13 @@ function ActiveWorkflow({
 
       {policies.isLoading ? (
         <Stack aria-busy="true" aria-label="Loading Approval workflow policies" gap={1}>
-          <Skeleton variant="rounded" height={96} />
-          <Skeleton variant="rounded" height={320} />
+          <LoadingState
+            embedded
+            variant="skeleton"
+            label="Loading Approval workflow policies"
+            skeletonHeights={[96, 320]}
+            skeletonGap={1}
+          />
         </Stack>
       ) : policies.isError ? (
         <InlineFeedback
@@ -249,7 +252,7 @@ function ActiveWorkflow({
                     }}
                   >
                     <Stack direction="row" justifyContent="space-between" gap={1}>
-                      <Typography fontWeight={700} sx={{ overflowWrap: 'anywhere' }}>
+                      <Typography fontWeight="fontWeightBold" sx={{ overflowWrap: 'anywhere' }}>
                         {policyName(policy)}
                       </Typography>
                       <Chip
@@ -293,7 +296,8 @@ function ActiveWorkflow({
                     The submitting actor cannot publish this pending policy version.
                   </InlineFeedback>
                 ) : null}
-                <TextField
+                <FormField
+                  fullWidth={false}
                   label="Review comment"
                   value={reviewComment}
                   onChange={(event) => setReviewComment(event.target.value)}

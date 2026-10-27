@@ -140,6 +140,7 @@
     "loadError": "Messenger home could not be loaded.",
     "sync": {
       "stale": "Refresh needed",
+      "presenceUnavailable": "Presence unavailable",
       "current": "Up to date",
       "refreshing": "Updating",
       "updated": "Retrieved {{time}}"
@@ -236,8 +237,13 @@
       "startDirect": "Find a person and start a new DM"
     },
     "people": {
-      "availableSnapshot": "{{count}} people available in this snapshot",
-      "messagePerson": "Message {{name}}",
+      "availableSnapshot": "Showing {{count}} people who are available now",
+      "unavailableSnapshot": "Live availability could not be verified",
+      "unavailableTitle": "Presence is temporarily unavailable",
+      "unavailableDescription": "We couldn't verify who is available. Last checked {{time}}.",
+      "emptyTitle": "No one is available right now",
+      "emptyDescription": "People appear here while they have Messenger open.",
+      "messagePerson": "Message {{name}}, {{presence}}",
       "presence": {
         "AVAILABLE": "Available",
         "BUSY": "Busy",
@@ -644,14 +650,14 @@
   "people": {
     "eyebrow": "Organization directory",
     "title": "Find people and start a conversation",
-    "description": "Start secure DMs from the SKAX people directory and presence snapshot.",
+    "description": "Start secure DMs from the SKAX people directory and live availability.",
     "search": "Search name, email, or title",
     "openError": "DM could not be opened.",
     "loadError": "People could not be loaded.",
     "message": "Message",
     "emptyTitle": "No people found",
     "emptyDescription": "Try a shorter query or another name.",
-    "directoryNote": "People data is synchronized from the HR directory snapshot."
+    "directoryNote": "Directory details come from HR. Availability refreshes automatically."
   },
   "admin": {
     "eyebrow": "Messenger administration",

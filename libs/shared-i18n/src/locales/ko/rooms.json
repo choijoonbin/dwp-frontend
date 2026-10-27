@@ -1978,7 +1978,10 @@
       "connectorStatuses": {
         "NOT_CONFIGURED": "설정되지 않았습니다. 외부 상태 데이터가 없습니다.",
         "DISABLED": "설정이 중지되었습니다. 외부 상태가 검증되지 않았습니다.",
-        "CONFIGURED_UNVERIFIED": "연계 설정이 저장되었습니다. 연결과 실제 데이터는 아직 검증되지 않았습니다."
+        "CONFIGURED_UNVERIFIED": "연계 설정이 저장되었습니다. 연결과 실제 데이터는 아직 검증되지 않았습니다.",
+        "HEALTHY": "연결과 최신 제공자 관측이 검증되었습니다.",
+        "DEGRADED": "제공자 관측은 검증됐지만 연결 상태가 저하되었습니다.",
+        "STALE": "마지막 제공자 관측이 오래되었습니다."
       },
       "policyEffects": {
         "BELOW_PROPOSED_MINIMUM_DURATION": "변경 후 최소 예약 시간 미달",
@@ -2319,7 +2322,12 @@
         "externalPresence": "외부 재실 정보",
         "workspaceDescription": "선택한 범위의 공간과 내 예약을 실제 예약 정보로 확인합니다.",
         "calendarDescription": "접근 가능한 회의·집중 일정만 표시합니다.",
-        "externalDescription": "이 화면에서 검증된 외부 재실 정보가 없습니다.",
+        "externalDescription": "외부 재실 공급자의 연결과 관측이 아직 검증되지 않았습니다. 실제 점유 인원이나 점유 수치를 추정하지 않습니다.",
+        "externalVerifiedDescription": "{{provider}} 외부 재실 공급자의 연결과 최신 관측 상태를 검증했습니다. 실제 점유 인원이나 점유 수치를 제공하는 표시는 아닙니다.",
+        "externalDegradedDescription": "{{provider}} 외부 재실 공급자의 최신 관측은 확인됐지만 연결 상태가 저하되었습니다. 실제 점유 인원이나 점유 수치를 제공하는 표시는 아닙니다.",
+        "externalStaleDescription": "{{provider}} 외부 재실 공급자의 마지막 관측이 오래되었습니다. 실제 점유 인원이나 점유 수치를 제공하는 표시는 아닙니다.",
+        "providerUnknown": "외부 공급자",
+        "degraded": "연결 저하",
         "unverified": "검증되지 않음"
       },
       "changeScope": "위치·시간 변경",

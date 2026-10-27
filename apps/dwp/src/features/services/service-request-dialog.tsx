@@ -14,6 +14,7 @@ import MenuItem from '@mui/material/MenuItem';
 import Stack from '@mui/material/Stack';
 
 import type {
+  DwaionProposalHandoffBinding,
   ServiceCatalogItem,
   ServiceRequestDetail,
   ServiceRequestField,
@@ -39,7 +40,7 @@ export function ServiceRequestDialog({
   draft?: ServiceRequestDetail | null;
   initialSummary?: string;
   fromDwaion?: boolean;
-  dwaionProposalBinding?: import('@dwp-frontend/shared-utils').DwaionProposalHandoffBinding | null;
+  dwaionProposalBinding?: DwaionProposalHandoffBinding | null;
   onClose: () => void;
 }) {
   const { t, i18n } = useTranslation('services');

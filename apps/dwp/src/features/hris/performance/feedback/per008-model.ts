@@ -1,6 +1,5 @@
-export const PER008_FEATURE_FLAG = 'HRIS_PER_TEAM_PERFORMANCE_FEEDBACK';
+/** Default-off projection of the Auth-owned HRIS_PER_TEAM_PERFORMANCE_FEEDBACK feature. */
 export const PER008_FEATURE_DEFAULT_ENABLED = false;
-export const PER008_ENROLLED_TENANTS: readonly string[] = [];
 export const PER008_PROVIDER_BOUND = false;
 
 export const PER008_ROUTES = {
@@ -244,7 +243,4 @@ export type Per008CommandContext = Readonly<{
   idempotencyKey: string;
   expectedDecisionRevision: string;
   stepUpChallenge?: string;
-}>;
-export type Per008Problem = Readonly<{
-  code: string; correlationId: string | null; retryable: boolean;
 }>;

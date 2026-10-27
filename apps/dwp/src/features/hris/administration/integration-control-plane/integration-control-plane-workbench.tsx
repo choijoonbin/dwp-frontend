@@ -11,6 +11,7 @@ import {
   OperationalKpiStrip,
   PageCanvas,
   ResourcePageHeader,
+  foundationTokens,
 } from '@dwp-frontend/design-system';
 import { Activity, Cable, Plus, RefreshCw, ShieldCheck, TriangleAlert } from 'lucide-react';
 
@@ -483,7 +484,7 @@ function ConnectorTable({
                     <Stack alignItems="flex-start" minWidth={0}>
                       <Typography
                         variant="body2"
-                        fontWeight={750}
+                        fontWeight="fontWeightBold"
                         sx={{ overflowWrap: 'anywhere' }}
                       >
                         {row.title}
@@ -562,7 +563,7 @@ function ConnectorInspector({
             <Typography
               component="h2"
               variant="subtitle1"
-              fontWeight={760}
+              fontWeight="fontWeightBold"
               sx={{ overflowWrap: 'anywhere' }}
             >
               {row.title}
@@ -683,7 +684,15 @@ function ExecutionEvidence({
             ['Rejected', execution.rejectedCount],
             ['Selected', execution.selectedItemCount],
           ].map(([label, value]) => (
-            <Box key={label} sx={{ p: 1.5, bgcolor: 'action.hover', borderRadius: 1, minWidth: 0 }}>
+            <Box
+              key={label}
+              sx={{
+                p: 1.5,
+                bgcolor: 'action.hover',
+                borderRadius: foundationTokens.radius.control + 'px',
+                minWidth: 0,
+              }}
+            >
               <Typography variant="h6" sx={{ fontVariantNumeric: 'tabular-nums' }}>
                 {value}
               </Typography>
@@ -709,7 +718,7 @@ function DefinitionList({ items }: Readonly<{ items: readonly (readonly [string,
           <Typography
             component="dd"
             variant="body2"
-            fontWeight={650}
+            fontWeight="subtitle2.fontWeight"
             sx={{ m: 0, overflowWrap: 'anywhere' }}
           >
             {value}

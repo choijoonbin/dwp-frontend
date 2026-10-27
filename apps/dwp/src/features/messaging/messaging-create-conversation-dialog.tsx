@@ -42,7 +42,8 @@ export function MessagingCreateConversationDialog({
     queryKey: ['messaging', 'people', 'create-conversation', debouncedPeopleQuery],
     queryFn: () => searchMessagingPeople(debouncedPeopleQuery),
     enabled: open,
-    staleTime: 20_000,
+    staleTime: 10_000,
+    refetchInterval: 15_000,
     retry: 1,
   });
   const mutation = useMutation({

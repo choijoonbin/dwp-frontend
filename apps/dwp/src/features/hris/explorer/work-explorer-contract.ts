@@ -1,6 +1,8 @@
-export const HRIS_WORK_EXPLORER_PATH = '/hr/explore' as const;
-export const HRIS_WORK_EXPLORER_ROUTE_CONTRACT = 'route.hcm.utility.explorer.page' as const;
-export const HRIS_WORK_EXPLORER_SURFACE = 'hcm.utility' as const;
+export {
+  HRIS_WORK_EXPLORER_PATH,
+  HRIS_WORK_EXPLORER_ROUTE_CONTRACT,
+  HRIS_WORK_EXPLORER_SURFACE,
+} from '../../../components/work-explorer-navigation';
 export const HRIS_WORK_EXPLORER_BASE_PATH = '/api/platform/v1/hris/explorer' as const;
 export const HRIS_WORK_EXPLORER_RECEIPT_PATH =
   '/api/platform/v1/admin/hris/command-receipts' as const;

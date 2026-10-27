@@ -17,6 +17,10 @@ const canonicalSource = readFileSync(
   new URL('../../organization-positions/organization-positions-explorer.tsx', import.meta.url),
   'utf8'
 );
+const workspaceSource = readFileSync(
+  new URL('../../organization-positions/organization-positions-workspace.tsx', import.meta.url),
+  'utf8'
+);
 
 describe('[SLICE:BASE-TFR-HRM-005] organization graph frontend seam', () => {
   it('pins the single canonical feature, PEP route, and sealed query-only adapter', () => {
@@ -45,7 +49,7 @@ describe('[SLICE:BASE-TFR-HRM-005] organization graph frontend seam', () => {
     expect(Object.isFrozen(HRIS_ORGANIZATION_POSITIONS_DEFAULT_GATE)).toBe(true);
   });
 
-  it('adapts OrganizationExplorer through isolated canonical and management children', () => {
+  it('mounts the canonical branch independently from the management feature', () => {
     const seamStart = managerSource.indexOf('export function OrganizationExplorer');
     const managementStart = managerSource.indexOf('function ManagementOrganizationExplorer');
     const seam = managerSource.slice(seamStart, managementStart);
@@ -53,7 +57,9 @@ describe('[SLICE:BASE-TFR-HRM-005] organization graph frontend seam', () => {
 
     expect(seamStart).toBeGreaterThan(-1);
     expect(managementStart).toBeGreaterThan(seamStart);
-    expect(seam).toContain('HrisOrganizationPositionsBranch');
+    expect(workspaceSource).toContain('<HrisOrganizationPositionsBranch adapter={adapter}');
+    expect(workspaceSource).not.toContain('organization-chart-manager');
+    expect(managerSource).not.toContain('HrisOrganizationPositionsBranch');
     expect(seam).not.toMatch(
       /getOrganizationChart|listOrganizationScenarios|listWorkforceOrganizationCandidates|getOrganizationIntelligence|useProductActionMutation/u
     );

@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 760" role="img" aria-labelledby="title description">
+  <title id="title">SKAX Seoul workplace floor plan</title>
+  <description id="description">A verification floor plan with conference rooms, team areas, an east-west corridor, elevators, stairs, and a main entrance.</description>
+  <defs>
+    <pattern id="grid" width="30" height="30" patternUnits="userSpaceOnUse"><path d="M30 0H0V30" fill="none" stroke="#dfe7ef" stroke-width="1"/></pattern>
+    <style>.wall{fill:none;stroke:#52657a;stroke-width:7;stroke-linejoin:round}.partition{fill:#f8fafc;stroke:#9bacbd;stroke-width:3}.corridor{fill:#e8f1ff;stroke:#7ca9e8;stroke-width:2}.core{fill:#eef2f6;stroke:#75879b;stroke-width:3}.label{font:600 22px system-ui,sans-serif;fill:#405267}.small{font:600 18px system-ui,sans-serif;fill:#53677d}.door{fill:none;stroke:#3f78c5;stroke-width:4}.route{fill:none;stroke:#9bbdec;stroke-width:7;stroke-dasharray:12 10;stroke-linecap:round}</style>
+  </defs>
+  <rect width="1200" height="760" fill="#fbfcfe"/>
+  <rect x="28" y="28" width="1144" height="704" rx="8" fill="url(#grid)" class="wall"/>
+  <rect x="58" y="60" width="206" height="140" rx="8" class="partition"/>
+  <rect x="282" y="60" width="206" height="140" rx="8" class="partition"/>
+  <rect x="506" y="60" width="286" height="140" rx="8" class="partition"/>
+  <rect x="810" y="60" width="324" height="140" rx="8" class="partition"/>
+  <text x="78" y="96" class="label">CONFERENCE</text>
+  <text x="526" y="96" class="label">COLLABORATION</text>
+  <text x="830" y="96" class="label">LOUNGE</text>
+  <rect x="58" y="228" width="518" height="164" rx="8" class="partition"/>
+  <rect x="594" y="228" width="540" height="164" rx="8" class="partition"/>
+  <text x="78" y="266" class="label">TEAM AREA A</text>
+  <text x="614" y="266" class="label">TEAM AREA B</text>
+  <rect x="58" y="414" width="1076" height="70" rx="12" class="corridor"/>
+  <text x="78" y="456" class="small">MAIN CORRIDOR</text>
+  <path d="M144 449H600H1056M696 449V593M864 449V593M1056 449L1104 684" class="route"/>
+  <rect x="58" y="506" width="518" height="198" rx="8" class="partition"/>
+  <rect x="594" y="506" width="246" height="198" rx="8" class="partition"/>
+  <rect x="930" y="506" width="204" height="132" rx="8" class="partition"/>
+  <text x="78" y="544" class="label">WORK LOUNGE</text>
+  <rect x="656" y="564" width="86" height="88" rx="8" class="core"/>
+  <rect x="820" y="564" width="86" height="88" rx="8" class="core"/>
+  <path d="M674 608h50M699 583l25 25-25 25" class="door"/>
+  <path d="M838 630l18-18 18 18 18-18" class="door"/>
+  <text x="650" y="682" class="small">ELEVATOR</text>
+  <text x="826" y="682" class="small">STAIR</text>
+  <path d="M1078 732v-72h94" class="door"/>
+  <text x="1002" y="702" class="small">MAIN ENTRY</text>
+</svg>

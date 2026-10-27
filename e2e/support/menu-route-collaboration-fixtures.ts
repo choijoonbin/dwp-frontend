@@ -265,6 +265,12 @@ const resolveMessagingFixture = (path: string): MenuRouteFixtureResolution | nul
       return {
         data: {
           generatedAt: OBSERVED_AT,
+          presence: {
+            authority: 'LIVE',
+            evaluatedAt: OBSERVED_AT,
+            leaseTtlSeconds: 75,
+            refreshAfterSeconds: 15,
+          },
           metrics: {
             unreadConversations: 0,
             mentions: 0,

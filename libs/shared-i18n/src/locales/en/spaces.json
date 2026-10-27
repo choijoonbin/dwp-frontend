@@ -136,13 +136,17 @@
     "DISCOVER": {
       "title": "Discover spaces",
       "description": "Find spaces that are open or available by request across your organization.",
+      "adminDescription": "Your administrator access includes all organization spaces, including private and hidden spaces.",
       "emptyTitle": "No spaces are available to discover",
       "emptyDescription": "Published spaces will appear here when administrators make them available."
     },
     "results": "Space directory",
-    "resultCount": "Number of results",
-    "search": "Search name, purpose, or description",
+    "resultCount_one": "{{count}} result",
+    "resultCount_other": "{{count}} results",
+    "searching": "Searching…",
+    "search": "Search space name or description",
     "loadError": "We could not load the spaces.",
+    "refreshError": "We could not refresh the directory. Previous results are shown.",
     "emptySearchTitle": "No spaces match your search",
     "emptySearchDescription": "Use fewer terms or try a different phrase."
   },
@@ -192,6 +196,9 @@
     "loadError": "We could not load this space.",
     "contentLoadError": "We could not load the content.",
     "membersLoadError": "We could not load the members.",
+    "accessStatusChecking": "Checking access requests…",
+    "accessStatusError": "We could not check your pending access requests. Retry before requesting access.",
+    "membersOnlyContent": "Content and recent activity are available to members of this Space only.",
     "tabsLabel": "Space details",
     "tabs": {
       "overview": "Overview",
@@ -299,7 +306,9 @@
     "lastOwnerError": "The final active Owner cannot be revoked. Assign another Owner first."
   },
   "card": {
+    "joined": "Joined",
     "unread": "Unread Space activity",
+    "lastActivity": "Last activity {{date}}",
     "members_one": "{{count}} access subject",
     "members_other": "{{count}} access subjects"
   },

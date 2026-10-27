@@ -22,7 +22,7 @@ import {
 import {
   organizationManagementChartRequest,
   organizationManagementQueryPlan,
-} from '../../../people/organization/organization-chart-manager';
+} from '../../../../components/organization-management-query';
 
 const ROOT = '10000000-0000-4000-8000-000000000001';
 const request = {

@@ -1,9 +1,8 @@
+import { ActionButton, LoadingState } from '@dwp-frontend/design-system';
 import type { ReactNode } from 'react';
 import { AlertCircle, CheckCircle2, LockKeyhole, RefreshCw } from 'lucide-react';
 
 import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
-import CircularProgress from '@mui/material/CircularProgress';
 import Paper from '@mui/material/Paper';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
@@ -64,7 +63,6 @@ export type HrisAutomationControlPlaneStatePanelProps = Readonly<{
 }>;
 
 function StateIcon({ state }: Readonly<{ state: HrisAutomationControlPlaneState }>) {
-  if (state === 'loading') return <CircularProgress size={22} aria-hidden="true" />;
   if (state === 'complete') return <CheckCircle2 size={22} aria-hidden="true" />;
   if (state === 'forbidden' || state === 'step-up') {
     return <LockKeyhole size={22} aria-hidden="true" />;
@@ -113,35 +111,63 @@ export function HrisAutomationControlPlaneStatePanel({
         }}
       >
         <Stack direction="row" gap={1.25} minWidth={0} alignItems="flex-start">
-          <Box sx={{ color: state === 'complete' ? 'success.main' : 'text.secondary', mt: 0.25 }}>
-            <StateIcon state={state} />
-          </Box>
+          {state !== 'loading' ? (
+            <Box sx={{ color: state === 'complete' ? 'success.main' : 'text.secondary', mt: 0.25 }}>
+              <StateIcon state={state} />
+            </Box>
+          ) : null}
           <Box minWidth={0}>
-            <Typography id={titleId} component="h2" variant="subtitle1" fontWeight={760}>
-              {copy.title}
-            </Typography>
+            {state === 'loading' ? (
+              <Box
+                id={titleId}
+                role="heading"
+                aria-level={2}
+                sx={{
+                  '& [role="status"]': { gap: 1.25 },
+                  '& .MuiTypography-root': {
+                    typography: 'subtitle1',
+                    fontWeight: 'fontWeightBold',
+                  },
+                }}
+              >
+                <LoadingState embedded spinnerSize={22} label={copy.title} />
+              </Box>
+            ) : (
+              <Typography
+                id={titleId}
+                component="h2"
+                variant="subtitle1"
+                fontWeight="fontWeightBold"
+              >
+                {copy.title}
+              </Typography>
+            )}
             <Typography
               variant="body2"
               color="text.secondary"
-              sx={{ overflowWrap: HRIS_AUTOMATION_CONTROL_PLANE_RESPONSIVE_CONTRACT.textOverflow }}
+              sx={{
+                overflowWrap: HRIS_AUTOMATION_CONTROL_PLANE_RESPONSIVE_CONTRACT.textOverflow,
+                ...(state === 'loading' ? { pl: 4 } : {}),
+              }}
             >
               {copy.description}
             </Typography>
           </Box>
         </Stack>
         {state === 'retry' ? (
-          <Button
+          <ActionButton
+            intent="quiet"
             startIcon={<RefreshCw size={16} />}
             onClick={onRetry}
             sx={{ minWidth: 44, minHeight: 44 }}
           >
             Retry
-          </Button>
+          </ActionButton>
         ) : null}
         {state === 'step-up' ? (
-          <Button variant="contained" onClick={onStepUp} sx={{ minWidth: 44, minHeight: 44 }}>
+          <ActionButton intent="primary" onClick={onStepUp} sx={{ minWidth: 44, minHeight: 44 }}>
             Verify session
-          </Button>
+          </ActionButton>
         ) : null}
       </Box>
     </Paper>

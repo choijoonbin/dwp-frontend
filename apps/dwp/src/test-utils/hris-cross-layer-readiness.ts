@@ -1,26 +1,24 @@
-import {
-  HCM_DEEP_LINK_COMPATIBILITY_ITEMS,
-  HCM_NAVIGATION,
-  HRIS_R7_GOVERNED_PAGE_CATALOG,
-} from '../../../hcm/hcm-navigation';
-import { ADMIN_NAVIGATION } from '../../../admin/admin-navigation';
-import { OFFICIAL_PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE } from '../../../../routes/official-product-page-route-contracts';
-import { HRIS_IA_CONTRACT_NODES } from '../model/hris-information-architecture.generated';
-import { HRIS_PRODUCT_MAP_CATALOG } from '../model/hris-product-map-catalog';
+/** App-level integration evidence; imported only by verification suites. */
+import { HCM_DEEP_LINK_COMPATIBILITY_ITEMS, HCM_NAVIGATION } from '../features/hcm/hcm-navigation';
+import { HRIS_R7_GOVERNED_PAGE_CATALOG } from '../components/hris-governed-page-catalog';
+import { ADMIN_NAVIGATION } from '../features/admin/admin-navigation';
+import { OFFICIAL_PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE } from '../routes/official-product-page-route-contracts';
+import { HRIS_IA_CONTRACT_NODES } from '../features/hris/shell/model/hris-information-architecture.generated';
+import { HRIS_PRODUCT_MAP_CATALOG } from '../features/hris/shell/model/hris-product-map-catalog';
 import {
   HRIS_CONTROLLED_EXPORT_GROUP_ID,
   HRIS_CONTROLLED_EXPORT_NODE_ID,
   HRIS_CONTROLLED_EXPORT_ROUTE,
-} from '../model/hris-navigation-topology-successor';
-import { HRIS_RUNTIME_NAVIGATION_MANIFEST } from '../model/hris-runtime-navigation-manifest';
+} from '../features/hris/shell/model/hris-navigation-topology-successor';
+import { HRIS_RUNTIME_NAVIGATION_MANIFEST } from '../features/hris/shell/model/hris-runtime-navigation-manifest';
 
-import type { HcmView } from '../../../hcm/hcm-navigation';
-import type { AdminSection, AdminView } from '../../../admin/admin-navigation';
+import type { HcmView } from '../features/hcm/hcm-navigation';
+import type { AdminSection, AdminView } from '../features/admin/admin-navigation';
 import type {
   HrisCatalogNode,
   HrisExternalTarget,
   HrisModule,
-} from '../model/hris-product-map-contract';
+} from '../features/hris/shell/model/hris-product-map-contract';
 
 export type HrisCrossLayerState =
   | 'MOUNTED_DEFAULT_OFF'
@@ -498,3 +496,6 @@ export function buildHrisCrossLayerReadinessReport({
     }),
   });
 }
+
+export type { HcmView } from '../features/hcm/hcm-navigation';
+export type { AdminView } from '../features/admin/admin-navigation';

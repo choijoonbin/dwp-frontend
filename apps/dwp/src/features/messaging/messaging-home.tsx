@@ -34,10 +34,12 @@ import {
   buildMessagingHomeView,
   filterMessagingHomeConversations,
   messagingHomeFilter,
+  messagingPresenceRefreshIntervalMs,
   type MessagingHomeFilter,
 } from './messaging-home-model';
 import { MessagingHomeHuddle } from './messaging-home-huddle';
 import { MessagingHomeSharedAssets } from './messaging-home-shared-assets';
+import { useMessagingHomePresence } from './use-messaging-home-presence';
 
 export function MessagingHome() {
   const { t, i18n } = useTranslation('messaging');
@@ -49,8 +51,9 @@ export function MessagingHome() {
   const homeQuery = useQuery({
     queryKey: ['messaging', 'home', auth.user?.tenantId, auth.user?.userId],
     queryFn: getMessagingHome,
-    staleTime: 20_000,
-    refetchInterval: 30_000,
+    staleTime: 10_000,
+    refetchInterval: (query) =>
+      messagingPresenceRefreshIntervalMs(query.state.data?.presence?.refreshAfterSeconds),
     retry: 1,
   });
   const conversationsQuery = useQuery({
@@ -110,6 +113,12 @@ export function MessagingHome() {
         : 'home.greetingEvening'
   );
   const data = homeQuery.data;
+  const effectivePresence = useMessagingHomePresence(
+    data,
+    homeQuery.isError,
+    homeQuery.dataUpdatedAt
+  );
+  const presenceUnavailable = effectivePresence?.authority === 'UNAVAILABLE';
   const conversationSource = useMemo(
     () => conversationsQuery.data?.items ?? data?.priority ?? [],
     [conversationsQuery.data?.items, data?.priority]
@@ -199,17 +208,25 @@ export function MessagingHome() {
               <Stack direction="row" flexWrap="wrap" gap={1} alignItems="center">
                 {data && (
                   <LiveStatus
-                    state={homeQuery.isError ? 'stale' : refreshing ? 'syncing' : 'live'}
+                    state={
+                      homeQuery.isError || presenceUnavailable
+                        ? 'stale'
+                        : refreshing
+                          ? 'syncing'
+                          : 'live'
+                    }
                     label={t(
                       homeQuery.isError
                         ? 'home.sync.stale'
-                        : refreshing
-                          ? 'home.sync.refreshing'
-                          : 'home.sync.current'
+                        : presenceUnavailable
+                          ? 'home.sync.presenceUnavailable'
+                          : refreshing
+                            ? 'home.sync.refreshing'
+                            : 'home.sync.current'
                     )}
                     detail={t('home.sync.updated', {
                       time: messagingRelativeTime(
-                        data.generatedAt,
+                        effectivePresence?.evaluatedAt ?? data.generatedAt,
                         i18n.resolvedLanguage ?? i18n.language
                       ),
                     })}
@@ -292,7 +309,7 @@ export function MessagingHome() {
             </>
           ) : null}
         </Stack>
-        {data && view && (
+        {data && view && effectivePresence && (
           <Stack
             component="aside"
             aria-label={t('home.contextRail')}
@@ -313,6 +330,8 @@ export function MessagingHome() {
           >
             <MessagingPeoplePulse
               people={data.people}
+              presence={effectivePresence}
+              onRetry={() => homeQuery.refetch()}
               onOpenDirectory={() => navigate('/messages/people')}
               onOpenPerson={(userId) => directMutation.mutate(userId)}
               openingPerson={directMutation.isPending}

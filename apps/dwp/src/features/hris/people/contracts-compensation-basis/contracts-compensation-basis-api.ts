@@ -3,7 +3,6 @@ import { productSurfaceReadScopeConfig } from '@dwp-frontend/shared-utils/api/pr
 
 import { parseHrisCommandReceipt } from '../command-receipts/model/command-receipt';
 import {
-  HRM011_ADAPTER_KIND,
   HRM011_ISSUE_ROUTE_CONTRACT,
   HRM011_QUERY_CONTRACT,
   assertHrm011EmploymentContractRequest,
@@ -14,6 +13,7 @@ import {
 import type { ProductSurfaceGovernedMutationAuthority } from '@dwp-frontend/shared-utils';
 import type { HrisCommandReceipt } from '../command-receipts/model/command-receipt';
 import type {
+  HRM011_ADAPTER_KIND,
   Hrm011IssueCommand,
   Hrm011Projection,
   Hrm011QueryRequest,
@@ -165,8 +165,4 @@ export async function issueEmploymentContract(
     throw new Error('Employment-contract receipt does not match the submitted command.');
   }
   return receipt;
-}
-
-export function createHrm011QueryAdapter(): Hrm011QueryAdapter {
-  return Object.freeze({ kind: HRM011_ADAPTER_KIND, query: queryHrm011Entry });
 }

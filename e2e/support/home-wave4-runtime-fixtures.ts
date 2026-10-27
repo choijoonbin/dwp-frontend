@@ -605,6 +605,9 @@ export function homeWave4ResponseHeaders(
   const runtimeState =
     options.runtimeState ?? (runtimeMode === 'SHADOW' ? 'SHADOW_COMPARE' : 'READ_ONLY_ACTIVE');
   return {
+    // The shell can call a separate API origin; keep its conditional and authority headers readable.
+    'Access-Control-Expose-Headers':
+      'ETag, Vary, X-DWP-Decision-Revision, X-DWP-Home-Commands-Enabled, X-DWP-Home-Runtime-Mode, X-DWP-Home-Runtime-State, X-DWP-Home-Rollout-Ring, X-DWP-Home-Rollout-Revision, X-DWP-Widget-Registry-Authoritative',
     'Cache-Control': 'private, max-age=0, must-revalidate',
     Vary: HOME_V2_VARY,
     ETag: etag,

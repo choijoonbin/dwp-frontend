@@ -15,8 +15,8 @@ import {
   scheduleDirectDecisionLease,
 } from '../../../components/direct-decision-lease';
 import { useProductSurfaceRequestScope } from '../../../components/use-product-surface-request-scope';
-import { isAllowedCanaryDecisionTrusted } from '../../shell/product-surface-canary-runtime';
-import { mapProductSurfaceDirectEvaluation } from '../../shell/product-surface-context';
+import { isAllowedCanaryDecisionTrusted } from '../../../components/product-surface-canary-runtime';
+import { mapProductSurfaceDirectEvaluation } from '../../../components/product-surface-context';
 import {
   HRM007_FEATURE,
   HRM007_QUERY_CONTRACTS,
@@ -36,7 +36,7 @@ import type {
   EffectiveProductSurfaceContext,
   EffectiveProductSurfaceContextEnvelope,
   ProductSurfaceDirectEvaluation,
-} from '../../shell/product-surface-context';
+} from '../../../components/product-surface-context';
 import type {
   Hrm007QueryId,
   Hrm007QueryOptions,

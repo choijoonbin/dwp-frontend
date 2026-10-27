@@ -248,5 +248,3 @@ export function useHrisOperationsWorkspace({
     },
   };
 }
-
-export type HrisOperationsWorkspaceController = ReturnType<typeof useHrisOperationsWorkspace>;

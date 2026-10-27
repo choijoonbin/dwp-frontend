@@ -1,5 +1,3 @@
-import type { HrisCommandReceipt } from '../command-receipts/model/command-receipt';
-
 export const HRM011_FEATURE = 'HRIS_HRM_CONTRACT_COMPENSATION_WORKBENCH' as const;
 export const HRM011_ADAPTER_KIND = 'HRIS_HRM_011_ENTRY_QUERY_V2' as const;
 export const HRM011_QUERY_ID = 'IAQ-008' as const;
@@ -156,8 +154,6 @@ export type Hrm011IssueDraft = Hrm011IssueCommand &
     sourceItemPublicId: string;
     action: Hrm011IssueAction;
   }>;
-
-export type Hrm011IssueResult = HrisCommandReceipt;
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/iu;
 const PUBLIC_ID = /^[A-Za-z0-9._:-]{1,128}$/u;

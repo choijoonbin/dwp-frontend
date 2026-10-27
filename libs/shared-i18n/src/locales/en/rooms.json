@@ -1978,7 +1978,10 @@
       "connectorStatuses": {
         "NOT_CONFIGURED": "Not configured. No external status data is available.",
         "DISABLED": "Configuration is disabled. External status has not been verified.",
-        "CONFIGURED_UNVERIFIED": "Connector configuration is saved. The connection and actual data have not been verified."
+        "CONFIGURED_UNVERIFIED": "Connector configuration is saved. The connection and actual data have not been verified.",
+        "HEALTHY": "The connection and latest provider observation are verified.",
+        "DEGRADED": "The provider observation is verified, but the connection is degraded.",
+        "STALE": "The last provider observation is stale."
       },
       "policyEffects": {
         "BELOW_PROPOSED_MINIMUM_DURATION": "Below the proposed minimum duration",
@@ -2319,7 +2322,12 @@
         "externalPresence": "External presence information",
         "workspaceDescription": "Spaces and your bookings are checked against owner booking data for the selected scope.",
         "calendarDescription": "Only authorized meeting and focus schedules are shown.",
-        "externalDescription": "This view has no verified external presence information.",
+        "externalDescription": "The external presence provider connection and observations have not been verified. No actual occupancy count or estimate is inferred.",
+        "externalVerifiedDescription": "The {{provider}} external presence provider connection and latest observation are verified. This is not an actual occupancy or headcount value.",
+        "externalDegradedDescription": "The latest {{provider}} external presence provider observation is verified, but its connection is degraded. This is not an actual occupancy or headcount value.",
+        "externalStaleDescription": "The last {{provider}} external presence provider observation is stale. This is not an actual occupancy or headcount value.",
+        "providerUnknown": "external provider",
+        "degraded": "Connection degraded",
         "unverified": "Unverified"
       },
       "changeScope": "Change location and time",

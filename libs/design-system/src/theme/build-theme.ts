@@ -138,7 +138,31 @@ export function buildDwpTheme({
       MuiCssBaseline: {
         styleOverrides: {
           '*': { boxSizing: 'border-box' },
-          ':root': { '--dwp-focus-ring': focusRing },
+          ':root': {
+            '--dwp-focus-ring': focusRing,
+            '--dwp-radius-control': `${tokens.radius.control}px`,
+            '--dwp-radius-surface': `${tokens.radius.surface}px`,
+            '--dwp-type-page-size': tokens.workplace.typography.pageTitle.fontSize,
+            '--dwp-type-section-size': tokens.workplace.typography.sectionTitle.fontSize,
+            '--dwp-type-subheading-size': tokens.workplace.typography.subsectionTitle.fontSize,
+            '--dwp-type-body-size': tokens.workplace.typography.body.fontSize,
+            '--dwp-type-small-size': tokens.workplace.typography.smallBody.fontSize,
+            '--dwp-type-caption-size': tokens.workplace.typography.caption.fontSize,
+            '--dwp-type-title-line-height': tokens.home.typography.titleLineHeight,
+            '--dwp-type-card-line-height': tokens.home.typography.cardLineHeight,
+            '--dwp-type-reading-line-height': tokens.home.typography.readingLineHeight,
+            '--dwp-type-weight-medium': tokens.workplace.typography.label.fontWeight,
+            '--dwp-type-weight-bold': tokens.home.typography.weightBold,
+            '--dwp-type-weight-emphasis': tokens.home.typography.weightEmphasis,
+            '--dwp-type-weight-heavy': tokens.home.typography.weightHeavy,
+            '--dwp-motion-reduced-iterations': tokens.home.motion.reducedIterationCount,
+            '--dwp-shadow-selection': 'inset 3px 0 0 var(--dwp-palette-primary-main)',
+            '--dwp-motion-surface': ['border-color', 'box-shadow', 'transform']
+              .map(
+                (property) => `${property} ${reduceMotion ? 0 : tokens.duration.standard}ms ease`
+              )
+              .join(', '),
+          },
           '::selection': { backgroundColor: alpha(primary, 0.24) },
           ':focus-visible': {
             outline: `3px solid ${highContrast ? primary : focusRing}`,

@@ -88,6 +88,8 @@ let unauthorizedHandlerRegistration: UnauthorizedHandlerRegistration | null = nu
 let authorizationAccessFailureRegistration: AuthorizationAccessFailureRegistration | null = null;
 let csrfToken: CsrfTokenData | null = null;
 let csrfTokenPromise: Promise<CsrfTokenData> | null = null;
+let csrfRequestController: AbortController | null = null;
+const CSRF_REQUEST_TIMEOUT_MS = 10_000;
 
 export function setUnauthorizedHandler(handler: UnauthorizedHandler | null): () => void {
   const registration = handler ? { handler } : null;
@@ -210,6 +212,13 @@ function notifyUnauthorized(
 export function resetCsrfToken(): void {
   csrfToken = null;
   csrfTokenPromise = null;
+  csrfRequestController?.abort('csrf-reset');
+  csrfRequestController = null;
+}
+
+function invalidateRejectedCsrfToken(rejectedToken: CsrfTokenData | undefined): void {
+  if (!rejectedToken || csrfToken !== rejectedToken) return;
+  csrfToken = null;
 }
 
 function buildHeaders(body: unknown, extra?: Record<string, string>): Record<string, string> {
@@ -290,13 +299,23 @@ async function loadCsrfToken(keepalive = false): Promise<CsrfTokenData> {
   if (csrfToken) return csrfToken;
   if (csrfTokenPromise) return csrfTokenPromise;
 
-  csrfTokenPromise = fetch(API_URL + '/api/auth/csrf', {
-    method: 'GET',
-    headers: buildHeaders(undefined),
-    credentials: 'include',
-    keepalive,
-  })
-    .then(async (response) => {
+  const controller = new AbortController();
+  csrfRequestController = controller;
+  let timedOut = false;
+  const timeout = globalThis.setTimeout(() => {
+    if (controller.signal.aborted) return;
+    timedOut = true;
+    controller.abort('csrf-timeout');
+  }, CSRF_REQUEST_TIMEOUT_MS);
+  const pending = (async () => {
+    try {
+      const response = await fetch(API_URL + '/api/auth/csrf', {
+        method: 'GET',
+        headers: buildHeaders(undefined),
+        credentials: 'include',
+        keepalive,
+        signal: controller.signal,
+      });
       const payload = await parseBody(response);
       if (!response.ok) {
         throw new HttpError(
@@ -309,14 +328,33 @@ async function loadCsrfToken(keepalive = false): Promise<CsrfTokenData> {
       if (!data || typeof data.token !== 'string' || typeof data.headerName !== 'string') {
         throw new HttpError('CSRF token response is invalid.', response.status, payload);
       }
+      if (controller.signal.aborted) throw controller.signal.reason;
       csrfToken = { token: data.token, headerName: data.headerName };
       return csrfToken;
-    })
-    .finally(() => {
-      csrfTokenPromise = null;
-    });
+    } catch (cause) {
+      if (timedOut) throw new HttpTransportError('TIMEOUT', cause);
+      if (controller.signal.aborted) throw new HttpTransportError('ABORT', cause);
+      if (cause instanceof HttpError || cause instanceof HttpTransportError) throw cause;
+      throw new HttpTransportError('NETWORK', cause);
+    }
+  })().finally(() => {
+    globalThis.clearTimeout(timeout);
+    if (csrfTokenPromise === pending) csrfTokenPromise = null;
+    if (csrfRequestController === controller) csrfRequestController = null;
+  });
+  csrfTokenPromise = pending;
 
   return csrfTokenPromise;
+}
+
+function waitForAbort<T>(promise: Promise<T>, signal?: AbortSignal): Promise<T> {
+  if (!signal) return promise;
+  if (signal.aborted) return Promise.reject(signal.reason);
+  return new Promise<T>((resolve, reject) => {
+    const abort = () => reject(signal.reason);
+    signal.addEventListener('abort', abort, { once: true });
+    void promise.then(resolve, reject).finally(() => signal.removeEventListener('abort', abort));
+  });
 }
 
 async function request<T>(
@@ -332,34 +370,50 @@ async function request<T>(
     : null,
   accessFailureRegistration = sessionEffect === 'authoritative'
     ? authorizationAccessFailureRegistration
-    : null
+    : null,
+  deadlineAt = config.timeoutMs ? Date.now() + config.timeoutMs : undefined
 ): Promise<TransportResponse<T>> {
+  if (deadlineAt !== undefined && deadlineAt <= Date.now()) {
+    throw new HttpTransportError('TIMEOUT');
+  }
   const headers = buildHeaders(body, config.headers);
   const scopedUrl = withContextScope(url, config.contextScopeKey);
-  config.beforeDispatch?.();
-  if (isMutation(method)) {
-    const csrf = await loadCsrfToken(config.keepalive);
-    headers[csrf.headerName] = csrf.token;
-  }
-  config.beforeDispatch?.();
-
-  const controller = config.timeoutMs || config.signal ? new AbortController() : undefined;
+  let requestCsrfToken: CsrfTokenData | undefined;
+  const controller = deadlineAt !== undefined || config.signal ? new AbortController() : undefined;
   const abortFromCaller = () => controller?.abort(config.signal?.reason);
   if (config.signal?.aborted) abortFromCaller();
   else config.signal?.addEventListener('abort', abortFromCaller, { once: true });
   let timedOut = false;
   const timeout =
-    controller && config.timeoutMs
-      ? globalThis.setTimeout(() => {
-          if (controller.signal.aborted) return;
-          timedOut = true;
-          controller.abort('request-timeout');
-        }, config.timeoutMs)
+    controller && deadlineAt !== undefined
+      ? globalThis.setTimeout(
+          () => {
+            if (controller.signal.aborted) return;
+            timedOut = true;
+            controller.abort('request-timeout');
+          },
+          Math.max(0, deadlineAt - Date.now())
+        )
       : undefined;
   let response: Response;
   let payload: unknown;
   let accepted = false;
   try {
+    config.beforeDispatch?.();
+    if (isMutation(method)) {
+      try {
+        const csrf = await waitForAbort(loadCsrfToken(config.keepalive), controller?.signal);
+        requestCsrfToken = csrf;
+        headers[csrf.headerName] = csrf.token;
+      } catch (cause) {
+        if (cause instanceof HttpError || cause instanceof HttpTransportError) throw cause;
+        throw new HttpTransportError(
+          timedOut ? 'TIMEOUT' : controller?.signal.aborted ? 'ABORT' : 'NETWORK',
+          cause
+        );
+      }
+    }
+    config.beforeDispatch?.();
     try {
       response = await fetch(API_URL + scopedUrl, {
         method,
@@ -392,7 +446,10 @@ async function request<T>(
   if (!accepted) {
     const csrfRejected = response.status === 403 && isMutation(method) && payload === undefined;
     if (csrfRejected) {
-      resetCsrfToken();
+      // Invalidate only the credential rejected by this response. A concurrent request may
+      // already be refreshing or may have installed a newer token; aborting that shared work
+      // makes otherwise independent mutations fail with a transport error.
+      invalidateRejectedCsrfToken(requestCsrfToken);
       if (allowCsrfRetry && config.csrfReplay !== 'NEVER') {
         return request<T>(
           method,
@@ -403,7 +460,8 @@ async function request<T>(
           acceptedStatuses,
           false,
           unauthorizedRegistration,
-          accessFailureRegistration
+          accessFailureRegistration,
+          deadlineAt
         );
       }
     }
@@ -521,23 +579,46 @@ async function streamRequest<B>(
     : null,
   accessFailureRegistration = sessionEffect === 'authoritative'
     ? authorizationAccessFailureRegistration
-    : null
+    : null,
+  deadlineAt = config.timeoutMs ? Date.now() + config.timeoutMs : undefined
 ): Promise<void> {
+  if (deadlineAt !== undefined && deadlineAt <= Date.now()) {
+    throw new HttpTransportError('TIMEOUT');
+  }
   const headers = buildHeaders(body, { Accept: 'text/event-stream', ...config.headers });
   const scopedUrl = withContextScope(url, config.contextScopeKey);
-  if (isMutation(method)) {
-    const csrf = await loadCsrfToken();
-    headers[csrf.headerName] = csrf.token;
-  }
+  let requestCsrfToken: CsrfTokenData | undefined;
   const controller = new AbortController();
   const abortFromCaller = () => controller.abort(config.signal?.reason);
   if (config.signal?.aborted) abortFromCaller();
   else config.signal?.addEventListener('abort', abortFromCaller, { once: true });
-  const timeout = config.timeoutMs
-    ? globalThis.setTimeout(() => controller.abort('request-timeout'), config.timeoutMs)
-    : undefined;
+  let timedOut = false;
+  const timeout =
+    deadlineAt !== undefined
+      ? globalThis.setTimeout(
+          () => {
+            if (controller.signal.aborted) return;
+            timedOut = true;
+            controller.abort('request-timeout');
+          },
+          Math.max(0, deadlineAt - Date.now())
+        )
+      : undefined;
 
   try {
+    if (isMutation(method)) {
+      try {
+        const csrf = await waitForAbort(loadCsrfToken(), controller.signal);
+        requestCsrfToken = csrf;
+        headers[csrf.headerName] = csrf.token;
+      } catch (cause) {
+        if (cause instanceof HttpError || cause instanceof HttpTransportError) throw cause;
+        throw new HttpTransportError(
+          timedOut ? 'TIMEOUT' : controller.signal.aborted ? 'ABORT' : 'NETWORK',
+          cause
+        );
+      }
+    }
     const response = await fetch(API_URL + scopedUrl, {
       method,
       headers,
@@ -548,7 +629,7 @@ async function streamRequest<B>(
     if (!response.ok) {
       const payload = await parseBody(response);
       if (response.status === 403 && payload === undefined && allowCsrfRetry) {
-        resetCsrfToken();
+        invalidateRejectedCsrfToken(requestCsrfToken);
         return streamRequest(
           method,
           url,
@@ -557,7 +638,8 @@ async function streamRequest<B>(
           sessionEffect,
           false,
           unauthorizedRegistration,
-          accessFailureRegistration
+          accessFailureRegistration,
+          deadlineAt
         );
       }
       notifyUnauthorized(response.status, unauthorizedRegistration);
@@ -595,6 +677,11 @@ async function streamRequest<B>(
       if (done) break;
     }
     if (buffer.trim()) config.onMessage(parseEventFrame(buffer));
+  } catch (cause) {
+    if (cause instanceof HttpError || cause instanceof HttpTransportError) throw cause;
+    if (timedOut) throw new HttpTransportError('TIMEOUT', cause);
+    if (controller.signal.aborted) throw new HttpTransportError('ABORT', cause);
+    throw cause;
   } finally {
     if (timeout !== undefined) globalThis.clearTimeout(timeout);
     config.signal?.removeEventListener('abort', abortFromCaller);

@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 760" role="img" aria-labelledby="title description">
+  <title id="title">Gangnam shared office floor plan</title>
+  <description id="description">A verification floor plan with lockers, focus booths, shared desk areas, an east-west corridor, elevators, stairs, and a main entrance.</description>
+  <defs>
+    <pattern id="grid" width="30" height="30" patternUnits="userSpaceOnUse"><path d="M30 0H0V30" fill="none" stroke="#dfe7ef" stroke-width="1"/></pattern>
+    <style>.wall{fill:none;stroke:#52657a;stroke-width:7;stroke-linejoin:round}.partition{fill:#f8fafc;stroke:#9bacbd;stroke-width:3}.corridor{fill:#e8f1ff;stroke:#7ca9e8;stroke-width:2}.core{fill:#eef2f6;stroke:#75879b;stroke-width:3}.label{font:600 22px system-ui,sans-serif;fill:#405267}.small{font:600 18px system-ui,sans-serif;fill:#53677d}.desk{fill:#f1f5f9;stroke:#a7b6c5;stroke-width:2}.door{fill:none;stroke:#3f78c5;stroke-width:4}.route{fill:none;stroke:#9bbdec;stroke-width:7;stroke-dasharray:12 10;stroke-linecap:round}</style>
+  </defs>
+  <rect width="1200" height="760" fill="#fbfcfe"/>
+  <rect x="28" y="28" width="1144" height="704" rx="8" fill="url(#grid)" class="wall"/>
+  <rect x="58" y="60" width="250" height="118" rx="8" class="partition"/>
+  <rect x="330" y="60" width="470" height="118" rx="8" class="partition"/>
+  <rect x="822" y="60" width="312" height="118" rx="8" class="partition"/>
+  <text x="78" y="98" class="label">LOCKERS</text>
+  <text x="350" y="98" class="label">COMMUNITY TABLE</text>
+  <text x="842" y="98" class="label">FOCUS BOOTHS</text>
+  <rect x="58" y="200" width="516" height="192" rx="8" class="partition"/>
+  <rect x="592" y="200" width="542" height="192" rx="8" class="partition"/>
+  <text x="78" y="238" class="label">WINDOW WORK ZONE</text>
+  <text x="612" y="238" class="label">COLLABORATION ZONE</text>
+  <g class="desk"><rect x="86" y="268" width="78" height="46" rx="5"/><rect x="180" y="268" width="78" height="46" rx="5"/><rect x="274" y="268" width="78" height="46" rx="5"/><rect x="626" y="268" width="78" height="46" rx="5"/><rect x="720" y="268" width="78" height="46" rx="5"/><rect x="814" y="268" width="78" height="46" rx="5"/></g>
+  <rect x="58" y="414" width="1076" height="70" rx="12" class="corridor"/>
+  <text x="78" y="456" class="small">MAIN CORRIDOR</text>
+  <path d="M144 449H600H1056M696 449V593M864 449V593M1056 449L1104 684" class="route"/>
+  <rect x="58" y="506" width="516" height="198" rx="8" class="partition"/>
+  <rect x="592" y="506" width="246" height="198" rx="8" class="partition"/>
+  <rect x="930" y="506" width="204" height="132" rx="8" class="partition"/>
+  <text x="78" y="544" class="label">FLEX DESKS</text>
+  <rect x="656" y="564" width="86" height="88" rx="8" class="core"/>
+  <rect x="820" y="564" width="86" height="88" rx="8" class="core"/>
+  <path d="M674 608h50M699 583l25 25-25 25" class="door"/>
+  <path d="M838 630l18-18 18 18 18-18" class="door"/>
+  <text x="650" y="682" class="small">ELEVATOR</text>
+  <text x="826" y="682" class="small">STAIR</text>
+  <path d="M1078 732v-72h94" class="door"/>
+  <text x="1002" y="702" class="small">MAIN ENTRY</text>
+</svg>

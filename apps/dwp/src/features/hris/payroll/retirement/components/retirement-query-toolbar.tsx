@@ -1,6 +1,11 @@
 import { useEffect, useState } from 'react';
 import { Filter, RotateCcw } from 'lucide-react';
-import { ActionButton } from '@dwp-frontend/design-system';
+import {
+  ActionButton,
+  DatePickerField,
+  FormField,
+  InlineFeedback,
+} from '@dwp-frontend/design-system';
 
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
@@ -9,7 +14,6 @@ import InputLabel from '@mui/material/InputLabel';
 import Paper from '@mui/material/Paper';
 import Select from '@mui/material/Select';
 import Stack from '@mui/material/Stack';
-import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 
 import { PAY004_QUERY_CONTRACT } from '../retirement-contract';
@@ -127,7 +131,7 @@ export function RetirementQueryToolbar({
             minWidth={0}
           >
             <Box minWidth={0}>
-              <Typography component="h2" variant="subtitle1" fontWeight={750}>
+              <Typography component="h2" variant="subtitle1" fontWeight="fontWeightBold">
                 {copy.queryToolbarTitle}
               </Typography>
               <Typography
@@ -159,20 +163,20 @@ export function RetirementQueryToolbar({
             }}
           >
             <Box data-filter-key="retirementResult" minWidth={0}>
-              <TextField
+              <FormField
                 id="pay004-minimum-amount"
                 fullWidth
                 size="small"
                 label={copy.minimumAmountFilter}
                 value={draft.minimumAmount}
                 disabled={disabled}
-                error={invalid}
+                errorMessage={invalid ? copy.criteriaValidation : undefined}
                 inputProps={{ inputMode: 'decimal', maxLength: 24 }}
                 onChange={(event) => update({ minimumAmount: event.target.value })}
               />
             </Box>
             <Box data-filter-key="policyVersion" minWidth={0}>
-              <TextField
+              <FormField
                 id="pay004-policy-keys"
                 fullWidth
                 size="small"
@@ -180,13 +184,13 @@ export function RetirementQueryToolbar({
                 placeholder={copy.policyKeyPlaceholder}
                 value={draft.policyKeys}
                 disabled={disabled}
-                error={invalid}
+                errorMessage={invalid ? copy.criteriaValidation : undefined}
                 inputProps={{ maxLength: 512 }}
                 onChange={(event) => update({ policyKeys: event.target.value })}
               />
             </Box>
             <Box data-filter-key="caseStatus" minWidth={0}>
-              <TextField
+              <FormField
                 id="pay004-case-statuses"
                 fullWidth
                 size="small"
@@ -194,23 +198,21 @@ export function RetirementQueryToolbar({
                 placeholder={copy.caseStatusPlaceholder}
                 value={draft.caseStatuses}
                 disabled={disabled}
-                error={invalid}
+                errorMessage={invalid ? copy.criteriaValidation : undefined}
                 inputProps={{ maxLength: 512 }}
                 onChange={(event) => update({ caseStatuses: event.target.value })}
               />
             </Box>
             <Box data-filter-key="effectiveOn" minWidth={0}>
-              <TextField
+              <DatePickerField
                 id="pay004-effective-on"
                 fullWidth
                 size="small"
-                type="date"
                 label={copy.effectiveOnFilter}
-                value={draft.effectiveOn}
+                value={draft.effectiveOn || null}
                 disabled={disabled}
-                error={invalid}
-                InputLabelProps={{ shrink: true }}
-                onChange={(event) => update({ effectiveOn: event.target.value })}
+                errorMessage={invalid ? copy.criteriaValidation : undefined}
+                onValueChange={(value) => update({ effectiveOn: value ?? '' })}
               />
             </Box>
             <FormControl
@@ -241,16 +243,7 @@ export function RetirementQueryToolbar({
             </FormControl>
           </Box>
 
-          {invalid && (
-            <Typography
-              role="alert"
-              variant="body2"
-              color="error.main"
-              sx={{ overflowWrap: 'anywhere' }}
-            >
-              {copy.criteriaValidation}
-            </Typography>
-          )}
+          {invalid && <InlineFeedback severity="error">{copy.criteriaValidation}</InlineFeedback>}
           <Stack
             direction={{ xs: 'column', sm: 'row' }}
             gap={1}

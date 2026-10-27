@@ -21,7 +21,15 @@ import useMediaQuery from '@mui/material/useMediaQuery';
 import { useTheme } from '@mui/material/styles';
 
 import { HcmQueryState } from '../../../components/hcm-query-state';
-import { HrisOrganizationPositionsBranch } from '../../hris/people/organization-positions/organization-positions-explorer';
+import {
+  organizationManagementChartRequest,
+  organizationManagementQueryPlan,
+} from '../../../components/organization-management-query';
+import type { OrganizationExperience } from '../../../components/organization-management-query';
+export {
+  organizationManagementChartRequest,
+  organizationManagementQueryPlan,
+} from '../../../components/organization-management-query';
 import {
   appendProductPageShortcutScope,
   PRODUCT_PAGE_SHORTCUT_TARGETS,
@@ -75,7 +83,6 @@ import type {
   ReactFlowInstance,
 } from '@xyflow/react';
 import type { OrganizationScenario } from '@dwp-frontend/shared-utils';
-import type { HrisOrganizationPositionsQueryAdapter } from '../../hris/people/organization-positions/organization-positions-contract';
 
 function today(): string {
   const value = new Date();
@@ -89,67 +96,11 @@ function monthBefore(date: string): string {
   return value.toISOString().slice(0, 10);
 }
 
-export type OrganizationExperience = 'directory' | 'workforce';
-
-export function organizationManagementQueryPlan({
-  workforceView,
-  requestScopeReady,
-  workforceReadOnly,
-  insightsSelected,
-}: {
-  workforceView: boolean;
-  requestScopeReady: boolean;
-  workforceReadOnly: boolean;
-  insightsSelected: boolean;
-}) {
-  return Object.freeze({
-    chart: !workforceView || requestScopeReady,
-    scenarios: workforceView && requestScopeReady,
-    candidates: workforceView && !workforceReadOnly && requestScopeReady,
-    intelligence: workforceView && insightsSelected && requestScopeReady,
-  });
-}
-
-export function organizationManagementChartRequest({
-  experience,
-  asOf,
-  rootOrganizationId,
-  scenarioId,
-  contextScopeKey,
-  signal,
-}: {
-  experience: OrganizationExperience;
-  asOf: string;
-  rootOrganizationId?: string;
-  scenarioId?: string;
-  contextScopeKey?: string;
-  signal: AbortSignal;
-}) {
-  const workforceView = experience === 'workforce';
-  return {
-    asOf,
-    rootOrganizationId,
-    scenarioId: workforceView && scenarioId ? scenarioId : undefined,
-    depth: 10,
-    surface: experience,
-    view: workforceView ? ('design' as const) : undefined,
-    contextScopeKey: workforceView ? contextScopeKey : undefined,
-    signal,
-  };
-}
-
 export function OrganizationExplorer({
   experience = 'workforce',
-  hrisOrganizationPositionsAdapter,
-  now,
 }: {
   experience?: OrganizationExperience;
-  hrisOrganizationPositionsAdapter?: HrisOrganizationPositionsQueryAdapter;
-  now?: string;
 }) {
-  if (hrisOrganizationPositionsAdapter) {
-    return <HrisOrganizationPositionsBranch adapter={hrisOrganizationPositionsAdapter} now={now} />;
-  }
   return <ManagementOrganizationExplorer experience={experience} />;
 }
 

@@ -129,13 +129,13 @@ export function HrisTaskNavigation({
         py: 0.2,
         border: 1,
         borderColor: 'var(--dwp-product-accent-border)',
-        borderRadius: 99,
+        borderRadius: foundationTokens.radius.compact + 'px',
         bgcolor: 'background.paper',
         color: 'var(--dwp-product-accent)',
-        fontSize: '0.6875rem',
-        fontWeight: 760,
+        fontSize: 'overline.fontSize',
+        fontWeight: 'fontWeightBold',
         fontVariantNumeric: 'tabular-nums',
-        lineHeight: 1.45,
+        lineHeight: 'overline.lineHeight',
       }}
     >
       {t('navigation.taskPanel.taskCount', { count: authorizedTaskCount })}
@@ -202,7 +202,7 @@ export function HrisTaskNavigation({
                   placeItems: 'center',
                   border: 1,
                   borderColor: 'var(--dwp-product-accent-border)',
-                  borderRadius: `${foundationTokens.radius.surface}px`,
+                  borderRadius: foundationTokens.radius.surface + 'px',
                   bgcolor: 'background.paper',
                   color: 'var(--dwp-product-accent)',
                 }}
@@ -214,7 +214,7 @@ export function HrisTaskNavigation({
                   id={titleId}
                   component="h2"
                   variant="h5"
-                  fontWeight={820}
+                  fontWeight="fontWeightBold"
                   sx={{ minWidth: 0, overflowWrap: 'anywhere' }}
                 >
                   {workbenchPresentationLabel}
@@ -254,7 +254,7 @@ export function HrisTaskNavigation({
               mt: compact ? 1.25 : 1.5,
               '& .MuiOutlinedInput-root': {
                 minHeight: 42,
-                borderRadius: `${foundationTokens.radius.control}px`,
+                borderRadius: foundationTokens.radius.control + 'px',
                 bgcolor: 'background.paper',
                 '& fieldset': { borderColor: 'var(--dwp-product-accent-border)' },
                 '&:hover fieldset': { borderColor: 'var(--dwp-product-accent)' },
@@ -285,7 +285,7 @@ export function HrisTaskNavigation({
               : visuallyHidden
           }
         >
-          <Typography variant="caption" color="text.secondary" fontWeight={650}>
+          <Typography variant="caption" color="text.secondary" fontWeight="fontWeightMedium">
             {t('navigation.taskPanel.filteredCount', { count: filteredTaskCount })}
           </Typography>
         </Box>
@@ -340,7 +340,7 @@ export function HrisTaskNavigation({
                       p: 0.75,
                       border: 1,
                       borderColor: 'divider',
-                      borderRadius: `${foundationTokens.radius.surface}px`,
+                      borderRadius: foundationTokens.radius.surface + 'px',
                       bgcolor: 'action.hover',
                     }
               }
@@ -356,7 +356,7 @@ export function HrisTaskNavigation({
                   id={`${titleId}-${group.groupId}`}
                   component="h3"
                   variant="subtitle2"
-                  fontWeight={760}
+                  fontWeight="fontWeightBold"
                   sx={{ overflowWrap: 'anywhere' }}
                 >
                   {group.label[locale]}
@@ -413,25 +413,34 @@ export function HrisTaskNavigation({
                           borderRadius: foundationTokens.radius.control + 'px',
                           color: active ? 'var(--dwp-product-accent)' : 'text.primary',
                           bgcolor: active ? 'var(--dwp-product-selection)' : 'transparent',
-                          fontWeight: active ? 720 : 560,
+                          fontWeight: active ? 'fontWeightBold' : 'fontWeightMedium',
                           overflowWrap: 'anywhere',
                           textAlign: 'start',
-                          lineHeight: 1.35,
-                          transition: 'background-color 140ms ease, color 140ms ease',
+                          lineHeight: 'button.lineHeight',
+                          transition: (theme) =>
+                            theme.transitions.create(['background-color', 'color'], {
+                              duration: theme.transitions.duration.shortest,
+                            }),
                           '&::before': {
                             position: 'absolute',
                             left: 4,
                             width: 3,
                             height: active ? 18 : 0,
-                            borderRadius: 99,
+                            borderRadius: foundationTokens.radius.compact + 'px',
                             bgcolor: 'var(--dwp-product-accent)',
                             content: '""',
-                            transition: 'height 140ms ease',
+                            transition: (theme) =>
+                              theme.transitions.create('height', {
+                                duration: theme.transitions.duration.shortest,
+                              }),
                           },
                           '& .MuiButton-endIcon': {
                             ml: 'auto',
                             opacity: active ? 0.88 : 0.38,
-                            transition: 'opacity 140ms ease, transform 140ms ease',
+                            transition: (theme) =>
+                              theme.transitions.create(['opacity', 'transform'], {
+                                duration: theme.transitions.duration.shortest,
+                              }),
                           },
                           '&:hover': {
                             bgcolor: active
@@ -455,7 +464,10 @@ export function HrisTaskNavigation({
                                 outlineOffset: -2,
                               }
                             : undefined,
-                          '@media (prefers-reduced-motion: reduce)': { transition: 'none' },
+                          '@media (prefers-reduced-motion: reduce)': {
+                            transition: 'none',
+                            '&::before, & .MuiButton-endIcon': { transition: 'none' },
+                          },
                         }}
                       >
                         {node.label[locale]}
@@ -520,7 +532,12 @@ export function HrisTaskNavigation({
             }}
           >
             <Box component="span" sx={{ minWidth: 0 }}>
-              <Typography component="span" variant="body2" fontWeight={760} display="block">
+              <Typography
+                component="span"
+                variant="body2"
+                fontWeight="fontWeightBold"
+                display="block"
+              >
                 {t('navigation.taskPanel.explorerLabel')}
               </Typography>
               <Typography
@@ -568,7 +585,7 @@ function TaskPanelEmptyState({
       gap={0.75}
       sx={{ minHeight: 180, px: { xs: 2, sm: 2.5 }, py: 4, textAlign: 'center' }}
     >
-      <Typography component="h3" variant="subtitle1" fontWeight={760}>
+      <Typography component="h3" variant="subtitle1" fontWeight="fontWeightBold">
         {title}
       </Typography>
       <Typography variant="body2" color="text.secondary" sx={{ maxWidth: 360 }}>

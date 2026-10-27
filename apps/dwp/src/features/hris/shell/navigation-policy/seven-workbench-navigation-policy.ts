@@ -493,12 +493,6 @@ export function canonicalHrisWorkbench(workbenchId: string) {
   );
 }
 
-export function canonicalHrisTaskNode(nodeId: string) {
-  return HRIS_SEVEN_WORKBENCH_NAVIGATION_CATALOG.flatMap((workbench) => workbench.groups)
-    .flatMap((group) => group.nodes)
-    .find((node) => node.nodeId === nodeId);
-}
-
 export function hrisWorkbenchIdForView(view: string) {
   return HRIS_WORKBENCH_IDS.find((workbenchId) => HRIS_WORKBENCH_VIEW_BY_ID[workbenchId] === view);
 }

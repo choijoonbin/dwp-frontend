@@ -6,7 +6,7 @@ import {
   RefreshCw,
   ShieldCheck,
 } from 'lucide-react';
-import { ActionButton, InlineFeedback } from '@dwp-frontend/design-system';
+import { ActionButton, InlineFeedback, FormField, LoadingState } from '@dwp-frontend/design-system';
 
 import Box from '@mui/material/Box';
 import ButtonBase from '@mui/material/ButtonBase';
@@ -14,9 +14,7 @@ import Chip from '@mui/material/Chip';
 import Divider from '@mui/material/Divider';
 import MenuItem from '@mui/material/MenuItem';
 import Paper from '@mui/material/Paper';
-import Skeleton from '@mui/material/Skeleton';
 import Stack from '@mui/material/Stack';
-import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 
 import {
@@ -124,7 +122,13 @@ function StateNotice({
 function LoadingWorkspace() {
   return (
     <Stack gap={2} aria-label="Loading HRIS operations exceptions" aria-busy="true">
-      <Skeleton variant="rounded" height={112} />
+      <LoadingState
+        embedded
+        variant="skeleton"
+        label="Loading HRIS operations summary"
+        skeletonRows={1}
+        skeletonHeight={112}
+      />
       <Box
         sx={{
           display: 'grid',
@@ -133,8 +137,20 @@ function LoadingWorkspace() {
           minWidth: 0,
         }}
       >
-        <Skeleton variant="rounded" height={340} />
-        <Skeleton variant="rounded" height={340} />
+        <LoadingState
+          embedded
+          variant="skeleton"
+          label="Loading HRIS operations workspace"
+          skeletonRows={1}
+          skeletonHeight={340}
+        />
+        <LoadingState
+          embedded
+          variant="skeleton"
+          label="Loading HRIS operations workspace"
+          skeletonRows={1}
+          skeletonHeight={340}
+        />
       </Box>
     </Stack>
   );
@@ -177,7 +193,7 @@ function SummaryPanel({ entry }: Readonly<{ entry: HrisOperationsEntry }>) {
           gap={1}
         >
           <Box minWidth={0}>
-            <Typography component="h2" variant="subtitle1" fontWeight={760}>
+            <Typography component="h2" variant="subtitle1" fontWeight="fontWeightBold">
               Customer and process impact
             </Typography>
             <Typography variant="body2" color="text.secondary" sx={{ overflowWrap: 'anywhere' }}>
@@ -218,7 +234,7 @@ function SummaryPanel({ entry }: Readonly<{ entry: HrisOperationsEntry }>) {
         >
           {metrics.map(([label, value]) => (
             <Box key={label} sx={{ minWidth: 0 }}>
-              <Typography variant="h6" fontWeight={760}>
+              <Typography variant="h6" fontWeight="fontWeightBold">
                 {value}
               </Typography>
               <Typography
@@ -245,7 +261,8 @@ function Filters({
 }>) {
   return (
     <Stack direction={{ xs: 'column', sm: 'row' }} gap={1} minWidth={0}>
-      <TextField
+      <FormField
+        fullWidth={false}
         select
         size="small"
         label="Owner module"
@@ -264,8 +281,9 @@ function Filters({
             {module}
           </MenuItem>
         ))}
-      </TextField>
-      <TextField
+      </FormField>
+      <FormField
+        fullWidth={false}
         select
         size="small"
         label="Severity"
@@ -284,8 +302,9 @@ function Filters({
             {severity}
           </MenuItem>
         ))}
-      </TextField>
-      <TextField
+      </FormField>
+      <FormField
+        fullWidth={false}
         select
         size="small"
         label="Owner state"
@@ -304,7 +323,7 @@ function Filters({
             {state}
           </MenuItem>
         ))}
-      </TextField>
+      </FormField>
     </Stack>
   );
 }
@@ -332,7 +351,7 @@ function ExceptionList({
     <Paper component="section" variant="outlined" sx={{ minWidth: 0, overflow: 'hidden' }}>
       <Stack gap={0} minWidth={0}>
         <Box sx={{ p: 1.5 }}>
-          <Typography component="h2" variant="subtitle1" fontWeight={760}>
+          <Typography component="h2" variant="subtitle1" fontWeight="fontWeightBold">
             Authorized exceptions
           </Typography>
           <Typography variant="caption" color="text.secondary">
@@ -389,7 +408,7 @@ function ExceptionList({
                       </Stack>
                       <Typography
                         variant="body2"
-                        fontWeight={720}
+                        fontWeight="fontWeightBold"
                         sx={{ overflowWrap: 'anywhere' }}
                       >
                         {hrisOperationSummary(item)}
@@ -445,7 +464,16 @@ function ReceiptPanel({
   denied: boolean;
   unavailable: boolean;
 }>) {
-  if (loading) return <Skeleton variant="rounded" height={92} />;
+  if (loading)
+    return (
+      <LoadingState
+        embedded
+        variant="skeleton"
+        label="Loading existing command receipt"
+        skeletonRows={1}
+        skeletonHeight={92}
+      />
+    );
   if (denied) {
     return (
       <InlineFeedback severity="error" title="Receipt is not available">
@@ -466,7 +494,7 @@ function ReceiptPanel({
     <Paper variant="outlined" sx={{ p: 1.5, minWidth: 0 }} data-testid="hris-operations-receipt">
       <Stack gap={0.5} minWidth={0}>
         <Typography variant="overline">Existing command receipt · {receipt.profile}</Typography>
-        <Typography variant="body2" fontWeight={720} sx={{ overflowWrap: 'anywhere' }}>
+        <Typography variant="body2" fontWeight="fontWeightBold" sx={{ overflowWrap: 'anywhere' }}>
           {receipt.receipt.commandType}
         </Typography>
         <Typography variant="caption" color="text.secondary" sx={{ overflowWrap: 'anywhere' }}>
@@ -508,7 +536,7 @@ function ExceptionDetail({
       <Stack gap={1.5} minWidth={0}>
         <Stack direction="row" gap={1} alignItems="center">
           <FileSearch size={18} aria-hidden="true" />
-          <Typography component="h2" variant="subtitle1" fontWeight={760}>
+          <Typography component="h2" variant="subtitle1" fontWeight="fontWeightBold">
             Redacted exception detail
           </Typography>
         </Stack>
@@ -519,8 +547,13 @@ function ExceptionDetail({
           </Typography>
         ) : loading ? (
           <Stack gap={1} aria-label="Loading redacted exception detail" aria-busy="true">
-            <Skeleton variant="rounded" height={42} />
-            <Skeleton variant="rounded" height={120} />
+            <LoadingState
+              embedded
+              variant="skeleton"
+              label="Loading redacted exception detail"
+              skeletonHeights={[42, 120]}
+              skeletonGap={1}
+            />
           </Stack>
         ) : denied ? (
           <InlineFeedback severity="error" title="Exception detail is not available">

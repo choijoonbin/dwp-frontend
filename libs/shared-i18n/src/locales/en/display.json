@@ -386,7 +386,18 @@
     "SIGNED_CERTIFICATE": "Signed certificate issued",
     "SKIP_QUARANTINED_AND_CONTINUE": "Skipped quarantined items and continued",
     "SUBMIT": "Submitted",
-    "UPDATE": "Updated"
+    "UPDATE": "Updated",
+    "COMMAND": "Command",
+    "CREATE_DRAFT": "Create draft",
+    "SAVE_DRAFT": "Save draft",
+    "VALIDATE": "Validate",
+    "RESTORE": "Restore",
+    "HIRE": "Hire",
+    "CONCURRENT_EMPLOYMENT": "Concurrent employment",
+    "IN": "Clock in",
+    "OUT": "Clock out",
+    "BREAK_START": "Start break",
+    "BREAK_END": "End break"
   },
   "sourceTypes": {
     "CALENDAR": "Calendar",
@@ -554,7 +565,8 @@
     "WP_DELEGATION": "Workplace administration delegation",
     "APPROVAL_TASK": "Approval task",
     "OUTBOX_EVENT": "Outbox event",
-    "POLICY": "Policy"
+    "POLICY": "Policy",
+    "PAYROLL_FORMULA": "Payroll formula"
   },
   "relationTypes": {
     "CONSUMES": "Consumes",

@@ -1,5 +1,5 @@
 import { formatDate, resolveSupportedLocale } from '@dwp-frontend/shared-i18n';
-import { DetailInspector } from '@dwp-frontend/design-system';
+import { DetailInspector, foundationTokens } from '@dwp-frontend/design-system';
 
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
@@ -30,7 +30,7 @@ function DetailValue({ label, value }: Readonly<{ label: string; value: string }
       <Typography
         component="dd"
         variant="body2"
-        fontWeight={650}
+        fontWeight={foundationTokens.home.typography.weightSemibold}
         sx={{ m: 0, mt: 0.25, overflowWrap: 'anywhere' }}
       >
         {value}
@@ -106,7 +106,7 @@ function FieldDecisionCard({
 }>) {
   return (
     <Paper component="section" variant="outlined" sx={{ p: 1.5, minWidth: 0 }}>
-      <Typography component="h3" variant="subtitle2" fontWeight={750}>
+      <Typography component="h3" variant="subtitle2" fontWeight={foundationTokens.home.typography.weightEmphasis}>
         {copy.fieldLabels[group]}
       </Typography>
       <Divider sx={{ my: 1 }} />

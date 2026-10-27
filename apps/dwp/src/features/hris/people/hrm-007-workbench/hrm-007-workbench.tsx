@@ -9,6 +9,7 @@ import {
   GuidedEmptyState,
   InlineFeedback,
   LocalErrorState,
+  foundationTokens,
 } from '@dwp-frontend/design-system';
 
 import Box from '@mui/material/Box';
@@ -146,7 +147,7 @@ function FieldDecisionView({
       <Typography
         component="dd"
         variant="body2"
-        fontWeight={600}
+        fontWeight="subtitle2.fontWeight"
         sx={{ m: 0, mt: 0.25, overflowWrap: 'anywhere' }}
       >
         {value}
@@ -185,7 +186,7 @@ function WorkbenchList({
                   p: 1.25,
                   border: 1,
                   borderColor: active ? 'primary.main' : 'divider',
-                  borderRadius: 1.5,
+                  borderRadius: foundationTokens.radius.control + 'px',
                   bgcolor: active ? 'action.selected' : 'background.paper',
                   color: 'text.primary',
                   textAlign: 'left',
@@ -195,7 +196,12 @@ function WorkbenchList({
                   '&:focus-visible': { outline: '2px solid', outlineOffset: 2 },
                 }}
               >
-                <Typography component="span" variant="body2" fontWeight={700} display="block">
+                <Typography
+                  component="span"
+                  variant="body2"
+                  fontWeight="fontWeightBold"
+                  display="block"
+                >
                   {item.title}
                 </Typography>
                 <Typography

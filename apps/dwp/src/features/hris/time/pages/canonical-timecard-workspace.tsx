@@ -218,7 +218,7 @@ export function CanonicalTimecardWorkspace({
             scrollBehavior: 'auto !important',
             transitionDuration: '0s !important',
             animationDuration: '0s !important',
-            animationIterationCount: '1 !important',
+            animation: 'none !important',
           },
         },
       }}

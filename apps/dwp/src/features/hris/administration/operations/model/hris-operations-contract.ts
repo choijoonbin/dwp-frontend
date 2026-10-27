@@ -747,20 +747,20 @@ export function parseHrisOperationsQueryState(search: URLSearchParams): HrisOper
   const rawSeverity = search.get('severity');
   const rawState = search.get('state');
   return Object.freeze({
-    tab: 'overview',
-    focus: rawFocus && UUID.test(rawFocus) ? rawFocus : null,
+    tab: EMPTY_HRIS_OPERATIONS_QUERY_STATE.tab,
+    focus: rawFocus && UUID.test(rawFocus) ? rawFocus : EMPTY_HRIS_OPERATIONS_QUERY_STATE.focus,
     ownerModule:
       rawModule && HRIS_OPERATION_MODULES.includes(rawModule as HrisOperationModule)
         ? (rawModule as HrisOperationModule)
-        : 'ALL',
+        : EMPTY_HRIS_OPERATIONS_QUERY_STATE.ownerModule,
     severity:
       rawSeverity && HRIS_OPERATION_SEVERITIES.includes(rawSeverity as HrisOperationSeverity)
         ? (rawSeverity as HrisOperationSeverity)
-        : 'ALL',
+        : EMPTY_HRIS_OPERATIONS_QUERY_STATE.severity,
     state:
       rawState && HRIS_OPERATION_PUBLIC_STATES.includes(rawState as HrisOperationPublicState)
         ? (rawState as HrisOperationPublicState)
-        : 'ALL',
+        : EMPTY_HRIS_OPERATIONS_QUERY_STATE.state,
   });
 }
 
@@ -775,7 +775,7 @@ export function mergeHrisOperationsQueryState(
   const severity = patch.severity === undefined ? currentState.severity : patch.severity;
   const state = patch.state === undefined ? currentState.state : patch.state;
   const next = new URLSearchParams();
-  next.set('tab', 'overview');
+  next.set('tab', EMPTY_HRIS_OPERATIONS_QUERY_STATE.tab);
   const values = [
     ['focus', focus],
     ['owner', ownerModule],

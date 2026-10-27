@@ -38,7 +38,8 @@ export function MessagingSearchPalette({
     queryKey: ['messaging', 'search', debouncedQuery],
     queryFn: () => searchMessaging({ query: debouncedQuery, limit: 30 }),
     enabled: open && debouncedQuery.length >= 2,
-    staleTime: 15_000,
+    staleTime: 10_000,
+    refetchInterval: 15_000,
     retry: 1,
   });
   const directMutation = useMutation({

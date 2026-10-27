@@ -1,6 +1,8 @@
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 
+import { organizationManagementChartRequest } from '../../components/organization-management-query';
+
 function source(relativePath: string): string {
   return readFileSync(new URL(relativePath, import.meta.url), 'utf8');
 }
@@ -17,7 +19,13 @@ describe('HCM query discriminator source contract', () => {
   it('uses candidates and design view only in organization design', () => {
     const organizationDesign = source('../people/organization/organization-chart-manager.tsx');
     expect(organizationDesign).toContain('listWorkforceOrganizationCandidates');
-    expect(organizationDesign).toContain("view: workforceView ? 'design' : undefined");
+    const options = { asOf: '2026-10-27', signal: new AbortController().signal };
+    expect(organizationManagementChartRequest({ ...options, experience: 'workforce' }).view).toBe(
+      'design'
+    );
+    expect(
+      organizationManagementChartRequest({ ...options, experience: 'directory' }).view
+    ).toBeUndefined();
   });
 
   it('pins assignment, directory, and HCM service discriminators in their callers', () => {

@@ -10878,6 +10878,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/messaging/v1/presence/heartbeat": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put: operations["messaging_heartbeat"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/messaging/v1/privacy-preferences": {
         parameters: {
             query?: never;
@@ -12120,6 +12136,134 @@ export interface paths {
         get?: never;
         put?: never;
         post: operations["payroll_finalizePayrollRun"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/payroll/v1/settings/payroll/foundation/configurations": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["payroll_settingsPayrollFoundationConfigurations"];
+        put?: never;
+        post: operations["payroll_settingsPayrollFoundationCreateConfiguration"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/payroll/v1/settings/payroll/foundation/configurations/{configurationId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["payroll_settingsPayrollFoundationConfiguration"];
+        put: operations["payroll_settingsPayrollFoundationUpdateConfiguration"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/payroll/v1/settings/payroll/foundation/configurations/{configurationId}/publish": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["payroll_settingsPayrollFoundationPublishConfiguration"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/payroll/v1/settings/payroll/foundation/configurations/{configurationId}/reversals": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["payroll_settingsPayrollFoundationReverseConfiguration"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/payroll/v1/settings/payroll/foundation/configurations/{configurationId}/simulations": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["payroll_settingsPayrollFoundationSimulateConfiguration"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/payroll/v1/settings/payroll/foundation/configurations/{configurationId}/versions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["payroll_settingsPayrollFoundationConfigurationVersions"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/payroll/v1/settings/payroll/foundation/receipts/{commandId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["payroll_settingsPayrollFoundationCommandReceipt"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/payroll/v1/settings/payroll/foundation/receipts/{commandId}/reconcile": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["payroll_settingsPayrollFoundationReconcileCommand"];
         delete?: never;
         options?: never;
         head?: never;
@@ -15272,6 +15416,22 @@ export interface paths {
         get?: never;
         put?: never;
         post: operations["platform_hrisReferenceConfigurationValidateVersion"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/admin/hris/file-transfers": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["platform_getControlledFileTransfers"];
+        put?: never;
+        post: operations["platform_requestControlledFileTransfer"];
         delete?: never;
         options?: never;
         head?: never;
@@ -27845,6 +28005,70 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/time/v1/close-periods/{periodId}/close": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["time_hrisTimeClosePeriod"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/time/v1/close-periods/{periodId}/payroll-handoffs": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["time_hrisTimeCreatePayrollHandoff"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/time/v1/close-periods/{periodId}/reopen": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["time_hrisTimeReopenPeriod"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/time/v1/close-periods/{periodId}/validations": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["time_hrisTimeValidateClosePeriod"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/time/v1/command-receipts/{receiptId}": {
         parameters: {
             query?: never;
@@ -27957,6 +28181,38 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/time/v1/hris/workbench/time-command-center": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["time_hrisTimeCommandCenter"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/time/v1/hris/workbench/time-daily-close": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["time_hrisTimeDailyClose"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/time/v1/hris/workbench/time-exceptions": {
         parameters: {
             query?: never;
@@ -27989,6 +28245,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/time/v1/hris/workbench/time-monthly-close": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["time_hrisTimeMonthlyClose"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/time/v1/interpretation-runs": {
         parameters: {
             query?: never;
@@ -28013,6 +28285,22 @@ export interface paths {
             cookie?: never;
         };
         get: operations["time_hrisTimeInterpretationTrace"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/time/v1/payroll-handoffs/{handoffId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["time_hrisTimeGetPayrollHandoff"];
         put?: never;
         post?: never;
         delete?: never;
@@ -49123,6 +49411,7 @@ export interface components {
             generatedAt?: string;
             metrics?: components["schemas"]["messaging_HomeMetrics"];
             people?: components["schemas"]["messaging_PersonSummary"][];
+            presence?: components["schemas"]["messaging_PresenceMetadata"];
             priority?: components["schemas"]["messaging_ConversationSummary"][];
             spaces?: components["schemas"]["messaging_ConversationSummary"][];
         };
@@ -49254,6 +49543,15 @@ export interface components {
             presenceState?: string;
             /** Format: int64 */
             userId?: number;
+        };
+        messaging_PresenceMetadata: {
+            authority?: string;
+            /** Format: date-time */
+            evaluatedAt?: string;
+            /** Format: int64 */
+            leaseTtlSeconds?: number;
+            /** Format: int64 */
+            refreshAfterSeconds?: number;
         };
         messaging_PrivacyPreference: {
             readReceiptsEnabled?: boolean;
@@ -61623,7 +61921,7 @@ export interface components {
             lastVerifiedAt?: string;
             provider?: string;
             /** @enum {string} */
-            status?: "NOT_CONFIGURED" | "DISABLED" | "CONFIGURED_UNVERIFIED";
+            status?: "NOT_CONFIGURED" | "DISABLED" | "CONFIGURED_UNVERIFIED" | "HEALTHY" | "DEGRADED" | "STALE";
             /** Format: int64 */
             version?: number;
         };
@@ -61769,6 +62067,81 @@ export interface components {
             phoneNumber?: string;
             /** Format: int64 */
             version: number;
+        };
+        platform_ControlledTransferCatalogItemV1: {
+            key: string;
+            publicId: components["schemas"]["platform_Uuid"];
+            state: string;
+            type: string;
+            updatedAt: components["schemas"]["platform_Instant"];
+            version: number;
+        };
+        platform_ControlledTransferCatalogQueryV1: {
+            asOf: components["schemas"]["platform_Instant"];
+            cursor?: components["schemas"]["platform_Cursor"];
+            fields: string[];
+            filter?: string;
+            /** @enum {string} */
+            freshness: "FRESH_ONLY" | "ALLOW_STALE";
+            limit?: number;
+        };
+        platform_ControlledTransferCatalogV1: {
+            asOf: components["schemas"]["platform_Instant"];
+            freshUntil: components["schemas"]["platform_Instant"];
+            items: components["schemas"]["platform_ControlledTransferCatalogItemV1"][];
+            nextCursor?: components["schemas"]["platform_Cursor"];
+            staleAfter: components["schemas"]["platform_Instant"];
+        };
+        platform_ControlledTransferCreateCommandV1: {
+            byteSize: number;
+            /** @enum {string} */
+            classification: "CONFIDENTIAL" | "RESTRICTED";
+            egressPolicyRevision?: number;
+            expiresAt: components["schemas"]["platform_Instant"];
+            malwareScanSnapshot: components["schemas"]["platform_ControlledTransferMalwareScanV1"];
+            /** @enum {string} */
+            mediaType: "text/csv" | "application/json" | "application/pdf" | "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+            objectDigest: components["schemas"]["platform_Digest"];
+            objectRef: string;
+            objectVersion: string;
+            /** @enum {string} */
+            ownerModule: "HRM" | "PER" | "TIM" | "PAY" | "SYS";
+            /** @constant */
+            purposeCode: "HRIS_INTEGRATION_ADMIN";
+            recipientPolicyRef?: components["schemas"]["platform_Uuid"];
+            toctouBinding: components["schemas"]["platform_ControlledTransferToctouBindingV1"];
+            /** @enum {string} */
+            transferKind: "INGEST" | "EXPORT" | "DELIVERY" | "EXCHANGE";
+        };
+        platform_ControlledTransferMalwareScanV1: {
+            byteSize: number;
+            objectDigest: components["schemas"]["platform_Digest"];
+            scannedAt: components["schemas"]["platform_Instant"];
+            scannerKey: string;
+            scannerVersion: string;
+            /** @constant */
+            verdict: "CLEAN";
+        };
+        platform_ControlledTransferProblemV1: {
+            /** @enum {string} */
+            code: "SCHEMA_INVALID" | "AUTHENTICATION_REQUIRED" | "AUTHORIZATION_DENIED" | "TARGET_NOT_DISCLOSED" | "STALE_OR_STATE_CONFLICT" | "DOMAIN_RULE_REJECTED" | "RATE_LIMITED" | "RESULT_UNKNOWN";
+            correlationId: components["schemas"]["platform_Uuid"];
+            currentVersion?: number;
+            receiptId?: components["schemas"]["platform_Uuid"];
+            retryable: boolean;
+            /** @enum {integer} */
+            status: 400 | 401 | 403 | 404 | 409 | 422 | 429 | 503;
+            title: string;
+            /** Format: uri-reference */
+            type: string;
+        };
+        platform_ControlledTransferToctouBindingV1: {
+            boundByteSize: number;
+            boundDigest: components["schemas"]["platform_Digest"];
+            boundObjectVersion: string;
+            snapshotDigest: components["schemas"]["platform_Digest"];
+            storageETag: string;
+            uploadSessionId: components["schemas"]["platform_Uuid"];
         };
         platform_Correlation: {
             attentionRequired?: boolean;
@@ -67606,9 +67979,17 @@ export interface components {
             /** Format: uuid */
             floorId?: string;
             /** Format: uuid */
+            fromFloorId?: string;
+            /** Format: uuid */
             fromNodeId?: string;
+            fromPositionX?: number;
+            fromPositionY?: number;
+            /** Format: uuid */
+            toFloorId?: string;
             /** Format: uuid */
             toNodeId?: string;
+            toPositionX?: number;
+            toPositionY?: number;
             /** @enum {string} */
             travelMode?: "WALK" | "STAIR" | "ELEVATOR" | "RAMP";
             /** Format: int32 */
@@ -75340,6 +75721,25 @@ export interface components {
             /** Format: int32 */
             viewCount?: number;
         };
+        time_HrisTimeProblemV1: {
+            /** @enum {string} */
+            code: "SCHEMA_INVALID" | "AUTHENTICATION_REQUIRED" | "AUTHORIZATION_DENIED" | "TARGET_NOT_DISCLOSED" | "STALE_OR_STATE_CONFLICT" | "PRECONDITION_FAILED" | "DOMAIN_RULE_REJECTED" | "PRECONDITION_REQUIRED" | "RATE_LIMITED" | "AUTHORITY_UNAVAILABLE";
+            /** Format: uuid */
+            correlationId: string;
+            currentVersion?: number;
+            fieldErrors?: {
+                code: string;
+                field: string;
+            }[];
+            /** Format: uuid */
+            receiptId?: string;
+            retryable: boolean;
+            /** @enum {integer} */
+            status: 400 | 401 | 403 | 404 | 409 | 412 | 422 | 428 | 429 | 503;
+            title: string;
+            /** Format: uri */
+            type: string;
+        };
         time_InterpretCommand: {
             /** Format: date-time */
             asOf: string;
@@ -75417,6 +75817,46 @@ export interface components {
             errorCode?: string;
             retryable?: boolean;
         };
+        time_PayrollTimeHandoffCommandV1: {
+            /** Format: uuid */
+            closedTimeResultId: string;
+            /** Format: uuid */
+            payPeriodId: string;
+            /** Format: uuid */
+            payrollEntityId: string;
+        };
+        time_PayrollTimeHandoffStatusV1: {
+            /** Format: uuid */
+            closePeriodId: string;
+            closeRevision: number;
+            /** Format: uuid */
+            closedTimeResultId: string;
+            /** Format: date-time */
+            createdAt: string;
+            /** Format: uuid */
+            handoffId: string;
+            lineCount: number;
+            /** Format: date-time */
+            outcomeAt: string | null;
+            /** Format: uuid */
+            payPeriodId: string;
+            payloadDigest: string;
+            /** Format: uuid */
+            payrollEntityId: string;
+            reasonCode: string | null;
+            receiverReceiptDigest: string | null;
+            /** Format: uuid */
+            receiverReceiptId: string | null;
+            receiverReceiptRevision: number | null;
+            ruleDigest: string;
+            sourceDigest: string;
+            /** @enum {string} */
+            status: "PENDING" | "ACKNOWLEDGED" | "REJECTED" | "RESULT_UNKNOWN";
+            /** Format: date-time */
+            updatedAt: string;
+            version: number;
+            workerCount: number;
+        } & (unknown & unknown & unknown & unknown);
         time_PolicyPackView: {
             /** Format: date */
             effectiveOn?: string;
@@ -75591,6 +76031,236 @@ export interface components {
             /** Format: int32 */
             schemaVersion?: number;
         };
+        time_TimIaqAggregateFilterV1: {
+            maximumItemCount?: number | null;
+            minimumItemCount?: number | null;
+        };
+        time_TimIaqAggregateValueV1: {
+            /** Format: date-time */
+            asOf: string;
+            itemCount: number;
+            revision: number;
+        };
+        time_TimIaqEffectiveRangeFilterV1: {
+            activeOn?: string | null;
+            from?: string | null;
+            to?: string | null;
+        };
+        time_TimIaqEffectiveRangeValueV1: {
+            /** Format: date */
+            effectiveFrom: string;
+            effectiveTo: string | null;
+            revision: number;
+        };
+        time_TimIaqReceiptFilterV1: {
+            receiptIds?: string[];
+            states?: string[];
+        };
+        time_TimIaqReceiptValueV1: {
+            /** Format: date-time */
+            occurredAt: string;
+            /** Format: uuid */
+            receiptId: string;
+            revision: number;
+            state: string;
+        };
+        time_TimIaqStatusFilterV1: {
+            codes?: string[];
+            minimumRevision?: number | null;
+        };
+        time_TimIaqStatusValueV1: {
+            code: string;
+            revision: number;
+        };
+        time_TimeCloseCommandReceiptV1: {
+            aggregateVersion?: number;
+            authorizationRevision: number;
+            /** @enum {string} */
+            commandType: "PERIOD_VALIDATE" | "PERIOD_CLOSE" | "PERIOD_REOPEN" | "PAYROLL_HANDOFF";
+            /** Format: uuid */
+            correlationId: string;
+            /** Format: date-time */
+            createdAt: string;
+            fieldPolicyRevision: number;
+            /** @enum {string} */
+            originatingAction: "TIME_PERIOD_VALIDATE" | "TIME_PERIOD_CLOSE" | "TIME_PERIOD_REOPEN" | "TIME_PAYROLL_HANDOFF";
+            populationScopeDigest: string;
+            /** @enum {string} */
+            purposeCode: "WORK_TIME_PERIOD_CLOSURE" | "CLOSED_TIME_PAYROLL_TRANSFER";
+            /** Format: uuid */
+            receiptId: string;
+            requestDigest: string;
+            resultRef?: string;
+            /** @enum {string} */
+            status: "ACCEPTED" | "RUNNING" | "SUCCEEDED" | "REJECTED" | "FAILED" | "RESULT_UNKNOWN";
+            /** Format: uuid */
+            subjectPrincipalPublicId: string;
+        } & (unknown & unknown & unknown & unknown);
+        time_TimeCloseCommandV1: {
+            /** Format: uuid */
+            approvalReceiptId: string;
+            /** Format: date-time */
+            asOf: string;
+        };
+        time_TimeCloseValidationCommandV1: {
+            /** Format: date-time */
+            asOf: string;
+        };
+        time_TimeCommandCenterFilterV1: {
+            commandReceipt?: components["schemas"]["time_TimIaqReceiptFilterV1"] | null;
+            effectiveOn?: string | null;
+            exceptionSummary?: components["schemas"]["time_TimIaqAggregateFilterV1"] | null;
+            timePeriod?: components["schemas"]["time_TimIaqEffectiveRangeFilterV1"] | null;
+        };
+        time_TimeCommandCenterProjectionV1: {
+            /** Format: date-time */
+            asOf: string;
+            items: {
+                availableActions: ({
+                    /** @constant */
+                    actionKey: "hris.action.tim.timecard.correct";
+                    /** @constant */
+                    hrefTemplate: "/api/time/v1/timecards/{timecardId}/corrections";
+                    /** @constant */
+                    idempotencyPolicy: "REQUIRED_IDEMPOTENCY_KEY";
+                    /** @constant */
+                    method: "POST";
+                    /** @constant */
+                    stepUpPolicy: "OWNER_PEP_RISK_POLICY_DECISION_REQUIRED";
+                } | {
+                    /** @constant */
+                    actionKey: "hris.action.tim.timecard.decide";
+                    /** @constant */
+                    hrefTemplate: "/api/time/v1/timecards/{timecardId}/decisions";
+                    /** @constant */
+                    idempotencyPolicy: "REQUIRED_IDEMPOTENCY_KEY";
+                    /** @constant */
+                    method: "POST";
+                    /** @constant */
+                    stepUpPolicy: "OWNER_PEP_RISK_POLICY_DECISION_REQUIRED";
+                } | {
+                    /** @constant */
+                    actionKey: "hris.action.tim.close.validate";
+                    /** @constant */
+                    hrefTemplate: "/api/time/v1/close-periods/{periodId}/validations";
+                    /** @constant */
+                    idempotencyPolicy: "REQUIRED_IDEMPOTENCY_KEY";
+                    /** @constant */
+                    method: "POST";
+                    /** @constant */
+                    stepUpPolicy: "OWNER_PEP_RISK_POLICY_DECISION_REQUIRED";
+                } | {
+                    /** @constant */
+                    actionKey: "hris.action.tim.close.close";
+                    /** @constant */
+                    hrefTemplate: "/api/time/v1/close-periods/{periodId}/close";
+                    /** @constant */
+                    idempotencyPolicy: "REQUIRED_IDEMPOTENCY_KEY";
+                    /** @constant */
+                    method: "POST";
+                    /** @constant */
+                    stepUpPolicy: "OWNER_PEP_RISK_POLICY_DECISION_REQUIRED";
+                } | {
+                    /** @constant */
+                    actionKey: "hris.action.tim.close.reopen";
+                    /** @constant */
+                    hrefTemplate: "/api/time/v1/close-periods/{periodId}/reopen";
+                    /** @constant */
+                    idempotencyPolicy: "REQUIRED_IDEMPOTENCY_KEY";
+                    /** @constant */
+                    method: "POST";
+                    /** @constant */
+                    stepUpPolicy: "OWNER_PEP_RISK_POLICY_DECISION_REQUIRED";
+                } | {
+                    /** @constant */
+                    actionKey: "hris.action.tim.handoff.create";
+                    /** @constant */
+                    hrefTemplate: "/api/time/v1/close-periods/{periodId}/payroll-handoffs";
+                    /** @constant */
+                    idempotencyPolicy: "REQUIRED_IDEMPOTENCY_KEY";
+                    /** @constant */
+                    method: "POST";
+                    /** @constant */
+                    stepUpPolicy: "OWNER_PEP_RISK_POLICY_DECISION_REQUIRED";
+                })[];
+                deepLink: {
+                    resourcePublicId: string;
+                    /** @constant */
+                    route: "/hr/operations/time/command-center";
+                };
+                fieldGroups: {
+                    COMMAND_RECEIPT?: {
+                        /** @constant */
+                        decision: "VIEW";
+                        value: components["schemas"]["time_TimIaqReceiptValueV1"];
+                    } | {
+                        /** @constant */
+                        decision: "MASK";
+                        maskReason: string;
+                        maskedDisplayKey: string;
+                        value: null;
+                    };
+                    EXCEPTION_SUMMARY?: {
+                        /** @constant */
+                        decision: "VIEW";
+                        value: components["schemas"]["time_TimIaqAggregateValueV1"];
+                    } | {
+                        /** @constant */
+                        decision: "MASK";
+                        maskReason: string;
+                        maskedDisplayKey: string;
+                        value: null;
+                    };
+                    TIME_PERIOD?: {
+                        /** @constant */
+                        decision: "VIEW";
+                        value: components["schemas"]["time_TimIaqEffectiveRangeValueV1"];
+                    } | {
+                        /** @constant */
+                        decision: "MASK";
+                        maskReason: string;
+                        maskedDisplayKey: string;
+                        value: null;
+                    };
+                };
+                itemPublicId: string;
+                statusCode: string;
+                title: string;
+            }[];
+            /** @constant */
+            projectionVersion: "1";
+            queryState: {
+                cachePolicy: {
+                    authorizationDecisionRevision: string;
+                    /** @constant */
+                    invalidationEvent: "dwp.hris.access.assignment.changed.v1";
+                    maxAgeSeconds: number;
+                };
+                /** Format: uuid */
+                correlationId: string;
+                fieldDecisionSummary: {
+                    maskedCount: number;
+                    omittedCount: number;
+                    viewCount: number;
+                };
+                /** @enum {string} */
+                freshness: "CURRENT" | "STALE" | "UNAVAILABLE";
+                nextCursor: string | null;
+                partialFailures: {
+                    componentKey: string;
+                    /** Format: uuid */
+                    correlationId: string;
+                    errorCode: string;
+                    retryable: boolean;
+                }[];
+                scopeDecisionRevision: string;
+                /** @enum {string} */
+                state: "COMPLETE" | "EMPTY" | "PARTIAL" | "UNAVAILABLE";
+            };
+            /** @constant */
+            variantKey: "COMMAND_CENTER";
+        } & (unknown & unknown & unknown & unknown & unknown);
+        time_TimeCommandReceiptLookupV1: components["schemas"]["time_TimeCommandReceiptV1"] | components["schemas"]["time_TimeCloseCommandReceiptV1"];
         time_TimeCommandReceiptV1: {
             /** Format: date-time */
             acceptedAt: string;
@@ -75606,6 +76276,277 @@ export interface components {
             status: "ACCEPTED" | "RUNNING" | "SUCCEEDED" | "REJECTED" | "FAILED" | "RESULT_UNKNOWN";
             /** Format: uuid */
             timecardId: string;
+        };
+        time_TimeDailyCloseFilterV1: {
+            closeStatus?: components["schemas"]["time_TimIaqStatusFilterV1"] | null;
+            effectiveOn?: string | null;
+            impactSummary?: components["schemas"]["time_TimIaqAggregateFilterV1"] | null;
+            timePeriod?: components["schemas"]["time_TimIaqEffectiveRangeFilterV1"] | null;
+        };
+        time_TimeDailyCloseProjectionV1: {
+            /** Format: date-time */
+            asOf: string;
+            items: {
+                availableActions: ({
+                    /** @constant */
+                    actionKey: "hris.action.tim.close.validate";
+                    /** @constant */
+                    hrefTemplate: "/api/time/v1/close-periods/{periodId}/validations";
+                    /** @constant */
+                    idempotencyPolicy: "REQUIRED_IDEMPOTENCY_KEY";
+                    /** @constant */
+                    method: "POST";
+                    /** @constant */
+                    stepUpPolicy: "OWNER_PEP_RISK_POLICY_DECISION_REQUIRED";
+                } | {
+                    /** @constant */
+                    actionKey: "hris.action.tim.close.close";
+                    /** @constant */
+                    hrefTemplate: "/api/time/v1/close-periods/{periodId}/close";
+                    /** @constant */
+                    idempotencyPolicy: "REQUIRED_IDEMPOTENCY_KEY";
+                    /** @constant */
+                    method: "POST";
+                    /** @constant */
+                    stepUpPolicy: "OWNER_PEP_RISK_POLICY_DECISION_REQUIRED";
+                } | {
+                    /** @constant */
+                    actionKey: "hris.action.tim.close.reopen";
+                    /** @constant */
+                    hrefTemplate: "/api/time/v1/close-periods/{periodId}/reopen";
+                    /** @constant */
+                    idempotencyPolicy: "REQUIRED_IDEMPOTENCY_KEY";
+                    /** @constant */
+                    method: "POST";
+                    /** @constant */
+                    stepUpPolicy: "OWNER_PEP_RISK_POLICY_DECISION_REQUIRED";
+                } | {
+                    /** @constant */
+                    actionKey: "hris.action.tim.handoff.create";
+                    /** @constant */
+                    hrefTemplate: "/api/time/v1/close-periods/{periodId}/payroll-handoffs";
+                    /** @constant */
+                    idempotencyPolicy: "REQUIRED_IDEMPOTENCY_KEY";
+                    /** @constant */
+                    method: "POST";
+                    /** @constant */
+                    stepUpPolicy: "OWNER_PEP_RISK_POLICY_DECISION_REQUIRED";
+                })[];
+                deepLink: {
+                    resourcePublicId: string;
+                    /** @constant */
+                    route: "/hr/operations/time/daily-close";
+                };
+                fieldGroups: {
+                    CLOSE_STATUS?: {
+                        /** @constant */
+                        decision: "VIEW";
+                        value: components["schemas"]["time_TimIaqStatusValueV1"];
+                    } | {
+                        /** @constant */
+                        decision: "MASK";
+                        maskReason: string;
+                        maskedDisplayKey: string;
+                        value: null;
+                    };
+                    IMPACT_SUMMARY?: {
+                        /** @constant */
+                        decision: "VIEW";
+                        value: components["schemas"]["time_TimIaqAggregateValueV1"];
+                    } | {
+                        /** @constant */
+                        decision: "MASK";
+                        maskReason: string;
+                        maskedDisplayKey: string;
+                        value: null;
+                    };
+                    TIME_PERIOD?: {
+                        /** @constant */
+                        decision: "VIEW";
+                        value: components["schemas"]["time_TimIaqEffectiveRangeValueV1"];
+                    } | {
+                        /** @constant */
+                        decision: "MASK";
+                        maskReason: string;
+                        maskedDisplayKey: string;
+                        value: null;
+                    };
+                };
+                itemPublicId: string;
+                statusCode: string;
+                title: string;
+            }[];
+            /** @constant */
+            projectionVersion: "1";
+            queryState: {
+                cachePolicy: {
+                    authorizationDecisionRevision: string;
+                    /** @constant */
+                    invalidationEvent: "dwp.hris.access.assignment.changed.v1";
+                    maxAgeSeconds: number;
+                };
+                /** Format: uuid */
+                correlationId: string;
+                fieldDecisionSummary: {
+                    maskedCount: number;
+                    omittedCount: number;
+                    viewCount: number;
+                };
+                /** @enum {string} */
+                freshness: "CURRENT" | "STALE" | "UNAVAILABLE";
+                nextCursor: string | null;
+                partialFailures: {
+                    componentKey: string;
+                    /** Format: uuid */
+                    correlationId: string;
+                    errorCode: string;
+                    retryable: boolean;
+                }[];
+                scopeDecisionRevision: string;
+                /** @enum {string} */
+                state: "COMPLETE" | "EMPTY" | "PARTIAL" | "UNAVAILABLE";
+            };
+            /** @constant */
+            variantKey: "DAILY_CLOSE";
+        } & (unknown & unknown & unknown & unknown & unknown);
+        time_TimeMonthlyCloseFilterV1: {
+            closeStatus?: components["schemas"]["time_TimIaqStatusFilterV1"] | null;
+            effectiveOn?: string | null;
+            payrollHandoff?: components["schemas"]["time_TimIaqReceiptFilterV1"] | null;
+            timePeriod?: components["schemas"]["time_TimIaqEffectiveRangeFilterV1"] | null;
+        };
+        time_TimeMonthlyCloseProjectionV1: {
+            /** Format: date-time */
+            asOf: string;
+            items: {
+                availableActions: ({
+                    /** @constant */
+                    actionKey: "hris.action.tim.close.validate";
+                    /** @constant */
+                    hrefTemplate: "/api/time/v1/close-periods/{periodId}/validations";
+                    /** @constant */
+                    idempotencyPolicy: "REQUIRED_IDEMPOTENCY_KEY";
+                    /** @constant */
+                    method: "POST";
+                    /** @constant */
+                    stepUpPolicy: "OWNER_PEP_RISK_POLICY_DECISION_REQUIRED";
+                } | {
+                    /** @constant */
+                    actionKey: "hris.action.tim.close.close";
+                    /** @constant */
+                    hrefTemplate: "/api/time/v1/close-periods/{periodId}/close";
+                    /** @constant */
+                    idempotencyPolicy: "REQUIRED_IDEMPOTENCY_KEY";
+                    /** @constant */
+                    method: "POST";
+                    /** @constant */
+                    stepUpPolicy: "OWNER_PEP_RISK_POLICY_DECISION_REQUIRED";
+                } | {
+                    /** @constant */
+                    actionKey: "hris.action.tim.close.reopen";
+                    /** @constant */
+                    hrefTemplate: "/api/time/v1/close-periods/{periodId}/reopen";
+                    /** @constant */
+                    idempotencyPolicy: "REQUIRED_IDEMPOTENCY_KEY";
+                    /** @constant */
+                    method: "POST";
+                    /** @constant */
+                    stepUpPolicy: "OWNER_PEP_RISK_POLICY_DECISION_REQUIRED";
+                } | {
+                    /** @constant */
+                    actionKey: "hris.action.tim.handoff.create";
+                    /** @constant */
+                    hrefTemplate: "/api/time/v1/close-periods/{periodId}/payroll-handoffs";
+                    /** @constant */
+                    idempotencyPolicy: "REQUIRED_IDEMPOTENCY_KEY";
+                    /** @constant */
+                    method: "POST";
+                    /** @constant */
+                    stepUpPolicy: "OWNER_PEP_RISK_POLICY_DECISION_REQUIRED";
+                })[];
+                deepLink: {
+                    resourcePublicId: string;
+                    /** @constant */
+                    route: "/hr/operations/time/monthly-close";
+                };
+                fieldGroups: {
+                    CLOSE_STATUS?: {
+                        /** @constant */
+                        decision: "VIEW";
+                        value: components["schemas"]["time_TimIaqStatusValueV1"];
+                    } | {
+                        /** @constant */
+                        decision: "MASK";
+                        maskReason: string;
+                        maskedDisplayKey: string;
+                        value: null;
+                    };
+                    PAYROLL_HANDOFF?: {
+                        /** @constant */
+                        decision: "VIEW";
+                        value: components["schemas"]["time_TimIaqReceiptValueV1"];
+                    } | {
+                        /** @constant */
+                        decision: "MASK";
+                        maskReason: string;
+                        maskedDisplayKey: string;
+                        value: null;
+                    };
+                    TIME_PERIOD?: {
+                        /** @constant */
+                        decision: "VIEW";
+                        value: components["schemas"]["time_TimIaqEffectiveRangeValueV1"];
+                    } | {
+                        /** @constant */
+                        decision: "MASK";
+                        maskReason: string;
+                        maskedDisplayKey: string;
+                        value: null;
+                    };
+                };
+                itemPublicId: string;
+                statusCode: string;
+                title: string;
+            }[];
+            /** @constant */
+            projectionVersion: "1";
+            queryState: {
+                cachePolicy: {
+                    authorizationDecisionRevision: string;
+                    /** @constant */
+                    invalidationEvent: "dwp.hris.access.assignment.changed.v1";
+                    maxAgeSeconds: number;
+                };
+                /** Format: uuid */
+                correlationId: string;
+                fieldDecisionSummary: {
+                    maskedCount: number;
+                    omittedCount: number;
+                    viewCount: number;
+                };
+                /** @enum {string} */
+                freshness: "CURRENT" | "STALE" | "UNAVAILABLE";
+                nextCursor: string | null;
+                partialFailures: {
+                    componentKey: string;
+                    /** Format: uuid */
+                    correlationId: string;
+                    errorCode: string;
+                    retryable: boolean;
+                }[];
+                scopeDecisionRevision: string;
+                /** @enum {string} */
+                state: "COMPLETE" | "EMPTY" | "PARTIAL" | "UNAVAILABLE";
+            };
+            /** @constant */
+            variantKey: "MONTHLY_CLOSE";
+        } & (unknown & unknown & unknown & unknown & unknown);
+        time_TimeReopenCommandV1: {
+            /** Format: uuid */
+            approvalReceiptId: string;
+            /** Format: date-time */
+            asOf: string;
+            reasonCode: string;
         };
         time_TimecardCorrectionCommandV1: {
             entries: components["schemas"]["time_TimecardCorrectionEntryV1"][];
@@ -99381,6 +100322,35 @@ export interface operations {
             };
         };
     };
+    messaging_heartbeat: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Presence lease renewed */
+            204: {
+                headers: {
+                    /** @description Authoritative renewed lease lifetime in whole seconds */
+                    "X-DWP-Presence-Lease-TTL-Seconds"?: number;
+                    /** @description Server-recommended delay before the next heartbeat in whole seconds */
+                    "X-DWP-Presence-Refresh-After-Seconds"?: number;
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Presence authority unavailable */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
     messaging_preference: {
         parameters: {
             query?: never;
@@ -101656,6 +102626,260 @@ export interface operations {
         responses: {
             /** @description Payroll run finalization accepted */
             202: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    payroll_settingsPayrollFoundationConfigurations: {
+        parameters: {
+            query?: never;
+            header: {
+                "X-Purpose-Code": "PAYROLL_CONFIGURATION";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    payroll_settingsPayrollFoundationCreateConfiguration: {
+        parameters: {
+            query?: never;
+            header: {
+                "Idempotency-Key": string;
+                "X-Correlation-ID"?: string;
+                "X-DWP-Expected-Decision-Revision": string;
+                "X-Purpose-Code": "PAYROLL_CONFIGURATION";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": Record<string, never>;
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    payroll_settingsPayrollFoundationConfiguration: {
+        parameters: {
+            query?: never;
+            header: {
+                "X-Purpose-Code": "PAYROLL_CONFIGURATION";
+            };
+            path: {
+                configurationId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    payroll_settingsPayrollFoundationUpdateConfiguration: {
+        parameters: {
+            query?: never;
+            header: {
+                "Idempotency-Key": string;
+                "X-Correlation-ID"?: string;
+                "X-DWP-Expected-Decision-Revision": string;
+                "X-Purpose-Code": "PAYROLL_CONFIGURATION";
+            };
+            path: {
+                configurationId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": Record<string, never>;
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    payroll_settingsPayrollFoundationPublishConfiguration: {
+        parameters: {
+            query?: never;
+            header: {
+                "Idempotency-Key": string;
+                "X-Correlation-ID"?: string;
+                "X-DWP-Expected-Decision-Revision": string;
+                "X-DWP-Step-Up-Challenge": string;
+                "X-Purpose-Code": "PAYROLL_CONFIGURATION";
+            };
+            path: {
+                configurationId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": Record<string, never>;
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    payroll_settingsPayrollFoundationReverseConfiguration: {
+        parameters: {
+            query?: never;
+            header: {
+                "Idempotency-Key": string;
+                "X-Correlation-ID"?: string;
+                "X-DWP-Expected-Decision-Revision": string;
+                "X-DWP-Step-Up-Challenge": string;
+                "X-Purpose-Code": "PAYROLL_CONFIGURATION";
+            };
+            path: {
+                configurationId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": Record<string, never>;
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    payroll_settingsPayrollFoundationSimulateConfiguration: {
+        parameters: {
+            query?: never;
+            header: {
+                "Idempotency-Key": string;
+                "X-Correlation-ID"?: string;
+                "X-DWP-Expected-Decision-Revision": string;
+                "X-Purpose-Code": "PAYROLL_CONFIGURATION";
+            };
+            path: {
+                configurationId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": Record<string, never>;
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    payroll_settingsPayrollFoundationConfigurationVersions: {
+        parameters: {
+            query?: never;
+            header: {
+                "X-Purpose-Code": "PAYROLL_CONFIGURATION";
+            };
+            path: {
+                configurationId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    payroll_settingsPayrollFoundationCommandReceipt: {
+        parameters: {
+            query?: never;
+            header: {
+                "X-Purpose-Code": "PAYROLL_CONFIGURATION";
+            };
+            path: {
+                commandId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    payroll_settingsPayrollFoundationReconcileCommand: {
+        parameters: {
+            query?: never;
+            header: {
+                "X-DWP-Expected-Decision-Revision": string;
+                "X-Purpose-Code": "PAYROLL_CONFIGURATION";
+            };
+            path: {
+                commandId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -108470,6 +109694,190 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+        };
+    };
+    platform_getControlledFileTransfers: {
+        parameters: {
+            query: {
+                cursor?: components["schemas"]["platform_Cursor"];
+                asOf: components["schemas"]["platform_Instant"];
+                filter?: string;
+                fields: string[];
+                freshness: "FRESH_ONLY" | "ALLOW_STALE";
+                limit?: number;
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
+            header: {
+                Authorization: string;
+                "X-Correlation-Id": components["schemas"]["platform_Uuid"];
+                "X-Purpose-Code": "HRIS_INTEGRATION_ADMIN";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Metadata-only controlled transfer catalog */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["platform_ControlledTransferCatalogV1"];
+                };
+            };
+            /** @description Schema invalid */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["platform_ControlledTransferProblemV1"];
+                };
+            };
+            /** @description Authentication required */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["platform_ControlledTransferProblemV1"];
+                };
+            };
+            /** @description Authorization denied */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["platform_ControlledTransferProblemV1"];
+                };
+            };
+            /** @description Rate limited */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["platform_ControlledTransferProblemV1"];
+                };
+            };
+            /** @description Result unknown */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["platform_ControlledTransferProblemV1"];
+                };
+            };
+        };
+    };
+    platform_requestControlledFileTransfer: {
+        parameters: {
+            query?: {
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
+            header: {
+                "Idempotency-Key": string;
+                "X-DWP-Step-Up-Challenge": string;
+                "X-DWP-Expected-Decision-Revision": string;
+                Authorization: string;
+                "X-Correlation-Id": components["schemas"]["platform_Uuid"];
+                "X-Purpose-Code": "HRIS_INTEGRATION_ADMIN";
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_ControlledTransferCreateCommandV1"];
+            };
+        };
+        responses: {
+            /** @description Controlled transfer request accepted */
+            202: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["platform_HrisCommandReceiptV1"];
+                };
+            };
+            /** @description Schema invalid */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["platform_ControlledTransferProblemV1"];
+                };
+            };
+            /** @description Authentication required */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["platform_ControlledTransferProblemV1"];
+                };
+            };
+            /** @description Authorization, purpose, step-up, or separation-of-duties denied */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["platform_ControlledTransferProblemV1"];
+                };
+            };
+            /** @description Object target not disclosed */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["platform_ControlledTransferProblemV1"];
+                };
+            };
+            /** @description Object snapshot or idempotency conflict */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["platform_ControlledTransferProblemV1"];
+                };
+            };
+            /** @description Transfer policy rejected */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["platform_ControlledTransferProblemV1"];
+                };
+            };
+            /** @description Rate limited */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["platform_ControlledTransferProblemV1"];
+                };
+            };
+            /** @description Result unknown; reconcile using the receipt */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["platform_ControlledTransferProblemV1"];
+                };
             };
         };
     };
@@ -134458,6 +135866,608 @@ export interface operations {
             };
         };
     };
+    time_hrisTimeClosePeriod: {
+        parameters: {
+            query?: never;
+            header: {
+                "Idempotency-Key": string;
+                "If-Match": string;
+                "X-Correlation-ID": string;
+                "X-Purpose-Code": "WORK_TIME_PERIOD_CLOSURE";
+                "X-DWP-Expected-Decision-Revision": string;
+                "X-DWP-Step-Up-Challenge": string;
+            };
+            path: {
+                periodId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["time_TimeCloseCommandV1"];
+            };
+        };
+        responses: {
+            /** @description Command accepted */
+            202: {
+                headers: {
+                    "Cache-Control": "no-store";
+                    Location: string;
+                    "Retry-After": "1";
+                    "X-Correlation-ID": string;
+                    "X-DWP-Decision-Revision": string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["time_TimeCloseCommandReceiptV1"];
+                };
+            };
+            /** @description SCHEMA_INVALID */
+            400: {
+                headers: {
+                    "Cache-Control": "no-store";
+                    "X-Correlation-ID": string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["time_HrisTimeProblemV1"];
+                };
+            };
+            /** @description AUTHENTICATION_REQUIRED */
+            401: {
+                headers: {
+                    "Cache-Control": "no-store";
+                    "X-Correlation-ID": string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["time_HrisTimeProblemV1"];
+                };
+            };
+            /** @description AUTHORIZATION_DENIED */
+            403: {
+                headers: {
+                    "Cache-Control": "no-store";
+                    "X-Correlation-ID": string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["time_HrisTimeProblemV1"];
+                };
+            };
+            /** @description TARGET_NOT_DISCLOSED */
+            404: {
+                headers: {
+                    "Cache-Control": "no-store";
+                    "X-Correlation-ID": string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["time_HrisTimeProblemV1"];
+                };
+            };
+            /** @description STALE_OR_STATE_CONFLICT */
+            409: {
+                headers: {
+                    "Cache-Control": "no-store";
+                    "X-Correlation-ID": string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["time_HrisTimeProblemV1"];
+                };
+            };
+            /** @description PRECONDITION_FAILED */
+            412: {
+                headers: {
+                    "Cache-Control": "no-store";
+                    ETag: string;
+                    "X-Correlation-ID": string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["time_HrisTimeProblemV1"];
+                };
+            };
+            /** @description DOMAIN_RULE_REJECTED */
+            422: {
+                headers: {
+                    "Cache-Control": "no-store";
+                    "X-Correlation-ID": string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["time_HrisTimeProblemV1"];
+                };
+            };
+            /** @description PRECONDITION_REQUIRED */
+            428: {
+                headers: {
+                    "Cache-Control": "no-store";
+                    "X-Correlation-ID": string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["time_HrisTimeProblemV1"];
+                };
+            };
+            /** @description RATE_LIMITED */
+            429: {
+                headers: {
+                    "Cache-Control": "no-store";
+                    "Retry-After": string;
+                    "X-Correlation-ID": string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["time_HrisTimeProblemV1"];
+                };
+            };
+            /** @description AUTHORITY_UNAVAILABLE */
+            503: {
+                headers: {
+                    "Cache-Control": "no-store";
+                    "Retry-After": string;
+                    "X-Correlation-ID": string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["time_HrisTimeProblemV1"];
+                };
+            };
+        };
+    };
+    time_hrisTimeCreatePayrollHandoff: {
+        parameters: {
+            query?: never;
+            header: {
+                "Idempotency-Key": string;
+                "If-Match": string;
+                "X-Correlation-ID": string;
+                "X-Purpose-Code": "CLOSED_TIME_PAYROLL_TRANSFER";
+                "X-DWP-Expected-Decision-Revision": string;
+            };
+            path: {
+                periodId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["time_PayrollTimeHandoffCommandV1"];
+            };
+        };
+        responses: {
+            /** @description Command accepted */
+            202: {
+                headers: {
+                    "Cache-Control": "no-store";
+                    Location: string;
+                    "Retry-After": "1";
+                    "X-Correlation-ID": string;
+                    "X-DWP-Decision-Revision": string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["time_TimeCloseCommandReceiptV1"];
+                };
+            };
+            /** @description SCHEMA_INVALID */
+            400: {
+                headers: {
+                    "Cache-Control": "no-store";
+                    "X-Correlation-ID": string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["time_HrisTimeProblemV1"];
+                };
+            };
+            /** @description AUTHENTICATION_REQUIRED */
+            401: {
+                headers: {
+                    "Cache-Control": "no-store";
+                    "X-Correlation-ID": string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["time_HrisTimeProblemV1"];
+                };
+            };
+            /** @description AUTHORIZATION_DENIED */
+            403: {
+                headers: {
+                    "Cache-Control": "no-store";
+                    "X-Correlation-ID": string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["time_HrisTimeProblemV1"];
+                };
+            };
+            /** @description TARGET_NOT_DISCLOSED */
+            404: {
+                headers: {
+                    "Cache-Control": "no-store";
+                    "X-Correlation-ID": string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["time_HrisTimeProblemV1"];
+                };
+            };
+            /** @description STALE_OR_STATE_CONFLICT */
+            409: {
+                headers: {
+                    "Cache-Control": "no-store";
+                    "X-Correlation-ID": string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["time_HrisTimeProblemV1"];
+                };
+            };
+            /** @description PRECONDITION_FAILED */
+            412: {
+                headers: {
+                    "Cache-Control": "no-store";
+                    ETag: string;
+                    "X-Correlation-ID": string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["time_HrisTimeProblemV1"];
+                };
+            };
+            /** @description DOMAIN_RULE_REJECTED */
+            422: {
+                headers: {
+                    "Cache-Control": "no-store";
+                    "X-Correlation-ID": string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["time_HrisTimeProblemV1"];
+                };
+            };
+            /** @description PRECONDITION_REQUIRED */
+            428: {
+                headers: {
+                    "Cache-Control": "no-store";
+                    "X-Correlation-ID": string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["time_HrisTimeProblemV1"];
+                };
+            };
+            /** @description RATE_LIMITED */
+            429: {
+                headers: {
+                    "Cache-Control": "no-store";
+                    "Retry-After": string;
+                    "X-Correlation-ID": string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["time_HrisTimeProblemV1"];
+                };
+            };
+            /** @description AUTHORITY_UNAVAILABLE */
+            503: {
+                headers: {
+                    "Cache-Control": "no-store";
+                    "Retry-After": string;
+                    "X-Correlation-ID": string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["time_HrisTimeProblemV1"];
+                };
+            };
+        };
+    };
+    time_hrisTimeReopenPeriod: {
+        parameters: {
+            query?: never;
+            header: {
+                "Idempotency-Key": string;
+                "If-Match": string;
+                "X-Correlation-ID": string;
+                "X-Purpose-Code": "WORK_TIME_PERIOD_CLOSURE";
+                "X-DWP-Expected-Decision-Revision": string;
+                "X-DWP-Step-Up-Challenge": string;
+            };
+            path: {
+                periodId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["time_TimeReopenCommandV1"];
+            };
+        };
+        responses: {
+            /** @description Command accepted */
+            202: {
+                headers: {
+                    "Cache-Control": "no-store";
+                    Location: string;
+                    "Retry-After": "1";
+                    "X-Correlation-ID": string;
+                    "X-DWP-Decision-Revision": string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["time_TimeCloseCommandReceiptV1"];
+                };
+            };
+            /** @description SCHEMA_INVALID */
+            400: {
+                headers: {
+                    "Cache-Control": "no-store";
+                    "X-Correlation-ID": string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["time_HrisTimeProblemV1"];
+                };
+            };
+            /** @description AUTHENTICATION_REQUIRED */
+            401: {
+                headers: {
+                    "Cache-Control": "no-store";
+                    "X-Correlation-ID": string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["time_HrisTimeProblemV1"];
+                };
+            };
+            /** @description AUTHORIZATION_DENIED */
+            403: {
+                headers: {
+                    "Cache-Control": "no-store";
+                    "X-Correlation-ID": string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["time_HrisTimeProblemV1"];
+                };
+            };
+            /** @description TARGET_NOT_DISCLOSED */
+            404: {
+                headers: {
+                    "Cache-Control": "no-store";
+                    "X-Correlation-ID": string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["time_HrisTimeProblemV1"];
+                };
+            };
+            /** @description STALE_OR_STATE_CONFLICT */
+            409: {
+                headers: {
+                    "Cache-Control": "no-store";
+                    "X-Correlation-ID": string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["time_HrisTimeProblemV1"];
+                };
+            };
+            /** @description PRECONDITION_FAILED */
+            412: {
+                headers: {
+                    "Cache-Control": "no-store";
+                    ETag: string;
+                    "X-Correlation-ID": string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["time_HrisTimeProblemV1"];
+                };
+            };
+            /** @description DOMAIN_RULE_REJECTED */
+            422: {
+                headers: {
+                    "Cache-Control": "no-store";
+                    "X-Correlation-ID": string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["time_HrisTimeProblemV1"];
+                };
+            };
+            /** @description PRECONDITION_REQUIRED */
+            428: {
+                headers: {
+                    "Cache-Control": "no-store";
+                    "X-Correlation-ID": string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["time_HrisTimeProblemV1"];
+                };
+            };
+            /** @description RATE_LIMITED */
+            429: {
+                headers: {
+                    "Cache-Control": "no-store";
+                    "Retry-After": string;
+                    "X-Correlation-ID": string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["time_HrisTimeProblemV1"];
+                };
+            };
+            /** @description AUTHORITY_UNAVAILABLE */
+            503: {
+                headers: {
+                    "Cache-Control": "no-store";
+                    "Retry-After": string;
+                    "X-Correlation-ID": string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["time_HrisTimeProblemV1"];
+                };
+            };
+        };
+    };
+    time_hrisTimeValidateClosePeriod: {
+        parameters: {
+            query?: never;
+            header: {
+                "Idempotency-Key": string;
+                "If-Match": string;
+                "X-Correlation-ID": string;
+                "X-Purpose-Code": "WORK_TIME_PERIOD_CLOSURE";
+                "X-DWP-Expected-Decision-Revision": string;
+            };
+            path: {
+                periodId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["time_TimeCloseValidationCommandV1"];
+            };
+        };
+        responses: {
+            /** @description Command accepted */
+            202: {
+                headers: {
+                    "Cache-Control": "no-store";
+                    Location: string;
+                    "Retry-After": "1";
+                    "X-Correlation-ID": string;
+                    "X-DWP-Decision-Revision": string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["time_TimeCloseCommandReceiptV1"];
+                };
+            };
+            /** @description SCHEMA_INVALID */
+            400: {
+                headers: {
+                    "Cache-Control": "no-store";
+                    "X-Correlation-ID": string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["time_HrisTimeProblemV1"];
+                };
+            };
+            /** @description AUTHENTICATION_REQUIRED */
+            401: {
+                headers: {
+                    "Cache-Control": "no-store";
+                    "X-Correlation-ID": string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["time_HrisTimeProblemV1"];
+                };
+            };
+            /** @description AUTHORIZATION_DENIED */
+            403: {
+                headers: {
+                    "Cache-Control": "no-store";
+                    "X-Correlation-ID": string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["time_HrisTimeProblemV1"];
+                };
+            };
+            /** @description TARGET_NOT_DISCLOSED */
+            404: {
+                headers: {
+                    "Cache-Control": "no-store";
+                    "X-Correlation-ID": string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["time_HrisTimeProblemV1"];
+                };
+            };
+            /** @description STALE_OR_STATE_CONFLICT */
+            409: {
+                headers: {
+                    "Cache-Control": "no-store";
+                    "X-Correlation-ID": string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["time_HrisTimeProblemV1"];
+                };
+            };
+            /** @description PRECONDITION_FAILED */
+            412: {
+                headers: {
+                    "Cache-Control": "no-store";
+                    ETag: string;
+                    "X-Correlation-ID": string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["time_HrisTimeProblemV1"];
+                };
+            };
+            /** @description DOMAIN_RULE_REJECTED */
+            422: {
+                headers: {
+                    "Cache-Control": "no-store";
+                    "X-Correlation-ID": string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["time_HrisTimeProblemV1"];
+                };
+            };
+            /** @description PRECONDITION_REQUIRED */
+            428: {
+                headers: {
+                    "Cache-Control": "no-store";
+                    "X-Correlation-ID": string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["time_HrisTimeProblemV1"];
+                };
+            };
+            /** @description RATE_LIMITED */
+            429: {
+                headers: {
+                    "Cache-Control": "no-store";
+                    "Retry-After": string;
+                    "X-Correlation-ID": string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["time_HrisTimeProblemV1"];
+                };
+            };
+            /** @description AUTHORITY_UNAVAILABLE */
+            503: {
+                headers: {
+                    "Cache-Control": "no-store";
+                    "Retry-After": string;
+                    "X-Correlation-ID": string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["time_HrisTimeProblemV1"];
+                };
+            };
+        };
+    };
     time_getTimeCommandReceipt: {
         parameters: {
             query?: {
@@ -134478,7 +136488,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["time_TimeCommandReceiptV1"];
+                    "application/json": components["schemas"]["time_TimeCommandReceiptLookupV1"];
                 };
             };
             /** @description Receipt absent or outside the originating-command scope */
@@ -134676,6 +136686,294 @@ export interface operations {
             };
         };
     };
+    time_hrisTimeCommandCenter: {
+        parameters: {
+            query: {
+                limit: number;
+                filter: components["schemas"]["time_TimeCommandCenterFilterV1"];
+                sort: ("timePeriod:ASC" | "exceptionSummary:ASC" | "commandReceipt:ASC" | "timePeriod:DESC" | "exceptionSummary:DESC" | "commandReceipt:DESC" | "itemPublicId:ASC" | "itemPublicId:DESC")[];
+                locale: string;
+                timeZone: string;
+                correlationId: string;
+                asOf?: string | null;
+                cursor?: string | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description TimeCommandCenter projection */
+            200: {
+                headers: {
+                    "Cache-Control": "no-store";
+                    "X-Correlation-ID": string;
+                    "X-DWP-Decision-Revision": string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["time_TimeCommandCenterProjectionV1"];
+                };
+            };
+            /** @description SCHEMA_INVALID */
+            400: {
+                headers: {
+                    "Cache-Control": "no-store";
+                    "X-Correlation-ID": string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["time_HrisTimeProblemV1"];
+                };
+            };
+            /** @description AUTHENTICATION_REQUIRED */
+            401: {
+                headers: {
+                    "Cache-Control": "no-store";
+                    "X-Correlation-ID": string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["time_HrisTimeProblemV1"];
+                };
+            };
+            /** @description AUTHORIZATION_DENIED */
+            403: {
+                headers: {
+                    "Cache-Control": "no-store";
+                    "X-Correlation-ID": string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["time_HrisTimeProblemV1"];
+                };
+            };
+            /** @description TARGET_NOT_DISCLOSED */
+            404: {
+                headers: {
+                    "Cache-Control": "no-store";
+                    "X-Correlation-ID": string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["time_HrisTimeProblemV1"];
+                };
+            };
+            /** @description STALE_OR_STATE_CONFLICT */
+            409: {
+                headers: {
+                    "Cache-Control": "no-store";
+                    "X-Correlation-ID": string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["time_HrisTimeProblemV1"];
+                };
+            };
+            /** @description PRECONDITION_FAILED */
+            412: {
+                headers: {
+                    "Cache-Control": "no-store";
+                    "X-Correlation-ID": string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["time_HrisTimeProblemV1"];
+                };
+            };
+            /** @description DOMAIN_RULE_REJECTED */
+            422: {
+                headers: {
+                    "Cache-Control": "no-store";
+                    "X-Correlation-ID": string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["time_HrisTimeProblemV1"];
+                };
+            };
+            /** @description PRECONDITION_REQUIRED */
+            428: {
+                headers: {
+                    "Cache-Control": "no-store";
+                    "X-Correlation-ID": string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["time_HrisTimeProblemV1"];
+                };
+            };
+            /** @description RATE_LIMITED */
+            429: {
+                headers: {
+                    "Cache-Control": "no-store";
+                    "Retry-After": string;
+                    "X-Correlation-ID": string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["time_HrisTimeProblemV1"];
+                };
+            };
+            /** @description AUTHORITY_UNAVAILABLE */
+            503: {
+                headers: {
+                    "Cache-Control": "no-store";
+                    "Retry-After": string;
+                    "X-Correlation-ID": string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["time_HrisTimeProblemV1"];
+                };
+            };
+        };
+    };
+    time_hrisTimeDailyClose: {
+        parameters: {
+            query: {
+                limit: number;
+                filter: components["schemas"]["time_TimeDailyCloseFilterV1"];
+                sort: ("timePeriod:ASC" | "closeStatus:ASC" | "impactSummary:ASC" | "timePeriod:DESC" | "closeStatus:DESC" | "impactSummary:DESC" | "itemPublicId:ASC" | "itemPublicId:DESC")[];
+                locale: string;
+                timeZone: string;
+                correlationId: string;
+                asOf?: string | null;
+                cursor?: string | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description TimeDailyClose projection */
+            200: {
+                headers: {
+                    "Cache-Control": "no-store";
+                    "X-Correlation-ID": string;
+                    "X-DWP-Decision-Revision": string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["time_TimeDailyCloseProjectionV1"];
+                };
+            };
+            /** @description SCHEMA_INVALID */
+            400: {
+                headers: {
+                    "Cache-Control": "no-store";
+                    "X-Correlation-ID": string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["time_HrisTimeProblemV1"];
+                };
+            };
+            /** @description AUTHENTICATION_REQUIRED */
+            401: {
+                headers: {
+                    "Cache-Control": "no-store";
+                    "X-Correlation-ID": string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["time_HrisTimeProblemV1"];
+                };
+            };
+            /** @description AUTHORIZATION_DENIED */
+            403: {
+                headers: {
+                    "Cache-Control": "no-store";
+                    "X-Correlation-ID": string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["time_HrisTimeProblemV1"];
+                };
+            };
+            /** @description TARGET_NOT_DISCLOSED */
+            404: {
+                headers: {
+                    "Cache-Control": "no-store";
+                    "X-Correlation-ID": string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["time_HrisTimeProblemV1"];
+                };
+            };
+            /** @description STALE_OR_STATE_CONFLICT */
+            409: {
+                headers: {
+                    "Cache-Control": "no-store";
+                    "X-Correlation-ID": string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["time_HrisTimeProblemV1"];
+                };
+            };
+            /** @description PRECONDITION_FAILED */
+            412: {
+                headers: {
+                    "Cache-Control": "no-store";
+                    "X-Correlation-ID": string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["time_HrisTimeProblemV1"];
+                };
+            };
+            /** @description DOMAIN_RULE_REJECTED */
+            422: {
+                headers: {
+                    "Cache-Control": "no-store";
+                    "X-Correlation-ID": string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["time_HrisTimeProblemV1"];
+                };
+            };
+            /** @description PRECONDITION_REQUIRED */
+            428: {
+                headers: {
+                    "Cache-Control": "no-store";
+                    "X-Correlation-ID": string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["time_HrisTimeProblemV1"];
+                };
+            };
+            /** @description RATE_LIMITED */
+            429: {
+                headers: {
+                    "Cache-Control": "no-store";
+                    "Retry-After": string;
+                    "X-Correlation-ID": string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["time_HrisTimeProblemV1"];
+                };
+            };
+            /** @description AUTHORITY_UNAVAILABLE */
+            503: {
+                headers: {
+                    "Cache-Control": "no-store";
+                    "Retry-After": string;
+                    "X-Correlation-ID": string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["time_HrisTimeProblemV1"];
+                };
+            };
+        };
+    };
     time_hrisTimeClockIngestionExceptions: {
         parameters: {
             query: {
@@ -134754,6 +137052,150 @@ export interface operations {
             };
         };
     };
+    time_hrisTimeMonthlyClose: {
+        parameters: {
+            query: {
+                limit: number;
+                filter: components["schemas"]["time_TimeMonthlyCloseFilterV1"];
+                sort: ("timePeriod:ASC" | "closeStatus:ASC" | "payrollHandoff:ASC" | "timePeriod:DESC" | "closeStatus:DESC" | "payrollHandoff:DESC" | "itemPublicId:ASC" | "itemPublicId:DESC")[];
+                locale: string;
+                timeZone: string;
+                correlationId: string;
+                asOf?: string | null;
+                cursor?: string | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description TimeMonthlyClose projection */
+            200: {
+                headers: {
+                    "Cache-Control": "no-store";
+                    "X-Correlation-ID": string;
+                    "X-DWP-Decision-Revision": string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["time_TimeMonthlyCloseProjectionV1"];
+                };
+            };
+            /** @description SCHEMA_INVALID */
+            400: {
+                headers: {
+                    "Cache-Control": "no-store";
+                    "X-Correlation-ID": string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["time_HrisTimeProblemV1"];
+                };
+            };
+            /** @description AUTHENTICATION_REQUIRED */
+            401: {
+                headers: {
+                    "Cache-Control": "no-store";
+                    "X-Correlation-ID": string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["time_HrisTimeProblemV1"];
+                };
+            };
+            /** @description AUTHORIZATION_DENIED */
+            403: {
+                headers: {
+                    "Cache-Control": "no-store";
+                    "X-Correlation-ID": string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["time_HrisTimeProblemV1"];
+                };
+            };
+            /** @description TARGET_NOT_DISCLOSED */
+            404: {
+                headers: {
+                    "Cache-Control": "no-store";
+                    "X-Correlation-ID": string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["time_HrisTimeProblemV1"];
+                };
+            };
+            /** @description STALE_OR_STATE_CONFLICT */
+            409: {
+                headers: {
+                    "Cache-Control": "no-store";
+                    "X-Correlation-ID": string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["time_HrisTimeProblemV1"];
+                };
+            };
+            /** @description PRECONDITION_FAILED */
+            412: {
+                headers: {
+                    "Cache-Control": "no-store";
+                    "X-Correlation-ID": string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["time_HrisTimeProblemV1"];
+                };
+            };
+            /** @description DOMAIN_RULE_REJECTED */
+            422: {
+                headers: {
+                    "Cache-Control": "no-store";
+                    "X-Correlation-ID": string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["time_HrisTimeProblemV1"];
+                };
+            };
+            /** @description PRECONDITION_REQUIRED */
+            428: {
+                headers: {
+                    "Cache-Control": "no-store";
+                    "X-Correlation-ID": string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["time_HrisTimeProblemV1"];
+                };
+            };
+            /** @description RATE_LIMITED */
+            429: {
+                headers: {
+                    "Cache-Control": "no-store";
+                    "Retry-After": string;
+                    "X-Correlation-ID": string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["time_HrisTimeProblemV1"];
+                };
+            };
+            /** @description AUTHORITY_UNAVAILABLE */
+            503: {
+                headers: {
+                    "Cache-Control": "no-store";
+                    "Retry-After": string;
+                    "X-Correlation-ID": string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["time_HrisTimeProblemV1"];
+                };
+            };
+        };
+    };
     time_hrisTimeInterpretationRun: {
         parameters: {
             query?: {
@@ -134806,6 +137248,148 @@ export interface operations {
                 };
                 content: {
                     "*/*": components["schemas"]["time_ApiResponseInterpretationTrace"];
+                };
+            };
+        };
+    };
+    time_hrisTimeGetPayrollHandoff: {
+        parameters: {
+            query?: never;
+            header: {
+                "X-Correlation-ID": string;
+                "X-Purpose-Code": "CLOSED_TIME_PAYROLL_TRANSFER";
+                "X-DWP-Expected-Decision-Revision": string;
+            };
+            path: {
+                handoffId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Payroll handoff status */
+            200: {
+                headers: {
+                    "Cache-Control": "no-store";
+                    ETag: string;
+                    "X-Correlation-ID": string;
+                    "X-DWP-Decision-Revision": string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["time_PayrollTimeHandoffStatusV1"];
+                };
+            };
+            /** @description SCHEMA_INVALID */
+            400: {
+                headers: {
+                    "Cache-Control": "no-store";
+                    "X-Correlation-ID": string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["time_HrisTimeProblemV1"];
+                };
+            };
+            /** @description AUTHENTICATION_REQUIRED */
+            401: {
+                headers: {
+                    "Cache-Control": "no-store";
+                    "X-Correlation-ID": string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["time_HrisTimeProblemV1"];
+                };
+            };
+            /** @description AUTHORIZATION_DENIED */
+            403: {
+                headers: {
+                    "Cache-Control": "no-store";
+                    "X-Correlation-ID": string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["time_HrisTimeProblemV1"];
+                };
+            };
+            /** @description TARGET_NOT_DISCLOSED */
+            404: {
+                headers: {
+                    "Cache-Control": "no-store";
+                    "X-Correlation-ID": string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["time_HrisTimeProblemV1"];
+                };
+            };
+            /** @description STALE_OR_STATE_CONFLICT */
+            409: {
+                headers: {
+                    "Cache-Control": "no-store";
+                    "X-Correlation-ID": string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["time_HrisTimeProblemV1"];
+                };
+            };
+            /** @description PRECONDITION_FAILED */
+            412: {
+                headers: {
+                    "Cache-Control": "no-store";
+                    "X-Correlation-ID": string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["time_HrisTimeProblemV1"];
+                };
+            };
+            /** @description DOMAIN_RULE_REJECTED */
+            422: {
+                headers: {
+                    "Cache-Control": "no-store";
+                    "X-Correlation-ID": string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["time_HrisTimeProblemV1"];
+                };
+            };
+            /** @description PRECONDITION_REQUIRED */
+            428: {
+                headers: {
+                    "Cache-Control": "no-store";
+                    "X-Correlation-ID": string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["time_HrisTimeProblemV1"];
+                };
+            };
+            /** @description RATE_LIMITED */
+            429: {
+                headers: {
+                    "Cache-Control": "no-store";
+                    "Retry-After": string;
+                    "X-Correlation-ID": string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["time_HrisTimeProblemV1"];
+                };
+            };
+            /** @description AUTHORITY_UNAVAILABLE */
+            503: {
+                headers: {
+                    "Cache-Control": "no-store";
+                    "Retry-After": string;
+                    "X-Correlation-ID": string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["time_HrisTimeProblemV1"];
                 };
             };
         };

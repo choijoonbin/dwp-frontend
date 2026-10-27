@@ -86,7 +86,8 @@ function conversation(
   };
 }
 
-function fixtures(empty: boolean) {
+function fixtures(empty: boolean, presenceAuthority: 'LIVE' | 'UNAVAILABLE' | null = 'LIVE') {
+  const snapshotAt = new Date().toISOString();
   const direct = conversation('direct-1', {
     conversationType: 'DIRECT',
     name: 'Alex Park',
@@ -119,7 +120,17 @@ function fixtures(empty: boolean) {
   });
   const conversations = empty ? [] : [readPinned, restricted, space, direct];
   const home: MessagingHome = {
-    generatedAt: '2026-08-27T00:40:00Z',
+    generatedAt: snapshotAt,
+    ...(presenceAuthority
+      ? {
+          presence: {
+            authority: presenceAuthority,
+            evaluatedAt: snapshotAt,
+            leaseTtlSeconds: 75,
+            refreshAfterSeconds: 20,
+          },
+        }
+      : {}),
     metrics: empty
       ? { unreadConversations: 0, mentions: 0, spaceChannels: 0, directMessages: 0, savedItems: 0 }
       : { unreadConversations: 3, mentions: 2, spaceChannels: 4, directMessages: 7, savedItems: 1 },
@@ -172,7 +183,12 @@ function fixtures(empty: boolean) {
   return { conversations, home, saved };
 }
 
-async function mockMessagingHome(page: Page, empty = false, locale: 'en' | 'ko' = 'en') {
+async function mockMessagingHome(
+  page: Page,
+  empty = false,
+  locale: 'en' | 'ko' = 'en',
+  presenceAuthority: 'LIVE' | 'UNAVAILABLE' | null = 'LIVE'
+) {
   await mockShellSession(page, ['WORKSPACE_MEMBER'], {
     userId: 42,
     personPublicId: 'person-mina',
@@ -182,11 +198,14 @@ async function mockMessagingHome(page: Page, empty = false, locale: 'en' | 'ko' 
     email: 'mina.kim@sk.com',
     permissions: MESSAGING_PERMISSIONS,
   });
-  const data = fixtures(empty);
+  const data = fixtures(empty, presenceAuthority);
 
   await page.route('**/api/messaging/v1/**', async (route) => {
     const request = route.request();
     const url = new URL(request.url());
+    if (url.pathname === '/api/messaging/v1/presence/heartbeat' && request.method() === 'PUT') {
+      return route.fulfill({ status: 204 });
+    }
     if (url.pathname === '/api/messaging/v1/direct-conversations' && request.method() === 'POST') {
       return fulfill(
         route,
@@ -281,7 +300,15 @@ async function mockMessagingHome(page: Page, empty = false, locale: 'en' | 'ko' 
 
 test('turns Messenger home into a truthful, actionable attention workspace', async ({ page }) => {
   await mockMessagingHome(page);
+  const heartbeatRequest = page.waitForRequest((request) => {
+    const url = new URL(request.url());
+    return url.pathname === '/api/messaging/v1/presence/heartbeat';
+  });
   await page.goto('/messages/home');
+
+  const heartbeat = await heartbeatRequest;
+  expect(heartbeat.method()).toBe('PUT');
+  expect(heartbeat.postData()).toBeNull();
 
   await expect(page.getByRole('heading', { level: 1 })).toContainText('Mina Kim');
   await expect(page.getByRole('heading', { name: '2 mentions are waiting for you' })).toBeVisible();
@@ -298,6 +325,8 @@ test('turns Messenger home into a truthful, actionable attention workspace', asy
   await expect(page.getByText('Confidential acquisition details', { exact: false })).toHaveCount(0);
   await expect(page.getByRole('heading', { name: 'My Space flow' })).toBeVisible();
   await expect(page.getByRole('heading', { name: 'People available now' })).toBeVisible();
+  await expect(page.getByText('Jun Lee', { exact: true })).toBeVisible();
+  await expect(page.getByText('Sara Jenkins', { exact: true })).toHaveCount(0);
   await expect(page.getByRole('heading', { name: 'Continue where you left off' })).toBeVisible();
   await expect(page.getByText('Confirm the customer briefing owner.')).toBeVisible();
 
@@ -330,6 +359,28 @@ test('shows a calm completion state without fabricated recommendations', async (
   await expect(page.getByText('No new conversations need action')).toBeVisible();
   await expect(page.getByText('No saved messages')).toBeVisible();
   await expect(page.getByText('People to connect with')).toHaveCount(0);
+});
+
+test('distinguishes unavailable presence authority from zero available people', async ({
+  page,
+}) => {
+  await mockMessagingHome(page, true, 'en', 'UNAVAILABLE');
+  await page.goto('/messages/home');
+
+  const unavailable = page.getByTestId('messaging-presence-unavailable');
+  await expect(unavailable).toBeVisible();
+  await expect(unavailable.getByRole('heading')).toHaveText('Presence is temporarily unavailable');
+  await expect(page.getByText('No one is available right now')).toHaveCount(0);
+});
+
+test('fails closed during a rolling deploy when the backend omits presence metadata', async ({
+  page,
+}) => {
+  await mockMessagingHome(page, true, 'en', null);
+  await page.goto('/messages/home');
+
+  await expect(page.getByTestId('messaging-presence-unavailable')).toBeVisible();
+  await expect(page.getByText('No one is available right now')).toHaveCount(0);
 });
 
 test('home filters, shared assets and huddle selection connect to real product flows', async ({
@@ -368,7 +419,7 @@ test('home filters, shared assets and huddle selection connect to real product f
   await expect(lobby).toBeVisible();
   await expect(lobby.getByRole('button', { name: 'Start meeting', exact: true })).toBeVisible();
   await lobby.getByRole('button', { name: 'Close', exact: true }).click();
-  await page.getByRole('button', { name: 'Message Jun Lee', exact: true }).click();
+  await page.getByRole('button', { name: 'Message Jun Lee, Available', exact: true }).click();
   await expect(page).toHaveURL(/\/messages\/direct\?conversation=direct-1/);
 });
 

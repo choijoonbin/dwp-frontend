@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
-import { FormDialog } from '@dwp-frontend/design-system';
+import { FormDialog, FormField } from '@dwp-frontend/design-system';
 import Stack from '@mui/material/Stack';
-import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 
 import type { ReactNode } from 'react';
@@ -121,58 +120,78 @@ export function TimeCloseCommandDialogs({
           prior blocker, result, event, or receipt.
         </Typography>
         {(mode === 'CLOSE' || mode === 'REOPEN') && (
-          <TextField
+          <FormField
             autoFocus
             fullWidth
             required
             label="Approval receipt ID"
             value={approvalReceiptId}
             onChange={(event) => setApprovalReceiptId(event.target.value.trim())}
-            error={approvalReceiptId.length > 0 && !approvalValid}
-            helperText="Use the approved UUID for this exact period and version."
+            errorMessage={
+              approvalReceiptId.length > 0 && !approvalValid
+                ? 'Use the approved UUID for this exact period and version.'
+                : undefined
+            }
+            supportingText="Use the approved UUID for this exact period and version."
             inputProps={{ maxLength: 36 }}
           />
         )}
         {mode === 'REOPEN' && (
-          <TextField
+          <FormField
             fullWidth
             required
             label="Reopen reason code"
             value={reasonCode}
             onChange={(event) => setReasonCode(event.target.value.toUpperCase())}
-            error={reasonCode.length > 0 && !REASON.test(reasonCode)}
-            helperText="Forward correction only; the closed result and prior events remain immutable."
+            errorMessage={
+              reasonCode.length > 0 && !REASON.test(reasonCode)
+                ? 'Forward correction only; the closed result and prior events remain immutable.'
+                : undefined
+            }
+            supportingText="Forward correction only; the closed result and prior events remain immutable."
             inputProps={{ maxLength: 80 }}
           />
         )}
         {mode === 'HANDOFF' && (
           <>
-            <TextField
+            <FormField
               autoFocus
               fullWidth
               required
               label="Closed-time result ID"
               value={closedTimeResultId}
               onChange={(event) => setClosedTimeResultId(event.target.value.trim())}
-              error={closedTimeResultId.length > 0 && !UUID.test(closedTimeResultId)}
+              errorMessage={
+                closedTimeResultId.length > 0 && !UUID.test(closedTimeResultId)
+                  ? 'Enter a valid closed-time result UUID.'
+                  : undefined
+              }
               inputProps={{ maxLength: 36 }}
             />
-            <TextField
+            <FormField
               fullWidth
               required
               label="Payroll entity ID"
               value={payrollEntityId}
               onChange={(event) => setPayrollEntityId(event.target.value.trim())}
-              error={payrollEntityId.length > 0 && !UUID.test(payrollEntityId)}
+              errorMessage={
+                payrollEntityId.length > 0 && !UUID.test(payrollEntityId)
+                  ? 'Enter a valid Payroll entity UUID.'
+                  : undefined
+              }
               inputProps={{ maxLength: 36 }}
             />
-            <TextField
+            <FormField
               fullWidth
               required
               label="Pay period ID"
               value={payPeriodId}
               onChange={(event) => setPayPeriodId(event.target.value.trim())}
-              error={payPeriodId.length > 0 && !UUID.test(payPeriodId)}
+              errorMessage={
+                payPeriodId.length > 0 && !UUID.test(payPeriodId)
+                  ? 'Enter a valid pay period UUID.'
+                  : undefined
+              }
               inputProps={{ maxLength: 36 }}
             />
           </>

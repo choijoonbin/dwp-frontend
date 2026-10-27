@@ -4,7 +4,8 @@ import { useSearchParams } from 'react-router-dom';
 import { resolveSupportedLocale } from '@dwp-frontend/shared-i18n';
 import { getWorkplaceExplore, useProductSurfaceAuthority } from '@dwp-frontend/shared-utils';
 import { useQuery } from '@tanstack/react-query';
-import { InlineFeedback, LoadingState, PageCanvas } from '@dwp-frontend/design-system';
+import { Building2 } from 'lucide-react';
+import { EmptyState, InlineFeedback, LoadingState, PageCanvas } from '@dwp-frontend/design-system';
 
 import { useRoomsCapabilities } from './rooms-capabilities';
 import { RoomsPageHeading } from './rooms-ui';
@@ -85,9 +86,11 @@ export function WorkplaceWayfindingPage() {
     return (
       <PageCanvas topInset="compact">
         {heading}
-        <InlineFeedback severity="warning">
-          {t('screen19.wayfinding.startFromContext')}
-        </InlineFeedback>
+        <EmptyState
+          icon={<Building2 size={28} />}
+          title={t('workplace.explore.noSitesTitle')}
+          description={t('workplace.explore.noSitesDescription')}
+        />
       </PageCanvas>
     );
   }

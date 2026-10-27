@@ -13,7 +13,14 @@ import {
 } from 'lucide-react';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { ActionButton, EmptyState, FormField, PageCanvas } from '@dwp-frontend/design-system';
+import {
+  ActionButton,
+  EmptyState,
+  FormField,
+  InlineFeedback,
+  LoadingState,
+  PageCanvas,
+} from '@dwp-frontend/design-system';
 import { formatDate, formatNumber } from '@dwp-frontend/shared-i18n';
 import {
   getSpace,
@@ -21,38 +28,52 @@ import {
   getSpaceMembers,
   getMySpaceAccessRequests,
   updateSpacePolicies,
+  useAuth,
+  usePermissions,
   useToast,
 } from '@dwp-frontend/shared-utils';
 
-import Alert from '@mui/material/Alert';
 import Avatar from '@mui/material/Avatar';
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
 import Divider from '@mui/material/Divider';
 import Link from '@mui/material/Link';
 import Paper from '@mui/material/Paper';
-import Skeleton from '@mui/material/Skeleton';
 import Stack from '@mui/material/Stack';
 import Tab from '@mui/material/Tab';
 import Tabs from '@mui/material/Tabs';
 import Typography from '@mui/material/Typography';
+import { alpha } from '@mui/material/styles';
 
 import { CreateSpaceContentDialog } from './create-space-content-dialog';
 import { SpaceAccessDialog } from './space-access-dialog';
+import { spaceDetailQueryKeys } from './space-detail-query-keys';
 import { SpaceMemberManager } from './space-member-manager';
 import { SpaceGlyph, SpaceStatusChip, getSpaceTone, localizedSpace } from './space-ui';
+
+import type { SpaceQueryIdentity } from './space-detail-query-keys';
 
 const ALL_TABS = ['overview', 'content', 'people', 'apps', 'agent', 'owner'] as const;
 type SpaceTab = (typeof ALL_TABS)[number];
 
-function ContentList({ spaceKey }: { spaceKey: string }) {
+function ContentList({ spaceKey, identity }: { spaceKey: string; identity: SpaceQueryIdentity }) {
   const { t } = useTranslation('spaces');
   const content = useQuery({
-    queryKey: ['spaces', 'content', spaceKey],
+    queryKey: spaceDetailQueryKeys.content(spaceKey, identity),
     queryFn: () => getSpaceContent(spaceKey),
   });
-  if (content.isLoading) return <Skeleton variant="rounded" height={280} />;
-  if (content.isError) return <Alert severity="error">{t('detail.contentLoadError')}</Alert>;
+  if (content.isLoading)
+    return (
+      <LoadingState
+        label={t('common:labels.loading')}
+        variant="skeleton"
+        embedded
+        skeletonRows={1}
+        skeletonHeight={280}
+      />
+    );
+  if (content.isError)
+    return <InlineFeedback severity="error">{t('detail.contentLoadError')}</InlineFeedback>;
   return (
     <Paper component="section" variant="outlined" sx={{ borderRadius: 1 }}>
       <Stack divider={<Divider flexItem />}>
@@ -113,14 +134,24 @@ function ContentList({ spaceKey }: { spaceKey: string }) {
   );
 }
 
-function MemberList({ spaceKey }: { spaceKey: string }) {
+function MemberList({ spaceKey, identity }: { spaceKey: string; identity: SpaceQueryIdentity }) {
   const { t } = useTranslation('spaces');
   const members = useQuery({
-    queryKey: ['spaces', 'members', spaceKey],
+    queryKey: spaceDetailQueryKeys.members(spaceKey, identity),
     queryFn: () => getSpaceMembers(spaceKey),
   });
-  if (members.isLoading) return <Skeleton variant="rounded" height={260} />;
-  if (members.isError) return <Alert severity="error">{t('detail.membersLoadError')}</Alert>;
+  if (members.isLoading)
+    return (
+      <LoadingState
+        label={t('common:labels.loading')}
+        variant="skeleton"
+        embedded
+        skeletonRows={1}
+        skeletonHeight={260}
+      />
+    );
+  if (members.isError)
+    return <InlineFeedback severity="error">{t('detail.membersLoadError')}</InlineFeedback>;
   return (
     <Paper component="section" variant="outlined" sx={{ borderRadius: 1 }}>
       <Stack divider={<Divider flexItem />}>
@@ -165,25 +196,80 @@ function MemberList({ spaceKey }: { spaceKey: string }) {
 }
 
 export function SpaceDetailPage({ spaceKey, tab }: { spaceKey: string; tab: string }) {
+  const { user } = useAuth();
+  const { t } = useTranslation('spaces');
+  if (!user) {
+    return (
+      <PageCanvas>
+        <LoadingState
+          label={t('common:labels.loading')}
+          variant="skeleton"
+          embedded
+          skeletonRows={1}
+          skeletonHeight={186}
+        />
+      </PageCanvas>
+    );
+  }
+  return (
+    <SpaceDetail
+      key={JSON.stringify([spaceKey, user.tenantId, user.userId])}
+      spaceKey={spaceKey}
+      tab={tab}
+      identity={{ tenantId: user.tenantId, userId: user.userId }}
+    />
+  );
+}
+
+function SpaceDetail({
+  spaceKey,
+  tab,
+  identity,
+}: {
+  spaceKey: string;
+  tab: string;
+  identity: SpaceQueryIdentity;
+}) {
   const { t, i18n } = useTranslation('spaces');
+  const permissions = usePermissions();
   const navigate = useNavigate();
   const toast = useToast();
   const queryClient = useQueryClient();
   const [createContentOpen, setCreateContentOpen] = useState(false);
   const [accessOpen, setAccessOpen] = useState(false);
   const detail = useQuery({
-    queryKey: ['spaces', 'detail', spaceKey],
+    queryKey: spaceDetailQueryKeys.detail(spaceKey, identity),
     queryFn: () => getSpace(spaceKey),
     staleTime: 20_000,
   });
   const [contentPolicy, setContentPolicy] = useState('OWNER_REVIEW');
   const [appPolicy, setAppPolicy] = useState('OWNER_REVIEW');
   const [aiPolicy, setAiPolicy] = useState('MEMBER_SCOPED');
+  const canRequestMembership =
+    permissions.isLoaded &&
+    (permissions.hasPermission('ACTION.SPACE_MEMBERSHIP', 'CREATE') ||
+      permissions.hasPermission('ACTION.SPACE_MEMBERSHIP', 'MANAGE'));
+  const requestableSpace =
+    canRequestMembership &&
+    Boolean(detail.data) &&
+    !detail.data?.space.memberRole &&
+    detail.data?.space.lifecycleState === 'ACTIVE' &&
+    (detail.data?.space.visibility === 'OPEN' || detail.data?.space.visibility === 'REQUEST');
   const accessRequests = useQuery({
-    queryKey: ['spaces', 'access-requests'],
+    queryKey: spaceDetailQueryKeys.pending(identity),
     queryFn: () => getMySpaceAccessRequests('PENDING'),
-    staleTime: 20_000,
+    enabled: requestableSpace,
+    retry: false,
   });
+  const hasPendingRequest = accessRequests.data?.some(
+    (request) => request.spaceKey === spaceKey && request.status === 'PENDING'
+  );
+  const canSubmitAccessRequest =
+    requestableSpace &&
+    !detail.isFetching &&
+    accessRequests.isSuccess &&
+    !accessRequests.isFetching &&
+    !hasPendingRequest;
   const activeTab: SpaceTab = ALL_TABS.includes(tab as SpaceTab) ? (tab as SpaceTab) : 'overview';
 
   useEffect(() => {
@@ -202,7 +288,7 @@ export function SpaceDetailPage({ spaceKey, tab }: { spaceKey: string; tab: stri
         expectedVersion: detail.data?.space.version ?? 0,
       }),
     onSuccess: (next) => {
-      queryClient.setQueryData(['spaces', 'detail', spaceKey], next);
+      queryClient.setQueryData(spaceDetailQueryKeys.detail(spaceKey, identity), next);
       toast.success(t('owner.saved'));
     },
     onError: () => toast.error(t('owner.error')),
@@ -211,15 +297,20 @@ export function SpaceDetailPage({ spaceKey, tab }: { spaceKey: string; tab: stri
   if (detail.isLoading) {
     return (
       <PageCanvas>
-        <Skeleton variant="rounded" height={186} />
-        <Skeleton variant="rounded" height={340} sx={{ mt: 2 }} />
+        <LoadingState
+          label={t('common:labels.loading')}
+          variant="skeleton"
+          embedded
+          skeletonHeights={[186, 340]}
+          skeletonGap={2}
+        />
       </PageCanvas>
     );
   }
   if (detail.isError || !detail.data) {
     return (
       <PageCanvas>
-        <Alert severity="error">{t('detail.loadError')}</Alert>
+        <InlineFeedback severity="error">{t('detail.loadError')}</InlineFeedback>
       </PageCanvas>
     );
   }
@@ -252,7 +343,8 @@ export function SpaceDetailPage({ spaceKey, tab }: { spaceKey: string; tab: stri
         sx={{
           px: { xs: 2, md: 3 },
           py: { xs: 2.5, md: 3 },
-          bgcolor: tone.soft,
+          bgcolor: (theme) =>
+            theme.palette.mode === 'dark' ? alpha(tone.strong, 0.24) : tone.soft,
           border: 1,
           borderColor: 'divider',
           borderRadius: 1,
@@ -264,16 +356,28 @@ export function SpaceDetailPage({ spaceKey, tab }: { spaceKey: string; tab: stri
           alignItems={{ xs: 'flex-start', md: 'center' }}
           gap={2.5}
         >
-          <Stack direction="row" gap={2} alignItems="flex-start">
+          <Stack
+            direction="row"
+            gap={2}
+            alignItems="flex-start"
+            sx={{ minWidth: 0, maxWidth: '100%', flex: { md: 1 } }}
+          >
             <SpaceGlyph iconKey={space.iconKey} accentToken={space.accentToken} size={52} />
-            <Box sx={{ minWidth: 0 }}>
+            <Box sx={{ minWidth: 0, flex: 1 }}>
               <Stack direction="row" gap={1} alignItems="center" flexWrap="wrap">
-                <Typography component="h1" variant="h4">
+                <Typography
+                  component="h1"
+                  variant="h4"
+                  sx={{ overflowWrap: 'anywhere', minWidth: 0 }}
+                >
                   {label.name}
                 </Typography>
                 {space.memberRole && <Chip size="small" label={t(`role.${space.memberRole}`)} />}
               </Stack>
-              <Typography color="text.secondary" sx={{ mt: 0.75, maxWidth: 760 }}>
+              <Typography
+                color="text.secondary"
+                sx={{ mt: 0.75, maxWidth: 760, overflowWrap: 'anywhere' }}
+              >
                 {label.summary}
               </Typography>
               <Stack direction="row" gap={0.75} flexWrap="wrap" sx={{ mt: 1.5 }}>
@@ -295,24 +399,40 @@ export function SpaceDetailPage({ spaceKey, tab }: { spaceKey: string; tab: stri
             >
               {t('actions.newContent')}
             </ActionButton>
-          ) : !space.memberRole ? (
+          ) : requestableSpace ? (
             <ActionButton
               intent="primary"
               startIcon={<KeyRound size={17} />}
-              disabled={accessRequests.data?.some(
-                (request) => request.spaceKey === spaceKey && request.status === 'PENDING'
-              )}
+              disabled={!canSubmitAccessRequest}
               onClick={() => setAccessOpen(true)}
             >
-              {accessRequests.data?.some(
-                (request) => request.spaceKey === spaceKey && request.status === 'PENDING'
-              )
+              {hasPendingRequest
                 ? t('actions.accessPending')
-                : t('actions.requestAccess')}
+                : accessRequests.isPending || accessRequests.isFetching
+                  ? t('detail.accessStatusChecking')
+                  : t('actions.requestAccess')}
             </ActionButton>
           ) : null}
         </Stack>
       </Box>
+
+      {requestableSpace && accessRequests.isError && (
+        <InlineFeedback
+          severity="error"
+          sx={{ mt: 2 }}
+          action={
+            <ActionButton
+              intent="quiet"
+              disabled={accessRequests.isFetching}
+              onClick={() => void accessRequests.refetch()}
+            >
+              {t('actions.retry')}
+            </ActionButton>
+          }
+        >
+          {t('detail.accessStatusError')}
+        </InlineFeedback>
+      )}
 
       <Tabs
         value={visibleTab}
@@ -364,76 +484,80 @@ export function SpaceDetailPage({ spaceKey, tab }: { spaceKey: string; tab: stri
                 </Box>
               ))}
             </Box>
-            <Box
-              sx={{
-                display: 'grid',
-                gridTemplateColumns: { xs: '1fr', lg: 'minmax(0, 1.5fr) minmax(300px, 0.8fr)' },
-                gap: 2,
-              }}
-            >
-              <Paper component="section" variant="outlined" sx={{ borderRadius: 1 }}>
-                <Stack direction="row" alignItems="center" gap={1} sx={{ p: 2 }}>
-                  <FileText size={18} />
-                  <Typography component="h2" variant="h6">
-                    {t('detail.featuredContent')}
-                  </Typography>
-                </Stack>
-                <Divider />
-                <Stack divider={<Divider flexItem />}>
-                  {data.featuredContent.map((item) => (
-                    <Box key={item.contentId} sx={{ p: 2 }}>
-                      <Typography fontWeight={750}>{item.title}</Typography>
-                      <Typography variant="body2" color="text.secondary" sx={{ mt: 0.4 }}>
-                        {item.summary}
-                      </Typography>
-                    </Box>
-                  ))}
-                  {!data.featuredContent.length && (
-                    <EmptyState
-                      size="compact"
-                      title={t('detail.noFeaturedTitle')}
-                      description={t('detail.noFeaturedDescription')}
-                    />
-                  )}
-                </Stack>
-              </Paper>
-              <Paper component="section" variant="outlined" sx={{ borderRadius: 1 }}>
-                <Stack direction="row" alignItems="center" gap={1} sx={{ p: 2 }}>
-                  <Activity size={18} />
-                  <Typography component="h2" variant="h6">
-                    {t('detail.recentActivity')}
-                  </Typography>
-                </Stack>
-                <Divider />
-                <Stack divider={<Divider flexItem />}>
-                  {data.activity.slice(0, 6).map((item) => (
-                    <Box key={item.activityId} sx={{ px: 2, py: 1.5 }}>
-                      <Typography variant="body2" fontWeight={700}>
-                        {language.startsWith('ko') ? item.titleKo : item.titleEn}
-                      </Typography>
-                      <Typography variant="caption" color="text.secondary">
-                        {formatDate(item.occurredAt, { timeStyle: 'short' })}
-                      </Typography>
-                    </Box>
-                  ))}
-                  {!data.activity.length && (
-                    <EmptyState
-                      size="compact"
-                      title={t('detail.noActivityTitle')}
-                      description={t('detail.noActivityDescription')}
-                    />
-                  )}
-                </Stack>
-              </Paper>
-            </Box>
+            {canViewSpaceBody ? (
+              <Box
+                sx={{
+                  display: 'grid',
+                  gridTemplateColumns: { xs: '1fr', lg: 'minmax(0, 1.5fr) minmax(300px, 0.8fr)' },
+                  gap: 2,
+                }}
+              >
+                <Paper component="section" variant="outlined" sx={{ borderRadius: 1 }}>
+                  <Stack direction="row" alignItems="center" gap={1} sx={{ p: 2 }}>
+                    <FileText size={18} />
+                    <Typography component="h2" variant="h6">
+                      {t('detail.featuredContent')}
+                    </Typography>
+                  </Stack>
+                  <Divider />
+                  <Stack divider={<Divider flexItem />}>
+                    {data.featuredContent.map((item) => (
+                      <Box key={item.contentId} sx={{ p: 2 }}>
+                        <Typography fontWeight={750}>{item.title}</Typography>
+                        <Typography variant="body2" color="text.secondary" sx={{ mt: 0.4 }}>
+                          {item.summary}
+                        </Typography>
+                      </Box>
+                    ))}
+                    {!data.featuredContent.length && (
+                      <EmptyState
+                        size="compact"
+                        title={t('detail.noFeaturedTitle')}
+                        description={t('detail.noFeaturedDescription')}
+                      />
+                    )}
+                  </Stack>
+                </Paper>
+                <Paper component="section" variant="outlined" sx={{ borderRadius: 1 }}>
+                  <Stack direction="row" alignItems="center" gap={1} sx={{ p: 2 }}>
+                    <Activity size={18} />
+                    <Typography component="h2" variant="h6">
+                      {t('detail.recentActivity')}
+                    </Typography>
+                  </Stack>
+                  <Divider />
+                  <Stack divider={<Divider flexItem />}>
+                    {data.activity.slice(0, 6).map((item) => (
+                      <Box key={item.activityId} sx={{ px: 2, py: 1.5 }}>
+                        <Typography variant="body2" fontWeight={700}>
+                          {language.startsWith('ko') ? item.titleKo : item.titleEn}
+                        </Typography>
+                        <Typography variant="caption" color="text.secondary">
+                          {formatDate(item.occurredAt, { timeStyle: 'short' })}
+                        </Typography>
+                      </Box>
+                    ))}
+                    {!data.activity.length && (
+                      <EmptyState
+                        size="compact"
+                        title={t('detail.noActivityTitle')}
+                        description={t('detail.noActivityDescription')}
+                      />
+                    )}
+                  </Stack>
+                </Paper>
+              </Box>
+            ) : (
+              <InlineFeedback severity="info">{t('detail.membersOnlyContent')}</InlineFeedback>
+            )}
           </Stack>
         )}
-        {visibleTab === 'content' && <ContentList spaceKey={spaceKey} />}
+        {visibleTab === 'content' && <ContentList spaceKey={spaceKey} identity={identity} />}
         {visibleTab === 'people' &&
           (data.canModerate ? (
-            <MemberList spaceKey={spaceKey} />
+            <MemberList spaceKey={spaceKey} identity={identity} />
           ) : (
-            <Alert severity="info">{t('detail.peoplePrivacy')}</Alert>
+            <InlineFeedback severity="info">{t('detail.peoplePrivacy')}</InlineFeedback>
           ))}
         {visibleTab === 'apps' && (
           <Box
@@ -546,7 +670,7 @@ export function SpaceDetailPage({ spaceKey, tab }: { spaceKey: string; tab: stri
         )}
         {visibleTab === 'owner' && data.canManage && (
           <Stack gap={3}>
-            <SpaceMemberManager spaceKey={spaceKey} />
+            <SpaceMemberManager spaceKey={spaceKey} identity={identity} />
             <Box
               sx={{
                 display: 'grid',
@@ -642,11 +766,15 @@ export function SpaceDetailPage({ spaceKey, tab }: { spaceKey: string; tab: stri
         spaceKey={spaceKey}
         onClose={() => setCreateContentOpen(false)}
       />
-      <SpaceAccessDialog
-        open={accessOpen}
-        spaceKey={spaceKey}
-        onClose={() => setAccessOpen(false)}
-      />
+      {accessOpen && (
+        <SpaceAccessDialog
+          open
+          spaceKey={spaceKey}
+          identity={identity}
+          canRequest={canSubmitAccessRequest}
+          onClose={() => setAccessOpen(false)}
+        />
+      )}
     </PageCanvas>
   );
 }

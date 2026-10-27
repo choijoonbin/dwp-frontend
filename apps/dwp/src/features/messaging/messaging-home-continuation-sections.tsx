@@ -5,6 +5,7 @@ import { Link as RouterLink } from 'react-router-dom';
 import {
   ActionButton,
   ActionIconButton,
+  ErrorState,
   GlyphSurface,
   GuidedEmptyState,
 } from '@dwp-frontend/design-system';
@@ -22,6 +23,7 @@ import Tabs from '@mui/material/Tabs';
 import { alpha } from '@mui/material/styles';
 
 import { MessagingPersonLine, messagingRelativeTime } from './messaging-components';
+import { selectAvailableMessagingPeople } from './messaging-home-model';
 import { messagingPlainTextPreview } from './messaging-message-body';
 import { messagingVisualTokens } from './messaging-visual-model';
 
@@ -34,26 +36,22 @@ import type {
 
 export function MessagingPeoplePulse({
   people,
+  presence,
+  onRetry,
   onOpenDirectory,
   onOpenPerson,
   openingPerson,
 }: {
   people: MessagingPerson[];
+  presence: NonNullable<MessagingHome['presence']>;
+  onRetry: () => void;
   onOpenDirectory: () => void;
   onOpenPerson: (userId: number) => void;
   openingPerson: boolean;
 }) {
-  const { t } = useTranslation('messaging');
-  if (!people.length) return null;
-  const visiblePeople = [...people]
-    .sort(
-      (left, right) =>
-        Number(right.presenceState === 'AVAILABLE') - Number(left.presenceState === 'AVAILABLE')
-    )
-    .slice(0, 5);
-  const availableCount = visiblePeople.filter(
-    (person) => person.presenceState === 'AVAILABLE'
-  ).length;
+  const { t, i18n } = useTranslation('messaging');
+  const visiblePeople = selectAvailableMessagingPeople(people);
+  const unavailable = presence.authority === 'UNAVAILABLE';
 
   return (
     <Box component="section" aria-labelledby="messaging-people-pulse-title" sx={{ minWidth: 0 }}>
@@ -73,7 +71,9 @@ export function MessagingPeoplePulse({
                 {t('home.people.title')}
               </Typography>
               <Typography variant="caption" color="text.secondary">
-                {t('home.people.availableSnapshot', { count: availableCount })}
+                {unavailable
+                  ? t('home.people.unavailableSnapshot')
+                  : t('home.people.availableSnapshot', { count: visiblePeople.length })}
               </Typography>
             </Box>
           </Stack>
@@ -82,34 +82,54 @@ export function MessagingPeoplePulse({
           </ActionIconButton>
         </Stack>
       </Box>
-      <Stack spacing={0.4}>
-        {visiblePeople.map((person) => (
-          <ButtonBase
-            key={person.userId}
-            disabled={openingPerson}
-            onClick={() => onOpenPerson(person.userId)}
-            aria-label={t('home.people.messagePerson', { name: person.displayName })}
-            sx={{
-              display: 'block',
-              width: 1,
-              textAlign: 'left',
-              p: 0.75,
-              borderRadius: messagingVisualTokens.radius.compact,
-              '&:hover': { bgcolor: 'action.hover' },
-              '&:focus-visible': { outline: '2px solid', outlineColor: 'primary.main' },
-            }}
-          >
-            <MessagingPersonLine person={person} />
-            <Typography
-              variant="caption"
-              color="text.secondary"
-              sx={{ display: 'block', pl: 5.4, mt: 0.2 }}
+      {unavailable ? (
+        <Box data-testid="messaging-presence-unavailable">
+          <ErrorState
+            size="compact"
+            title={t('home.people.unavailableTitle')}
+            description={t('home.people.unavailableDescription', {
+              time: messagingRelativeTime(
+                presence.evaluatedAt,
+                i18n.resolvedLanguage ?? i18n.language
+              ),
+            })}
+            retryLabel={t('actions.retry')}
+            onRetry={onRetry}
+          />
+        </Box>
+      ) : visiblePeople.length ? (
+        <Stack spacing={0.4}>
+          {visiblePeople.map((person) => (
+            <ButtonBase
+              key={person.userId}
+              disabled={openingPerson}
+              onClick={() => onOpenPerson(person.userId)}
+              aria-label={t('home.people.messagePerson', {
+                name: person.displayName,
+                presence: t(`home.people.presence.${person.presenceState}`),
+              })}
+              sx={{
+                display: 'block',
+                width: 1,
+                textAlign: 'left',
+                p: 0.75,
+                borderRadius: messagingVisualTokens.radius.compact,
+                '&:hover': { bgcolor: 'action.hover' },
+                '&:focus-visible': { outline: '2px solid', outlineColor: 'primary.main' },
+              }}
             >
-              {t(`home.people.presence.${person.presenceState}`)}
-            </Typography>
-          </ButtonBase>
-        ))}
-      </Stack>
+              <MessagingPersonLine person={person} />
+            </ButtonBase>
+          ))}
+        </Stack>
+      ) : (
+        <GuidedEmptyState
+          kind="empty"
+          size="compact"
+          title={t('home.people.emptyTitle')}
+          description={t('home.people.emptyDescription')}
+        />
+      )}
     </Box>
   );
 }

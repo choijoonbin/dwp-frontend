@@ -1,4 +1,4 @@
-import type { ProductAccessMode } from '../../../shell/product-surface-context';
+import type { ProductAccessMode } from '../../../../components/product-surface-context';
 
 export const HRM007_FEATURE = 'HRIS_HRM_APPOINTMENT_WORKBENCH' as const;
 export const HRM007_ADAPTER_KIND = 'HRIS_HRM_007_ENTRY_QUERY_V1' as const;

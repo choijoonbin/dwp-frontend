@@ -1,9 +1,8 @@
-import { ActionButton, FormDialog, InlineFeedback } from '@dwp-frontend/design-system';
+import { ActionButton, FormDialog, FormField, InlineFeedback } from '@dwp-frontend/design-system';
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
 import Paper from '@mui/material/Paper';
 import Stack from '@mui/material/Stack';
-import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import { useState } from 'react';
 
@@ -118,11 +117,11 @@ export function PayrollCalculationRunInspector({
             <InlineFeedback severity="info" title={copy.commands}>
               {copy.commandGuard}
             </InlineFeedback>
-            <TextField
+            <FormField
               label={copy.comment}
               value={comment}
               onChange={(event) => setComment(normalizePayrollActionComment(event.target.value))}
-              helperText={`${commentCodePointCount}/${PAYROLL_ACTION_COMMENT_MAX_CODE_POINTS}`}
+              supportingText={`${commentCodePointCount}/${PAYROLL_ACTION_COMMENT_MAX_CODE_POINTS}`}
               multiline
               minRows={2}
               disabled={busy}

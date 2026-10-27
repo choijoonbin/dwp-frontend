@@ -11,8 +11,8 @@ import {
   scheduleDirectDecisionLease,
 } from '../../../components/direct-decision-lease';
 import { useProductActionMutation } from '../../../components/use-product-action-mutation';
-import { isAllowedCanaryDecisionTrusted } from '../../shell/product-surface-canary-runtime';
-import { mapProductSurfaceDirectEvaluation } from '../../shell/product-surface-context';
+import { isAllowedCanaryDecisionTrusted } from '../../../components/product-surface-canary-runtime';
+import { mapProductSurfaceDirectEvaluation } from '../../../components/product-surface-context';
 import {
   HRIS_OPERATIONS_API_CONTRACTS,
   HRIS_OPERATIONS_FEATURE,
@@ -43,7 +43,7 @@ import type {
   EffectiveProductSurfaceContext,
   EffectiveProductSurfaceContextEnvelope,
   ProductSurfaceDirectEvaluation,
-} from '../../shell/product-surface-context';
+} from '../../../components/product-surface-context';
 import type {
   HrisOperationsDataSource,
   HrisOperationsTrustedAdmission,

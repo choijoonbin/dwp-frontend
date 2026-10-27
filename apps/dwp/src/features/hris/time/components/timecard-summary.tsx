@@ -1,4 +1,5 @@
 import { CalendarDays, Clock3, History, ShieldCheck } from 'lucide-react';
+import { foundationTokens } from '@dwp-frontend/design-system';
 
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
@@ -134,7 +135,7 @@ export function TimecardSummary({ timecard }: { timecard: Timecard }) {
                   border: 1,
                   borderColor: current ? 'text.primary' : 'divider',
                   bgcolor: current ? 'action.selected' : 'background.paper',
-                  borderRadius: 1,
+                  borderRadius: foundationTokens.radius.compact + 'px',
                   p: 1.25,
                   minWidth: 0,
                 }}
@@ -142,7 +143,10 @@ export function TimecardSummary({ timecard }: { timecard: Timecard }) {
                 <Typography variant="caption" color="text.secondary">
                   {current ? 'Current state' : 'State'}
                 </Typography>
-                <Typography variant="body2" fontWeight={current ? 700 : 500}>
+                <Typography
+                  variant="body2"
+                  fontWeight={current ? 'fontWeightBold' : 'fontWeightMedium'}
+                >
                   {STATE_LABELS[state]}
                 </Typography>
               </Box>

@@ -15,8 +15,8 @@ import {
   scheduleDirectDecisionLease,
 } from '../../../components/direct-decision-lease';
 import { useProductSurfaceRequestScope } from '../../../components/use-product-surface-request-scope';
-import { isAllowedCanaryDecisionTrusted } from '../../shell/product-surface-canary-runtime';
-import { mapProductSurfaceDirectEvaluation } from '../../shell/product-surface-context';
+import { isAllowedCanaryDecisionTrusted } from '../../../components/product-surface-canary-runtime';
+import { mapProductSurfaceDirectEvaluation } from '../../../components/product-surface-context';
 import {
   HRM009_FEATURE,
   HRM009_QUERY_CONTRACTS,
@@ -34,7 +34,7 @@ import type {
   EffectiveProductSurfaceContext,
   EffectiveProductSurfaceContextEnvelope,
   ProductSurfaceDirectEvaluation,
-} from '../../shell/product-surface-context';
+} from '../../../components/product-surface-context';
 import type { Hrm009QueryId, Hrm009TrustedScope } from '../employee-services/certificates';
 
 export const HRM009_PAGE_ROUTE_CONTRACTS = Object.freeze({

@@ -32,6 +32,7 @@ const pickerOpenButtonSlotProps = {
 } as const;
 
 type PickerFieldContract = FieldFeedbackProps & {
+  id?: string;
   label: string;
   required?: boolean;
   fullWidth?: boolean;
@@ -52,6 +53,7 @@ export type DatePickerFieldProps = PickerFieldContract &
   };
 
 export function DatePickerField({
+  id,
   label,
   value,
   onValueChange,
@@ -84,6 +86,7 @@ export function DatePickerField({
         slotProps={{
           openPickerButton: pickerOpenButtonSlotProps,
           textField: {
+            id,
             fullWidth,
             size,
             required,
@@ -110,6 +113,7 @@ export type DateTimePickerFieldProps = PickerFieldContract &
   };
 
 export function DateTimePickerField({
+  id,
   label,
   value,
   onValueChange,
@@ -138,6 +142,7 @@ export function DateTimePickerField({
         slotProps={{
           openPickerButton: pickerOpenButtonSlotProps,
           textField: {
+            id,
             fullWidth,
             size,
             required,
@@ -164,6 +169,7 @@ export type TimePickerFieldProps = PickerFieldContract &
   };
 
 export function TimePickerField({
+  id,
   label,
   value,
   onValueChange,
@@ -195,6 +201,7 @@ export function TimePickerField({
         slotProps={{
           openPickerButton: pickerOpenButtonSlotProps,
           textField: {
+            id,
             fullWidth,
             size,
             required,

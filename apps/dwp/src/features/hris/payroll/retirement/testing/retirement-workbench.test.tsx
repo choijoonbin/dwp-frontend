@@ -5,6 +5,8 @@ import { HttpError, HttpTransportError } from '@dwp-frontend/shared-utils';
 import { DwpThemeProvider } from '@dwp-frontend/design-system';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
+import type * as DesignSystem from '@dwp-frontend/design-system';
+
 import {
   PAY004_ADAPTER_KIND,
   PAY004_DEFAULT_ROLLOUT,
@@ -20,6 +22,40 @@ import {
 
 import type { Pay004QueryAdapter } from '../retirement-api';
 import type { Pay004Projection } from '../retirement-contract';
+
+// Domain assertions drive the scalar picker contract; DS tests cover section editing.
+vi.mock('@dwp-frontend/design-system', async (importOriginal) => {
+  const actual = await importOriginal<typeof DesignSystem>();
+  return {
+    ...actual,
+    DatePickerField: ({
+      id,
+      label,
+      value,
+      onValueChange,
+      disabled,
+      required,
+      size,
+      fullWidth,
+      errorMessage,
+      supportingText,
+    }: Parameters<typeof actual.DatePickerField>[0]) => (
+      <actual.FormField
+        id={id}
+        label={label}
+        type="date"
+        value={value ?? ''}
+        onChange={(event) => onValueChange(event.target.value || null)}
+        disabled={disabled}
+        required={required}
+        size={size}
+        fullWidth={fullWidth}
+        errorMessage={errorMessage}
+        supportingText={supportingText}
+      />
+    ),
+  };
+});
 
 const ADMITTED = Object.freeze({
   feature: PAY004_FEATURE,
@@ -451,41 +487,34 @@ describe('PAY-004 retirement payroll workbench', () => {
     { label: '320px', width: 320, zoom: 1 },
     { label: '1440px at 200% zoom', width: 720, zoom: 2 },
     { label: '1280px at 200% zoom', width: 640, zoom: 2 },
-  ])(
-    'keeps complete list-detail inspection accessible at $label',
-    async ({ width, zoom }) => {
-      installEnvironment({
-        width,
-        zoom,
-        forcedColors: width === 320,
-        reducedMotion: width === 390,
-      });
-      await renderWorkbench(adapter(), {}, width === 320 ? 'dark' : 'light');
-      await shown('Retirement case · October separation');
-      const workbench = document.querySelector<HTMLElement>(
-        '[data-testid="pay-004-retirement-workbench"]'
-      );
-      expect(workbench?.getAttribute('data-runtime-state')).toBe('complete');
-      expect(workbench?.getAttribute('data-layout-density')).toBe(
-        width <= 600 ? 'compact' : 'fluid'
-      );
-      expect(workbench?.getAttribute('data-color-scheme')).toBe(
-        width === 320 ? 'dark' : 'light'
-      );
-      expect(workbench?.getAttribute('data-forced-colors')).toBe(
-        width === 320 ? 'active' : 'inactive'
-      );
-      expect(workbench?.getAttribute('data-reduced-motion')).toBe(
-        width === 390 ? 'active' : 'inactive'
-      );
-      expect(document.querySelector('h1')?.textContent).toBe('Retirement payroll workbench');
-      expect(document.body.textContent).not.toContain('Calculate');
-      expect(document.body.textContent).not.toContain('Activate pack');
-      expect(window.devicePixelRatio).toBe(zoom);
-      expect(getComputedStyle(workbench!).overflowX).toBe('clip');
-      expect(workbench!.scrollWidth).toBeLessThanOrEqual(workbench!.clientWidth);
-    }
-  );
+  ])('keeps complete list-detail inspection accessible at $label', async ({ width, zoom }) => {
+    installEnvironment({
+      width,
+      zoom,
+      forcedColors: width === 320,
+      reducedMotion: width === 390,
+    });
+    await renderWorkbench(adapter(), {}, width === 320 ? 'dark' : 'light');
+    await shown('Retirement case · October separation');
+    const workbench = document.querySelector<HTMLElement>(
+      '[data-testid="pay-004-retirement-workbench"]'
+    );
+    expect(workbench?.getAttribute('data-runtime-state')).toBe('complete');
+    expect(workbench?.getAttribute('data-layout-density')).toBe(width <= 600 ? 'compact' : 'fluid');
+    expect(workbench?.getAttribute('data-color-scheme')).toBe(width === 320 ? 'dark' : 'light');
+    expect(workbench?.getAttribute('data-forced-colors')).toBe(
+      width === 320 ? 'active' : 'inactive'
+    );
+    expect(workbench?.getAttribute('data-reduced-motion')).toBe(
+      width === 390 ? 'active' : 'inactive'
+    );
+    expect(document.querySelector('h1')?.textContent).toBe('Retirement payroll workbench');
+    expect(document.body.textContent).not.toContain('Calculate');
+    expect(document.body.textContent).not.toContain('Activate pack');
+    expect(window.devicePixelRatio).toBe(zoom);
+    expect(getComputedStyle(workbench!).overflowX).toBe('clip');
+    expect(workbench!.scrollWidth).toBeLessThanOrEqual(workbench!.clientWidth);
+  });
 
   it.each(['Enter', ' '])(
     'supports Korean copy and keyboard-only compact inspection with %s',

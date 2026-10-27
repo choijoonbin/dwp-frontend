@@ -7,6 +7,7 @@ import type { SxProps, Theme } from '@mui/material/styles';
 
 type CapturedPickerProps = {
   slotProps?: {
+    textField?: { id?: string };
     openPickerButton?: {
       sx?: SxProps<Theme>;
     };
@@ -43,9 +44,9 @@ vi.mock('@mui/x-date-pickers/TimePicker', () => ({
 function renderFields() {
   renderToStaticMarkup(
     <>
-      <DatePickerField label="Date" value={null} onValueChange={() => undefined} />
-      <DateTimePickerField label="Date and time" value={null} onValueChange={() => undefined} />
-      <TimePickerField label="Time" value={null} onValueChange={() => undefined} />
+      <DatePickerField id="date-field" label="Date" value={null} onValueChange={() => undefined} />
+      <DateTimePickerField id="datetime-field" label="Date and time" value={null} onValueChange={() => undefined} />
+      <TimePickerField id="time-field" label="Time" value={null} onValueChange={() => undefined} />
     </>
   );
 }
@@ -55,6 +56,13 @@ describe('date and time picker touch-target contract', () => {
     captured.date = undefined;
     captured.dateTime = undefined;
     captured.time = undefined;
+  });
+
+  it('forwards stable field identities to the labelled input slot', () => {
+    renderFields();
+    expect(captured.date?.slotProps?.textField?.id).toBe('date-field');
+    expect(captured.dateTime?.slotProps?.textField?.id).toBe('datetime-field');
+    expect(captured.time?.slotProps?.textField?.id).toBe('time-field');
   });
 
   it('keeps desktop density while expanding every picker trigger to 44px on mobile or touch', () => {

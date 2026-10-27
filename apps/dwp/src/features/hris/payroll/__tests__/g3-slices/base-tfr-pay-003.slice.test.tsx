@@ -5,6 +5,8 @@ import { createRoot, type Root } from 'react-dom/client';
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+
+import type * as DesignSystem from '@dwp-frontend/design-system';
 import { HttpError } from '@dwp-frontend/shared-utils';
 
 import type { ProductSurfaceGovernedMutationAuthority } from '@dwp-frontend/shared-utils';
@@ -15,6 +17,40 @@ vi.mock('@dwp-frontend/shared-utils', async (importOriginal) => ({
   ...(await importOriginal<object>()),
   axiosInstance: transport,
 }));
+
+// Domain assertions drive the scalar picker contract; DS tests cover section editing.
+vi.mock('@dwp-frontend/design-system', async (importOriginal) => {
+  const actual = await importOriginal<typeof DesignSystem>();
+  return {
+    ...actual,
+    DatePickerField: ({
+      id,
+      label,
+      value,
+      onValueChange,
+      disabled,
+      required,
+      size,
+      fullWidth,
+      errorMessage,
+      supportingText,
+    }: Parameters<typeof actual.DatePickerField>[0]) => (
+      <actual.FormField
+        id={id}
+        label={label}
+        type="date"
+        value={value ?? ''}
+        onChange={(event) => onValueChange(event.target.value || null)}
+        disabled={disabled}
+        required={required}
+        size={size}
+        fullWidth={fullWidth}
+        errorMessage={errorMessage}
+        supportingText={supportingText}
+      />
+    ),
+  };
+});
 
 import {
   COUNTRY_PACK_ACTIVATE_ROUTE_CONTRACT_KEY,
@@ -833,20 +869,30 @@ describe('[SLICE:BASE-TFR-PAY-003] statutory insurance contract', () => {
     act(() => button('Review country packs').click());
     await settle();
     const values = ['MOEL-2026-11', '2026-11-01', 'b'.repeat(64), ids.approval];
-    const inputs = [...document.querySelectorAll('input')].slice(-4) as HTMLInputElement[];
-    inputs.forEach((input, index) => {
-      const setter = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value')?.set;
-      setter?.call(input, values[index]);
-      input.dispatchEvent(new Event('input', { bubbles: true }));
+    const form = button('Activate country pack').closest('form');
+    expect(form).not.toBeNull();
+    const inputs = [...form!.querySelectorAll('input')];
+    expect(inputs).toHaveLength(values.length);
+    act(() => {
+      inputs.forEach((input, index) => {
+        const setter = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value')?.set;
+        setter?.call(input, values[index]);
+        input.dispatchEvent(new Event('input', { bubbles: true }));
+      });
     });
     act(() => button('Activate country pack').click());
     expect(document.body.textContent).toContain('Additional verification required');
     release();
     await settle();
     expect(document.body.textContent).toContain('outcome needs reconciliation');
+    expect(activate.mock.calls[0]?.[0]).toEqual(
+      expect.objectContaining({ request: command().request })
+    );
     act(() => button('Retry exact command').click());
     await settle();
     expect(executorCalls).toHaveBeenCalledTimes(2);
+    expect(activate).toHaveBeenCalledTimes(2);
+    expect(activate.mock.calls[1]?.[0]).toEqual(activate.mock.calls[0]?.[0]);
     expect(executorCalls.mock.calls[1]![1]).toEqual(executorCalls.mock.calls[0]![1]);
   });
 });

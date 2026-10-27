@@ -33,8 +33,10 @@ import ToggleButton from '@mui/material/ToggleButton';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import Typography from '@mui/material/Typography';
 
+import { spaceDetailQueryKeys } from './space-detail-query-keys';
 import { SpaceStatusChip } from './space-ui';
 
+import type { SpaceQueryIdentity } from './space-detail-query-keys';
 import type {
   PersonSummary,
   SpaceAccessRequest,
@@ -47,12 +49,14 @@ const ROLES: SpaceRole[] = ['VIEWER', 'CONTRIBUTOR', 'EDITOR', 'MODERATOR', 'OWN
 function AddMemberDialog({
   open,
   spaceKey,
+  identity,
   busy,
   onClose,
   onSave,
 }: {
   open: boolean;
   spaceKey: string;
+  identity: SpaceQueryIdentity;
   busy: boolean;
   onClose: () => void;
   onSave: (input: {
@@ -71,7 +75,7 @@ function AddMemberDialog({
   const [validUntil, setValidUntil] = useState('');
   const deferredQuery = useDeferredValue(query.trim());
   const people = useQuery({
-    queryKey: ['spaces', 'people-search', deferredQuery],
+    queryKey: spaceDetailQueryKeys.people(deferredQuery, identity),
     queryFn: () => listPeople({ query: deferredQuery, size: 8 }),
     enabled: open && type === 'USER' && deferredQuery.length >= 2,
   });
@@ -327,7 +331,13 @@ function AccessRequestRow({
   );
 }
 
-export function SpaceMemberManager({ spaceKey }: { spaceKey: string }) {
+export function SpaceMemberManager({
+  spaceKey,
+  identity,
+}: {
+  spaceKey: string;
+  identity: SpaceQueryIdentity;
+}) {
   const { t } = useTranslation('spaces');
   const toast = useToast();
   const queryClient = useQueryClient();
@@ -339,18 +349,20 @@ export function SpaceMemberManager({ spaceKey }: { spaceKey: string }) {
   } | null>(null);
   const [note, setNote] = useState('');
   const members = useQuery({
-    queryKey: ['spaces', 'members', spaceKey],
+    queryKey: spaceDetailQueryKeys.members(spaceKey, identity),
     queryFn: () => getSpaceMembers(spaceKey),
   });
   const requests = useQuery({
-    queryKey: ['spaces', 'owner-access-requests', spaceKey],
+    queryKey: spaceDetailQueryKeys.ownerRequests(spaceKey, identity),
     queryFn: () => getSpaceOwnerAccessRequests(spaceKey, 'ALL'),
   });
   const invalidate = async () => {
     await Promise.all([
-      queryClient.invalidateQueries({ queryKey: ['spaces', 'members', spaceKey] }),
-      queryClient.invalidateQueries({ queryKey: ['spaces', 'owner-access-requests', spaceKey] }),
-      queryClient.invalidateQueries({ queryKey: ['spaces', 'detail', spaceKey] }),
+      queryClient.invalidateQueries({ queryKey: spaceDetailQueryKeys.members(spaceKey, identity) }),
+      queryClient.invalidateQueries({
+        queryKey: spaceDetailQueryKeys.ownerRequests(spaceKey, identity),
+      }),
+      queryClient.invalidateQueries({ queryKey: spaceDetailQueryKeys.detail(spaceKey, identity) }),
     ]);
   };
   const addMutation = useMutation({
@@ -478,6 +490,7 @@ export function SpaceMemberManager({ spaceKey }: { spaceKey: string }) {
       <AddMemberDialog
         open={addOpen}
         spaceKey={spaceKey}
+        identity={identity}
         busy={busy}
         onClose={() => setAddOpen(false)}
         onSave={(input) => addMutation.mutate(input)}

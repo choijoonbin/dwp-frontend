@@ -3,18 +3,21 @@ import './work-explorer.css';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { ArrowRight, Clock3, FolderClock, RefreshCw, Search, Star, StarOff } from 'lucide-react';
+import { ArrowRight, Clock3, RefreshCw, Search, Star, StarOff } from 'lucide-react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { ActionButton, InlineFeedback, PageCanvas } from '@dwp-frontend/design-system';
+import {
+  ActionButton,
+  FormField,
+  InlineFeedback,
+  LoadingState,
+  PageCanvas,
+} from '@dwp-frontend/design-system';
 import { HttpError } from '@dwp-frontend/shared-utils';
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
-import CircularProgress from '@mui/material/CircularProgress';
-import MenuItem from '@mui/material/MenuItem';
 import Paper from '@mui/material/Paper';
-import Skeleton from '@mui/material/Skeleton';
+import MenuItem from '@mui/material/MenuItem';
 import Stack from '@mui/material/Stack';
-import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 
 import {
@@ -39,6 +42,12 @@ import {
   hrisReceiptProjectionsShareImmutableContext,
   nextExplorerFavoriteRouteKeys,
 } from './work-explorer-contract';
+import {
+  ActivityList,
+  CompactRouteList,
+  LoadingWorkspace,
+  StatePanel,
+} from './work-explorer-components';
 import {
   mergeWorkExplorerQueryState,
   parseWorkExplorerQueryState,
@@ -110,52 +119,6 @@ function errorStatus(error: unknown): number | undefined {
     return typeof status === 'number' ? status : undefined;
   }
   return undefined;
-}
-
-function LoadingWorkspace() {
-  const { t } = useTranslation('hcm');
-  return (
-    <Stack aria-label={t('hris.explorer.states.loading')} aria-busy="true" gap={2}>
-      <Skeleton variant="rounded" height={58} />
-      <Box className="work-explorer-card-grid">
-        {[0, 1, 2, 3, 4, 5].map((index) => (
-          <Skeleton key={index} variant="rounded" height={150} />
-        ))}
-      </Box>
-    </Stack>
-  );
-}
-
-function StatePanel({
-  title,
-  description,
-  actionLabel,
-  onAction,
-  severity = 'info',
-}: {
-  title: string;
-  description: string;
-  actionLabel?: string;
-  onAction?: () => void;
-  severity?: 'info' | 'warning' | 'error';
-}) {
-  return (
-    <Paper variant="outlined" className="work-explorer-state-panel">
-      <InlineFeedback
-        severity={severity}
-        title={title}
-        action={
-          actionLabel && onAction ? (
-            <ActionButton intent="quiet" size="small" onClick={onAction}>
-              {actionLabel}
-            </ActionButton>
-          ) : undefined
-        }
-      >
-        {description}
-      </InlineFeedback>
-    </Paper>
-  );
 }
 
 function WorkCard({
@@ -230,7 +193,7 @@ function WorkCard({
       <Typography
         component="h3"
         variant="subtitle1"
-        fontWeight={780}
+        fontWeight="fontWeightBold"
         className="work-explorer-label"
       >
         {label}
@@ -254,107 +217,6 @@ function WorkCard({
         {t('hris.explorer.actions.open')}
       </ActionButton>
     </Paper>
-  );
-}
-
-function CompactRouteList({
-  id,
-  title,
-  icon,
-  routes,
-  labels,
-  commandStartBlocked,
-  onOpen,
-}: {
-  id: string;
-  title: string;
-  icon: React.ReactNode;
-  routes: readonly ExplorerRoute[];
-  labels: ReadonlyMap<string, string>;
-  commandStartBlocked: boolean;
-  onOpen: (route: ExplorerRoute) => void;
-}) {
-  if (!routes.length) return null;
-  return (
-    <Box component="section" aria-labelledby={id}>
-      <Stack direction="row" alignItems="center" gap={0.8} sx={{ mb: 1 }}>
-        {icon}
-        <Typography id={id} component="h2" variant="subtitle1" fontWeight={780}>
-          {title}
-        </Typography>
-      </Stack>
-      <Box component="ul" className="work-explorer-compact-list">
-        {routes.map((route) => (
-          <Box component="li" key={route.routeKey}>
-            <ActionButton
-              intent="quiet"
-              disabled={commandStartBlocked}
-              onClick={() => onOpen(route)}
-            >
-              <span className="work-explorer-compact-label">{labels.get(route.routeKey)}</span>
-              <ArrowRight size={15} aria-hidden="true" />
-            </ActionButton>
-          </Box>
-        ))}
-      </Box>
-    </Box>
-  );
-}
-
-function ActivityList({
-  activities,
-  onOpen,
-  resultUnknownLabel,
-  busy,
-}: {
-  activities: readonly ExplorerActivity[];
-  onOpen: (activity: ExplorerActivity) => void;
-  resultUnknownLabel: string;
-  busy: boolean;
-}) {
-  const { t } = useTranslation('hcm');
-  if (!activities.length) return null;
-  return (
-    <Box component="section" aria-labelledby="work-explorer-in-progress-title">
-      <Stack direction="row" alignItems="center" gap={0.8} sx={{ mb: 1 }}>
-        <FolderClock size={18} aria-hidden="true" />
-        <Typography
-          id="work-explorer-in-progress-title"
-          component="h2"
-          variant="subtitle1"
-          fontWeight={780}
-        >
-          {t('hris.explorer.sections.inProgress')}
-        </Typography>
-      </Stack>
-      <Box component="ul" className="work-explorer-activity-list">
-        {activities.map((activity) => (
-          <Paper component="li" variant="outlined" key={activity.activityId}>
-            <Box minWidth={0}>
-              <Typography variant="body2" fontWeight={740}>
-                {t(`hris.explorer.sourceKinds.${activity.sourceKind}`)}
-              </Typography>
-              <Typography variant="caption" color="text.secondary">
-                {t(`hris.explorer.modules.${activity.module}`)} ·{' '}
-                {t(`hris.explorer.activityStates.${activity.state}`)}
-                {activity.state === 'RESULT_UNKNOWN' ? ` · ${resultUnknownLabel}` : ''}
-              </Typography>
-            </Box>
-            <ActionButton
-              intent="quiet"
-              size="small"
-              aria-label={t('hris.explorer.actions.resumeActivity', {
-                source: t(`hris.explorer.sourceKinds.${activity.sourceKind}`),
-              })}
-              disabled={busy}
-              onClick={() => onOpen(activity)}
-            >
-              {t('hris.explorer.actions.resume')}
-            </ActionButton>
-          </Paper>
-        ))}
-      </Box>
-    </Box>
   );
 }
 
@@ -687,10 +549,10 @@ export function WorkExplorer() {
       >
         <Box component="header" className="work-explorer-header">
           <Box minWidth={0}>
-            <Typography variant="overline" color="text.secondary" fontWeight={760}>
+            <Typography variant="overline" color="text.secondary" fontWeight="fontWeightBold">
               {t('hris.explorer.eyebrow')}
             </Typography>
-            <Typography component="h1" variant="h4" fontWeight={840}>
+            <Typography component="h1" variant="h4" fontWeight="fontWeightBold">
               {t('hris.explorer.title')}
             </Typography>
             <Typography color="text.secondary" sx={{ mt: 0.6, maxWidth: 760 }}>
@@ -698,10 +560,7 @@ export function WorkExplorer() {
             </Typography>
           </Box>
           {explorerQuery.isFetching && !explorerQuery.isLoading ? (
-            <Stack direction="row" alignItems="center" gap={0.8} role="status">
-              <CircularProgress size={16} />
-              <Typography variant="caption">{t('hris.explorer.states.refreshing')}</Typography>
-            </Stack>
+            <LoadingState label={t('hris.explorer.states.refreshing')} embedded spinnerSize={16} />
           ) : (
             <ActionButton
               intent="quiet"
@@ -719,7 +578,7 @@ export function WorkExplorer() {
           className="work-explorer-search"
           aria-label={t('hris.explorer.search.label')}
         >
-          <TextField
+          <FormField
             value={searchDraft}
             onChange={(event) => setSearchDraft(event.target.value.slice(0, 200))}
             label={t('hris.explorer.search.label')}
@@ -731,8 +590,9 @@ export function WorkExplorer() {
               htmlInput: { maxLength: 200 },
             }}
           />
-          <TextField
+          <FormField
             select
+            fullWidth={false}
             label={t('hris.explorer.filters.workbench')}
             value={queryState.workbench}
             onChange={(event) =>
@@ -748,9 +608,10 @@ export function WorkExplorer() {
                 {t(`hris.explorer.workbenches.${workbench}`)}
               </MenuItem>
             ))}
-          </TextField>
-          <TextField
+          </FormField>
+          <FormField
             select
+            fullWidth={false}
             label={t('hris.explorer.filters.module')}
             value={queryState.module}
             onChange={(event) =>
@@ -766,7 +627,7 @@ export function WorkExplorer() {
                 {t(`hris.explorer.modules.${module}`)}
               </MenuItem>
             ))}
-          </TextField>
+          </FormField>
         </Box>
 
         {!requestScope.ready || explorerQuery.isLoading ? <LoadingWorkspace /> : null}
@@ -968,7 +829,7 @@ export function WorkExplorer() {
                     id="work-explorer-catalog-title"
                     component="h2"
                     variant="h6"
-                    fontWeight={800}
+                    fontWeight="fontWeightBold"
                   >
                     {t('hris.explorer.sections.available')}
                   </Typography>

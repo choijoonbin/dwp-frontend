@@ -9,8 +9,6 @@ import type {
   HrisNavigationRolloutMode,
 } from '../../../shell/navigation-policy/hr-operations-navigation-policy';
 
-export const NAVIGATION_POLICY_RUNTIME_FLAG = 'VITE_HRIS_NAVIGATION_POLICY_ENABLED' as const;
-
 export type NavigationPolicyScopeKind = 'TENANT' | 'LEGAL_ENTITY';
 export type NavigationPolicyLifecycle =
   'DRAFT' | 'VALIDATED' | 'PENDING_APPROVAL' | 'APPROVED' | 'PUBLISHED';
@@ -384,22 +382,6 @@ export function assertNavigationPolicyReceipt(
     throw new Error('Navigation-policy receipt does not match the sealed command.');
   }
   return Object.freeze(value as NavigationPolicyCommandReceipt);
-}
-
-export function isNavigationPolicyWorkspace(value: unknown): value is NavigationPolicyWorkspace {
-  if (!isRecord(value) || !isRecord(value.queryState) || !isRecord(value.scope)) return false;
-  const state = value.queryState.state;
-  return (
-    value.projectionVersion === '1' &&
-    ['COMPLETE', 'EMPTY', 'PARTIAL', 'UNAVAILABLE'].includes(String(state)) &&
-    ['CURRENT', 'STALE', 'UNAVAILABLE'].includes(String(value.queryState.freshness)) &&
-    ['TENANT', 'LEGAL_ENTITY'].includes(String(value.scope.scopeKind)) &&
-    (value.scope.scopePublicId === null || typeof value.scope.scopePublicId === 'string') &&
-    typeof value.scope.displayName === 'string' &&
-    Array.isArray(value.queryState.partialFailures) &&
-    (state !== 'PARTIAL' || value.queryState.partialFailures.length > 0) &&
-    (state !== 'EMPTY' || (value.activeRevision == null && value.draft == null))
-  );
 }
 
 function cloneGroup(

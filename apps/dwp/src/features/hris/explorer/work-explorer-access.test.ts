@@ -4,7 +4,7 @@ import { describe, expect, it } from 'vitest';
 import { resolveWorkExplorerShortcutAccess } from './work-explorer-access';
 
 import type { ProductSurfaceCanaryAuthority } from '../../../components/product-surface-canary-runtime';
-import type { AllowedSurfaceDecision } from '../../shell/product-surface-context';
+import type { AllowedSurfaceDecision } from '../../../components/product-surface-context';
 
 const NOW = Date.parse('2029-01-01T00:00:00Z');
 const FUTURE = '2030-01-01T00:00:00Z';

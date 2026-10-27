@@ -9,7 +9,7 @@
   gap: 16px;
   padding-bottom: 20px;
   border-bottom: 1px solid;
-  border-color: var(--mui-palette-divider);
+  border-color: var(--dwp-palette-divider);
 }
 
 .work-explorer-search {
@@ -21,9 +21,9 @@
   gap: 12px;
   margin-block: 20px;
   padding: 12px;
-  border: 1px solid var(--mui-palette-divider);
-  border-radius: 12px;
-  background: var(--mui-palette-background-paper);
+  border: 1px solid var(--dwp-palette-divider);
+  border-radius: var(--dwp-radius-surface);
+  background: var(--dwp-palette-background-paper);
 }
 
 .work-explorer-search .MuiInputBase-root {
@@ -50,7 +50,7 @@
   width: 100%;
   min-width: 0;
   justify-content: space-between;
-  border: 1px solid var(--mui-palette-divider);
+  border: 1px solid var(--dwp-palette-divider);
   text-align: start;
 }
 
@@ -81,22 +81,19 @@
   flex-direction: column;
   gap: 10px;
   padding: 16px;
-  transition:
-    border-color 160ms ease,
-    box-shadow 160ms ease,
-    transform 160ms ease;
+  transition: var(--dwp-motion-surface);
 }
 
 .work-explorer-card:hover,
 .work-explorer-card:focus-within {
-  border-color: var(--mui-palette-primary-main);
-  box-shadow: 0 8px 22px rgb(15 23 42 / 10%);
+  border-color: var(--dwp-palette-primary-main);
+  box-shadow: var(--dwp-shadows-2);
   transform: translateY(-1px);
 }
 
 .work-explorer-card[data-selected='true'] {
-  border-color: var(--mui-palette-primary-main);
-  box-shadow: inset 3px 0 0 var(--mui-palette-primary-main);
+  border-color: var(--dwp-palette-primary-main);
+  box-shadow: var(--dwp-shadow-selection);
 }
 
 .work-explorer-label,

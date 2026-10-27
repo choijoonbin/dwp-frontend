@@ -11,7 +11,7 @@ describe('workplace reservations URL state', () => {
   it('normalizes unsupported and unsafe values to a versioned canonical state', () => {
     const parsed = parseWorkplaceReservationsUrl(
       new URLSearchParams(
-        'v=77&period=FOREVER&types=SECRET&status=UNKNOWN&authority=ROOT&q=%00++focus++&token=secret'
+        'v=77&period=FOREVER&types=SECRET&status=UNKNOWN&authority=ROOT&q=%00++focus++&scope=bad%2Fscope&token=secret'
       )
     );
 
@@ -24,6 +24,7 @@ describe('workplace reservations URL state', () => {
       reservationId: null,
       reservationAuthority: null,
       detailTab: null,
+      scope: null,
     });
     expect(parsed.canonicalSearchParams.toString()).toBe(
       'v=1&period=UPCOMING&types=ALL&status=ACTIVE&authority=ALL&q=focus'
@@ -31,16 +32,29 @@ describe('workplace reservations URL state', () => {
     expect(parsed.corrected).toBe(true);
   });
 
+  it('keeps the route authority scope in an already canonical reservations URL', () => {
+    const canonical = new URLSearchParams(
+      'v=1&period=UPCOMING&types=DESK&status=ACTIVE&authority=ALL' +
+        '&scope=scope%3Aworkplace%3Aself'
+    );
+
+    const parsed = parseWorkplaceReservationsUrl(canonical);
+
+    expect(parsed.state.scope).toBe('scope:workplace:self');
+    expect(parsed.canonicalSearchParams.get('scope')).toBe('scope:workplace:self');
+    expect(parsed.corrected).toBe(false);
+  });
+
   it('updates filters while preserving a selected reservation', () => {
     const next = updateWorkplaceReservationsUrl(
       new URLSearchParams(
-        'v=1&period=WEEK&types=ALL&status=ACTIVE&authority=ALL&reservation=booking%2F1&reservationAuthority=WORKPLACE&tab=VISITS'
+        'v=1&period=WEEK&types=ALL&status=ACTIVE&authority=ALL&reservation=booking%2F1&reservationAuthority=WORKPLACE&tab=VISITS&scope=scope%3Aworkplace%3Aself'
       ),
       { types: 'DESK', status: 'CHECKED_IN' }
     );
 
     expect(next.toString()).toBe(
-      'v=1&period=WEEK&types=DESK&status=CHECKED_IN&authority=ALL&reservation=booking%2F1&reservationAuthority=WORKPLACE&tab=VISITS'
+      'v=1&period=WEEK&types=DESK&status=CHECKED_IN&authority=ALL&reservation=booking%2F1&reservationAuthority=WORKPLACE&tab=VISITS&scope=scope%3Aworkplace%3Aself'
     );
   });
 

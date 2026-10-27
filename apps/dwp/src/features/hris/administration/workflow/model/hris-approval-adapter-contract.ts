@@ -2,8 +2,6 @@ import type { ApprovalMutationExecution } from '@dwp-frontend/shared-utils';
 
 export const HRIS_APPROVAL_ADAPTER_FEATURE =
   'HRIS_APPROVAL_WORKFLOW_AND_DELEGATION_ADAPTERS' as const;
-export const HRIS_WORKFLOW_ROUTE = '/hr/settings/workflow' as const;
-export const HRIS_DELEGATION_ROUTE = '/hr/team/delegation' as const;
 
 export const HRIS_APPROVAL_SHARED_API_CONTRACTS = Object.freeze({
   policyList: Object.freeze({

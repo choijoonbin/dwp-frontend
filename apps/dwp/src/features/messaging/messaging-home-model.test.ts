@@ -6,10 +6,18 @@ import {
   filterMessagingHomeConversations,
   messagingAttentionState,
   messagingFocusReason,
+  messagingHomePresenceLeaseExpiresAt,
   messagingHomeFilter,
+  messagingPresenceRefreshIntervalMs,
+  resolveMessagingHomePresence,
+  selectAvailableMessagingPeople,
 } from './messaging-home-model';
 
-import type { MessagingConversation, MessagingHome } from '@dwp-frontend/shared-utils';
+import type {
+  MessagingConversation,
+  MessagingHome,
+  MessagingPerson,
+} from '@dwp-frontend/shared-utils';
 
 function conversation(
   conversationId: string,
@@ -40,6 +48,12 @@ function conversation(
 function home(overrides: Partial<MessagingHome> = {}): MessagingHome {
   return {
     generatedAt: '2026-08-27T00:30:00Z',
+    presence: {
+      authority: 'LIVE',
+      evaluatedAt: '2026-08-27T00:30:00Z',
+      leaseTtlSeconds: 75,
+      refreshAfterSeconds: 15,
+    },
     metrics: {
       unreadConversations: 0,
       mentions: 0,
@@ -54,7 +68,88 @@ function home(overrides: Partial<MessagingHome> = {}): MessagingHome {
   };
 }
 
+function person(userId: number, presenceState: MessagingPerson['presenceState']): MessagingPerson {
+  return {
+    userId,
+    emailAddress: `person-${userId}@example.com`,
+    displayName: `Person ${userId}`,
+    presenceState,
+  };
+}
+
 describe('messaging home model', () => {
+  it('clamps server-recommended presence refresh intervals to safe UI bounds', () => {
+    expect(messagingPresenceRefreshIntervalMs()).toBe(15_000);
+    expect(messagingPresenceRefreshIntervalMs(Number.NaN)).toBe(15_000);
+    expect(messagingPresenceRefreshIntervalMs(1)).toBe(5_000);
+    expect(messagingPresenceRefreshIntervalMs(15)).toBe(15_000);
+    expect(messagingPresenceRefreshIntervalMs(90)).toBe(20_000);
+  });
+
+  it('fails closed when a rolling-deploy home response has no presence metadata', () => {
+    const legacy = home();
+    delete legacy.presence;
+
+    expect(resolveMessagingHomePresence(legacy)).toEqual({
+      authority: 'UNAVAILABLE',
+      evaluatedAt: legacy.generatedAt,
+      leaseTtlSeconds: 75,
+      refreshAfterSeconds: 15,
+    });
+  });
+
+  it('fails closed when a background refresh fails with cached live presence', () => {
+    const cached = home({ people: [person(200, 'AVAILABLE')] });
+    const dataUpdatedAt = 1_000_000;
+    const observedAt = dataUpdatedAt + 1_000;
+
+    expect(resolveMessagingHomePresence(cached, { dataUpdatedAt, observedAt }).authority).toBe(
+      'LIVE'
+    );
+    expect(
+      resolveMessagingHomePresence(cached, { queryFailed: true, dataUpdatedAt, observedAt })
+    ).toEqual({
+      authority: 'UNAVAILABLE',
+      evaluatedAt: cached.presence?.evaluatedAt,
+      leaseTtlSeconds: 75,
+      refreshAfterSeconds: 15,
+    });
+  });
+
+  it('anchors the remaining server-relative lease to the local query update time', () => {
+    const evaluatedAt = Date.parse(home().presence!.evaluatedAt);
+    const snapshot = home({ generatedAt: new Date(evaluatedAt + 10_000).toISOString() });
+    const dataUpdatedAt = 1_000_000;
+
+    expect(messagingHomePresenceLeaseExpiresAt(snapshot, dataUpdatedAt)).toBe(
+      dataUpdatedAt + 65_000
+    );
+    expect(
+      resolveMessagingHomePresence(snapshot, { observedAt: dataUpdatedAt + 1_000 }).authority
+    ).toBe('UNAVAILABLE');
+    expect(
+      resolveMessagingHomePresence(snapshot, {
+        online: false,
+        dataUpdatedAt,
+        observedAt: dataUpdatedAt + 1_000,
+      }).authority
+    ).toBe('UNAVAILABLE');
+    expect(
+      resolveMessagingHomePresence(snapshot, {
+        online: true,
+        dataUpdatedAt,
+        observedAt: dataUpdatedAt + 64_999,
+      }).authority
+    ).toBe('LIVE');
+    expect(
+      resolveMessagingHomePresence(snapshot, {
+        online: true,
+        dataUpdatedAt,
+        observedAt: dataUpdatedAt + 65_000,
+      }).authority
+    ).toBe('UNAVAILABLE');
+  });
+
   it('selects the strongest truthful attention signal without double-counting it', () => {
     expect(
       messagingAttentionState(
@@ -153,5 +248,24 @@ describe('messaging home model', () => {
     const view = buildMessagingHomeView(home(), [direct, archived]);
     expect(view.directConversations).toEqual([direct]);
     expect(view.focusConversations).toEqual([]);
+  });
+
+  it('shows only the first five people who are actually available', () => {
+    const people = [
+      person(1, 'BUSY'),
+      person(2, 'AVAILABLE'),
+      person(3, 'OFFLINE'),
+      person(4, 'AVAILABLE'),
+      person(5, 'AVAILABLE'),
+      person(6, 'AWAY'),
+      person(7, 'AVAILABLE'),
+      person(8, 'AVAILABLE'),
+      person(9, 'AVAILABLE'),
+    ];
+
+    expect(selectAvailableMessagingPeople(people).map(({ userId }) => userId)).toEqual([
+      2, 4, 5, 7, 8,
+    ]);
+    expect(selectAvailableMessagingPeople([person(10, 'BUSY'), person(11, 'OFFLINE')])).toEqual([]);
   });
 });

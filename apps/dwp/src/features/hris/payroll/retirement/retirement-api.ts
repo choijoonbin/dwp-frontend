@@ -2,14 +2,17 @@ import { axiosInstance } from '@dwp-frontend/shared-utils';
 import { productSurfaceReadScopeConfig } from '@dwp-frontend/shared-utils/api/product-surface-read-scope';
 
 import {
-  PAY004_ADAPTER_KIND,
   PAY004_DATA_ROUTE_CONTRACT_KEY,
   PAY004_QUERY_CONTRACT,
   assertPay004QueryRequest,
   selectPay004Projection,
 } from './retirement-contract';
 
-import type { Pay004Projection, Pay004QueryRequest } from './retirement-contract';
+import type {
+  PAY004_ADAPTER_KIND,
+  Pay004Projection,
+  Pay004QueryRequest,
+} from './retirement-contract';
 
 export const PAY004_API_CONTRACTS = Object.freeze([
   Object.freeze({
@@ -83,8 +86,4 @@ export async function queryPay004Entry(
     }
   );
   return selectPay004Projection(response.data);
-}
-
-export function createPay004QueryAdapter(): Pay004QueryAdapter {
-  return Object.freeze({ kind: PAY004_ADAPTER_KIND, query: queryPay004Entry });
 }

@@ -3,6 +3,8 @@ import { FileSignature, RefreshCw, ShieldCheck } from 'lucide-react';
 import { HttpError, HttpTransportError } from '@dwp-frontend/shared-utils';
 import {
   ActionButton,
+  DatePickerField,
+  foundationTokens,
   GlyphSurface,
   GuidedEmptyState,
   InlineFeedback,
@@ -14,7 +16,6 @@ import Chip from '@mui/material/Chip';
 import Divider from '@mui/material/Divider';
 import Paper from '@mui/material/Paper';
 import Stack from '@mui/material/Stack';
-import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
@@ -155,7 +156,7 @@ function FieldDecision({
       <Typography
         component="dd"
         variant="body2"
-        fontWeight={600}
+        fontWeight="fontWeightMedium"
         sx={{ m: 0, mt: 0.25, overflowWrap: 'anywhere' }}
       >
         {decisionText(decision)}
@@ -290,7 +291,7 @@ function IssueContractForm({
   return (
     <Box component="form" onSubmit={issue} noValidate sx={{ mt: 2 }}>
       <Divider sx={{ mb: 2 }} />
-      <Typography component="h3" variant="subtitle1" fontWeight={700}>
+      <Typography component="h3" variant="subtitle1" fontWeight="fontWeightBold">
         Issue employment contract
       </Typography>
       <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
@@ -305,30 +306,26 @@ function IssueContractForm({
           mt: 2,
         }}
       >
-        <TextField
+        <DatePickerField
           required
-          type="date"
           size="small"
           label="Effective from"
-          value={effectiveFrom}
+          value={effectiveFrom || null}
           disabled={!onIssueEmploymentContract || busy || completed || !delegationAvailable}
-          onChange={(event) => {
-            setEffectiveFrom(event.target.value);
+          onValueChange={(value) => {
+            setEffectiveFrom(value ?? '');
             resetReview();
           }}
-          slotProps={{ inputLabel: { shrink: true } }}
         />
-        <TextField
-          type="date"
+        <DatePickerField
           size="small"
           label="Effective to (optional)"
-          value={effectiveTo}
+          value={effectiveTo || null}
           disabled={!onIssueEmploymentContract || busy || completed || !delegationAvailable}
-          onChange={(event) => {
-            setEffectiveTo(event.target.value);
+          onValueChange={(value) => {
+            setEffectiveTo(value ?? '');
             resetReview();
           }}
-          slotProps={{ inputLabel: { shrink: true } }}
         />
       </Box>
 
@@ -357,7 +354,7 @@ function IssueContractForm({
           variant="outlined"
           sx={{ mt: 2, p: 1.5, bgcolor: 'action.hover' }}
         >
-          <Typography component="h4" variant="subtitle2" fontWeight={700}>
+          <Typography component="h4" variant="subtitle2" fontWeight="fontWeightBold">
             Confirm immutable issuance snapshot
           </Typography>
           <Box component="dl" sx={{ m: 0, mt: 1, display: 'grid', gap: 0.75 }}>
@@ -455,8 +452,8 @@ function WorkList({
           const active = item.itemPublicId === selected.itemPublicId;
           return (
             <Box component="li" key={item.itemPublicId} sx={{ '& + &': { mt: 0.75 } }}>
-              <Box
-                component="button"
+              <ActionButton
+                intent="quiet"
                 type="button"
                 data-focus-ring="keyboard-visible"
                 aria-pressed={active}
@@ -467,9 +464,10 @@ function WorkList({
                   p: 1.25,
                   border: 1,
                   borderColor: active ? 'primary.main' : 'divider',
-                  borderRadius: 1.5,
+                  borderRadius: foundationTokens.radius.control + 'px',
                   bgcolor: active ? 'action.selected' : 'background.paper',
                   color: 'text.primary',
+                  display: 'block',
                   textAlign: 'left',
                   cursor: 'pointer',
                   '@media (forced-colors: active)': { borderColor: 'ButtonText' },
@@ -479,7 +477,7 @@ function WorkList({
                 <Typography
                   component="span"
                   variant="body2"
-                  fontWeight={700}
+                  fontWeight="fontWeightBold"
                   display="block"
                   sx={{ overflowWrap: 'anywhere' }}
                 >
@@ -488,7 +486,7 @@ function WorkList({
                 <Typography component="span" variant="caption" color="text.secondary">
                   {item.statusCode.replaceAll('_', ' ')} · version {item.resourceVersion}
                 </Typography>
-              </Box>
+              </ActionButton>
             </Box>
           );
         })}
@@ -677,10 +675,9 @@ function ActiveWorkbench({
         '@media (forced-colors: active)': { outline: '1px solid CanvasText', outlineOffset: 2 },
         '@media (prefers-reduced-motion: reduce)': {
           '& *, & *::before, & *::after': {
-            animationDuration: '0.01ms !important',
-            animationIterationCount: '1 !important',
+            animation: 'none !important',
             scrollBehavior: 'auto !important',
-            transitionDuration: '0.01ms !important',
+            transition: 'none !important',
           },
         },
       }}

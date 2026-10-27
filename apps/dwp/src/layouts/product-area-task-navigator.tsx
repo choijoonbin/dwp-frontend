@@ -243,8 +243,8 @@ export function ProductAreaMobileTaskNavigator({
             px: 0.5,
             py: 0.75,
             textAlign: 'center',
-            fontWeight: 700,
-            lineHeight: 1.25,
+            fontWeight: 'fontWeightBold',
+            lineHeight: 'subtitle2.lineHeight',
             whiteSpace: 'normal',
             overflowWrap: 'anywhere',
           }}
@@ -357,7 +357,8 @@ export function ProductAreaDesktopTaskNavigator({
           boxShadow: (theme) => theme.shadows[4],
           overflow: 'hidden',
           transformOrigin: 'top left',
-          animation: 'dwp-task-navigator-enter 150ms cubic-bezier(0.2, 0, 0, 1)',
+          animation: (theme) =>
+            `dwp-task-navigator-enter ${theme.transitions.duration.shortest}ms ${theme.transitions.easing.easeOut}`,
           '&:has([data-navigation-density="dense"])': {
             width: 'clamp(500px, 38vw, 560px)',
           },

@@ -3,10 +3,16 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import { resetCsrfToken } from '../axios-instance';
 import {
   cancelRoomBooking,
+  createRoomBooking,
   getRoomAvailability,
   getRoomsAdminOverview,
   getRoomsPolicy,
+  respondToRoomBooking,
+  updateRoomBooking,
 } from './rooms-api';
+
+import type { CreateCalendarEventInput } from './calendar-api';
+import type { ProductSurfaceGovernedMutationAuthority } from './product-surface-governed-mutation';
 
 function jsonResponse(data: unknown): Response {
   return {
@@ -15,6 +21,34 @@ function jsonResponse(data: unknown): Response {
     text: async () => JSON.stringify({ data }),
   } as Response;
 }
+
+function roomActionAuthority(
+  expectedDecisionRevision: string
+): ProductSurfaceGovernedMutationAuthority {
+  return {
+    mode: 'SECURE',
+    rolloutState: '111',
+    expectedDecisionRevision,
+    contextKey: 'workplace-work',
+    contextScopeKey: 'scope-workplace',
+  };
+}
+
+const createInput = {
+  title: 'Contract verification',
+  type: 'MEETING',
+  startsAt: '2026-10-28T01:00:00Z',
+  endsAt: '2026-10-28T01:30:00Z',
+  timeZone: 'Asia/Seoul',
+  allDay: false,
+  visibility: 'DEFAULT',
+  recurrence: 'NONE',
+  recurrenceInterval: 1,
+  responseRequired: false,
+  attendees: [],
+  resourceId: 'room-1',
+  idempotencyKey: 'room-contract-verification',
+} satisfies CreateCalendarEventInput;
 
 describe('rooms API boundary', () => {
   afterEach(() => {
@@ -73,17 +107,40 @@ describe('rooms API boundary', () => {
     );
   });
 
-  it('cancels a booking without crossing into the Calendar app API', async () => {
+  it('forwards each exact action decision revision and scope through the Rooms boundary', async () => {
     const fetchMock = vi
       .fn()
       .mockResolvedValueOnce(jsonResponse({ token: 'csrf-token', headerName: 'X-XSRF-TOKEN' }))
-      .mockResolvedValueOnce(jsonResponse(null));
+      .mockResolvedValue(jsonResponse({ eventId: 'event-1' }));
     vi.stubGlobal('fetch', fetchMock);
 
-    await expect(cancelRoomBooking('event-1', 8)).resolves.toBeUndefined();
+    await createRoomBooking(createInput, roomActionAuthority('revision-create'));
+    await updateRoomBooking(
+      'event-1',
+      { ...createInput, idempotencyKey: undefined, version: 7 },
+      roomActionAuthority('revision-update')
+    );
+    await respondToRoomBooking('event-1', 'ACCEPTED', roomActionAuthority('revision-response'));
+    await expect(
+      cancelRoomBooking('event-1', 8, roomActionAuthority('revision-cancel'))
+    ).resolves.toBeUndefined();
 
-    const request = fetchMock.mock.calls[1]?.[1] as RequestInit;
-    expect(fetchMock.mock.calls[1]?.[0]).toBe('/api/platform/v1/rooms/bookings/event-1/cancel');
-    expect(JSON.parse(String(request.body))).toEqual({ version: 8 });
+    const actionRequests = fetchMock.mock.calls.slice(1).map(([url, init]) => ({
+      url,
+      init: init as RequestInit,
+    }));
+    expect(actionRequests.map(({ url }) => url)).toEqual([
+      '/api/platform/v1/rooms/bookings?contextScopeKey=scope-workplace',
+      '/api/platform/v1/rooms/bookings/event-1?contextScopeKey=scope-workplace',
+      '/api/platform/v1/rooms/bookings/event-1/response?contextScopeKey=scope-workplace',
+      '/api/platform/v1/rooms/bookings/event-1/cancel?contextScopeKey=scope-workplace',
+    ]);
+    expect(
+      actionRequests.map(
+        ({ init }) => (init.headers as Record<string, string>)['X-DWP-Expected-Decision-Revision']
+      )
+    ).toEqual(['revision-create', 'revision-update', 'revision-response', 'revision-cancel']);
+
+    expect(JSON.parse(String(actionRequests[3]?.init.body))).toEqual({ version: 8 });
   });
 });

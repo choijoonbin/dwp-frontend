@@ -2,13 +2,16 @@ import { axiosInstance } from '@dwp-frontend/shared-utils';
 import { productSurfaceReadScopeConfig } from '@dwp-frontend/shared-utils/api/product-surface-read-scope';
 
 import {
-  HRM012_ADAPTER_KIND,
   HRM012_QUERY_CONTRACT,
   assertHrm012QueryRequest,
   selectHrm012Projection,
 } from './data-quality-contract';
 
-import type { Hrm012Projection, Hrm012QueryRequest } from './data-quality-contract';
+import type {
+  HRM012_ADAPTER_KIND,
+  Hrm012Projection,
+  Hrm012QueryRequest,
+} from './data-quality-contract';
 
 export const HRM012_API_CONTRACTS = Object.freeze([
   Object.freeze({
@@ -75,8 +78,4 @@ export async function queryHrm012Entry(
     productSurfaceReadScopeConfig(contextScopeKey, signal)
   );
   return selectHrm012Projection(response.data);
-}
-
-export function createHrm012QueryAdapter(): Hrm012QueryAdapter {
-  return Object.freeze({ kind: HRM012_ADAPTER_KIND, query: queryHrm012Entry });
 }

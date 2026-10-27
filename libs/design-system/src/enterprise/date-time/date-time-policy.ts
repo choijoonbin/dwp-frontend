@@ -42,6 +42,17 @@ export function toUtcIso(value: Dayjs | null): string | null {
   return value?.isValid() ? value.utc().toISOString() : null;
 }
 
+/** A civil editor value has no offset; UTC is only its lossless picker display frame. */
+export function civilDateTimeToPickerIso(value: string | null | undefined): string | null {
+  if (!value || !/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/.test(value)) return null;
+  const parsed = dayjs.utc(value, 'YYYY-MM-DDTHH:mm', true);
+  return parsed.isValid() ? parsed.toISOString() : null;
+}
+
+export function pickerIsoToCivilDateTime(value: string | null | undefined): string | null {
+  return parseUtcDateTime(value)?.format('YYYY-MM-DDTHH:mm') ?? null;
+}
+
 export function isOrderedDateRange(value: DateRangeValue): boolean {
   if (!value.start || !value.end) return true;
   return value.start <= value.end;

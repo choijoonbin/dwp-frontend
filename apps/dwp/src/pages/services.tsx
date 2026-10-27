@@ -56,6 +56,7 @@ import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import Typography from '@mui/material/Typography';
 
 import type {
+  DwaionProposalHandoffBinding,
   ServiceCatalogItem,
   ServiceRequestDetail,
   ServiceRequestStatus,
@@ -110,9 +111,8 @@ function DiscoverView() {
   const [dwaionSummary, setDwaionSummary] = useState('');
   const [dwaionCategory, setDwaionCategory] = useState('');
   const [dwaionDraft, setDwaionDraft] = useState(false);
-  const [dwaionProposalBinding, setDwaionProposalBinding] = useState<
-    import('@dwp-frontend/shared-utils').DwaionProposalHandoffBinding | null
-  >(null);
+  const [dwaionProposalBinding, setDwaionProposalBinding] =
+    useState<DwaionProposalHandoffBinding | null>(null);
   const dwaionHandoff = useMemo(
     () => parseDwaionHandoff(location.state, 'SERVICE.REQUEST.CREATE'),
     [location.state]

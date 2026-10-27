@@ -1,10 +1,8 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { InlineFeedback } from '@dwp-frontend/design-system';
-import Button from '@mui/material/Button';
+import { InlineFeedback, FormField, ActionButton } from '@dwp-frontend/design-system';
 import MenuItem from '@mui/material/MenuItem';
 import Paper from '@mui/material/Paper';
 import Stack from '@mui/material/Stack';
-import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import { useSearchParams } from 'react-router-dom';
 
@@ -228,7 +226,7 @@ function NavigationPolicyRequestedScopeSelector() {
     <Paper component="section" variant="outlined" sx={{ p: { xs: 1.5, sm: 2 } }}>
       <Stack gap={1.5}>
         <Stack gap={0.25}>
-          <Typography component="h2" variant="subtitle1" fontWeight={700}>
+          <Typography component="h2" variant="subtitle1" fontWeight="fontWeightBold">
             Policy scope
           </Typography>
           <Typography variant="body2" color="text.secondary">
@@ -238,7 +236,8 @@ function NavigationPolicyRequestedScopeSelector() {
           </Typography>
         </Stack>
         <Stack direction={{ xs: 'column', md: 'row' }} gap={1.25} alignItems={{ md: 'flex-start' }}>
-          <TextField
+          <FormField
+            fullWidth={false}
             select
             size="small"
             label="Policy scope"
@@ -250,27 +249,32 @@ function NavigationPolicyRequestedScopeSelector() {
           >
             <MenuItem value="TENANT">Tenant baseline</MenuItem>
             <MenuItem value="LEGAL_ENTITY">Legal-entity restriction</MenuItem>
-          </TextField>
+          </FormField>
           {scopeKind === 'LEGAL_ENTITY' ? (
-            <TextField
+            <FormField
+              fullWidth={false}
               size="small"
               label="Legal-entity public ID"
               value={legalEntityPublicId}
-              error={Boolean(legalEntityPublicId) && !validLegalEntity}
-              helperText="UUID requested for server-side People ownership verification"
+              errorMessage={
+                Boolean(legalEntityPublicId) && !validLegalEntity
+                  ? 'UUID requested for server-side People ownership verification'
+                  : undefined
+              }
+              supportingText="UUID requested for server-side People ownership verification"
               inputProps={{ inputMode: 'text', autoComplete: 'off', spellCheck: false }}
               onChange={(event) => setLegalEntityPublicId(event.target.value)}
               sx={{ flex: 1, minWidth: { xs: '100%', md: 360 } }}
             />
           ) : null}
-          <Button
-            variant="outlined"
+          <ActionButton
+            intent="secondary"
             disabled={!canApply}
             onClick={applyScope}
             sx={{ minHeight: 40, alignSelf: { xs: 'stretch', md: 'flex-start' } }}
           >
             Apply scope
-          </Button>
+          </ActionButton>
         </Stack>
       </Stack>
     </Paper>

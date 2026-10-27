@@ -1,15 +1,22 @@
 import { useDeferredValue, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useSearchParams } from 'react-router-dom';
 import { Compass, Grid2X2, Layers3, Plus, Search, X } from 'lucide-react';
-import { useQuery } from '@tanstack/react-query';
-import { ActionButton, ActionIconButton, FormField, PageCanvas } from '@dwp-frontend/design-system';
+import { keepPreviousData, useQuery } from '@tanstack/react-query';
+import {
+  ActionButton,
+  ActionIconButton,
+  ErrorState,
+  FormField,
+  PageCanvas,
+} from '@dwp-frontend/design-system';
 import { getSpaces, useAuth, usePermissions } from '@dwp-frontend/shared-utils';
+import { hasFullTenantAdminRole } from '@dwp-frontend/shared-utils/auth/control-plane-access';
 
 import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
 import InputAdornment from '@mui/material/InputAdornment';
-import Paper from '@mui/material/Paper';
 import Skeleton from '@mui/material/Skeleton';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
@@ -21,15 +28,36 @@ export function SpaceDirectoryPage({ scope }: { scope: 'MY' | 'DISCOVER' }) {
   const { t } = useTranslation('spaces');
   const auth = useAuth();
   const permissions = usePermissions();
-  const [query, setQuery] = useState('');
+  const [searchParams, setSearchParams] = useSearchParams();
+  const query = searchParams.get('q') ?? '';
+  const setQuery = (value: string) => {
+    setSearchParams(
+      (current) => {
+        const next = new URLSearchParams(current);
+        if (value) next.set('q', value);
+        else next.delete('q');
+        return next;
+      },
+      { replace: true }
+    );
+  };
   const [createOpen, setCreateOpen] = useState(false);
   const deferredQuery = useDeferredValue(query.trim());
   const spaces = useQuery({
-    queryKey: ['spaces', 'directory', scope, deferredQuery, auth.user?.tenantId],
+    queryKey: ['spaces', 'directory', scope, deferredQuery, auth.user?.tenantId, auth.user?.userId],
     queryFn: () => getSpaces(scope, deferredQuery),
     staleTime: 30_000,
+    placeholderData: (previousData, previousQuery) =>
+      previousQuery?.queryKey[2] === scope &&
+      previousQuery.queryKey[4] === auth.user?.tenantId &&
+      previousQuery.queryKey[5] === auth.user?.userId
+        ? keepPreviousData(previousData)
+        : undefined,
+    retry: 1,
   });
+  const updating = spaces.isFetching || query.trim() !== deferredQuery;
   const Icon = scope === 'MY' ? Layers3 : Compass;
+  const isTenantAdministrator = hasFullTenantAdminRole(auth.user?.roles ?? []);
   const canCreate =
     permissions.hasPermission('ACTION.SPACE_REQUEST', 'CREATE') ||
     permissions.hasPermission('ACTION.SPACE_REQUEST', 'MANAGE');
@@ -47,6 +75,7 @@ export function SpaceDirectoryPage({ scope }: { scope: 'MY' | 'DISCOVER' }) {
             sx={{
               width: 44,
               height: 44,
+              flexShrink: 0,
               display: 'grid',
               placeItems: 'center',
               color: 'var(--dwp-product-accent)',
@@ -56,12 +85,16 @@ export function SpaceDirectoryPage({ scope }: { scope: 'MY' | 'DISCOVER' }) {
           >
             <Icon size={21} />
           </Box>
-          <Box>
+          <Box sx={{ minWidth: 0, overflowWrap: 'anywhere' }}>
             <Typography component="h1" variant="h5">
               {t(`directory.${scope}.title`)}
             </Typography>
             <Typography variant="body2" color="text.secondary">
-              {t(`directory.${scope}.description`)}
+              {t(
+                scope === 'DISCOVER' && isTenantAdministrator
+                  ? 'directory.DISCOVER.adminDescription'
+                  : `directory.${scope}.description`
+              )}
             </Typography>
           </Box>
         </Stack>
@@ -76,10 +109,10 @@ export function SpaceDirectoryPage({ scope }: { scope: 'MY' | 'DISCOVER' }) {
         )}
       </Stack>
 
-      <Paper
+      <Box
         component="section"
-        variant="outlined"
-        sx={{ mt: 3, p: 2, borderRadius: 1, bgcolor: 'background.paper' }}
+        aria-labelledby="space-directory-results"
+        sx={{ mt: 3, pb: 2, borderBottom: 1, borderColor: 'divider' }}
       >
         <Stack
           direction={{ xs: 'column', md: 'row' }}
@@ -89,15 +122,28 @@ export function SpaceDirectoryPage({ scope }: { scope: 'MY' | 'DISCOVER' }) {
         >
           <Stack direction="row" gap={1} alignItems="center">
             <Grid2X2 size={18} />
-            <Typography component="h2" variant="subtitle1" fontWeight={750}>
+            <Typography
+              id="space-directory-results"
+              component="h2"
+              variant="subtitle1"
+              fontWeight={750}
+            >
               {t('directory.results')}
             </Typography>
-            <Chip
-              size="small"
-              variant="outlined"
-              label={spaces.data?.length ?? 0}
-              aria-label={t('directory.resultCount')}
-            />
+            <Box role="status" aria-live="polite" aria-atomic="true">
+              {updating ? (
+                <Typography variant="caption" color="text.secondary">
+                  {t('directory.searching')}
+                </Typography>
+              ) : spaces.isSuccess ? (
+                <Chip
+                  size="small"
+                  variant="outlined"
+                  label={spaces.data.length}
+                  aria-label={t('directory.resultCount', { count: spaces.data.length })}
+                />
+              ) : null}
+            </Box>
           </Stack>
           <FormField
             size="small"
@@ -125,15 +171,37 @@ export function SpaceDirectoryPage({ scope }: { scope: 'MY' | 'DISCOVER' }) {
             }}
           />
         </Stack>
-      </Paper>
+      </Box>
 
-      {spaces.isError && (
-        <Alert severity="error" sx={{ mt: 2 }}>
-          {t('directory.loadError')}
+      {spaces.isError && spaces.data && (
+        <Alert
+          severity="warning"
+          sx={{ mt: 2 }}
+          action={
+            <ActionButton
+              intent="secondary"
+              onClick={() => void spaces.refetch()}
+              loading={spaces.isFetching}
+            >
+              {t('actions.retry')}
+            </ActionButton>
+          }
+        >
+          {t('directory.refreshError')}
         </Alert>
       )}
-      {spaces.isLoading ? (
+      {spaces.isError && !spaces.data ? (
+        <ErrorState
+          title={t('directory.loadError')}
+          retryLabel={t('actions.retry')}
+          onRetry={() => void spaces.refetch()}
+          retrying={spaces.isFetching}
+          size="page"
+        />
+      ) : spaces.isLoading ? (
         <Box
+          aria-label={t('directory.searching')}
+          aria-busy="true"
           sx={{
             mt: 2,
             display: 'grid',
@@ -147,6 +215,7 @@ export function SpaceDirectoryPage({ scope }: { scope: 'MY' | 'DISCOVER' }) {
         </Box>
       ) : spaces.data?.length ? (
         <Box
+          aria-busy={updating}
           sx={{
             mt: 2,
             display: 'grid',
@@ -162,7 +231,7 @@ export function SpaceDirectoryPage({ scope }: { scope: 'MY' | 'DISCOVER' }) {
             <SpaceCard key={space.spaceId} space={space} />
           ))}
         </Box>
-      ) : (
+      ) : updating ? null : (
         <Box
           sx={{
             minHeight: 300,

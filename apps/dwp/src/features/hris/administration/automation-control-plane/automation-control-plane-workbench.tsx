@@ -11,6 +11,7 @@ import {
   OperationalKpiStrip,
   PageCanvas,
   ResourcePageHeader,
+  foundationTokens,
 } from '@dwp-frontend/design-system';
 import { Bot, CalendarClock, FileCog, Play, RefreshCw, ShieldCheck } from 'lucide-react';
 
@@ -36,7 +37,6 @@ import {
   automationActionsForRun,
   catalogRows,
   formatAutomationTimestamp,
-  isProjectedRestriction,
 } from './automation-control-plane-model';
 import {
   AUTOMATION_ACTION_KEYS,
@@ -46,12 +46,10 @@ import {
 import type { HrisAutomationControlPlaneState } from './automation-control-plane-contract';
 import type { AutomationCatalogRow } from './automation-control-plane-model';
 import type {
-  AutomationCatalogItem,
   AutomationCatalogProjection,
   AutomationControlPlaneAction,
   AutomationResourceType,
   AutomationRunProjection,
-  CollectionActionDescriptor,
   ResourceActionDescriptor,
 } from './automation-control-plane-types';
 
@@ -447,7 +445,7 @@ function CatalogTable({
                     <Stack alignItems="flex-start" minWidth={0}>
                       <Typography
                         variant="body2"
-                        fontWeight={750}
+                        fontWeight="fontWeightBold"
                         sx={{ overflowWrap: 'anywhere' }}
                       >
                         {row.title}
@@ -519,7 +517,7 @@ function ResourceInspector({
             <Typography
               component="h2"
               variant="subtitle1"
-              fontWeight={760}
+              fontWeight="fontWeightBold"
               sx={{ overflowWrap: 'anywhere' }}
             >
               {row.title}
@@ -634,7 +632,15 @@ function RunEvidence({
             ['Failed', run.itemFailed],
             ['Retry eligible', run.retryEligibleItemCount],
           ].map(([label, value]) => (
-            <Box key={label} sx={{ p: 1.5, bgcolor: 'action.hover', borderRadius: 1, minWidth: 0 }}>
+            <Box
+              key={label}
+              sx={{
+                p: 1.5,
+                bgcolor: 'action.hover',
+                borderRadius: foundationTokens.radius.control + 'px',
+                minWidth: 0,
+              }}
+            >
               <Typography variant="h6" sx={{ fontVariantNumeric: 'tabular-nums' }}>
                 {value}
               </Typography>
@@ -721,7 +727,11 @@ function EvidenceList({
               key={row.key}
               sx={{ borderTop: 1, borderColor: 'divider', pt: 0.75, minWidth: 0 }}
             >
-              <Typography variant="body2" fontWeight={700} sx={{ overflowWrap: 'anywhere' }}>
+              <Typography
+                variant="body2"
+                fontWeight="fontWeightBold"
+                sx={{ overflowWrap: 'anywhere' }}
+              >
                 {row.primary}
               </Typography>
               <Typography
@@ -750,7 +760,7 @@ function DefinitionList({ items }: Readonly<{ items: readonly (readonly [string,
           <Typography
             component="dd"
             variant="body2"
-            fontWeight={650}
+            fontWeight="subtitle2.fontWeight"
             sx={{ m: 0, overflowWrap: 'anywhere' }}
           >
             {value}
@@ -881,18 +891,4 @@ function shortActionLabel(action: ResourceActionDescriptor['actionKey']): string
   if (action.includes('.suspend')) return 'Suspend';
   if (action.endsWith('.runs')) return 'Run';
   return 'Create';
-}
-
-export function automationItemHasVisibleIdentifier(item: AutomationCatalogItem): boolean {
-  if (item.resourceType === 'AUTOMATION_DEFINITION')
-    return !isProjectedRestriction(item.definitionPublicId);
-  if (item.resourceType === 'AUTOMATION_VERSION')
-    return !isProjectedRestriction(item.definitionPublicId);
-  return !isProjectedRestriction(item.schedulePublicId);
-}
-
-export function isCreateDefinitionAction(
-  action: CollectionActionDescriptor | ResourceActionDescriptor
-): action is CollectionActionDescriptor {
-  return action.actionKey === AUTOMATION_ACTION_KEYS.createDefinition;
 }

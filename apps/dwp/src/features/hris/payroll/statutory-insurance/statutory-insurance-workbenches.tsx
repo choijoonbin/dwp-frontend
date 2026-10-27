@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import {
   ActionButton,
+  DatePickerField,
+  FormField,
   GuidedEmptyState,
   InlineFeedback,
   LoadingState,
@@ -15,7 +17,6 @@ import ListItemButton from '@mui/material/ListItemButton';
 import ListItemText from '@mui/material/ListItemText';
 import Paper from '@mui/material/Paper';
 import Stack from '@mui/material/Stack';
-import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 
 import {
@@ -396,14 +397,12 @@ function ReviewForm({
               alignItems: 'start',
             }}
           >
-            <TextField
+            <DatePickerField
               fullWidth
               size="small"
-              type="date"
               label={`${statutoryInsuranceCopy.common.effectiveOn} (${statutoryInsuranceCopy.common.optional})`}
-              value={effectiveOn}
-              onChange={(event) => setEffectiveOn(event.target.value)}
-              InputLabelProps={{ shrink: true }}
+              value={effectiveOn || null}
+              onValueChange={(value) => setEffectiveOn(value ?? '')}
             />
             <ActionButton
               type="submit"
@@ -614,7 +613,7 @@ function SettingsDetail({ controller }: { controller: StatutoryConfigurationCont
                     gap: 1.5,
                   }}
                 >
-                  <TextField
+                  <FormField
                     required
                     size="small"
                     label={copy.officialReferenceSet}
@@ -622,16 +621,14 @@ function SettingsDetail({ controller }: { controller: StatutoryConfigurationCont
                     onChange={(event) => update({ officialReferenceSet: event.target.value })}
                     inputProps={{ maxLength: 240 }}
                   />
-                  <TextField
+                  <DatePickerField
                     required
                     size="small"
-                    type="date"
                     label={copy.effectiveDate}
-                    value={draft.effectiveDate}
-                    onChange={(event) => update({ effectiveDate: event.target.value })}
-                    InputLabelProps={{ shrink: true }}
+                    value={draft.effectiveDate || null}
+                    onValueChange={(value) => update({ effectiveDate: value ?? '' })}
                   />
-                  <TextField
+                  <FormField
                     required
                     size="small"
                     label={copy.goldenPackDigest}
@@ -639,7 +636,7 @@ function SettingsDetail({ controller }: { controller: StatutoryConfigurationCont
                     onChange={(event) => update({ goldenPackDigest: event.target.value })}
                     inputProps={{ spellCheck: false }}
                   />
-                  <TextField
+                  <FormField
                     required
                     size="small"
                     label={copy.approvalReceipt}

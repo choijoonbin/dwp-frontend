@@ -5,7 +5,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import type { ProductSurfaceEvaluationData } from '@dwp-frontend/shared-utils/api/auth-api';
 import type { TrustedProductSurfaceAuthoritySnapshot } from '@dwp-frontend/shared-utils/auth/product-surface-authority-model';
-import type { AllowedSurfaceDecision } from '../../shell/product-surface-context';
+import type { AllowedSurfaceDecision } from '../../../components/product-surface-context';
 
 const state = vi.hoisted(() => ({
   pageDecision: null as unknown,

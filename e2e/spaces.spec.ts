@@ -1,126 +1,17 @@
 import AxeBuilder from '@axe-core/playwright';
-import { expect, test, type Page } from '@playwright/test';
+import { expect, test } from '@playwright/test';
 
-import { mockAuthenticatedRuntime } from './support/runtime-access';
-
-function envelope(data: unknown) {
-  return JSON.stringify({ status: 'SUCCESS', message: 'OK', success: true, data });
-}
-
-const SPACE_SUMMARY = {
-  spaceId: 'a1000000-0000-0000-0000-000000000001',
-  spaceKey: 'company-square',
-  nameKo: 'SKAX 타운스퀘어',
-  nameEn: 'SKAX Town Square',
-  summaryKo: '전사 소식과 질문, 구성원 참여가 모이는 열린 공간입니다.',
-  summaryEn: 'An open company space for news, questions, and participation.',
-  purposeType: 'COMMUNITY',
-  visibility: 'OPEN',
-  dataClassification: 'INTERNAL',
-  memberRole: 'VIEWER',
-  memberCount: 2,
-  contentCount: 2,
-  unreadCount: 1,
-  iconKey: 'building-2',
-  accentToken: 'cobalt',
-  coverAssetUrl: null,
-  lifecycleState: 'ACTIVE',
-  lastActivityAt: '2026-08-18T09:30:00Z',
-  version: 1,
-};
-
-const SPACE_TEMPLATE = {
-  templateId: 'b1000000-0000-0000-0000-000000000001',
-  templateKey: 'expert-community',
-  nameKo: '전문가 커뮤니티',
-  nameEn: 'Expert community',
-  descriptionKo: '전문 지식과 사례를 축적합니다.',
-  descriptionEn: 'Build a governed body of expert knowledge and practice.',
-  purposeType: 'COMMUNITY',
-  creationMode: 'APPROVAL',
-  defaultVisibility: 'REQUEST',
-  defaultDataClassification: 'INTERNAL',
-  iconKey: 'messages-square',
-  accentToken: 'cobalt',
-  lifecycleState: 'PUBLISHED',
-  currentVersion: 1,
-  version: 1,
-};
-
-type SpaceSession = {
-  roles?: string[];
-  permissions?: Array<{
-    resourceType: string;
-    resourceKey: string;
-    permissionCode: string;
-    effect: 'ALLOW';
-  }>;
-};
-
-async function mockSpaceSession(page: Page, options: SpaceSession = {}) {
-  await mockAuthenticatedRuntime(page);
-  await page.route('**/api/auth/me', (route) =>
-    route.fulfill({
-      contentType: 'application/json',
-      body: envelope({
-        userId: 42,
-        personPublicId: 'person-42',
-        displayName: 'Mina Kim',
-        jobTitle: 'Network Operations Lead',
-        email: 'mina.kim@sk.com',
-        tenantId: 1,
-        tenantCode: 'SKAX',
-        identityPlane: 'TENANT',
-        tenantName: 'SKAX',
-        roles: options.roles ?? ['WORKSPACE_MEMBER'],
-        groups: [{ groupRef: 'SKAX_ALL_EMPLOYEES', displayName: 'All employees' }],
-        resourceRoles: [],
-      }),
-    })
-  );
-  await page.route('**/api/auth/permissions', (route) =>
-    route.fulfill({
-      contentType: 'application/json',
-      body: envelope(
-        options.permissions ?? [
-          {
-            resourceType: 'APP',
-            resourceKey: 'APP.SPACES',
-            permissionCode: 'VIEW',
-            effect: 'ALLOW',
-          },
-        ]
-      ),
-    })
-  );
-  await page.route('**/api/auth/csrf', (route) =>
-    route.fulfill({
-      contentType: 'application/json',
-      body: envelope({ token: 'csrf-token', headerName: 'X-XSRF-TOKEN' }),
-    })
-  );
-  await page.route('**/api/platform/v1/tenant-branding', (route) =>
-    route.fulfill({
-      contentType: 'application/json',
-      body: envelope({ organizationName: 'SKAX', logoUrl: null, version: 1 }),
-    })
-  );
-  await page.route('**/api/platform/v1/personal-preferences**', (route) =>
-    route.fulfill({
-      contentType: 'application/json',
-      body: envelope({
-        schemaVersion: 1,
-        customized: false,
-        preferences: {
-          appearance: { mode: 'light', density: 'standard' },
-          accessibility: { highContrast: false, reduceMotion: false },
-        },
-        version: 0,
-        updatedAt: null,
-      }),
-    })
-  );
-}
+import {
+  DIRECTORY_SPACES,
+  SPACE_SUMMARY,
+  SPACE_TEMPLATE,
+  deferredDirectoryResponse,
+  directoryCards,
+  envelope,
+  expectNoDirectoryEmptyState,
+  mockDirectorySession,
+  mockSpaceSession,
+} from './support/space-fixtures';
 
 test('members receive an accessible responsive Space command center', async ({ page }) => {
   await mockSpaceSession(page);
@@ -180,7 +71,7 @@ test('members receive an accessible responsive Space command center', async ({ p
   await expect(
     page.getByRole('heading', { name: "Where Mina Kim's work comes together" })
   ).toBeVisible();
-  await expect(page.getByRole('button', { name: /SKAX Town Square/ })).toContainText(
+  await expect(page.getByRole('link', { name: 'SKAX Town Square', exact: true })).toContainText(
     '2 access subjects'
   );
   await expect(page.getByRole('heading', { name: 'Collaboration insights' })).toBeVisible();
@@ -203,6 +94,286 @@ test('members receive an accessible responsive Space command center', async ({ p
     documentWidth: document.documentElement.scrollWidth,
   }));
   expect(mobileOverflow.documentWidth).toBeLessThanOrEqual(mobileOverflow.viewport);
+});
+
+test('Space discover cards keep full-width aligned headers at supported widths', async ({
+  page,
+}, testInfo) => {
+  await mockDirectorySession(page, { roles: ['TENANT_ADMIN'] });
+  await page.route(/\/api\/spaces\/v1\/spaces\?/, (route) =>
+    route.fulfill({ contentType: 'application/json', body: envelope(DIRECTORY_SPACES) })
+  );
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto('/spaces/discover');
+  await expect(page.getByRole('heading', { name: 'Discover spaces', exact: true })).toBeVisible();
+  await expect(page.getByLabel('5 results', { exact: true })).toBeVisible();
+
+  for (const space of DIRECTORY_SPACES) {
+    const card = page.getByRole('link', { name: space.nameEn, exact: true });
+    await expect(card).toHaveAttribute('href', `/spaces/${space.spaceKey}/overview`);
+    await expect(card).toHaveAccessibleName(space.nameEn);
+    await expect(card.getByRole('heading', { name: space.nameEn, exact: true })).toBeVisible();
+    await expect(card.getByText(/^Last activity /)).toBeVisible();
+    await expect(card.getByText('Joined', { exact: true })).toHaveCount(space.memberRole ? 1 : 0);
+  }
+  await expect(
+    page.getByRole('link', { name: DIRECTORY_SPACES[2].nameEn, exact: true })
+  ).toContainText('Private');
+  await expect(
+    page.getByRole('link', { name: DIRECTORY_SPACES[4].nameEn, exact: true })
+  ).toContainText('Hidden');
+  await expect(page.getByRole('link', { name: SPACE_SUMMARY.nameEn, exact: true })).toContainText(
+    '2 access subjects'
+  );
+
+  for (const width of [1440, 1280, 390, 320]) {
+    await page.setViewportSize({ width, height: 900 });
+    await expect(page.getByRole('main')).toHaveCSS(
+      'width',
+      `${width - (width < 1200 ? 0 : 248)}px`
+    );
+    await expect(page.getByRole('main')).toHaveCSS('margin-left', width < 1200 ? '0px' : '248px');
+    await page.evaluate(() => document.fonts.ready);
+    const metrics = await directoryCards(page).evaluateAll((cards) =>
+      cards.map((card) => {
+        const bounds = card.getBoundingClientRect();
+        const style = getComputedStyle(card);
+        const header = card.querySelector(':scope > div')!;
+        const headerBounds = header.getBoundingClientRect();
+        const glyph = header.firstElementChild!.getBoundingClientRect();
+        const badges = header.lastElementChild!.getBoundingClientRect();
+        return {
+          name: card.getAttribute('aria-label'),
+          width: bounds.width,
+          innerWidth:
+            bounds.width - parseFloat(style.borderLeftWidth) - parseFloat(style.borderRightWidth),
+          innerLeft: bounds.left + parseFloat(style.borderLeftWidth),
+          innerTop: bounds.top + parseFloat(style.borderTopWidth),
+          headerWidth: headerBounds.width,
+          headerLeft: headerBounds.left,
+          headerTop: headerBounds.top,
+          centerDifference: Math.abs(glyph.top + glyph.height / 2 - badges.top - badges.height / 2),
+          overflow: card.scrollWidth - card.clientWidth,
+        };
+      })
+    );
+    expect(metrics).toHaveLength(DIRECTORY_SPACES.length);
+    for (const metric of metrics) {
+      const context = `${width}px: ${metric.name}`;
+      expect(Math.abs(metric.headerWidth - metric.innerWidth), context).toBeLessThanOrEqual(1);
+      expect(Math.abs(metric.headerLeft - metric.innerLeft), context).toBeLessThanOrEqual(1);
+      expect(Math.abs(metric.headerTop - metric.innerTop), context).toBeLessThanOrEqual(1);
+      expect(Math.abs(metric.width - metrics[0].width), context).toBeLessThanOrEqual(1);
+      expect(metric.centerDifference, context).toBeLessThanOrEqual(1);
+      expect(metric.overflow, context).toBeLessThanOrEqual(1);
+    }
+    const overflow = await page.evaluate(() => ({
+      viewport: document.documentElement.clientWidth,
+      documentWidth: document.documentElement.scrollWidth,
+    }));
+    expect(overflow.documentWidth, `${width}px document overflow`).toBeLessThanOrEqual(
+      overflow.viewport
+    );
+    await page.screenshot({
+      path: testInfo.outputPath(`space-discover-${width}.png`),
+      fullPage: true,
+    });
+  }
+});
+
+test('Space discover search replaces history and survives detail navigation and browser back', async ({
+  page,
+}) => {
+  await mockDirectorySession(page);
+  await page.route(/\/api\/spaces\/v1\/spaces\?/, (route) => {
+    const query = new URL(route.request().url()).searchParams.get('q')?.toLowerCase() ?? '';
+    const results = DIRECTORY_SPACES.filter((space) =>
+      `${space.nameEn} ${space.summaryEn}`.toLowerCase().includes(query)
+    );
+    return route.fulfill({ contentType: 'application/json', body: envelope(results) });
+  });
+  await page.goto('/spaces/discover?q=Engineering&context=review');
+  const search = page.getByRole('textbox', {
+    name: 'Search space name or description',
+    exact: true,
+  });
+  await expect(search).toHaveValue('Engineering');
+  await expect(directoryCards(page)).toHaveCount(1);
+  const initialHistoryLength = await page.evaluate(() => window.history.length);
+
+  await search.fill('AI');
+  await expect(page).toHaveURL(/\/spaces\/discover\?q=AI&context=review$/);
+  await expect(directoryCards(page)).toHaveCount(1);
+  await expect(page.getByLabel('1 result', { exact: true })).toBeVisible();
+  expect(await page.evaluate(() => window.history.length)).toBe(initialHistoryLength);
+  await page.getByRole('link', { name: DIRECTORY_SPACES[1].nameEn, exact: true }).click();
+  await expect(page).toHaveURL(/\/spaces\/ai-transformation\/overview$/);
+  await expect(
+    page.getByRole('heading', { name: DIRECTORY_SPACES[1].nameEn, exact: true })
+  ).toBeVisible();
+
+  await page.goBack();
+  await expect(page).toHaveURL(/\/spaces\/discover\?q=AI&context=review$/);
+  await expect(search).toHaveValue('AI');
+  await expect(directoryCards(page)).toHaveCount(1);
+  await expect(
+    page.getByRole('link', { name: DIRECTORY_SPACES[1].nameEn, exact: true })
+  ).toBeVisible();
+  await page.getByRole('button', { name: 'Clear search', exact: true }).click();
+  await expect(page).toHaveURL(/\/spaces\/discover\?context=review$/);
+  await expect(search).toHaveValue('');
+  await expect(page.getByLabel('5 results', { exact: true })).toBeVisible();
+});
+
+test('Space discover announces pending searches and keeps prior cards without false zero or empty states', async ({
+  page,
+}) => {
+  await mockDirectorySession(page);
+  const initialResponse = deferredDirectoryResponse();
+  const searchResponse = deferredDirectoryResponse();
+  await page.route(/\/api\/spaces\/v1\/spaces\?/, async (route) => {
+    const query = new URL(route.request().url()).searchParams.get('q');
+    await (query ? searchResponse.promise : initialResponse.promise);
+    return route.fulfill({
+      contentType: 'application/json',
+      body: envelope(query ? [DIRECTORY_SPACES[1]] : DIRECTORY_SPACES),
+    });
+  });
+
+  try {
+    await page.goto('/spaces/discover');
+    const status = page
+      .getByRole('region', { name: 'Space directory', exact: true })
+      .getByRole('status');
+    await expect(status).toHaveText('Searching…');
+    await expect(page.locator('main [aria-busy="true"]')).toBeVisible();
+    await expect(directoryCards(page)).toHaveCount(0);
+    await expectNoDirectoryEmptyState(page);
+
+    initialResponse.release();
+    await expect(directoryCards(page)).toHaveCount(5);
+    await expect(page.getByLabel('5 results', { exact: true })).toBeVisible();
+    await page
+      .getByRole('textbox', { name: 'Search space name or description', exact: true })
+      .fill('AI');
+    await expect(status).toHaveText('Searching…');
+    await expect(directoryCards(page)).toHaveCount(5);
+    await expect(page.locator('main [aria-busy="true"]')).toBeVisible();
+    await expectNoDirectoryEmptyState(page);
+
+    searchResponse.release();
+    await expect(page.getByLabel('1 result', { exact: true })).toBeVisible();
+    await expect(directoryCards(page)).toHaveCount(1);
+    await expect(page.locator('main [aria-busy="true"]')).toHaveCount(0);
+    await expect(status).not.toContainText('Searching…');
+  } finally {
+    initialResponse.release();
+    searchResponse.release();
+  }
+});
+
+test('Space discover failed loads offer Retry without claiming the directory is empty', async ({
+  page,
+}) => {
+  await mockDirectorySession(page);
+  let fail = true;
+  await page.route(/\/api\/spaces\/v1\/spaces\?/, (route) =>
+    fail
+      ? route.fulfill({
+          status: 503,
+          contentType: 'application/json',
+          body: JSON.stringify({ message: 'Fixture directory outage' }),
+        })
+      : route.fulfill({ contentType: 'application/json', body: envelope(DIRECTORY_SPACES) })
+  );
+  await page.goto('/spaces/discover?q=AI');
+  await expect(page.getByText('We could not load the spaces.', { exact: true })).toBeVisible();
+  await expectNoDirectoryEmptyState(page);
+  await expect(directoryCards(page)).toHaveCount(0);
+
+  fail = false;
+  await page.getByRole('button', { name: 'Retry', exact: true }).click();
+  await expect(page.getByLabel('5 results', { exact: true })).toBeVisible();
+  await expect(page.getByText('We could not load the spaces.', { exact: true })).toHaveCount(0);
+  await expectNoDirectoryEmptyState(page);
+});
+
+test('Space discover warns on a failed refresh while keeping the last successful cards', async ({
+  page,
+}) => {
+  await page.clock.install();
+  await mockDirectorySession(page);
+  let fail = false;
+  await page.route(/\/api\/spaces\/v1\/spaces\?/, (route) =>
+    fail
+      ? route.fulfill({
+          status: 503,
+          contentType: 'application/json',
+          body: JSON.stringify({ message: 'Fixture refresh outage' }),
+        })
+      : route.fulfill({ contentType: 'application/json', body: envelope(DIRECTORY_SPACES) })
+  );
+  await page.goto('/spaces/discover');
+  await expect(page.getByLabel('5 results', { exact: true })).toBeVisible();
+  await page.getByRole('link', { name: SPACE_SUMMARY.nameEn, exact: true }).click();
+  await expect(page).toHaveURL(/\/spaces\/company-square\/overview$/);
+  await expect(
+    page.getByRole('heading', { name: SPACE_SUMMARY.nameEn, level: 1, exact: true })
+  ).toBeVisible();
+  // Expire the directory cache while it is unmounted; returning triggers a refresh.
+  await page.clock.fastForward(31_000);
+  fail = true;
+  await page.goBack();
+  const warning = page.getByRole('alert').filter({
+    hasText: 'We could not refresh the directory. Previous results are shown.',
+  });
+  await expect(warning).toBeVisible();
+  await expect(directoryCards(page)).toHaveCount(5);
+  await expectNoDirectoryEmptyState(page);
+
+  fail = false;
+  await warning.getByRole('button', { name: 'Retry', exact: true }).click();
+  await expect(warning).toHaveCount(0);
+  await expect(page.getByLabel('5 results', { exact: true })).toBeVisible();
+});
+
+test('Space discover exposes localized full names and keyboard focus with dark contrast and reduced motion', async ({
+  page,
+}, testInfo) => {
+  await page.addInitScript(() => window.localStorage.setItem('dwp.locale', 'ko'));
+  await page.emulateMedia({ colorScheme: 'dark', forcedColors: 'active', reducedMotion: 'reduce' });
+  await mockDirectorySession(page, {
+    roles: ['TENANT_ADMIN'],
+    locale: 'ko',
+    preferences: { mode: 'dark', highContrast: true, reduceMotion: true },
+  });
+  await page.route(/\/api\/spaces\/v1\/spaces\?/, (route) =>
+    route.fulfill({ contentType: 'application/json', body: envelope(DIRECTORY_SPACES) })
+  );
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/spaces/discover');
+  const search = page.getByRole('textbox', { name: 'Space 이름 또는 설명 검색', exact: true });
+  await expect(directoryCards(page)).toHaveCount(5);
+  await search.focus();
+  await page.keyboard.press('Tab');
+  await expect(page.getByRole('link', { name: SPACE_SUMMARY.nameKo, exact: true })).toBeFocused();
+  await page.keyboard.press('Tab');
+  const longName = DIRECTORY_SPACES[1].nameKo;
+  const card = page.getByRole('link', { name: longName, exact: true });
+  await expect(card).toBeFocused();
+  await expect(card).toHaveAccessibleName(longName);
+  await expect(page.getByRole('tooltip', { name: longName, exact: true })).toBeVisible();
+  await expect(card).toHaveCSS('transition-property', 'none');
+  const focus = await card.evaluate((element) => {
+    const style = getComputedStyle(element);
+    return { style: style.outlineStyle, width: parseFloat(style.outlineWidth) };
+  });
+  expect(focus.style).not.toBe('none');
+  expect(focus.width).toBeGreaterThanOrEqual(2);
+  await page.screenshot({
+    path: testInfo.outputPath('space-discover-dark-contrast-keyboard-ko.png'),
+    fullPage: true,
+  });
 });
 
 test('Space control-center routes preserve separation of duties', async ({ page }) => {
@@ -277,7 +448,10 @@ test('Space control-center routes preserve separation of duties', async ({ page 
   await expect(page.getByRole('link', { name: 'Content reviews' })).toHaveCount(0);
 
   await page.goto('/admin/spaces/content-reviews');
-  await expect(page).toHaveURL(/\/403$/);
+  await expect(
+    page.getByRole('heading', { name: 'This page is outside your access', exact: true })
+  ).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Content reviews', exact: true })).toHaveCount(0);
 });
 
 test('Space lifecycle approvers can record decisions without broad manage authority', async ({

@@ -1,16 +1,21 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ActionButton, InlineFeedback } from '@dwp-frontend/design-system';
+import {
+  ActionButton,
+  DatePickerField,
+  FormField,
+  InlineFeedback,
+  LoadingState,
+  foundationTokens,
+} from '@dwp-frontend/design-system';
 
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
-import CircularProgress from '@mui/material/CircularProgress';
 import Divider from '@mui/material/Divider';
 import Link from '@mui/material/Link';
 import MenuItem from '@mui/material/MenuItem';
 import Paper from '@mui/material/Paper';
 import Stack from '@mui/material/Stack';
-import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 
 import { useEmployeeChangeWorkspace } from '../hooks/use-employee-change-workspace';
@@ -276,13 +281,13 @@ function CreateRequestForm({
             gap: 1.5,
           }}
         >
-          <TextField
+          <FormField
             required
             label="Target person public ID"
             value={targetPersonPublicId}
             onChange={(event) => setTargetPersonPublicId(event.target.value)}
           />
-          <TextField
+          <FormField
             select
             label="Target aggregate type"
             value={targetAggregateType}
@@ -297,28 +302,26 @@ function CreateRequestForm({
                 {value.replaceAll('_', ' ')}
               </MenuItem>
             ))}
-          </TextField>
-          <TextField
+          </FormField>
+          <FormField
             required
             label="Target aggregate public ID"
             value={targetAggregatePublicId}
             onChange={(event) => setTargetAggregatePublicId(event.target.value)}
           />
-          <TextField
+          <FormField
             required
             label="Change type"
             value={changeType}
             onChange={(event) => setChangeType(event.target.value)}
           />
-          <TextField
+          <DatePickerField
             required
-            type="date"
             label="Effective date"
-            value={effectiveDate}
-            slotProps={{ inputLabel: { shrink: true } }}
-            onChange={(event) => setEffectiveDate(event.target.value)}
+            value={effectiveDate || null}
+            onValueChange={(value) => setEffectiveDate(value ?? '')}
           />
-          <TextField
+          <FormField
             required
             type="number"
             label="Expected target version"
@@ -326,14 +329,14 @@ function CreateRequestForm({
             slotProps={{ htmlInput: { min: 0, step: 1 } }}
             onChange={(event) => setExpectedVersion(event.target.value)}
           />
-          <TextField
+          <FormField
             required
             label="Patch schema key"
             value={schemaKey}
             onChange={(event) => setSchemaKey(event.target.value)}
           />
         </Box>
-        <TextField
+        <FormField
           required
           multiline
           minRows={3}
@@ -341,7 +344,7 @@ function CreateRequestForm({
           value={patchText}
           onChange={(event) => setPatchText(event.target.value)}
         />
-        <TextField
+        <FormField
           multiline
           minRows={2}
           label="Evidence references (JSON)"
@@ -391,6 +394,7 @@ export function EmployeeChangeWorkspaceView({
   onApply,
   onRecoverReceipt,
 }: EmployeeChangeWorkspaceViewProps) {
+  const { t } = useTranslation('common');
   const [creating, setCreating] = useState(false);
   const receiptStatusRef = useRef<HTMLDivElement | null>(null);
   const receiptAnnouncementKey = `${receiptRecoveryPhase}:${receipt?.receiptId ?? 'none'}:${receipt?.status ?? 'none'}`;
@@ -453,10 +457,7 @@ export function EmployeeChangeWorkspaceView({
         />
       )}
       {loading && (
-        <Stack direction="row" gap={1} alignItems="center" role="status">
-          <CircularProgress size={20} />
-          <Typography>Loading employee-change requests…</Typography>
-        </Stack>
+        <LoadingState label="Loading employee-change requests…" embedded spinnerSize={20} />
       )}
       {Boolean(error) && (
         <InlineFeedback severity="error" title="Employee-change requests are unavailable">
@@ -547,8 +548,8 @@ export function EmployeeChangeWorkspaceView({
             <Stack component="ul" gap={0.75} sx={{ p: 0, m: 0, listStyle: 'none' }}>
               {projection.items.map((item) => (
                 <Box component="li" key={item.itemPublicId}>
-                  <Box
-                    component="button"
+                  <ActionButton
+                    intent="quiet"
                     type="button"
                     aria-pressed={selectedItem?.itemPublicId === item.itemPublicId}
                     onClick={() => onSelect(item.itemPublicId)}
@@ -560,23 +561,29 @@ export function EmployeeChangeWorkspaceView({
                         selectedItem?.itemPublicId === item.itemPublicId
                           ? 'primary.main'
                           : 'divider',
-                      borderRadius: 1.5,
+                      borderRadius: foundationTokens.radius.control + 'px',
                       bgcolor:
                         selectedItem?.itemPublicId === item.itemPublicId
                           ? 'action.selected'
                           : 'background.paper',
                       color: 'text.primary',
+                      display: 'block',
                       textAlign: 'left',
                       cursor: 'pointer',
                     }}
                   >
-                    <Typography component="span" variant="body2" fontWeight={700} display="block">
+                    <Typography
+                      component="span"
+                      variant="body2"
+                      fontWeight="fontWeightBold"
+                      display="block"
+                    >
                       {item.title}
                     </Typography>
                     <Typography component="span" variant="caption" color="text.secondary">
                       {item.statusCode.replaceAll('_', ' ')}
                     </Typography>
-                  </Box>
+                  </ActionButton>
                 </Box>
               ))}
             </Stack>
@@ -655,7 +662,9 @@ export function EmployeeChangeWorkspaceView({
       )}
 
       <Stack direction="row" gap={1} alignItems="center" justifyContent="flex-end">
-        {fetching && !loading && <CircularProgress size={18} aria-label="Refreshing" />}
+        {fetching && !loading && (
+          <LoadingState label={t('labels.loading')} embedded spinnerSize={18} />
+        )}
         <ActionButton
           intent="secondary"
           disabled={!canPrevious || commandBusy}

@@ -1,6 +1,11 @@
 import { useTranslation } from 'react-i18next';
 import { useQuery } from '@tanstack/react-query';
-import { ActionButton, GuidedEmptyState, InlineFeedback } from '@dwp-frontend/design-system';
+import {
+  ActionButton,
+  GuidedEmptyState,
+  InlineFeedback,
+  foundationTokens,
+} from '@dwp-frontend/design-system';
 import { formatCivilDate, formatDate } from '@dwp-frontend/shared-i18n';
 import { FileText, RefreshCw, ShieldCheck } from 'lucide-react';
 
@@ -54,7 +59,7 @@ function DocumentField({
           m: 0,
           mt: 0.25,
           overflowWrap: 'anywhere',
-          ...(mono ? { fontFamily: 'monospace' } : {}),
+          ...(mono ? { fontFamily: foundationTokens.font.mono } : {}),
         }}
       >
         {value}
@@ -91,7 +96,7 @@ function EmploymentDocumentCard({
           minWidth={0}
         >
           <Box minWidth={0} flex={1}>
-            <Typography id={titleId} component="h3" variant="subtitle1" fontWeight={700}>
+            <Typography id={titleId} component="h3" variant="subtitle1" fontWeight="fontWeightBold">
               {copy.documentLabel(index + 1, document.relationshipType)}
             </Typography>
             <Typography variant="body2" color="text.secondary" sx={{ overflowWrap: 'anywhere' }}>
@@ -217,7 +222,7 @@ export function EmploymentDocumentsRuntime({
                 id="employment-documents-question"
                 component="h2"
                 variant="subtitle1"
-                fontWeight={700}
+                fontWeight="fontWeightBold"
                 sx={{ overflowWrap: 'anywhere' }}
               >
                 {copy.question}
@@ -260,7 +265,7 @@ export function EmploymentDocumentsRuntime({
             id="employment-records-title"
             component="h2"
             variant="subtitle1"
-            fontWeight={700}
+            fontWeight="fontWeightBold"
           >
             {copy.recordsTitle}
           </Typography>
