@@ -1,0 +1,49 @@
+{
+  "schema": "dwp.hris.wave7.hrm013-final-matrix-independent-review.v1",
+  "reviewedAt": "2026-10-27T07:08:36Z",
+  "reviewScope": "EXACT_FINAL_BACKEND_TIP_TWELVE_CONDITION_PROJECTION_TWENTY_ONE_SELECTOR_FIVE_TASK_EXECUTION_AND_RESULT_EVIDENCE_CONTRACT_ONLY",
+  "decision": "GO_FOR_EXACT_TWENTY_ONE_SELECTOR_FIVE_TASK_SINGLE_INVOCATION_AFTER_CARRIER_PUSH_ONLY",
+  "severityCounts": {"P0": 0, "P1": 0, "P2": 3},
+  "authorityPin": {
+    "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-final-matrix-authority-r1/final-matrix-execution-authority.v1.json",
+    "bytes": 23324,
+    "sha256": "8664710f8e0e9573ad4fb3d84186e0530d8b9ac2ed9dc0d80d68e739c4463e36"
+  },
+  "validatorPin": {
+    "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-final-matrix-authority-r1/validate_hrm013_final_matrix_authority.py",
+    "bytes": 13631,
+    "sha256": "20a85542c28dcbc24c2777aaa8fbd10b11cd3992b558275e450c90aa9f6ffde8"
+  },
+  "reviewedFacts": [
+    "The authority carrier is a direct-child three-path append from frontend dwp-dev 05c784e6 and permits unrelated rooms, spaces, messaging and output working-tree changes only if they remain untouched and unstaged.",
+    "The execution target is the clean integration worktree at backend dwp-dev 2a765439 with tree 4c57372f, and its exact TIME, rebased PAYROLL, rebased AUTH and People handshake first-parent chain is pinned.",
+    "The twelve HRM013-RBG conditions are copied byte-semantically from the sealed binding gate and retain canonical compact JSON SHA-256 72c40f9a0a7ec19cc4b27e3caec7443a4d653a2aa42546113601af32f64f383b.",
+    "The earlier twenty-method shared/Auth/Approval/People matrix is retained only as prerequisite evidence because its own receipt explicitly excludes Phase-6 task owners and the complete twelve-condition matrix.",
+    "Every condition maps to exact frozen selector identifiers and hash-pinned predecessor evidence; all twenty-one selectors contribute to at least one condition.",
+    "The only authorized execution is one Gradle invocation with --rerun-tasks and five test tasks, with each task immediately followed by only its own selectors in a 5/4/5/6/1 distribution.",
+    "The People handshake class contributes two test methods, so a successful result requires twenty-one selectors, twenty-two tests, nineteen XML files, zero failures, zero errors and zero skipped tests.",
+    "The result contract requires exact repository hashes, clean before and after states, selector-set equality, XML manifest hash, per-task results and twelve condition results.",
+    "Broad repository tests, unrelated selectors, source changes during execution, activation, tenant enrollment, credentials, live network, production and business completion credit remain forbidden."
+  ],
+  "activationOnlyP2": [
+    {
+      "state": "OPEN_BEFORE_ACTIVATION",
+      "finding": "Production Flyway-owner/runtime-role provisioning and inherited-ACL drift attestation remain deployment controls."
+    },
+    {
+      "state": "OPEN_BEFORE_ACTIVATION",
+      "finding": "The production external LeaseSource/non-exportable signer and same-channel verified-mTLS implementation, including a live handshake, remain unbound and unexercised."
+    },
+    {
+      "state": "OPEN_BEFORE_ACTIVATION",
+      "finding": "Feature and relay enablement, tenant enrollment, live rotation or cutover and operational audit or SoD monitoring remain unauthorized."
+    }
+  ],
+  "nonClaims": [
+    "This review does not claim that the final matrix has run or passed.",
+    "This review does not convert the predecessor twenty-method matrix into final acceptance evidence by itself.",
+    "This review does not close any activation-only P2 finding.",
+    "This review does not authorize modification, staging or commit of unrelated working-tree changes.",
+    "This review grants no HRM-013, Batch-06, module-menu or HRIS business-completion credit."
+  ]
+}

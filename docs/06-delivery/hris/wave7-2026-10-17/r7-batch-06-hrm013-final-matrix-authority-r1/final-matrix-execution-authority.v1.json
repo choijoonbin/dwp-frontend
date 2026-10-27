@@ -1,0 +1,319 @@
+{
+  "schema": "dwp.hris.wave7.hrm013-final-matrix-execution-authority.v1",
+  "state": "INDEPENDENTLY_REVIEWED_HASH_BOUND_EXACT_TWENTY_ONE_SELECTOR_FIVE_TASK_SINGLE_INVOCATION_AUTHORITY",
+  "recordedAt": "2026-10-27T07:08:36Z",
+  "sliceId": "BASE-TFR-HRM-013",
+  "module": "HRM",
+  "moduleSession": "HRIS-HRM",
+  "purpose": "Freeze the only authorized final source-integration acceptance matrix after TIME, PAYROLL and AUTH task-owner integration without broad or unrelated reruns.",
+  "carrier": {
+    "repository": "dwp-frontend",
+    "branch": "dwp-dev",
+    "baseCommit": "05c784e6258b00c3fec90815387b13ebe087ca45",
+    "baseTree": "a6a8970a8ee69acc31a8e6d714bbca51a6ad1a9a",
+    "originMustMatchBaseAtAuthoring": true,
+    "requiredDirectChild": true,
+    "exactChangedPaths": [
+      "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-final-matrix-authority-r1/final-matrix-execution-authority.v1.json",
+      "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-final-matrix-authority-r1/independent-review.v1.json",
+      "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-final-matrix-authority-r1/validate_hrm013_final_matrix_authority.py"
+    ],
+    "unrelatedRoomsSpacesMessagingAndOutputChangesMayExist": true,
+    "unrelatedChangesMayBeModifiedStagedOrCommitted": false
+  },
+  "backendTarget": {
+    "repository": "dwp-backend",
+    "branch": "dwp-dev",
+    "commit": "2a765439beb50d40f91eb65c5350984cfc4b52de",
+    "tree": "4c57372f0ebb8f62db3ef8ab469ab6c5eb5e4bbd",
+    "originMustMatch": true,
+    "executionWorktree": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261027/batch06/hrm013-phase6/integration",
+    "executionWorktreeMustBeClean": true,
+    "integrationChain": [
+      {
+        "lane": "TIME_TASK_OWNER",
+        "commit": "e09603ea1270278e720462ba7d00b116ef12bb9c",
+        "tree": "76d818fad77af29364d20ce4cb3980d899f86213",
+        "parent": "8ccc7baeff43b60dc6cdf719449514f56b6dbca5"
+      },
+      {
+        "lane": "PAYROLL_TASK_OWNER_REBASED",
+        "commit": "3707d6378b4663812bd5dbdbb5de0b96aafa205d",
+        "tree": "ebd7248113d9d2db462c6297304bb5be3cafbd55",
+        "parent": "e09603ea1270278e720462ba7d00b116ef12bb9c"
+      },
+      {
+        "lane": "AUTH_IDENTITY_TASK_OWNER_REBASED",
+        "commit": "126421aae2f6fb31a15e6db41bfd4d1ab03e9f2a",
+        "tree": "9312c8c66b057557ab6f7fc4d348aa20390dbfa7",
+        "parent": "3707d6378b4663812bd5dbdbb5de0b96aafa205d"
+      },
+      {
+        "lane": "PEOPLE_THREE_OWNER_RECEIPT_HANDSHAKE",
+        "commit": "2a765439beb50d40f91eb65c5350984cfc4b52de",
+        "tree": "4c57372f0ebb8f62db3ef8ab469ab6c5eb5e4bbd",
+        "parent": "126421aae2f6fb31a15e6db41bfd4d1ab03e9f2a"
+      }
+    ]
+  },
+  "predecessorEvidence": {
+    "BINDING_GATE": {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-owner-runtime-binding-gate-r1/hrm-013-owner-runtime-binding-gate.v1.json",
+      "mode": "0644",
+      "bytes": 170804,
+      "sha256": "aa88b6116f2fa8ca4e96d85204414a737e763afa4e1bb01372e31fdaa59deb47"
+    },
+    "PHASE6_CENTRAL_AUTHORITY": {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-phase6-central-integration-r1/phase6-central-integration-authority.v1.json",
+      "mode": "0644",
+      "bytes": 9947,
+      "sha256": "74a4de7e7151f436677c401c59abb29cb6826bed6c36680213e080571253078f"
+    },
+    "PHASE6_CENTRAL_REVIEW": {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-phase6-central-integration-r1/independent-review.v1.json",
+      "mode": "0644",
+      "bytes": 3495,
+      "sha256": "d43107bb8b3b87383135aba8750897156989828b623a6220cf6ce6378bc10f4d"
+    },
+    "PHASE6_CENTRAL_VALIDATOR": {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-phase6-central-integration-r1/validate_hrm013_phase6_central_integration.py",
+      "mode": "0644",
+      "bytes": 10114,
+      "sha256": "22b0b1bc27d7c6c29116aaf812a3625c365a2e140c39874b16ae51c67b2e7769"
+    },
+    "PREREQUISITE_MATRIX_AUTHORITY": {
+      "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261026/batch06/hrm013-owner-runtime/receipts/bounded-shared-auth-approval-people-handshake-matrix-authority.v1.json",
+      "mode": "0600",
+      "bytes": 5961,
+      "sha256": "dfaf74516ea00fafd617a9ee087e0b12082ffbb83bb79a7abef574e625f5f2b9"
+    },
+    "PREREQUISITE_MATRIX_CORRECTION": {
+      "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261026/batch06/hrm013-owner-runtime/receipts/bounded-shared-auth-approval-people-handshake-matrix-execution-correction.v1.json",
+      "mode": "0600",
+      "bytes": 1889,
+      "sha256": "e42fbf1bdd796b631f033a76f8bf01df18e9c9d8480807d67f2164389ef4641e"
+    },
+    "PREREQUISITE_MATRIX_RECEIPT": {
+      "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261026/batch06/hrm013-owner-runtime/receipts/bounded-shared-auth-approval-people-handshake-matrix-receipt.v1.json",
+      "mode": "0600",
+      "bytes": 3883,
+      "sha256": "65d60fbf874635d68d03c06a0c067d7d28c5dedbd03d833b1271c27b60b3c7ea"
+    },
+    "PREREQUISITE_MATRIX_REVIEW": {
+      "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261026/batch06/hrm013-owner-runtime/receipts/bounded-shared-auth-approval-people-handshake-matrix-independent-review.v1.json",
+      "mode": "0600",
+      "bytes": 3519,
+      "sha256": "3f6f1ea985467573467f86f0388f5e986eb36cec528e43b6239f899db4327fd2"
+    }
+  },
+  "acceptanceMatrix": {
+    "source": "predecessorEvidence.BINDING_GATE.targetedAcceptanceMatrix",
+    "conditionCount": 12,
+    "canonicalCompactJsonSha256": "72c40f9a0a7ec19cc4b27e3caec7443a4d653a2aa42546113601af32f64f383b",
+    "conditions": [
+      {
+        "id": "HRM013-RBG-01",
+        "criterion": "Shared codecs reject unknown, duplicate, null, noncanonical and oversized bodies, headers and proof claims for the Auth resolver, requester identity, three task dispatches, APR-002 and HRM-008 through HRM-010; every affected business proof enforces grantUseMode and exact conditional seven-field DRAIN_EXISTING claims, and requester identity permits only the APR-002-bound DEPENDENT_READ while preserving the five-header envelope."
+      },
+      {
+        "id": "HRM013-RBG-02",
+        "criterion": "Inbound and outbound TLS1.3, exact binding-owner SPIFFE URI SAN, DNS/SNI/endpoint, current certificate chain and revocation are validated before proof or response parsing; cnf leaf thumbprint is validated during proof verification, redirects and forwarded certificate headers never authenticate, and all checks complete before authority or business reads."
+      },
+      {
+        "id": "HRM013-RBG-03",
+        "criterion": "Auth V271 provides one append-only current grant-set chain, strict four-caller NEW_WORK, DRAIN_EXISTING, READINESS_OBSERVE and opaque PROBE_MISSING resolve API for People, Approval, Time and Payroll plus the exact in-process equivalent for Auth requester-identity and identity-task roles, requester identity authority, durable quiesce fences, gap-free per-role drain activities, 30-second drain expiry, 65-second post-activity quiet observation, stale-readiness invalidation, task-pair rotation and the atomic APR-002/HRM-010/SVC-AUT-HRM-013 waiver dependency group, plus ADMIT, READINESS_OBSERVED, REVOKE, MISSING, AMBIGUOUS, STALE, REVISION_MISMATCH, QUIESCING and UNAVAILABLE behavior under forced tenant RLS."
+      },
+      {
+        "id": "HRM013-RBG-04",
+        "criterion": "Disabled Auth, Approval, People, Time and Payroll flags instantiate no HRM-013 controller, relay, consumer or credential reader and emit zero calls; migrations insert no grant or enrollment."
+      },
+      {
+        "id": "HRM013-RBG-05",
+        "criterion": "APR-002 accepts only the exact current three-member Auth authority plus the two-member Approval V59 projection after applying the sealed APR-002 and HRM-010 cross-store comparison map; local grant_revision, two-member grant_digest and recorded_at never alias Auth grantRevision, three-member grantDigest, recordedAt or rotationReadinessDigest, and SVC-AUT-HRM-013 remains Auth-only. It resolves the exact requester and fixed effective published workflow/form unambiguously, creates and submits once, and returns byte-identical stored 202 for exact replay; after grant rotation replay is historical only and never rebinds or authorizes an old terminal relay."
+      },
+      {
+        "id": "HRM013-RBG-06",
+        "criterion": "The dedicated HRM-013 approve route is a first-class Approval and Auth CAST route, accepts only command Decision.APPROVE, rejects non-HRM-013 tasks and cannot rewrite to the generic path; the generic task-decision route accepts only HRM-013 command Decision.REJECT, and both enforce maker, requester and decision-actor separation without existence disclosure."
+      },
+      {
+        "id": "HRM013-RBG-07",
+        "criterion": "Terminal Outcome.APPROVED consumes one fresh command-bound Auth challenge and emits the exact seven-field downstream evidence; terminal Outcome.REJECTED accepts no step-up input and emits none."
+      },
+      {
+        "id": "HRM013-RBG-08",
+        "criterion": "Exactly one ApprovalTerminalDecisionSink routes mutually exclusively to employee-change or separation; ambiguity rolls back and APR-001/HRM-001 regressions remain green."
+      },
+      {
+        "id": "HRM013-RBG-09",
+        "criterion": "People owner transactions atomically create every immutable callback authority with its exact integrity-fenced task-dispatch outbox, XCON-028 admission or APR-002 waiver fence; task dispatch and SVC-PEP-HRM-008 callback grants are resolved, frozen and revalidated as distinct revision pairs, every dispatch send revalidates the outbox against that fence, the three owners admit idempotently and no callback handler fabricates a fence. A pre-quiesce APR-002 or accepted owner task may create only its one UUIDv5 terminal HRM-010 or HRM-008 child in the same terminal transaction after a fence; sender and receiver business proofs carry the exact drain projection, while a new root, wrong lineage, collision, wrong digest or second child fails closed."
+      },
+      {
+        "id": "HRM013-RBG-10",
+        "criterion": "JTI and requestNonce reservations, callback identity locks and authority-stream locks make exact replay read-free, digest conflict quarantined and concurrent revision gaps impossible."
+      },
+      {
+        "id": "HRM013-RBG-11",
+        "criterion": "Task-dispatch, APR-002 and HRM-010 relays preserve exact bytes and identities, use fresh proof per bounded attempt, cap responses at 16384 bytes and end ambiguity as RESULT_UNKNOWN without invented admission or success."
+      },
+      {
+        "id": "HRM013-RBG-12",
+        "criterion": "Targeted unit, PostgreSQL, concurrency, migration, durable-quiesce, paused-drain expiry, Auth-local role parity, cross-service stale-readiness invalidation, terminal-child collision, task-pair and three-member waiver dependency planned drain, exact Approval projection comparison and digest non-alias, immediate group emergency-revocation and real test-certificate handshake suites pass at their bounded integration gates, including HrisSeparationGrantRotationDrainPostgresTest and HrisServiceGrantWaiverDependencyGroupRotationTest, while People V62, Approval V60, gateway internal-route exposure, raw PII logs and production activation remain absent."
+      }
+    ]
+  },
+  "selectorCatalog": {
+    "P01": {"task": ":dwp-platform-contracts:test", "selector": "com.dwp.platform.contract.Hrm013SeparationBridgeV1Test.roundTripsEveryClosedBodyAndReceiptWithStableDigests"},
+    "P02": {"task": ":dwp-platform-contracts:test", "selector": "com.dwp.platform.contract.Hrm013WorkloadProofV1Test.verifiesExactNewWorkProofAndPreservesResolveReplayRecheckOrder"},
+    "P03": {"task": ":dwp-platform-contracts:test", "selector": "com.dwp.platform.contract.Hrm013WorkloadProofV1Test.enforcesNewWorkAbsenceAndAllSevenDrainExistingClaims"},
+    "P04": {"task": ":dwp-platform-contracts:test", "selector": "com.dwp.platform.contract.HrisServiceGrantAuthorityV1Test.canonicalNewWorkAndDrainRequestsRoundTripWithExactConditionalFields"},
+    "P05": {"task": ":dwp-platform-contracts:test", "selector": "com.dwp.platform.contract.Hrm013RequesterIdentityAuthorityV1Test.requesterAdmissionBindsTenantApprovalRootActorRevisionsAndNewWork"},
+    "A01": {"task": ":dwp-auth-server:test", "selector": "com.dwp.services.auth.hrisservicegrant.HrisServiceGrantAuthorityProofVerifierTest.leafProofProducesUnreservedReplayEvidenceWithoutAuthorityRead"},
+    "A02": {"task": ":dwp-auth-server:test", "selector": "com.dwp.services.auth.hrisservicegrant.Hrm013RequesterIdentityProofVerifierTest.verifiesGrantProofThenReservesReplayThenRechecksAuthority"},
+    "A03": {"task": ":dwp-auth-server:test", "selector": "com.dwp.services.auth.hrisservicegrant.Hrm013RequesterIdentityAuthorityControllerTest.admitUsesOkAndPreservesCanonicalNoStoreBody"},
+    "A04": {"task": ":dwp-auth-server:test", "selector": "com.dwp.services.auth.hrisservicegrant.HrisServiceGrantAuthLocalRoleOperationTest.authLocalAdmissionAcceptsOnlyTheAuthSideAndNeverUsesResolverReplay"},
+    "R01": {"task": ":dwp-approval-server:test", "selector": "com.dwp.services.approval.hrisbridge.separation.Hrm013RequesterIdentityClientTest.authorityMustRemainLiveThroughTheFullyValidatedResponse"},
+    "R02": {"task": ":dwp-approval-server:test", "selector": "com.dwp.services.approval.hrisbridge.separation.HrisSeparationApprovalControllerTest.preservesExactBytesAndReturnsOnlyTheStoredNoStoreReceipt"},
+    "R03": {"task": ":dwp-approval-server:test", "selector": "com.dwp.services.approval.hrisbridge.separation.HrisSeparationApprovalBridgePostgresTest.exactApr002ReplayReturnsTheOriginalReceiptAndRejectsByteDrift"},
+    "R04": {"task": ":dwp-approval-server:test", "selector": "com.dwp.services.approval.hrisbridge.separation.HrisSeparationTerminalDecisionOutboxPostgresTest.terminalDecisionPersistsOneExactImmutableCallbackAndStepUpAttestation"},
+    "R05": {"task": ":dwp-approval-server:test", "selector": "com.dwp.services.approval.hrisbridge.separation.HrisSeparationDecisionRelayTest.postSendPeerFailureClosesTheBodyAndRemainsAmbiguous"},
+    "E01": {"task": ":dwp-people-server:test", "selector": "com.dwp.services.people.hris.separation.hrm013.Hrm013ControlPlaneAuthorityAdapterTest.readinessObservationIsBoundToExactPeopleRoleAndTuple"},
+    "E02": {"task": ":dwp-people-server:test", "selector": "com.dwp.services.people.hris.separation.hrm013.Hrm013ControlPlaneAuthorityAdapterTest.drainAdmissionMustAttestTheActualPeopleOwnerRole"},
+    "E03": {"task": ":dwp-people-server:test", "selector": "com.dwp.services.people.hris.separation.hrm013.Hrm013WaiverRequestRelayPostgresTest.canonical202ReceiptIsPersistedAndExactReplayIsIdempotent"},
+    "E04": {"task": ":dwp-people-server:test", "selector": "com.dwp.services.people.hris.separation.hrm013.Hrm013CallbackIngressFilterTest.approvedWaiverBindsAllSevenStepUpEvidenceFieldsExactly"},
+    "E05": {"task": ":dwp-people-server:test", "selector": "com.dwp.services.people.hris.separation.hrm013.Hrm013WorkloadProofVerifierTest.drainRecheckKeepsExactGrantAndFenceWhileActivityRevisionAdvances"},
+    "E06": {"task": ":dwp-people-server:test", "selector": "com.dwp.services.people.hris.separation.hrm013.Hrm013TaskDispatchReceiptHandshakeTest"},
+    "X01": {"task": ":dwp-approval-server:crossServiceTest", "selector": "com.dwp.services.approval.workflowauthority.WorkflowRuntimeActualAuthHttpTest.clientUsesRealAuthCurrentRoleAndDatabaseRevokesAtTheFixedEndpoint"}
+  },
+  "conditionEvidenceMap": {
+    "HRM013-RBG-01": {"selectorIds": ["P01", "P02", "P03", "P04", "P05"], "predecessorEvidence": ["BINDING_GATE", "PREREQUISITE_MATRIX_RECEIPT"]},
+    "HRM013-RBG-02": {"selectorIds": ["P02", "A01", "A02", "R01", "E04", "E06", "X01"], "predecessorEvidence": ["PHASE6_CENTRAL_AUTHORITY", "PREREQUISITE_MATRIX_RECEIPT", "PREREQUISITE_MATRIX_REVIEW"]},
+    "HRM013-RBG-03": {"selectorIds": ["P04", "P05", "A01", "A02", "A03", "A04", "E01", "E02", "E05", "X01"], "predecessorEvidence": ["PHASE6_CENTRAL_AUTHORITY", "PHASE6_CENTRAL_REVIEW", "PREREQUISITE_MATRIX_RECEIPT"]},
+    "HRM013-RBG-04": {"selectorIds": [], "predecessorEvidence": ["PHASE6_CENTRAL_AUTHORITY", "PHASE6_CENTRAL_REVIEW"]},
+    "HRM013-RBG-05": {"selectorIds": ["A03", "A04", "R01", "R02", "R03", "E03"], "predecessorEvidence": ["PREREQUISITE_MATRIX_RECEIPT", "PREREQUISITE_MATRIX_REVIEW"]},
+    "HRM013-RBG-06": {"selectorIds": ["A04", "R02"], "predecessorEvidence": ["PREREQUISITE_MATRIX_RECEIPT", "PREREQUISITE_MATRIX_REVIEW"]},
+    "HRM013-RBG-07": {"selectorIds": ["R04", "E04"], "predecessorEvidence": ["PREREQUISITE_MATRIX_RECEIPT"]},
+    "HRM013-RBG-08": {"selectorIds": ["R04"], "predecessorEvidence": ["PREREQUISITE_MATRIX_RECEIPT", "PREREQUISITE_MATRIX_REVIEW"]},
+    "HRM013-RBG-09": {"selectorIds": ["R04", "E01", "E02", "E03", "E04", "E05", "E06"], "predecessorEvidence": ["PHASE6_CENTRAL_AUTHORITY", "PREREQUISITE_MATRIX_RECEIPT"]},
+    "HRM013-RBG-10": {"selectorIds": ["A01", "A02", "R03", "E03", "E05"], "predecessorEvidence": ["PREREQUISITE_MATRIX_RECEIPT"]},
+    "HRM013-RBG-11": {"selectorIds": ["P01", "R02", "R05", "E03", "E06"], "predecessorEvidence": ["PHASE6_CENTRAL_AUTHORITY", "PREREQUISITE_MATRIX_RECEIPT"]},
+    "HRM013-RBG-12": {"selectorIds": ["P01", "P02", "P03", "P04", "P05", "A01", "A02", "A03", "A04", "R01", "R02", "R03", "R04", "R05", "E01", "E02", "E03", "E04", "E05", "E06", "X01"], "predecessorEvidence": ["BINDING_GATE", "PHASE6_CENTRAL_AUTHORITY", "PHASE6_CENTRAL_REVIEW", "PREREQUISITE_MATRIX_AUTHORITY", "PREREQUISITE_MATRIX_CORRECTION", "PREREQUISITE_MATRIX_RECEIPT", "PREREQUISITE_MATRIX_REVIEW"]}
+  },
+  "executionPlan": {
+    "invocationCount": 1,
+    "singleGradleInvocationRequired": true,
+    "rerunTasksRequired": true,
+    "zeroSkippedRequired": true,
+    "taskScopedSelectorOrderingRequired": true,
+    "taskCount": 5,
+    "selectorCount": 21,
+    "expectedTestCount": 22,
+    "expectedXmlFileCount": 19,
+    "taskSelectorDistribution": [5, 4, 5, 6, 1],
+    "taskExpectedTestDistribution": [5, 4, 5, 7, 1],
+    "taskPlan": [
+      {"task": ":dwp-platform-contracts:test", "selectorIds": ["P01", "P02", "P03", "P04", "P05"]},
+      {"task": ":dwp-auth-server:test", "selectorIds": ["A01", "A02", "A03", "A04"]},
+      {"task": ":dwp-approval-server:test", "selectorIds": ["R01", "R02", "R03", "R04", "R05"]},
+      {"task": ":dwp-people-server:test", "selectorIds": ["E01", "E02", "E03", "E04", "E05", "E06"]},
+      {"task": ":dwp-approval-server:crossServiceTest", "selectorIds": ["X01"]}
+    ],
+    "argvConstruction": "Start with ./gradlew --rerun-tasks, then append each task followed immediately by only that task's repeated --tests selector pairs before the next task.",
+    "broadRepositoryRerunAuthorized": false,
+    "unrelatedTaskOrSelectorRerunAuthorized": false,
+    "sourceChangeDuringExecutionAuthorized": false,
+    "retryRule": "A failed invocation is recorded fail-closed and is not a successful matrix. After a bounded fix and a separately reviewed successor authority, only the smallest failed target may run before one newly authorized final matrix invocation."
+  },
+  "resultEvidenceContract": {
+    "receiptPath": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-final-matrix-result-r1/final-matrix-result-receipt.v1.json",
+    "independentReviewPath": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-final-matrix-result-r1/independent-review.v1.json",
+    "requiredFields": [
+      "repositoryState.repository",
+      "repositoryState.branch",
+      "repositoryState.head",
+      "repositoryState.tree",
+      "repositoryState.originHead",
+      "repositoryState.cleanBefore",
+      "repositoryState.cleanAfter",
+      "authorityPin.path",
+      "authorityPin.bytes",
+      "authorityPin.sha256",
+      "successfulExecution.invocationCount",
+      "successfulExecution.singleGradleInvocation",
+      "successfulExecution.rerunTasks",
+      "successfulExecution.taskScopedSelectorOrdering",
+      "successfulExecution.taskCount",
+      "successfulExecution.selectorCount",
+      "successfulExecution.exitCode",
+      "successfulExecution.buildResult",
+      "successfulExecution.elapsedMilliseconds",
+      "successfulExecution.xmlFileCount",
+      "successfulExecution.tests",
+      "successfulExecution.failures",
+      "successfulExecution.errors",
+      "successfulExecution.skipped",
+      "successfulExecution.selectorSetExact",
+      "successfulExecution.missingSelectorCount",
+      "successfulExecution.unexpectedSelectorCount",
+      "successfulExecution.xmlManifestSha256",
+      "taskResults",
+      "conditionResults",
+      "claimBoundary"
+    ],
+    "requiredSuccessValues": {
+      "head": "2a765439beb50d40f91eb65c5350984cfc4b52de",
+      "tree": "4c57372f0ebb8f62db3ef8ab469ab6c5eb5e4bbd",
+      "originHead": "2a765439beb50d40f91eb65c5350984cfc4b52de",
+      "cleanBefore": true,
+      "cleanAfter": true,
+      "invocationCount": 1,
+      "singleGradleInvocation": true,
+      "rerunTasks": true,
+      "taskScopedSelectorOrdering": true,
+      "taskCount": 5,
+      "selectorCount": 21,
+      "exitCode": 0,
+      "buildResult": "BUILD_SUCCESSFUL",
+      "xmlFileCount": 19,
+      "tests": 22,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "selectorSetExact": true,
+      "missingSelectorCount": 0,
+      "unexpectedSelectorCount": 0,
+      "conditionPassCount": 12
+    }
+  },
+  "authority": {
+    "independentReviewComplete": true,
+    "carrierCommitAndPushAuthorized": true,
+    "matrixExecutionAuthorizedOnlyAfterCarrierPush": true,
+    "exactSingleInvocationAuthorized": true,
+    "resultReceiptAndIndependentReviewAuthorized": true,
+    "activationAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "runtimeCredentialProvisioningAuthorized": false,
+    "liveNetworkHandshakeAuthorized": false,
+    "productionBindingAuthorized": false,
+    "productionReleaseAuthorized": false,
+    "broadRepositoryRerunAuthorized": false,
+    "unrelatedModuleRerunAuthorized": false,
+    "hrm013BusinessCompletionAuthorized": false,
+    "batch06CompletionAuthorized": false,
+    "hrisCompletionAuthorized": false,
+    "businessCompletionCredit": 0
+  },
+  "activationOnlyOpenConditions": [
+    "Production Flyway-owner/runtime-role provisioning and inherited-ACL drift attestation remain deployment controls.",
+    "The production external LeaseSource/non-exportable signer and same-channel verified-mTLS implementation, including a live handshake, remain unbound and unexercised.",
+    "Feature and relay enablement, tenant enrollment, live rotation or cutover and operational audit or SoD monitoring remain unauthorized."
+  ],
+  "nonClaims": [
+    "The predecessor twenty-method prerequisite matrix was the complete twelve-condition matrix.",
+    "The final matrix has already executed or passed.",
+    "Any activation-only open condition is closed.",
+    "Any owner runtime is enabled, enrolled, credentialed or connected to a live production network.",
+    "HRM-013, Batch-06, module menus or HRIS are business-complete."
+  ],
+  "nextAction": "COMMIT_AND_PUSH_THIS_EXACT_THREE_PATH_CARRIER_THEN_RUN_THE_FROZEN_SINGLE_INVOCATION_ONCE_IN_THE_CLEAN_EXACT_BACKEND_WORKTREE"
+}
