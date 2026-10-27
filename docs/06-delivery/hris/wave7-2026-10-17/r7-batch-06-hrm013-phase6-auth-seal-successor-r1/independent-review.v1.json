@@ -1,0 +1,48 @@
+{
+  "schema": "dwp.hris.wave7.hrm013-auth-seal-successor-independent-review.v1",
+  "reviewedAt": "2026-10-27T05:00:00Z",
+  "reviewScope": "AUTH_PHASE6_ONE_ROUND_SEAL_REMEDIATION_AUTHORITY_ONLY",
+  "decision": "GO_FOR_ONE_BOUNDED_AUTH_SEAL_REMEDIATION_ROUND_ONLY",
+  "severityCounts": {"P0": 0, "P1": 0, "P2": 0},
+  "authorityPin": {
+    "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-phase6-auth-seal-successor-r1/auth-seal-successor-authority.v1.json",
+    "bytes": 11333,
+    "sha256": "543cee22859cf3602d80b618955d6ca8b8b5f9d9fd2cf9450857dd6c68d481df"
+  },
+  "validatorPin": {
+    "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-phase6-auth-seal-successor-r1/validate_hrm013_auth_seal_successor.py",
+    "bytes": 7321,
+    "sha256": "1b0932a249f9b1497ad4b2c94b669b28069908e0418b882a450996a8811f5d83"
+  },
+  "reviewedFacts": [
+    "The predecessor authority, review and validator are byte and SHA-256 pinned.",
+    "The frontend and backend dwp-dev commits and trees and the reviewed AUTH branch commit and tree are pinned.",
+    "The reviewed AUTH remote must equal 0a8faf2; after amendment it may equal only the reviewed commit or the single amended tip until force-with-lease completes.",
+    "All ten P1 and three P2 review findings are represented by thirteen required remediations in one bounded round.",
+    "The original twenty-one paths remain bounded and exactly six required implementation and test paths are added.",
+    "V272 may be hardened in place only because it has not entered backend dwp-dev or any deployment; V273 authoring is forbidden.",
+    "The required scenarios cover direct-DB forgery, DB-time lease races, durable drain, fresh replay proof, pre-body TLS denial, external lease rotation, tenant pagination, revocation tombstones, tenant time zones, poison isolation, replay cleanup and signed Auth readiness.",
+    "The implementation remains default-off and no activation, enrollment, credentials, live network, production, other-module, UI or central integration authority is granted.",
+    "Only the named compile and Auth selectors may be run; a broad repository rerun is prohibited.",
+    "The AUTH commit may be amended and force-pushed only after targeted verification and with force-with-lease."
+  ],
+  "residualSourceFindings": [
+    {
+      "severity": "P1",
+      "state": "OPEN_UNTIL_IMPLEMENTATION_AND_TARGETED_TESTS_PASS",
+      "count": 10,
+      "finding": "The reviewed default-off AUTH implementation is not safe to activate until all required seal remediations pass."
+    },
+    {
+      "severity": "P2",
+      "state": "OPEN_UNTIL_IMPLEMENTATION_AND_TARGETED_TESTS_PASS",
+      "count": 3,
+      "finding": "Operational isolation, cleanup and omitted runtime evidence remain incomplete."
+    }
+  ],
+  "nonClaims": [
+    "This review does not claim that any source finding is fixed.",
+    "This review does not authorize backend dwp-dev integration or feature activation.",
+    "This review does not grant HRM-013 or HRIS completion credit."
+  ]
+}

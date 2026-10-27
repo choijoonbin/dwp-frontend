@@ -1,0 +1,167 @@
+{
+  "schema": "dwp.hris.wave7.hrm013-auth-seal-successor-authority.v1",
+  "state": "INDEPENDENTLY_REVIEWED_HASH_BOUND_AUTH_SEAL_REMEDIATION_AUTHORITY",
+  "recordedAt": "2026-10-27T05:00:00Z",
+  "sliceId": "BASE-TFR-HRM-013",
+  "module": "HRM",
+  "moduleSession": "HRIS-HRM",
+  "lane": "AUTH_IDENTITY_TASK_OWNER_SEAL_REMEDIATION",
+  "carrier": {
+    "repository": "dwp-frontend",
+    "branch": "dwp-dev",
+    "baseCommit": "d54fb1d200e0aa4721ce637f4a97b5eb471f5813",
+    "baseTree": "5cf25da5e32ce8c924c086bbbad143ee3e67d184",
+    "requiredDirectChild": true,
+    "exactChangedPathCount": 3,
+    "packageJsonModificationAuthorized": false
+  },
+  "predecessorAuthorityPins": [
+    {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-phase6-auth-local-parity-successor-r1/auth-local-parity-successor-authority.v1.json",
+      "bytes": 9410,
+      "sha256": "df4cb80780774ee3707982e4905b3625a112571e678d4c7fbda3d24dde1b6833"
+    },
+    {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-phase6-auth-local-parity-successor-r1/independent-review.v1.json",
+      "bytes": 2874,
+      "sha256": "ee942dd663c38351b364b5d67e0992be0649e9cd0926646350df64616487ecf2"
+    },
+    {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-phase6-auth-local-parity-successor-r1/validate_hrm013_auth_local_parity_successor.py",
+      "bytes": 8065,
+      "sha256": "3946be8499130ecbb12ee74aad88e5f0edc84e57b31789b86cd6f233c7dda384"
+    }
+  ],
+  "backendBase": {
+    "repository": "dwp-backend",
+    "branch": "dwp-dev",
+    "commit": "8ccc7baeff43b60dc6cdf719449514f56b6dbca5",
+    "tree": "f17b244d9d47da035dfe09f7c9a604796f19eb74",
+    "originMustMatchUntilCentralIntegration": true
+  },
+  "authImplementationPin": {
+    "branch": "codex/hris-wave7-batch06-hrm013-phase6-auth-backend-20261027-r1",
+    "reviewedCommit": "0a8faf23386966b861cf019d306a1cfbd3e6c3fb",
+    "reviewedTree": "72832d470c1c0f9dda08e776e7de435e2b1aad87",
+    "reviewedRemoteMustMatch": true,
+    "expectedRemoteBeforeForce": "0a8faf23386966b861cf019d306a1cfbd3e6c3fb",
+    "worktree": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261027/batch06/hrm013-phase6/auth",
+    "amendAndForceWithLeaseAfterTargetedVerificationAuthorized": true,
+    "directBackendDwpDevIntegrationAuthorized": false
+  },
+  "reviewVerdict": {
+    "decision": "NO_GO_UNTIL_ONE_BOUNDED_REMEDIATION_ROUND_PASSES",
+    "severityCounts": {"P0": 0, "P1": 10, "P2": 3},
+    "defaultOffPreventsCurrentP0": true,
+    "activationBeforeSealProhibited": true
+  },
+  "requiredRemediations": [
+    "Seal V272 inbox and outbox INSERT and UPDATE state machines against NULL-check bypass, forged terminal evidence, early claims, stale results, invalid retry bounds and non-RESULT_UNKNOWN terminal states.",
+    "Use database time and exact owner, attempt and claim fences for relay claim, pre-I/O recheck and result CAS; expired attempt ten must become immutable RESULT_UNKNOWN.",
+    "Permit admitted durable work and callbacks to drain after quiesce and short proof expiry while rejecting revoked or cut-over authority; preserve exact root-delivery and terminal-child lineage.",
+    "Return the exact persisted admission body and digest on replay while issuing a fresh current-owner detached proof.",
+    "Reject TLS versions below 1.3, wrong DNS, wrong SPIFFE, invalid revocation and unbound client credentials before any callback body byte is sent.",
+    "Reload the external credential lease immediately before I/O and compare lease identity, version, digest, grant, local role, key and certificate binding.",
+    "Replace LIMIT-100 starvation with stable bounded keyset pagination so tenant 101 is eventually serviced.",
+    "Persist a per-person revocation watermark and append-only history even when no identity exists; delayed ACTIVE or PENDING synchronization must fail closed until a separately authorized monotonic REHIRE supersedes it.",
+    "Produce and wire Auth CALLER and OWNER signed zero-pending identity rotation-readiness evidence from repeatable-read snapshots, treating unresolved DEAD or RESULT_UNKNOWN as pending.",
+    "Evaluate effective dates using com_tenants.time_zone rather than the database session date.",
+    "Quarantine permanent poison work without head-of-line blocking and isolate per-tenant relay claim failures.",
+    "Add bounded proof-replay cleanup without permitting arbitrary replay deletion.",
+    "Prove the actual executor, scheduler, readiness and negative runtime-role paths omitted by the reviewed evidence."
+  ],
+  "existingExactChangedPaths": [
+    "dwp-auth-server/src/main/java/com/dwp/services/auth/hris/separation/hrm013/Hrm013IdentityTaskDispatchController.java",
+    "dwp-auth-server/src/main/java/com/dwp/services/auth/hris/separation/hrm013/Hrm013IdentityTaskDispatchIngressFilter.java",
+    "dwp-auth-server/src/main/java/com/dwp/services/auth/hris/separation/hrm013/Hrm013IdentityTaskDispatchService.java",
+    "dwp-auth-server/src/main/java/com/dwp/services/auth/hris/separation/hrm013/Hrm013IdentityTaskDispatchStore.java",
+    "dwp-auth-server/src/main/java/com/dwp/services/auth/hris/separation/hrm013/Hrm013IdentityTaskReceiptRelay.java",
+    "dwp-auth-server/src/main/java/com/dwp/services/auth/hris/separation/hrm013/Hrm013IdentityWorkloadCredentialProvider.java",
+    "dwp-auth-server/src/main/java/com/dwp/services/auth/hrisservicegrant/HrisServiceGrantAuthorityRepository.java",
+    "dwp-auth-server/src/main/java/com/dwp/services/auth/hrisservicegrant/HrisServiceGrantQuiesceService.java",
+    "dwp-auth-server/src/main/resources/application.yml",
+    "dwp-auth-server/src/main/resources/db/migration/V272__hrm013_identity_task_dispatch_inbox.sql",
+    "dwp-auth-server/src/test/java/com/dwp/services/auth/hris/separation/hrm013/Hrm013IdentityCallbackAuthorityTest.java",
+    "dwp-auth-server/src/test/java/com/dwp/services/auth/hris/separation/hrm013/Hrm013IdentityDrainContinuationCallbackTest.java",
+    "dwp-auth-server/src/test/java/com/dwp/services/auth/hris/separation/hrm013/Hrm013IdentityOutboundTlsBoundaryTest.java",
+    "dwp-auth-server/src/test/java/com/dwp/services/auth/hris/separation/hrm013/Hrm013IdentityTaskDispatchControllerTest.java",
+    "dwp-auth-server/src/test/java/com/dwp/services/auth/hris/separation/hrm013/Hrm013IdentityTaskDispatchDefaultOffTest.java",
+    "dwp-auth-server/src/test/java/com/dwp/services/auth/hris/separation/hrm013/Hrm013IdentityTaskDispatchIngressFilterTest.java",
+    "dwp-auth-server/src/test/java/com/dwp/services/auth/hris/separation/hrm013/Hrm013IdentityTaskDispatchStorePostgresTest.java",
+    "dwp-auth-server/src/test/java/com/dwp/services/auth/hris/separation/hrm013/Hrm013IdentityTaskReceiptRelayTest.java",
+    "dwp-auth-server/src/test/java/com/dwp/services/auth/hris/separation/hrm013/Hrm013IdentityWorkloadCredentialProviderTest.java",
+    "dwp-auth-server/src/test/java/com/dwp/services/auth/hrisservicegrant/HrisServiceGrantAuthLocalRoleOperationTest.java",
+    "dwp-auth-server/src/test/java/com/dwp/services/auth/hrisservicegrant/HrisServiceGrantAuthorityRepositoryPostgresTest.java"
+  ],
+  "requiredAdditionalPaths": [
+    "dwp-auth-server/src/main/java/com/dwp/services/auth/hrisservicegrant/Hrm013IdentityGrantRotationReadiness.java",
+    "dwp-auth-server/src/main/java/com/dwp/services/auth/identity/WorkforceIdentitySyncService.java",
+    "dwp-auth-server/src/main/java/com/dwp/services/auth/service/IdentityAccountService.java",
+    "dwp-auth-server/src/test/java/com/dwp/services/auth/hrisservicegrant/Hrm013IdentityGrantRotationReadinessTest.java",
+    "dwp-auth-server/src/test/java/com/dwp/services/auth/identity/WorkforceIdentitySyncServiceTest.java",
+    "dwp-auth-server/src/test/java/com/dwp/services/auth/service/IdentityAccountServiceTest.java"
+  ],
+  "migrationPolicy": {
+    "v272NotIntegratedOrDeployed": true,
+    "v272InPlaceHardeningAuthorized": true,
+    "newV273Authorized": false,
+    "rewriteAuthorityExpiresAtFirstCentralIntegration": true
+  },
+  "targetedVerification": {
+    "compileTask": ":dwp-auth-server:compileJava",
+    "requiredTests": [
+      "com.dwp.services.auth.hris.separation.hrm013.Hrm013IdentityTaskDispatchStorePostgresTest",
+      "com.dwp.services.auth.hris.separation.hrm013.Hrm013IdentityTaskReceiptRelayTest",
+      "com.dwp.services.auth.hris.separation.hrm013.Hrm013IdentityTaskDispatchControllerTest",
+      "com.dwp.services.auth.hris.separation.hrm013.Hrm013IdentityTaskDispatchIngressFilterTest",
+      "com.dwp.services.auth.hris.separation.hrm013.Hrm013IdentityTaskDispatchDefaultOffTest",
+      "com.dwp.services.auth.hris.separation.hrm013.Hrm013IdentityCallbackAuthorityTest",
+      "com.dwp.services.auth.hris.separation.hrm013.Hrm013IdentityDrainContinuationCallbackTest",
+      "com.dwp.services.auth.hris.separation.hrm013.Hrm013IdentityOutboundTlsBoundaryTest",
+      "com.dwp.services.auth.hris.separation.hrm013.Hrm013IdentityWorkloadCredentialProviderTest",
+      "com.dwp.services.auth.hrisservicegrant.HrisServiceGrantAuthLocalRoleOperationTest",
+      "com.dwp.services.auth.hrisservicegrant.HrisServiceGrantAuthorityRepositoryPostgresTest",
+      "com.dwp.services.auth.hrisservicegrant.Hrm013IdentityGrantRotationReadinessTest",
+      "com.dwp.services.auth.identity.WorkforceIdentitySyncServiceTest",
+      "com.dwp.services.auth.service.IdentityAccountServiceTest"
+    ],
+    "requiredScenarios": [
+      "runtime non-owner direct-DB negative matrix",
+      "database-clock stale A/B reclaim and attempt-ten RESULT_UNKNOWN",
+      "exact replay after 31 seconds with fresh proof",
+      "pre-quiesce inbox and outbox drain with revoke and cutover denial",
+      "zero-body TLS rejection and external lease rotation no-send",
+      "tenant 101 eventual service with stable pagination",
+      "absent and existing identity delayed ACTIVE denial",
+      "tenant-time-zone effective-date boundary",
+      "poison row isolation and replay cleanup",
+      "signed Auth CALLER and OWNER readiness followed by cutover"
+    ],
+    "broadRepositoryRerunAuthorized": false
+  },
+  "authority": {
+    "oneBoundedAuthRemediationRoundAuthorized": true,
+    "existingTwentyOnePathsRemainAuthorized": true,
+    "sixRequiredAdditionalPathsAuthorized": true,
+    "authBranchAmendAndForceWithLeaseAuthorizedAfterTargetedVerification": true,
+    "newMigrationAuthorized": false,
+    "otherModuleSourceOrTestAuthoringAuthorized": false,
+    "frontendUiMenuOrRouteAuthorized": false,
+    "featureEnablementAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "runtimeCredentialProvisioningAuthorized": false,
+    "liveNetworkHandshakeAuthorized": false,
+    "productionBindingAuthorized": false,
+    "productionReleaseAuthorized": false,
+    "directBackendDwpDevIntegrationAuthorized": false,
+    "businessCompletionCredit": 0
+  },
+  "nonClaims": [
+    "The AUTH remediation has been implemented or passed targeted verification.",
+    "The AUTH branch is ready for central integration.",
+    "TIME or PAYROLL has been integrated into backend dwp-dev.",
+    "The complete HRM-013 twelve-condition matrix has passed.",
+    "HRM-013, Batch-06, module menus or HRIS are complete."
+  ],
+  "nextAction": "COMMIT_AND_PUSH_THIS_THREE_PATH_CARRIER_THEN_COMPLETE_ALL_LISTED_AUTH_REMEDIATIONS_IN_ONE_BOUNDED_ROUND_AND_RUN_ONLY_THE_NAMED_TARGETS"
+}
