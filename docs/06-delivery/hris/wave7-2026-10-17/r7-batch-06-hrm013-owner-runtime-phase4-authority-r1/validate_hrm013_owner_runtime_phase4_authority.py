@@ -29,6 +29,10 @@ BACKEND_BASE = "bed31127123a318358f495f66edced7b024469d8"
 BACKEND_TREE = "e5564ff7a81e5dd0a85d0e61f091ec0714a1f777"
 APPROVAL_COMMIT = "b9880ec6cf0ad65e08d86c6624ee2ac91a748716"
 APPROVAL_TREE = "3b6033339058ae684dafe94361bc653d28d6fe75"
+APPROVAL_RESEAL_COMMIT = "3970b26c111c0492d7a7b637b8153f7a6844318d"
+APPROVAL_RESEAL_BRANCH = (
+    "codex/hris-wave7-batch06-hrm013-approval-runtime-backend-20261027-r2"
+)
 CARRIER_BRANCH = (
     "codex/hris-wave7-batch06-hrm013-owner-runtime-"
     "phase4-authority-frontend-20261027-r1"
@@ -321,8 +325,30 @@ def validate_backend(checks: Checks) -> None:
         text(BACKEND, "branch", "--show-current"), "dwp-dev", "backend branch"
     )
     backend_head = text(BACKEND, "rev-parse", "HEAD")
+    checks.exact(
+        text(BACKEND, "rev-list", "--parents", "-n", "1", APPROVAL_COMMIT).split(),
+        [APPROVAL_COMMIT, BACKEND_BASE],
+        "historical Approval commit topology",
+    )
+    checks.exact(
+        text(BACKEND, "rev-list", "--parents", "-n", "1", APPROVAL_RESEAL_COMMIT).split(),
+        [APPROVAL_RESEAL_COMMIT, BACKEND_BASE],
+        "Approval reseal topology",
+    )
+    checks.exact(text(BACKEND, "rev-parse", f"{APPROVAL_COMMIT}^{{tree}}"), APPROVAL_TREE, "historical Approval tree")
+    checks.exact(text(BACKEND, "rev-parse", f"{APPROVAL_RESEAL_COMMIT}^{{tree}}"), APPROVAL_TREE, "Approval reseal tree")
+    historical_paths = diff_paths(BACKEND, BACKEND_BASE, APPROVAL_COMMIT)
+    reseal_paths = diff_paths(BACKEND, BACKEND_BASE, APPROVAL_RESEAL_COMMIT)
+    checks.exact(len(historical_paths), 45, "historical Approval path count")
+    checks.exact(reseal_paths, historical_paths, "Approval reseal changed paths")
+    checks.exact(diff_paths(BACKEND, APPROVAL_COMMIT, APPROVAL_RESEAL_COMMIT), set(), "Approval reseal content diff")
+    checks.exact(
+        text(BACKEND, "rev-parse", f"origin/{APPROVAL_RESEAL_BRANCH}"),
+        APPROVAL_RESEAL_COMMIT,
+        "Approval reseal branch is not pushed",
+    )
     checks.require(
-        backend_head in {BACKEND_BASE, APPROVAL_COMMIT},
+        backend_head in {BACKEND_BASE, APPROVAL_RESEAL_COMMIT},
         "backend head is outside the authorized Approval integration lifecycle",
     )
     checks.exact(text(BACKEND, "rev-parse", "origin/dwp-dev"), backend_head, "backend origin")
@@ -331,20 +357,20 @@ def validate_backend(checks: Checks) -> None:
         BACKEND_TREE,
         "backend tree",
     )
-    if backend_head == APPROVAL_COMMIT:
+    if backend_head == APPROVAL_RESEAL_COMMIT:
         checks.exact(
-            text(BACKEND, "rev-parse", f"{APPROVAL_COMMIT}^{{tree}}"),
+            text(BACKEND, "rev-parse", f"{APPROVAL_RESEAL_COMMIT}^{{tree}}"),
             APPROVAL_TREE,
             "Approval integrated tree",
         )
         checks.exact(
-            text(BACKEND, "rev-list", "--parents", "-n", "1", APPROVAL_COMMIT).split(),
-            [APPROVAL_COMMIT, BACKEND_BASE],
+            text(BACKEND, "rev-list", "--parents", "-n", "1", APPROVAL_RESEAL_COMMIT).split(),
+            [APPROVAL_RESEAL_COMMIT, BACKEND_BASE],
             "Approval integration is not a direct child",
         )
         checks.exact(
-            text(BACKEND, "rev-parse", f"origin/{APPROVAL_BRANCH}"),
-            APPROVAL_COMMIT,
+            text(BACKEND, "rev-parse", f"origin/{APPROVAL_RESEAL_BRANCH}"),
+            APPROVAL_RESEAL_COMMIT,
             "Approval branch is not pushed",
         )
     checks.exact(changed(BACKEND), set(), "backend worktree is dirty")

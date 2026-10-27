@@ -1,0 +1,171 @@
+{
+  "schema": "dwp.hris.wave7.hrm013-approval-reseal-central-integration-authority.v1",
+  "state": "INDEPENDENTLY_REVIEWED_HASH_BOUND_EXACT_SAME_TREE_APPROVAL_RESEAL_INTEGRATION",
+  "sliceId": "BASE-TFR-HRM-013",
+  "lane": "APPROVAL_RUNTIME_SAME_TREE_RESEAL_INTEGRATION",
+  "carrier": {
+    "repository": "dwp-frontend",
+    "branch": "codex/hris-wave7-batch06-hrm013-approval-reseal-integration-frontend-20261027-r2",
+    "baseCommit": "6c79565649861f8bd1e9658495edc85155c10744",
+    "baseTree": "aa7049f0429cfba465995e3b46fad7e7caebf64c",
+    "requiredDirectChild": true,
+    "exactChangedPathCount": 12,
+    "exactChangedPaths": [
+      "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-auth-v62-generation-r1/validate_hrm013_auth_v62_generation_authority.py",
+      "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-auth-v62-generation-integration-r1/validate_hrm013_auth_v62_generation_integration.py",
+      "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-auth-v271-authority-r1/validate_hrm013_auth_v271_authority.py",
+      "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-approval-readiness-authority-r1/validate_hrm013_approval_readiness_authority.py",
+      "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-approval-readiness-successor-r1/validate_hrm013_approval_readiness_successor.py",
+      "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-approval-readiness-integration-r1/validate_hrm013_approval_readiness_integration.py",
+      "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-owner-runtime-phase4-authority-r1/validate_hrm013_owner_runtime_phase4_authority.py",
+      "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-approval-drain-clarification-r1/validate_hrm013_approval_drain_clarification.py",
+      "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-approval-runtime-integration-r1/validate_hrm013_approval_runtime_integration.py",
+      "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-validator-lifecycle-successor-r1/validate_hrm013_validator_lifecycle_successor.py",
+      "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-approval-reseal-integration-r1/approval-reseal-central-integration-authority.v1.json",
+      "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-approval-reseal-integration-r1/independent-review.v1.json"
+    ]
+  },
+  "historicalReviewedImplementation": {
+    "commit": "b9880ec6cf0ad65e08d86c6624ee2ac91a748716",
+    "parent": "bed31127123a318358f495f66edced7b024469d8",
+    "tree": "3b6033339058ae684dafe94361bc653d28d6fe75",
+    "targetedVerificationReceipt": {
+      "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261026/batch06/hrm013-owner-runtime/receipts/approval-runtime-targeted-verification-receipt.v1.json",
+      "mode": "0600",
+      "bytes": 3217,
+      "sha256": "903abb7ffdbd7153a95f21144eda24b7978f8c4d1d50f36bcd6e02323f0d8d2b"
+    },
+    "postImplementationReview": {
+      "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261026/batch06/hrm013-owner-runtime/receipts/approval-runtime-post-implementation-review.v1.json",
+      "mode": "0600",
+      "bytes": 1992,
+      "sha256": "b0d52957d72e87f15797e41a043bda491a35ee63255f83d86e9dcbb6b5984e5e"
+    },
+    "historicalEvidenceImmutable": true
+  },
+  "sameTreeSuccessor": {
+    "branch": "codex/hris-wave7-batch06-hrm013-approval-runtime-backend-20261027-r2",
+    "commit": "3970b26c111c0492d7a7b637b8153f7a6844318d",
+    "parent": "bed31127123a318358f495f66edced7b024469d8",
+    "tree": "3b6033339058ae684dafe94361bc653d28d6fe75",
+    "changedPathCount": 45,
+    "changedPaths": [
+      "dwp-approval-server/src/main/java/com/dwp/services/approval/api/ApprovalController.java",
+      "dwp-approval-server/src/main/java/com/dwp/services/approval/domain/ApprovalCommandLifecycleRepository.java",
+      "dwp-approval-server/src/main/java/com/dwp/services/approval/domain/ApprovalService.java",
+      "dwp-approval-server/src/main/java/com/dwp/services/approval/domain/ApprovalTerminalDecisionContext.java",
+      "dwp-approval-server/src/main/java/com/dwp/services/approval/domain/ApprovalTerminalDecisionSink.java",
+      "dwp-approval-server/src/main/java/com/dwp/services/approval/domain/ApprovalWorkflowDecisionCommands.java",
+      "dwp-approval-server/src/main/java/com/dwp/services/approval/domain/ApprovalWorkflowQuorumFacade.java",
+      "dwp-approval-server/src/main/java/com/dwp/services/approval/domain/ApprovalWorkflowQuorumRuntime.java",
+      "dwp-approval-server/src/main/java/com/dwp/services/approval/domain/ApprovalWorkflowRuntimeSource.java",
+      "dwp-approval-server/src/main/java/com/dwp/services/approval/hrisbridge/HrisApprovalDecisionOutbox.java",
+      "dwp-approval-server/src/main/java/com/dwp/services/approval/hrisbridge/separation/AuthHrm013ServiceAuthorityClient.java",
+      "dwp-approval-server/src/main/java/com/dwp/services/approval/hrisbridge/separation/HrisSeparationApprovalAuthorityResolver.java",
+      "dwp-approval-server/src/main/java/com/dwp/services/approval/hrisbridge/separation/HrisSeparationApprovalBridgeService.java",
+      "dwp-approval-server/src/main/java/com/dwp/services/approval/hrisbridge/separation/HrisSeparationApprovalController.java",
+      "dwp-approval-server/src/main/java/com/dwp/services/approval/hrisbridge/separation/HrisSeparationBridgeAdvice.java",
+      "dwp-approval-server/src/main/java/com/dwp/services/approval/hrisbridge/separation/HrisSeparationDecisionOutboxStore.java",
+      "dwp-approval-server/src/main/java/com/dwp/services/approval/hrisbridge/separation/HrisSeparationDecisionRelay.java",
+      "dwp-approval-server/src/main/java/com/dwp/services/approval/hrisbridge/separation/HrisSeparationGrantRotationBarrier.java",
+      "dwp-approval-server/src/main/java/com/dwp/services/approval/hrisbridge/separation/HrisSeparationProtocolException.java",
+      "dwp-approval-server/src/main/java/com/dwp/services/approval/hrisbridge/separation/HrisSeparationStepUpEvidenceVerifier.java",
+      "dwp-approval-server/src/main/java/com/dwp/services/approval/hrisbridge/separation/HrisSeparationTrustProfile.java",
+      "dwp-approval-server/src/main/java/com/dwp/services/approval/hrisbridge/separation/HrisSeparationWaiverBindingStore.java",
+      "dwp-approval-server/src/main/java/com/dwp/services/approval/hrisbridge/separation/HrisSeparationWorkloadCredentialProvider.java",
+      "dwp-approval-server/src/main/java/com/dwp/services/approval/hrisbridge/separation/Hrm013RequesterIdentityClient.java",
+      "dwp-approval-server/src/main/java/com/dwp/services/approval/security/ApprovalSecurityFilter.java",
+      "dwp-approval-server/src/main/java/com/dwp/services/approval/security/ApprovalStepUpVerifier.java",
+      "dwp-approval-server/src/main/java/com/dwp/services/approval/security/ApprovalWorkflowQuorumBodyFilter.java",
+      "dwp-approval-server/src/main/java/com/dwp/services/approval/security/ApprovalWorkflowQuorumCommandMetadata.java",
+      "dwp-approval-server/src/main/java/com/dwp/services/approval/workflowauthority/WorkflowRuntimeBindingContract.java",
+      "dwp-approval-server/src/main/resources/application.yml",
+      "dwp-approval-server/src/test/java/com/dwp/services/approval/domain/ApprovalWorkflowQuorumRuntimePostgresTest.java",
+      "dwp-approval-server/src/test/java/com/dwp/services/approval/hrisbridge/HrisApprovalDecisionRelayTest.java",
+      "dwp-approval-server/src/test/java/com/dwp/services/approval/hrisbridge/separation/HrisSeparationApprovalBridgePostgresTest.java",
+      "dwp-approval-server/src/test/java/com/dwp/services/approval/hrisbridge/separation/HrisSeparationApprovalControllerTest.java",
+      "dwp-approval-server/src/test/java/com/dwp/services/approval/hrisbridge/separation/HrisSeparationDecisionRelayTest.java",
+      "dwp-approval-server/src/test/java/com/dwp/services/approval/hrisbridge/separation/HrisSeparationDrainContinuationOutboxPostgresTest.java",
+      "dwp-approval-server/src/test/java/com/dwp/services/approval/hrisbridge/separation/HrisSeparationFeatureGateTest.java",
+      "dwp-approval-server/src/test/java/com/dwp/services/approval/hrisbridge/separation/HrisSeparationGrantRotationDrainPostgresTest.java",
+      "dwp-approval-server/src/test/java/com/dwp/services/approval/hrisbridge/separation/HrisSeparationOutboundTlsBoundaryTest.java",
+      "dwp-approval-server/src/test/java/com/dwp/services/approval/hrisbridge/separation/HrisSeparationTerminalDecisionOutboxPostgresTest.java",
+      "dwp-approval-server/src/test/java/com/dwp/services/approval/hrisbridge/separation/HrisSeparationTrustProfileTest.java",
+      "dwp-approval-server/src/test/java/com/dwp/services/approval/hrisbridge/separation/HrisSeparationWaiverStoresPostgresTest.java",
+      "dwp-approval-server/src/test/java/com/dwp/services/approval/hrisbridge/separation/HrisSeparationWorkloadCredentialProviderTest.java",
+      "dwp-approval-server/src/test/java/com/dwp/services/approval/hrisbridge/separation/Hrm013RequesterIdentityClientTest.java",
+      "dwp-approval-server/src/test/java/com/dwp/services/approval/security/Hrm013DedicatedApproveRouteContractTest.java"
+    ],
+    "originalToSuccessorChangedPaths": [],
+    "equivalenceReceipt": {
+      "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261026/batch06/hrm013-owner-runtime/receipts/approval-runtime-same-tree-reseal-equivalence-receipt.v1.json",
+      "mode": "0600",
+      "bytes": 10119,
+      "sha256": "052f58e89bfb0088dec975c0de659923b6778adf79103a0bc925a94722ab8b81"
+    },
+    "evidenceReuseRule": "ONLY_THE_EXACT_3970B26C_COMMIT_MAY_REUSE_THE_IMMUTABLE_B9880EC6_TREE_EVIDENCE"
+  },
+  "descendantGovernance": {
+    "carrierBranch": "codex/hris-wave7-batch06-hrm013-b9880-governance-frontend-20261027-r2",
+    "carrierCommit": "dca74e7fabc58651a40b2b9605b38da5adc1b9b8",
+    "carrierTree": "57611528080e3b19183abea146ad140e6f7b5cfc",
+    "carrierParent": "189bb49645515bbd3e4423cfb93dcc53ff40ed75",
+    "exactChangedPaths": [
+      "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-backend-descendant-governance/3970b26c111c0492d7a7b637b8153f7a6844318d/authority.v1.json",
+      "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-backend-descendant-governance/3970b26c111c0492d7a7b637b8153f7a6844318d/independent-review.v1.json"
+    ],
+    "authority": {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-backend-descendant-governance/3970b26c111c0492d7a7b637b8153f7a6844318d/authority.v1.json",
+      "bytes": 9846,
+      "sha256": "61f0a6fbde31295d1f0ef91a7b2ce9be6a88ff0d0aa501cc7a4a0a55d50f4a80"
+    },
+    "independentReview": {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-backend-descendant-governance/3970b26c111c0492d7a7b637b8153f7a6844318d/independent-review.v1.json",
+      "bytes": 2187,
+      "sha256": "57aea401fdd2a62de9a3dd2687fca0e7bfeda6e992e80632283f4a12464ee24f"
+    },
+    "externalReceipt": {
+      "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261026/batch06/hrm013-owner-runtime/receipts/backend-descendants/3970b26c111c0492d7a7b637b8153f7a6844318d.hrm013-shared-contract-governance.v1.json",
+      "mode": "0600",
+      "bytes": 10234,
+      "sha256": "d43c7c5e9556633989638c9f29627611afa117edda93fcf4ca22113d7844423d"
+    }
+  },
+  "validatorLifecycle": {
+    "governingValidatorPath": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-validator-lifecycle-successor-r1/validate_hrm013_validator_lifecycle_successor.py",
+    "modifiedValidatorPaths": [
+      "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-auth-v62-generation-r1/validate_hrm013_auth_v62_generation_authority.py",
+      "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-auth-v62-generation-integration-r1/validate_hrm013_auth_v62_generation_integration.py",
+      "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-auth-v271-authority-r1/validate_hrm013_auth_v271_authority.py",
+      "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-approval-readiness-authority-r1/validate_hrm013_approval_readiness_authority.py",
+      "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-approval-readiness-successor-r1/validate_hrm013_approval_readiness_successor.py",
+      "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-approval-readiness-integration-r1/validate_hrm013_approval_readiness_integration.py",
+      "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-owner-runtime-phase4-authority-r1/validate_hrm013_owner_runtime_phase4_authority.py",
+      "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-approval-drain-clarification-r1/validate_hrm013_approval_drain_clarification.py",
+      "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-approval-runtime-integration-r1/validate_hrm013_approval_runtime_integration.py",
+      "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-validator-lifecycle-successor-r1/validate_hrm013_validator_lifecycle_successor.py"
+    ],
+    "package": {
+      "path": "package.json",
+      "bytes": 16620,
+      "sha256": "2852cdd0cb616ff419479018e9d30d3602d606a9014fbf64e9a40d6b8d889bb6"
+    },
+    "currentContractCommandCount": 18,
+    "packageMutationAuthorized": false,
+    "historicalLifecycleCarrierCommit": "928f8dc665cff069c62cabc433c49dbefe2a3046"
+  },
+  "authority": {
+    "independentReviewComplete": true,
+    "exactTwelvePathCarrierCommitAndPushAuthorized": true,
+    "approvalDirectFastForwardAuthorizedAfterGovernanceClosure": true,
+    "originalB988IntegrationAuthorized": false,
+    "additionalSourceOrTestChangeAuthorized": false,
+    "peopleIntegrationAuthorized": false,
+    "featureActivationAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "runtimeCredentialProvisioningAuthorized": false,
+    "productionReleaseAuthorized": false,
+    "businessCompletionCredit": 0
+  },
+  "next": "COMMIT_AND_PUSH_EXACT_TWELVE_PATH_CARRIER_THEN_FAST_FORWARD_BACKEND_ONLY_TO_EXACT_3970B26C_AFTER_GOVERNANCE_CLOSURE"
+}

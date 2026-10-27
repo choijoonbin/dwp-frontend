@@ -23,9 +23,17 @@ FRONTEND_BASE = "3efa1e22243f37c9834a099dac32637191ac6f97"
 FRONTEND_TREE = "f4a984a6b20ce8b3bb1b18b4afa39d5c6d573278"
 BACKEND_BASE = "a1c0d8ecdbc959d378ef04dc401ee0ff2348ef6c"
 BACKEND_TREE = "b2173c7448d2e88b5a7f9278f0084d591c4462bf"
+APPROVAL_READINESS_COMMIT = "bed31127123a318358f495f66edced7b024469d8"
+APPROVAL_READINESS_TREE = "e5564ff7a81e5dd0a85d0e61f091ec0714a1f777"
+ORIGINAL_APPROVAL_COMMIT = "b9880ec6cf0ad65e08d86c6624ee2ac91a748716"
+APPROVAL_RESEAL_COMMIT = "3970b26c111c0492d7a7b637b8153f7a6844318d"
+APPROVAL_RESEAL_TREE = "3b6033339058ae684dafe94361bc653d28d6fe75"
+APPROVAL_RESEAL_BRANCH = (
+    "codex/hris-wave7-batch06-hrm013-approval-runtime-backend-20261027-r2"
+)
 GOVERNED_BACKEND_DESCENDANTS = {
-    "bed31127123a318358f495f66edced7b024469d8": "e5564ff7a81e5dd0a85d0e61f091ec0714a1f777",
-    "b9880ec6cf0ad65e08d86c6624ee2ac91a748716": "3b6033339058ae684dafe94361bc653d28d6fe75",
+    APPROVAL_READINESS_COMMIT: APPROVAL_READINESS_TREE,
+    APPROVAL_RESEAL_COMMIT: APPROVAL_RESEAL_TREE,
 }
 CARRIER_BRANCH = "codex/hris-wave7-batch06-hrm013-approval-readiness-authority-frontend-20261027-r1"
 LANE_BRANCH = "codex/hris-wave7-batch06-hrm013-approval-readiness-backend-20261027-r1"
@@ -124,6 +132,26 @@ def changed(repo: Path) -> set[str]:
 def diff_paths(repo: Path, older: str, newer: str) -> set[str]:
     return set(filter(None, git(repo, "diff", "--name-only", older, newer).splitlines()))
 
+def validate_approval_reseal(c: Check) -> None:
+    c.exact(
+        git(BACKEND, "rev-list", "--parents", "-n", "1", ORIGINAL_APPROVAL_COMMIT).split(),
+        [ORIGINAL_APPROVAL_COMMIT, APPROVAL_READINESS_COMMIT],
+        "historical Approval commit topology",
+    )
+    c.exact(
+        git(BACKEND, "rev-list", "--parents", "-n", "1", APPROVAL_RESEAL_COMMIT).split(),
+        [APPROVAL_RESEAL_COMMIT, APPROVAL_READINESS_COMMIT],
+        "Approval reseal topology",
+    )
+    c.exact(git(BACKEND, "rev-parse", f"{ORIGINAL_APPROVAL_COMMIT}^{{tree}}"), APPROVAL_RESEAL_TREE, "historical Approval tree")
+    c.exact(git(BACKEND, "rev-parse", f"{APPROVAL_RESEAL_COMMIT}^{{tree}}"), APPROVAL_RESEAL_TREE, "Approval reseal tree")
+    historical_paths = diff_paths(BACKEND, APPROVAL_READINESS_COMMIT, ORIGINAL_APPROVAL_COMMIT)
+    reseal_paths = diff_paths(BACKEND, APPROVAL_READINESS_COMMIT, APPROVAL_RESEAL_COMMIT)
+    c.exact(len(historical_paths), 45, "historical Approval path count")
+    c.exact(reseal_paths, historical_paths, "Approval reseal changed paths")
+    c.exact(diff_paths(BACKEND, ORIGINAL_APPROVAL_COMMIT, APPROVAL_RESEAL_COMMIT), set(), "Approval reseal content diff")
+    c.exact(git(BACKEND, "rev-parse", f"origin/{APPROVAL_RESEAL_BRANCH}"), APPROVAL_RESEAL_COMMIT, "Approval reseal branch push")
+
 def secure(c: Check, path: Path, size: int, digest: str):
     c.require(path.exists() and not path.is_symlink(), f"missing/symlinked prerequisite: {path}")
     info = path.stat()
@@ -220,7 +248,8 @@ def main() -> int:
         backend_head = git(BACKEND, "rev-parse", "HEAD")
         backend_origin = git(BACKEND, "rev-parse", "origin/dwp-dev")
         c.exact(backend_origin, backend_head, "backend origin")
-        allowed_heads = {BACKEND_BASE: BACKEND_TREE, **GOVERNED_BACKEND_DESCENDANTS}
+        validate_approval_reseal(c)
+        allowed_heads = GOVERNED_BACKEND_DESCENDANTS
         c.require(backend_head in allowed_heads, "backend head is not an exact governed descendant")
         c.exact(
             git(BACKEND, "rev-parse", f"{backend_head}^{{tree}}"),

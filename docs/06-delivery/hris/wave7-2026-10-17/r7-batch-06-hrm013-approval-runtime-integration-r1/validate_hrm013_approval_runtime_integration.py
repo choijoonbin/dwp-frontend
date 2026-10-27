@@ -30,6 +30,8 @@ BACKEND_TREE = "e5564ff7a81e5dd0a85d0e61f091ec0714a1f777"
 APPROVAL_BRANCH = "codex/hris-wave7-batch06-hrm013-approval-runtime-backend-20261026-r1"
 APPROVAL_COMMIT = "b9880ec6cf0ad65e08d86c6624ee2ac91a748716"
 APPROVAL_TREE = "3b6033339058ae684dafe94361bc653d28d6fe75"
+APPROVAL_RESEAL_BRANCH = "codex/hris-wave7-batch06-hrm013-approval-runtime-backend-20261027-r2"
+APPROVAL_RESEAL_COMMIT = "3970b26c111c0492d7a7b637b8153f7a6844318d"
 PEOPLE_BRANCH = "codex/hris-wave7-batch06-hrm013-people-owner-runtime-backend-20261026-r1"
 PEOPLE_COMMIT = "626e1de182678d28a82d6801855c039ed6f3f637"
 PEOPLE_TREE = "4366c40e6c2bec1b5ab6cb2f09b28bdd72754c08"
@@ -37,6 +39,10 @@ GOVERNANCE_PARENT = "54f312dd799570da659cbc438a40af5495aa153c"
 GOVERNANCE_BRANCH = "codex/hris-wave7-batch06-hrm013-bed31127-governance-frontend-20261027-r1"
 GOVERNANCE_COMMIT = "189bb49645515bbd3e4423cfb93dcc53ff40ed75"
 GOVERNANCE_TREE = "6acc5bf2cece78655d8653071ac38a3b06647bc0"
+RESEAL_GOVERNANCE_PARENT = "189bb49645515bbd3e4423cfb93dcc53ff40ed75"
+RESEAL_GOVERNANCE_BRANCH = "codex/hris-wave7-batch06-hrm013-b9880-governance-frontend-20261027-r2"
+RESEAL_GOVERNANCE_COMMIT = "dca74e7fabc58651a40b2b9605b38da5adc1b9b8"
+RESEAL_GOVERNANCE_TREE = "57611528080e3b19183abea146ad140e6f7b5cfc"
 SHARED_INTEGRATION_COMMIT = "3505cb2e84fc73f97d62de385cc347c5f8c81572"
 SHARED_INTEGRATION_TREE = "fa84a79668fd0f133d34c81d5a649747a6c527b6"
 PREVIOUS_BACKEND_COMMIT = "a1c0d8ecdbc959d378ef04dc401ee0ff2348ef6c"
@@ -87,6 +93,9 @@ GOV_REVIEW = (
 )
 TARGET_RECEIPT = RECEIPTS / "approval-runtime-targeted-verification-receipt.v1.json"
 POST_REVIEW = RECEIPTS / "approval-runtime-post-implementation-review.v1.json"
+RESEAL_EQUIVALENCE_RECEIPT = (
+    RECEIPTS / "approval-runtime-same-tree-reseal-equivalence-receipt.v1.json"
+)
 GOV_RECEIPT = (
     RECEIPTS / "backend-descendants" /
     f"{BACKEND_BASE}.hrm013-shared-contract-governance.v1.json"
@@ -94,6 +103,17 @@ GOV_RECEIPT = (
 PREVIOUS_GOV_RECEIPT = (
     RECEIPTS / "backend-descendants" /
     f"{PREVIOUS_BACKEND_COMMIT}.hrm013-shared-contract-governance.v1.json"
+)
+RESEAL_GOVERNANCE_ROOT = (
+    "docs/06-delivery/hris/wave7-2026-10-17/"
+    "r7-batch-06-hrm013-backend-descendant-governance/"
+    f"{APPROVAL_RESEAL_COMMIT}"
+)
+RESEAL_GOV_AUTHORITY = f"{RESEAL_GOVERNANCE_ROOT}/authority.v1.json"
+RESEAL_GOV_REVIEW = f"{RESEAL_GOVERNANCE_ROOT}/independent-review.v1.json"
+RESEAL_GOV_RECEIPT = (
+    RECEIPTS / "backend-descendants" /
+    f"{APPROVAL_RESEAL_COMMIT}.hrm013-shared-contract-governance.v1.json"
 )
 SHARED_VALIDATOR = (
     "docs/06-delivery/hris/wave7-2026-10-17/"
@@ -305,10 +325,218 @@ def validate_lane_evidence(checks: Checks) -> datetime:
     return review_at
 
 
+def validate_reseal_equivalence(checks: Checks) -> datetime:
+    receipt = secure_receipt(
+        checks,
+        RESEAL_EQUIVALENCE_RECEIPT,
+        10119,
+        "052f58e89bfb0088dec975c0de659923b6778adf79103a0bc925a94722ab8b81",
+    )
+    checks.exact(set(receipt), {
+        "schema", "state", "repository", "originalReviewedCommit",
+        "exactSuccessorCommit", "equivalenceProof",
+        "predecessorGovernanceReceipt", "reusedReviewedEvidence",
+        "testRerun", "causalOrder", "findings", "decision", "authority",
+        "reviewedAt", "recordedAt", "recordedBy",
+    }, "reseal equivalence receipt key set")
+    checks.exact(receipt["schema"],
+        "dwp.hris.wave7.hrm013-approval-runtime-same-tree-reseal-equivalence-receipt.v1",
+        "reseal equivalence schema")
+    checks.exact(receipt["state"],
+        "HASH_BOUND_ZERO_FINDING_APPROVAL_RUNTIME_SAME_TREE_RESEAL_EQUIVALENCE",
+        "reseal equivalence state")
+    checks.exact(receipt["repository"], "dwp-backend", "reseal repository")
+    checks.exact(receipt["originalReviewedCommit"], {
+        "branch": APPROVAL_BRANCH,
+        "commit": APPROVAL_COMMIT,
+        "parent": BACKEND_BASE,
+        "tree": APPROVAL_TREE,
+        "committedAt": "2026-10-26T23:03:36Z",
+    }, "historical Approval evidence identity")
+    checks.exact(receipt["exactSuccessorCommit"], {
+        "branch": APPROVAL_RESEAL_BRANCH,
+        "commit": APPROVAL_RESEAL_COMMIT,
+        "parent": BACKEND_BASE,
+        "tree": APPROVAL_TREE,
+        "committedAt": "2026-10-27T00:02:58Z",
+        "remoteRef": f"refs/remotes/origin/{APPROVAL_RESEAL_BRANCH}",
+        "remoteRefCommit": APPROVAL_RESEAL_COMMIT,
+    }, "Approval reseal identity")
+    historical_paths = diff_paths(BACKEND, BACKEND_BASE, APPROVAL_COMMIT)
+    reseal_paths = diff_paths(BACKEND, BACKEND_BASE, APPROVAL_RESEAL_COMMIT)
+    checks.exact(len(historical_paths), 45, "historical Approval path count")
+    checks.exact(reseal_paths, historical_paths, "Approval reseal path equivalence")
+    checks.exact(diff_paths(BACKEND, APPROVAL_COMMIT, APPROVAL_RESEAL_COMMIT), set(), "Approval reseal tree diff")
+    proof = receipt["equivalenceProof"]
+    checks.exact(set(proof), {
+        "sameImmediateParent", "sameTree", "originalToSuccessorChangedPaths",
+        "originalToSuccessorDiffEmpty", "successorChangedPathCountFromParent",
+        "successorChangedPathsFromParent", "contentAddressedConclusion",
+    }, "reseal equivalence proof key set")
+    checks.exact(proof["sameImmediateParent"], True, "reseal same parent")
+    checks.exact(proof["sameTree"], True, "reseal same tree")
+    checks.exact(proof["originalToSuccessorChangedPaths"], [], "reseal changed paths")
+    checks.exact(proof["originalToSuccessorDiffEmpty"], True, "reseal diff empty")
+    checks.exact(proof["successorChangedPathCountFromParent"], 45, "reseal path count evidence")
+    checks.exact(proof["successorChangedPathsFromParent"], sorted(reseal_paths), "reseal path evidence")
+    checks.exact(
+        proof["contentAddressedConclusion"],
+        "The exact successor commit names the identical Git tree under the identical immediate parent; therefore its source, resources and tests are byte-identical to the independently verified original commit.",
+        "reseal content-addressed conclusion",
+    )
+    checks.exact(receipt["predecessorGovernanceReceipt"], {
+        "path": str(GOV_RECEIPT), "mode": "0600", "bytes": 5739,
+        "sha256": "e2d60685644680ced28dfcf14a8848a7fe04fdd3804e654389da83cb3b86e4a4",
+        "recordedAt": "2026-10-26T23:31:54Z",
+    }, "reseal predecessor governance receipt")
+    checks.exact(receipt["reusedReviewedEvidence"], [
+        {
+            "purpose": "TARGETED_VERIFICATION_OF_THE_EXACT_CONTENT_ADDRESSED_TREE",
+            "path": str(TARGET_RECEIPT), "mode": "0600", "bytes": 3217,
+            "sha256": "903abb7ffdbd7153a95f21144eda24b7978f8c4d1d50f36bcd6e02323f0d8d2b",
+            "commit": APPROVAL_COMMIT, "tree": APPROVAL_TREE,
+            "recordedAt": "2026-10-26T23:04:11Z",
+        },
+        {
+            "purpose": "INDEPENDENT_POST_IMPLEMENTATION_REVIEW_OF_THE_EXACT_CONTENT_ADDRESSED_TREE",
+            "path": str(POST_REVIEW), "mode": "0600", "bytes": 1992,
+            "sha256": "b0d52957d72e87f15797e41a043bda491a35ee63255f83d86e9dcbb6b5984e5e",
+            "commit": APPROVAL_COMMIT, "tree": APPROVAL_TREE,
+            "recordedAt": "2026-10-26T23:04:11Z",
+        },
+    ], "reused reviewed evidence")
+    checks.exact(receipt["testRerun"], {
+        "performed": False,
+        "reason": "NO_TEST_RERUN_BECAUSE_THE_SUCCESSOR_GIT_TREE_IS_BYTE_IDENTICAL_TO_THE_ALREADY_TARGETED_AND_INDEPENDENTLY_REVIEWED_TREE",
+        "scopeExpansionAuthorized": False,
+    }, "reseal test-rerun policy")
+    checks.exact(receipt["findings"], {"p0": [], "p1": [], "p2": []}, "reseal findings")
+    checks.exact(receipt["decision"],
+        "GO_FOR_EXACT_3970B26C_SAME_TREE_RESEAL_EVIDENCE_REUSE_ONLY",
+        "reseal decision")
+    checks.exact(receipt["authority"], {
+        "exactSuccessorEvidenceReuseRecorded": True,
+        "originalEvidenceMutated": False,
+        "newRuntimeContentAuthorized": False,
+        "additionalSourceOrTestChangeAuthorized": False,
+        "backendDwpDevIntegrationAuthorized": False,
+        "featureActivationAuthorized": False,
+        "tenantEnrollmentAuthorized": False,
+        "productionReleaseAuthorized": False,
+        "businessCompletionCredit": 0,
+    }, "reseal authority")
+    expected_causal_order = [
+        {"event": "ORIGINAL_COMMIT", "at": "2026-10-26T23:03:36Z"},
+        {"event": "ORIGINAL_TARGETED_VERIFICATION_AND_POST_IMPLEMENTATION_REVIEW", "at": "2026-10-26T23:04:11Z"},
+        {"event": "IMMEDIATE_PARENT_GOVERNANCE_RECEIPT", "at": "2026-10-26T23:31:54Z"},
+        {"event": "EXACT_SAME_TREE_SUCCESSOR_COMMIT", "at": "2026-10-27T00:02:58Z"},
+        {"event": "SAME_TREE_RESEAL_EQUIVALENCE_REVIEW_AND_RECORD", "at": "2026-10-27T00:11:11Z"},
+    ]
+    checks.exact(receipt["causalOrder"], expected_causal_order, "reseal causal events")
+    times = [parse_timestamp(item.get("at"), f"reseal causal event {index}")
+             for index, item in enumerate(expected_causal_order)]
+    checks.require(all(left <= right for left, right in zip(times, times[1:])), "reseal causal order")
+    reviewed_at = parse_timestamp(receipt.get("reviewedAt"), "reseal reviewedAt")
+    recorded_at = parse_timestamp(receipt.get("recordedAt"), "reseal recordedAt")
+    checks.exact(reviewed_at, recorded_at, "reseal review/record time")
+    checks.exact(times[-1], recorded_at, "reseal final causal event")
+    checks.require(recorded_at <= datetime.now(timezone.utc) + timedelta(minutes=5), "reseal receipt is in the future")
+    checks.exact(receipt["recordedBy"],
+        "INDEPENDENT_HRM013_APPROVAL_RUNTIME_SAME_TREE_RESEAL_REVIEW",
+        "reseal recordedBy")
+    return recorded_at
+
+
+def validate_reseal_governance(checks: Checks) -> datetime:
+    checks.exact(
+        text(ROOT, "rev-list", "--parents", "-n", "1", RESEAL_GOVERNANCE_COMMIT).split(),
+        [RESEAL_GOVERNANCE_COMMIT, RESEAL_GOVERNANCE_PARENT],
+        "reseal governance carrier parent",
+    )
+    checks.exact(text(ROOT, "rev-parse", f"{RESEAL_GOVERNANCE_COMMIT}^{{tree}}"), RESEAL_GOVERNANCE_TREE, "reseal governance tree")
+    checks.exact(
+        diff_paths(ROOT, RESEAL_GOVERNANCE_PARENT, RESEAL_GOVERNANCE_COMMIT),
+        {RESEAL_GOV_AUTHORITY, RESEAL_GOV_REVIEW},
+        "reseal governance carrier paths",
+    )
+    checks.exact(text(ROOT, "rev-parse", f"origin/{RESEAL_GOVERNANCE_BRANCH}"), RESEAL_GOVERNANCE_COMMIT, "reseal governance branch push")
+    checks.require(run(ROOT, "merge-base", "--is-ancestor", RESEAL_GOVERNANCE_COMMIT, "HEAD").returncode == 0, "reseal governance carrier is not in frontend HEAD")
+    authority_data = output(ROOT, "show", f"{RESEAL_GOVERNANCE_COMMIT}:{RESEAL_GOV_AUTHORITY}")
+    review_data = output(ROOT, "show", f"{RESEAL_GOVERNANCE_COMMIT}:{RESEAL_GOV_REVIEW}")
+    checks.exact(pin(RESEAL_GOV_AUTHORITY, authority_data), {
+        "path": RESEAL_GOV_AUTHORITY, "bytes": 9846,
+        "sha256": "61f0a6fbde31295d1f0ef91a7b2ce9be6a88ff0d0aa501cc7a4a0a55d50f4a80",
+    }, "reseal governance authority pin")
+    checks.exact(pin(RESEAL_GOV_REVIEW, review_data), {
+        "path": RESEAL_GOV_REVIEW, "bytes": 2187,
+        "sha256": "57aea401fdd2a62de9a3dd2687fca0e7bfeda6e992e80632283f4a12464ee24f",
+    }, "reseal governance review pin")
+    previous = secure_receipt(
+        checks, GOV_RECEIPT, 5739,
+        "e2d60685644680ced28dfcf14a8848a7fe04fdd3804e654389da83cb3b86e4a4",
+    )
+    receipt = secure_receipt(
+        checks, RESEAL_GOV_RECEIPT, 10234,
+        "d43c7c5e9556633989638c9f29627611afa117edda93fcf4ca22113d7844423d",
+    )
+    checks.exact(set(receipt), {
+        "schema", "state", "sharedIntegrationCommit", "sharedIntegrationTree",
+        "immediateParentCommit", "descendantCommit", "descendantTree",
+        "descendantChangedPaths", "sharedElevenBlobPins",
+        "governingFrontendCarrierCommit", "governingFrontendCarrierTree",
+        "governingAuthorityArtifact", "governingValidatorArtifact",
+        "governingIndependentReviewArtifact", "governingPackageArtifact",
+        "previousGovernanceReceiptSha256", "p0", "p1", "p2", "decision",
+        "recordedAt", "recordedBy",
+    }, "reseal governance receipt key set")
+    shared_pins = []
+    for path in SHARED_PATHS:
+        shared_blob = output(BACKEND, "show", f"{SHARED_INTEGRATION_COMMIT}:{path}")
+        checks.exact(output(BACKEND, "show", f"{APPROVAL_RESEAL_COMMIT}:{path}"), shared_blob, f"reseal shared blob: {path}")
+        shared_pins.append(pin(path, shared_blob))
+    expected = {
+        "schema": "dwp.hris.wave7.hrm013-shared-contract-backend-descendant-governance-receipt.v1",
+        "state": "REVIEWED_ORDERED_BACKEND_DESCENDANT_GOVERNANCE_SHARED_ELEVEN_BLOBS_IMMUTABLE",
+        "sharedIntegrationCommit": SHARED_INTEGRATION_COMMIT,
+        "sharedIntegrationTree": SHARED_INTEGRATION_TREE,
+        "immediateParentCommit": BACKEND_BASE,
+        "descendantCommit": APPROVAL_RESEAL_COMMIT,
+        "descendantTree": APPROVAL_TREE,
+        "descendantChangedPaths": sorted(diff_paths(BACKEND, BACKEND_BASE, APPROVAL_RESEAL_COMMIT)),
+        "sharedElevenBlobPins": shared_pins,
+        "governingFrontendCarrierCommit": RESEAL_GOVERNANCE_COMMIT,
+        "governingFrontendCarrierTree": RESEAL_GOVERNANCE_TREE,
+        "governingAuthorityArtifact": pin(RESEAL_GOV_AUTHORITY, authority_data),
+        "governingValidatorArtifact": {
+            "path": SHARED_VALIDATOR, "bytes": 78934,
+            "sha256": "d177b30ca101a1cc3fd69749ff064d5a8e73224ff308fe812f18690ef291d49e",
+        },
+        "governingIndependentReviewArtifact": pin(RESEAL_GOV_REVIEW, review_data),
+        "governingPackageArtifact": {
+            "path": "package.json", "bytes": 14858,
+            "sha256": "ca2693e843d440191a84f29d417e553c8296b5b93a1dcdc8644b13d1a92eb1bb",
+        },
+        "previousGovernanceReceiptSha256": "e2d60685644680ced28dfcf14a8848a7fe04fdd3804e654389da83cb3b86e4a4",
+        "p0": 0, "p1": 0, "p2": 0,
+        "decision": "GO_FOR_EXACT_BACKEND_DESCENDANT_GOVERNANCE_ONLY",
+        "recordedBy": "INDEPENDENT_HRM013_BACKEND_DESCENDANT_GOVERNANCE_REVIEW",
+    }
+    checks.exact({key: receipt.get(key) for key in expected}, expected, "reseal governance receipt evidence")
+    previous_at = parse_timestamp(previous.get("recordedAt"), "bed governance recordedAt")
+    backend_at = parse_timestamp(text(BACKEND, "show", "-s", "--format=%cI", APPROVAL_RESEAL_COMMIT), "reseal committedAt")
+    review_at = parse_timestamp(load(review_data, RESEAL_GOV_REVIEW).get("reviewedAt"), "reseal governance reviewedAt")
+    carrier_at = parse_timestamp(text(ROOT, "show", "-s", "--format=%cI", RESEAL_GOVERNANCE_COMMIT), "reseal governance carrier committedAt")
+    recorded_at = parse_timestamp(receipt.get("recordedAt"), "reseal governance recordedAt")
+    events = [previous_at, backend_at, review_at, carrier_at, recorded_at]
+    checks.require(all(left <= right for left, right in zip(events, events[1:])), "reseal governance causal order")
+    checks.require(recorded_at <= datetime.now(timezone.utc) + timedelta(minutes=5), "reseal governance receipt is in the future")
+    return recorded_at
+
+
 def validate_backend(checks: Checks) -> str:
     checks.exact(text(BACKEND, "branch", "--show-current"), "dwp-dev", "backend branch")
     head = text(BACKEND, "rev-parse", "HEAD")
-    checks.require(head in {BACKEND_BASE, APPROVAL_COMMIT}, "unexpected backend dwp-dev head")
+    checks.require(head in {BACKEND_BASE, APPROVAL_RESEAL_COMMIT}, "unexpected backend dwp-dev head")
     checks.exact(text(BACKEND, "rev-parse", "origin/dwp-dev"), head, "backend origin drift")
     checks.exact(changed(BACKEND), set(), "backend dwp-dev dirty")
     checks.exact(text(BACKEND, "rev-parse", f"{BACKEND_BASE}^{{tree}}"), BACKEND_TREE, "backend base tree")
@@ -318,6 +546,12 @@ def validate_backend(checks: Checks) -> str:
     )
     checks.exact(text(BACKEND, "rev-parse", f"{APPROVAL_COMMIT}^{{tree}}"), APPROVAL_TREE, "Approval tree")
     checks.exact(text(BACKEND, "rev-parse", f"origin/{APPROVAL_BRANCH}"), APPROVAL_COMMIT, "Approval branch push")
+    checks.exact(
+        text(BACKEND, "rev-list", "--parents", "-n", "1", APPROVAL_RESEAL_COMMIT).split(),
+        [APPROVAL_RESEAL_COMMIT, BACKEND_BASE], "Approval reseal is not a direct child",
+    )
+    checks.exact(text(BACKEND, "rev-parse", f"{APPROVAL_RESEAL_COMMIT}^{{tree}}"), APPROVAL_TREE, "Approval reseal tree")
+    checks.exact(text(BACKEND, "rev-parse", f"origin/{APPROVAL_RESEAL_BRANCH}"), APPROVAL_RESEAL_COMMIT, "Approval reseal branch push")
     checks.exact(text(BACKEND, "rev-parse", f"origin/{PEOPLE_BRANCH}"), PEOPLE_COMMIT, "People branch push")
     checks.exact(text(BACKEND, "rev-parse", f"{PEOPLE_COMMIT}^{{tree}}"), PEOPLE_TREE, "People pre-rebase tree")
     checks.require(
@@ -326,11 +560,17 @@ def validate_backend(checks: Checks) -> str:
     )
     approval_paths = diff_paths(BACKEND, BACKEND_BASE, APPROVAL_COMMIT)
     checks.exact(len(approval_paths), 45, "Approval path count")
+    checks.exact(
+        diff_paths(BACKEND, BACKEND_BASE, APPROVAL_RESEAL_COMMIT),
+        approval_paths,
+        "Approval reseal path equivalence",
+    )
+    checks.exact(diff_paths(BACKEND, APPROVAL_COMMIT, APPROVAL_RESEAL_COMMIT), set(), "Approval reseal content diff")
     checks.require(
         not any(Path(path).name.startswith("V60") for path in approval_paths),
         "Approval V60 present",
     )
-    for revision in (BACKEND_BASE, APPROVAL_COMMIT):
+    for revision in (BACKEND_BASE, APPROVAL_COMMIT, APPROVAL_RESEAL_COMMIT):
         v59 = output(
             BACKEND, "show",
             f"{revision}:dwp-approval-server/src/main/resources/db/migration/V59__bridge_hris_separation_task_waivers.sql",
@@ -616,6 +856,12 @@ def main() -> int:
         checks.exact(text(ROOT, "rev-parse", "--show-toplevel"), str(ROOT), "frontend root")
         checks.exact(text(ROOT, "rev-parse", f"{FRONTEND_BASE}^{{tree}}"), FRONTEND_TREE, "frontend base tree")
         evidence_at = validate_lane_evidence(checks)
+        reseal_evidence_at = validate_reseal_equivalence(checks)
+        reseal_governance_at = validate_reseal_governance(checks)
+        checks.require(
+            reseal_evidence_at <= reseal_governance_at,
+            "reseal governance receipt predates same-tree equivalence evidence",
+        )
         backend_head = validate_backend(checks)
         governance_merged = validate_governance(checks)
         carrier = carrier_commit(checks)

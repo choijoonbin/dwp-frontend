@@ -34,6 +34,12 @@ BACKEND_BASE = "a1c0d8ecdbc959d378ef04dc401ee0ff2348ef6c"
 BACKEND_TREE = "b2173c7448d2e88b5a7f9278f0084d591c4462bf"
 LANE_COMMIT = "bed31127123a318358f495f66edced7b024469d8"
 LANE_TREE = "e5564ff7a81e5dd0a85d0e61f091ec0714a1f777"
+ORIGINAL_APPROVAL_COMMIT = "b9880ec6cf0ad65e08d86c6624ee2ac91a748716"
+APPROVAL_RESEAL_COMMIT = "3970b26c111c0492d7a7b637b8153f7a6844318d"
+APPROVAL_RESEAL_TREE = "3b6033339058ae684dafe94361bc653d28d6fe75"
+APPROVAL_RESEAL_BRANCH = (
+    "codex/hris-wave7-batch06-hrm013-approval-runtime-backend-20261027-r2"
+)
 CARRIER_BRANCH = (
     "codex/hris-wave7-batch06-hrm013-approval-readiness-"
     "integration-frontend-20261027-r1"
@@ -176,6 +182,27 @@ def changed(repo: Path) -> set[str]:
 
 def diff_paths(repo: Path, older: str, newer: str) -> set[str]:
     return set(filter(None, text(repo, "diff", "--name-only", older, newer).splitlines()))
+
+
+def validate_approval_reseal(c: Check) -> None:
+    c.exact(
+        text(BACKEND, "rev-list", "--parents", "-n", "1", ORIGINAL_APPROVAL_COMMIT).split(),
+        [ORIGINAL_APPROVAL_COMMIT, LANE_COMMIT],
+        "historical Approval topology",
+    )
+    c.exact(
+        text(BACKEND, "rev-list", "--parents", "-n", "1", APPROVAL_RESEAL_COMMIT).split(),
+        [APPROVAL_RESEAL_COMMIT, LANE_COMMIT],
+        "Approval reseal topology",
+    )
+    c.exact(text(BACKEND, "rev-parse", f"{ORIGINAL_APPROVAL_COMMIT}^{{tree}}"), APPROVAL_RESEAL_TREE, "historical Approval tree")
+    c.exact(text(BACKEND, "rev-parse", f"{APPROVAL_RESEAL_COMMIT}^{{tree}}"), APPROVAL_RESEAL_TREE, "Approval reseal tree")
+    historical_paths = diff_paths(BACKEND, LANE_COMMIT, ORIGINAL_APPROVAL_COMMIT)
+    reseal_paths = diff_paths(BACKEND, LANE_COMMIT, APPROVAL_RESEAL_COMMIT)
+    c.exact(len(historical_paths), 45, "historical Approval path count")
+    c.exact(reseal_paths, historical_paths, "Approval reseal changed paths")
+    c.exact(diff_paths(BACKEND, ORIGINAL_APPROVAL_COMMIT, APPROVAL_RESEAL_COMMIT), set(), "Approval reseal content diff")
+    c.exact(text(BACKEND, "rev-parse", f"origin/{APPROVAL_RESEAL_BRANCH}"), APPROVAL_RESEAL_COMMIT, "Approval reseal branch push")
 
 
 def carrier_commit(c: Check) -> str | None:
@@ -340,8 +367,13 @@ def validate_backend(c: Check) -> str:
     c.exact(text(BACKEND, "branch", "--show-current"), "dwp-dev", "backend target branch")
     c.exact(changed(BACKEND), set(), "backend target worktree is dirty")
     head = text(BACKEND, "rev-parse", "HEAD")
-    c.require(head in {BACKEND_BASE, LANE_COMMIT}, "unexpected backend dwp-dev head")
+    c.require(head in {LANE_COMMIT, APPROVAL_RESEAL_COMMIT}, "unexpected backend dwp-dev head")
     c.exact(text(BACKEND, "rev-parse", "origin/dwp-dev"), head, "backend dwp-dev origin drift")
+    c.exact(
+        text(BACKEND, "rev-parse", f"{head}^{{tree}}"),
+        LANE_TREE if head == LANE_COMMIT else APPROVAL_RESEAL_TREE,
+        "backend dwp-dev tree",
+    )
     return head
 
 
@@ -352,6 +384,7 @@ def main() -> int:
     c = Check()
     try:
         c.exact(text(ROOT, "rev-parse", f"{FRONTEND_BASE}^{{tree}}"), FRONTEND_TREE, "frontend base tree")
+        validate_approval_reseal(c)
         validate_evidence(c)
         backend_head = validate_backend(c)
         carrier = carrier_commit(c)
@@ -361,7 +394,7 @@ def main() -> int:
             c.exact(text(ROOT, "rev-parse", "HEAD"), FRONTEND_BASE, "authoring head")
             c.exact(text(ROOT, "branch", "--show-current"), CARRIER_BRANCH, "authoring branch")
             c.exact(changed(ROOT), CARRIER_PATHS, "authoring paths")
-            c.exact(backend_head, BACKEND_BASE, "backend integrated before carrier")
+            c.exact(backend_head, LANE_COMMIT, "backend integrated before carrier")
             state = "APPROVAL_READINESS_INTEGRATION_AUTHORITY_READY_TO_COMMIT_AND_PUSH"
         else:
             c.exact(text(ROOT, "rev-parse", f"origin/{CARRIER_BRANCH}"), carrier, "carrier branch not pushed")
@@ -371,7 +404,7 @@ def main() -> int:
             )
             state = (
                 "APPROVAL_READINESS_CORRECTION_READY_FOR_BACKEND_FAST_FORWARD"
-                if backend_head == BACKEND_BASE else
+                if backend_head == LANE_COMMIT else
                 "APPROVAL_READINESS_CORRECTION_INTEGRATED"
             )
         print(f"PASS state={state} checks={c.count} receipt_issuance=external-only")

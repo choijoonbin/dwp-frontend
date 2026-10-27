@@ -18,6 +18,7 @@ from typing import Any
 
 SCRIPT = Path(__file__).absolute()
 ROOT = SCRIPT.parents[5]
+BACKEND = Path("/Users/a10697/Work/DWP/dwp-backend")
 GIT = "/usr/bin/git"
 BASE = "50cf521fd38f09f1a930582562fd15f7c4bc126b"
 BASE_TREE = "830b484b5a3b338e984bbecd4be71236e611a86c"
@@ -93,6 +94,116 @@ APPROVAL_PATHS = {
     "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-approval-runtime-integration-r1/independent-review.v1.json",
     "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-approval-runtime-integration-r1/validate_hrm013_approval_runtime_integration.py",
 }
+
+RESEAL_BASE = "6c79565649861f8bd1e9658495edc85155c10744"
+RESEAL_BASE_TREE = "aa7049f0429cfba465995e3b46fad7e7caebf64c"
+RESEAL_BRANCH = (
+    "codex/hris-wave7-batch06-hrm013-approval-reseal-"
+    "integration-frontend-20261027-r2"
+)
+RESEAL_DIR = (
+    "docs/06-delivery/hris/wave7-2026-10-17/"
+    "r7-batch-06-hrm013-approval-reseal-integration-r1"
+)
+RESEAL_AUTHORITY = f"{RESEAL_DIR}/approval-reseal-central-integration-authority.v1.json"
+RESEAL_REVIEW = f"{RESEAL_DIR}/independent-review.v1.json"
+READINESS = (
+    "docs/06-delivery/hris/wave7-2026-10-17/"
+    "r7-batch-06-hrm013-approval-readiness-authority-r1/"
+    "validate_hrm013_approval_readiness_authority.py"
+)
+READINESS_SUCCESSOR = (
+    "docs/06-delivery/hris/wave7-2026-10-17/"
+    "r7-batch-06-hrm013-approval-readiness-successor-r1/"
+    "validate_hrm013_approval_readiness_successor.py"
+)
+READINESS_INTEGRATION = (
+    "docs/06-delivery/hris/wave7-2026-10-17/"
+    "r7-batch-06-hrm013-approval-readiness-integration-r1/"
+    "validate_hrm013_approval_readiness_integration.py"
+)
+PHASE4 = (
+    "docs/06-delivery/hris/wave7-2026-10-17/"
+    "r7-batch-06-hrm013-owner-runtime-phase4-authority-r1/"
+    "validate_hrm013_owner_runtime_phase4_authority.py"
+)
+CLARIFICATION = (
+    "docs/06-delivery/hris/wave7-2026-10-17/"
+    "r7-batch-06-hrm013-approval-drain-clarification-r1/"
+    "validate_hrm013_approval_drain_clarification.py"
+)
+APPROVAL_RUNTIME_INTEGRATION = (
+    "docs/06-delivery/hris/wave7-2026-10-17/"
+    "r7-batch-06-hrm013-approval-runtime-integration-r1/"
+    "validate_hrm013_approval_runtime_integration.py"
+)
+RESEAL_MODIFIED_VALIDATORS = [
+    SEVENTH,
+    EIGHTH,
+    NINTH,
+    READINESS,
+    READINESS_SUCCESSOR,
+    READINESS_INTEGRATION,
+    PHASE4,
+    CLARIFICATION,
+    APPROVAL_RUNTIME_INTEGRATION,
+    VALIDATOR,
+]
+RESEAL_PATHS = {
+    *RESEAL_MODIFIED_VALIDATORS,
+    RESEAL_AUTHORITY,
+    RESEAL_REVIEW,
+}
+RESEAL_PACKAGE_PIN = {
+    "path": "package.json",
+    "bytes": 16620,
+    "sha256": "2852cdd0cb616ff419479018e9d30d3602d606a9014fbf64e9a40d6b8d889bb6",
+}
+
+BACKEND_BASE = "bed31127123a318358f495f66edced7b024469d8"
+BACKEND_BASE_TREE = "e5564ff7a81e5dd0a85d0e61f091ec0714a1f777"
+ORIGINAL_APPROVAL_COMMIT = "b9880ec6cf0ad65e08d86c6624ee2ac91a748716"
+RESEALED_APPROVAL_COMMIT = "3970b26c111c0492d7a7b637b8153f7a6844318d"
+RESEALED_APPROVAL_TREE = "3b6033339058ae684dafe94361bc653d28d6fe75"
+RESEALED_APPROVAL_BRANCH = (
+    "codex/hris-wave7-batch06-hrm013-approval-runtime-backend-20261027-r2"
+)
+GOVERNANCE_PARENT = "189bb49645515bbd3e4423cfb93dcc53ff40ed75"
+GOVERNANCE_COMMIT = "dca74e7fabc58651a40b2b9605b38da5adc1b9b8"
+GOVERNANCE_TREE = "57611528080e3b19183abea146ad140e6f7b5cfc"
+GOVERNANCE_BRANCH = (
+    "codex/hris-wave7-batch06-hrm013-b9880-governance-frontend-20261027-r2"
+)
+GOVERNANCE_AUTHORITY = (
+    "docs/06-delivery/hris/wave7-2026-10-17/"
+    "r7-batch-06-hrm013-backend-descendant-governance/"
+    f"{RESEALED_APPROVAL_COMMIT}/authority.v1.json"
+)
+GOVERNANCE_REVIEW = (
+    "docs/06-delivery/hris/wave7-2026-10-17/"
+    "r7-batch-06-hrm013-backend-descendant-governance/"
+    f"{RESEALED_APPROVAL_COMMIT}/independent-review.v1.json"
+)
+RECEIPT_ROOT = Path(
+    "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261026/"
+    "batch06/hrm013-owner-runtime/receipts"
+)
+EQUIVALENCE_RECEIPT = RECEIPT_ROOT / (
+    "approval-runtime-same-tree-reseal-equivalence-receipt.v1.json"
+)
+TARGETED_RECEIPT = RECEIPT_ROOT / "approval-runtime-targeted-verification-receipt.v1.json"
+POST_REVIEW_RECEIPT = RECEIPT_ROOT / "approval-runtime-post-implementation-review.v1.json"
+PREVIOUS_GOVERNANCE_RECEIPT = RECEIPT_ROOT / "backend-descendants" / (
+    f"{BACKEND_BASE}.hrm013-shared-contract-governance.v1.json"
+)
+GOVERNANCE_RECEIPT = RECEIPT_ROOT / "backend-descendants" / (
+    f"{RESEALED_APPROVAL_COMMIT}.hrm013-shared-contract-governance.v1.json"
+)
+SHARED_VALIDATOR = (
+    "docs/06-delivery/hris/wave7-2026-10-17/"
+    "r7-batch-06-hrm013-shared-contract-integration-r1/"
+    "validate_hrm013_shared_contract_integration.py"
+)
 ENV = {
     "PATH": "/usr/bin:/bin", "HOME": "/var/empty", "LC_ALL": "C",
     "LANG": "C", "GIT_CONFIG_NOSYSTEM": "1",
@@ -165,6 +276,24 @@ def text(*args: str) -> str:
     return output(*args).decode().strip()
 
 
+def run_backend(*args: str) -> subprocess.CompletedProcess[bytes]:
+    return subprocess.run(
+        [GIT, "-C", str(BACKEND), *args], stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE, env=ENV, check=False,
+    )
+
+
+def output_backend(*args: str) -> bytes:
+    result = run_backend(*args)
+    if result.returncode:
+        raise VerificationError(result.stderr.decode(errors="replace").strip())
+    return result.stdout
+
+
+def text_backend(*args: str) -> str:
+    return output_backend(*args).decode().strip()
+
+
 def blob(commit: str, path: str) -> bytes | None:
     result = run("show", f"{commit}:{path}")
     return result.stdout if result.returncode == 0 else None
@@ -208,6 +337,10 @@ def between(older: str, newer: str) -> set[str]:
     return set(filter(None, text("diff", "--name-only", older, newer).splitlines()))
 
 
+def backend_between(older: str, newer: str) -> set[str]:
+    return set(filter(None, text_backend("diff", "--name-only", older, newer).splitlines()))
+
+
 def mode(commit: str, path: str) -> str | None:
     raw = text("ls-tree", commit, "--", path)
     return raw.split()[0] if raw else None
@@ -249,6 +382,22 @@ def regular_live(v: V, path: str) -> bytes:
     v.require(candidate.is_file() and not candidate.is_symlink(), f"missing/symlinked artifact: {path}")
     v.exact(stat.S_IMODE(candidate.stat().st_mode), 0o644, f"artifact mode: {path}")
     return candidate.read_bytes()
+
+
+def secure_receipt(
+    v: V, path: Path, expected_size: int, expected_sha: str,
+) -> tuple[dict[str, Any], bytes]:
+    v.require(path.exists() and not path.is_symlink(), f"receipt missing/symlinked: {path}")
+    info = path.stat()
+    v.require(stat.S_ISREG(info.st_mode), f"receipt is not regular: {path}")
+    v.exact(stat.S_IMODE(info.st_mode), 0o600, f"receipt mode: {path}")
+    v.exact(info.st_uid, os.getuid(), f"receipt owner: {path}")
+    v.exact(info.st_nlink, 1, f"receipt link count: {path}")
+    data = path.read_bytes()
+    v.exact(pin(str(path), data), {
+        "path": str(path), "bytes": expected_size, "sha256": expected_sha,
+    }, f"receipt pin: {path}")
+    return load(data, str(path)), data
 
 
 def runtime(v: V, required: bool) -> bool:
@@ -368,7 +517,10 @@ def validate_package(v: V, package_data: bytes) -> None:
         v.require(run("ls-files", "--error-unmatch", "--", path).returncode == 0, f"untracked validator: {path}")
 
 
-def validate_approval_hardening(v: V, head: str) -> None:
+def validate_approval_hardening(
+    v: V, head: str, reseal_blobs: dict[str, bytes] | None = None,
+    reseal_authoring: bool = False,
+) -> None:
     v.exact(
         text("rev-list", "--parents", "-n", "1", APPROVAL_COMMIT).split(),
         [APPROVAL_COMMIT, APPROVAL_PARENT], "Approval carrier parent",
@@ -386,8 +538,14 @@ def validate_approval_hardening(v: V, head: str) -> None:
         current = blob(head, path)
         v.require(current is not None, f"current hardened validator missing: {path}")
         v.exact(mode(head, path), "100644", f"current hardened validator mode: {path}")
-        v.exact(pin(path, current or b""), pin(path, data or b""), f"hardened validator changed: {path}")
-        v.exact(pin(path, regular_live(v, path)), pin(path, data or b""), f"live hardened validator drift: {path}")
+        expected = (
+            reseal_blobs[path]
+            if reseal_blobs is not None and path in reseal_blobs
+            else data or b""
+        )
+        committed_expected = (data or b"") if reseal_authoring else expected
+        v.exact(pin(path, current or b""), pin(path, committed_expected), f"hardened validator successor drift: {path}")
+        v.exact(pin(path, regular_live(v, path)), pin(path, expected), f"live hardened validator drift: {path}")
 
 
 def validate_review(
@@ -460,9 +618,541 @@ def validate_review(
         v.require(reviewed_at <= committed_at, "review follows successor commit")
 
 
-def validate(authoring: bool) -> int:
+def expected_reseal_authority() -> dict[str, Any]:
+    changed_paths = sorted(backend_between(BACKEND_BASE, RESEALED_APPROVAL_COMMIT))
+    return {
+        "schema": "dwp.hris.wave7.hrm013-approval-reseal-central-integration-authority.v1",
+        "state": "INDEPENDENTLY_REVIEWED_HASH_BOUND_EXACT_SAME_TREE_APPROVAL_RESEAL_INTEGRATION",
+        "sliceId": "BASE-TFR-HRM-013",
+        "lane": "APPROVAL_RUNTIME_SAME_TREE_RESEAL_INTEGRATION",
+        "carrier": {
+            "repository": "dwp-frontend",
+            "branch": RESEAL_BRANCH,
+            "baseCommit": RESEAL_BASE,
+            "baseTree": RESEAL_BASE_TREE,
+            "requiredDirectChild": True,
+            "exactChangedPathCount": 12,
+            "exactChangedPaths": [
+                *RESEAL_MODIFIED_VALIDATORS,
+                RESEAL_AUTHORITY,
+                RESEAL_REVIEW,
+            ],
+        },
+        "historicalReviewedImplementation": {
+            "commit": ORIGINAL_APPROVAL_COMMIT,
+            "parent": BACKEND_BASE,
+            "tree": RESEALED_APPROVAL_TREE,
+            "targetedVerificationReceipt": {
+                "path": str(TARGETED_RECEIPT),
+                "mode": "0600",
+                "bytes": 3217,
+                "sha256": "903abb7ffdbd7153a95f21144eda24b7978f8c4d1d50f36bcd6e02323f0d8d2b",
+            },
+            "postImplementationReview": {
+                "path": str(POST_REVIEW_RECEIPT),
+                "mode": "0600",
+                "bytes": 1992,
+                "sha256": "b0d52957d72e87f15797e41a043bda491a35ee63255f83d86e9dcbb6b5984e5e",
+            },
+            "historicalEvidenceImmutable": True,
+        },
+        "sameTreeSuccessor": {
+            "branch": RESEALED_APPROVAL_BRANCH,
+            "commit": RESEALED_APPROVAL_COMMIT,
+            "parent": BACKEND_BASE,
+            "tree": RESEALED_APPROVAL_TREE,
+            "changedPathCount": 45,
+            "changedPaths": changed_paths,
+            "originalToSuccessorChangedPaths": [],
+            "equivalenceReceipt": {
+                "path": str(EQUIVALENCE_RECEIPT),
+                "mode": "0600",
+                "bytes": 10119,
+                "sha256": "052f58e89bfb0088dec975c0de659923b6778adf79103a0bc925a94722ab8b81",
+            },
+            "evidenceReuseRule": (
+                "ONLY_THE_EXACT_3970B26C_COMMIT_MAY_REUSE_THE_IMMUTABLE_"
+                "B9880EC6_TREE_EVIDENCE"
+            ),
+        },
+        "descendantGovernance": {
+            "carrierBranch": GOVERNANCE_BRANCH,
+            "carrierCommit": GOVERNANCE_COMMIT,
+            "carrierTree": GOVERNANCE_TREE,
+            "carrierParent": GOVERNANCE_PARENT,
+            "exactChangedPaths": [GOVERNANCE_AUTHORITY, GOVERNANCE_REVIEW],
+            "authority": {
+                "path": GOVERNANCE_AUTHORITY,
+                "bytes": 9846,
+                "sha256": "61f0a6fbde31295d1f0ef91a7b2ce9be6a88ff0d0aa501cc7a4a0a55d50f4a80",
+            },
+            "independentReview": {
+                "path": GOVERNANCE_REVIEW,
+                "bytes": 2187,
+                "sha256": "57aea401fdd2a62de9a3dd2687fca0e7bfeda6e992e80632283f4a12464ee24f",
+            },
+            "externalReceipt": {
+                "path": str(GOVERNANCE_RECEIPT),
+                "mode": "0600",
+                "bytes": 10234,
+                "sha256": "d43c7c5e9556633989638c9f29627611afa117edda93fcf4ca22113d7844423d",
+            },
+        },
+        "validatorLifecycle": {
+            "governingValidatorPath": VALIDATOR,
+            "modifiedValidatorPaths": RESEAL_MODIFIED_VALIDATORS,
+            "package": RESEAL_PACKAGE_PIN,
+            "currentContractCommandCount": 18,
+            "packageMutationAuthorized": False,
+            "historicalLifecycleCarrierCommit": "928f8dc665cff069c62cabc433c49dbefe2a3046",
+        },
+        "authority": {
+            "independentReviewComplete": True,
+            "exactTwelvePathCarrierCommitAndPushAuthorized": True,
+            "approvalDirectFastForwardAuthorizedAfterGovernanceClosure": True,
+            "originalB988IntegrationAuthorized": False,
+            "additionalSourceOrTestChangeAuthorized": False,
+            "peopleIntegrationAuthorized": False,
+            "featureActivationAuthorized": False,
+            "tenantEnrollmentAuthorized": False,
+            "runtimeCredentialProvisioningAuthorized": False,
+            "productionReleaseAuthorized": False,
+            "businessCompletionCredit": 0,
+        },
+        "next": (
+            "COMMIT_AND_PUSH_EXACT_TWELVE_PATH_CARRIER_THEN_FAST_FORWARD_"
+            "BACKEND_ONLY_TO_EXACT_3970B26C_AFTER_GOVERNANCE_CLOSURE"
+        ),
+    }
+
+
+def validate_reseal_package(v: V, package_data: bytes) -> None:
+    base = blob(RESEAL_BASE, "package.json")
+    v.require(base is not None, "reseal base package missing")
+    v.exact(pin("package.json", base or b""), RESEAL_PACKAGE_PIN, "reseal base package pin")
+    v.exact(package_data, base or b"", "reseal package changed")
+    package = load(package_data, "reseal package")
+    scripts = package.get("scripts")
+    v.require(isinstance(scripts, dict), "reseal scripts missing")
+    if not isinstance(scripts, dict):
+        return
+    v.require("prehris:current-contracts:check" not in scripts, "reseal npm pre-hook")
+    v.require("posthris:current-contracts:check" not in scripts, "reseal npm post-hook")
+    command = scripts.get("hris:current-contracts:check")
+    v.require(isinstance(command, str), "reseal current-contract chain missing")
+    if not isinstance(command, str):
+        return
+    parts = command.split(" && ")
+    matches = [
+        re.fullmatch(
+            r"python3 (docs/06-delivery/hris/[A-Za-z0-9._/-]+/validate_[A-Za-z0-9_]+\.py)",
+            item,
+        )
+        for item in parts
+    ]
+    v.require(all(matches), "reseal package contains a non-validator command")
+    paths = [match.group(1) for match in matches if match]
+    v.exact(len(paths), 18, "reseal current-contract command count")
+    v.exact(len(paths), len(set(paths)), "reseal duplicate validator command")
+    v.exact(paths[-1], VALIDATOR, "lifecycle validator is not final after reseal")
+    for path in paths:
+        v.require(canonical(path), f"noncanonical reseal validator path: {path}")
+        candidate = ROOT / path
+        v.require(candidate.is_file() and not candidate.is_symlink(), f"missing reseal validator: {path}")
+        v.require(run("ls-files", "--error-unmatch", "--", path).returncode == 0, f"untracked reseal validator: {path}")
+
+
+def validate_reseal_external_evidence(v: V) -> datetime:
+    v.exact(text_backend("rev-parse", f"{BACKEND_BASE}^{{tree}}"), BACKEND_BASE_TREE, "Approval reseal base tree")
+    for commit in (ORIGINAL_APPROVAL_COMMIT, RESEALED_APPROVAL_COMMIT):
+        v.exact(
+            text_backend("rev-list", "--parents", "-n", "1", commit).split(),
+            [commit, BACKEND_BASE], f"Approval reseal parent: {commit}",
+        )
+        v.exact(text_backend("rev-parse", f"{commit}^{{tree}}"), RESEALED_APPROVAL_TREE, f"Approval reseal tree: {commit}")
+    v.exact(
+        backend_between(ORIGINAL_APPROVAL_COMMIT, RESEALED_APPROVAL_COMMIT),
+        set(), "original-to-reseal diff is not empty",
+    )
+    changed_paths = sorted(backend_between(BACKEND_BASE, RESEALED_APPROVAL_COMMIT))
+    v.exact(len(changed_paths), 45, "resealed Approval path count")
+    v.exact(
+        text_backend("rev-parse", f"origin/{RESEALED_APPROVAL_BRANCH}"),
+        RESEALED_APPROVAL_COMMIT, "resealed Approval branch push",
+    )
+
+    targeted, _ = secure_receipt(
+        v, TARGETED_RECEIPT, 3217,
+        "903abb7ffdbd7153a95f21144eda24b7978f8c4d1d50f36bcd6e02323f0d8d2b",
+    )
+    post, _ = secure_receipt(
+        v, POST_REVIEW_RECEIPT, 1992,
+        "b0d52957d72e87f15797e41a043bda491a35ee63255f83d86e9dcbb6b5984e5e",
+    )
+    predecessor_governance, _ = secure_receipt(
+        v, PREVIOUS_GOVERNANCE_RECEIPT, 5739,
+        "e2d60685644680ced28dfcf14a8848a7fe04fdd3804e654389da83cb3b86e4a4",
+    )
+    v.exact(
+        (targeted.get("testedCommit"), targeted.get("testedTree")),
+        (ORIGINAL_APPROVAL_COMMIT, RESEALED_APPROVAL_TREE),
+        "historical targeted evidence",
+    )
+    v.exact(
+        (post.get("laneCommit"), post.get("laneTree"), post.get("p0"), post.get("p1"), post.get("p2")),
+        (ORIGINAL_APPROVAL_COMMIT, RESEALED_APPROVAL_TREE, 0, 0, 0),
+        "historical post-review evidence",
+    )
+    v.exact(
+        (
+            predecessor_governance.get("schema"),
+            predecessor_governance.get("state"),
+            predecessor_governance.get("descendantCommit"),
+            predecessor_governance.get("descendantTree"),
+            predecessor_governance.get("p0"),
+            predecessor_governance.get("p1"),
+            predecessor_governance.get("p2"),
+            predecessor_governance.get("decision"),
+        ),
+        (
+            "dwp.hris.wave7.hrm013-shared-contract-backend-descendant-governance-receipt.v1",
+            "REVIEWED_ORDERED_BACKEND_DESCENDANT_GOVERNANCE_SHARED_ELEVEN_BLOBS_IMMUTABLE",
+            BACKEND_BASE,
+            BACKEND_BASE_TREE,
+            0,
+            0,
+            0,
+            "GO_FOR_EXACT_BACKEND_DESCENDANT_GOVERNANCE_ONLY",
+        ),
+        "predecessor governance receipt",
+    )
+
+    equivalence, _ = secure_receipt(
+        v, EQUIVALENCE_RECEIPT, 10119,
+        "052f58e89bfb0088dec975c0de659923b6778adf79103a0bc925a94722ab8b81",
+    )
+    v.exact(set(equivalence), {
+        "schema", "state", "repository", "originalReviewedCommit",
+        "exactSuccessorCommit", "equivalenceProof", "predecessorGovernanceReceipt",
+        "reusedReviewedEvidence", "testRerun", "causalOrder", "findings",
+        "decision", "authority", "reviewedAt", "recordedAt", "recordedBy",
+    }, "equivalence receipt key set")
+    v.exact(equivalence.get("schema"), "dwp.hris.wave7.hrm013-approval-runtime-same-tree-reseal-equivalence-receipt.v1", "equivalence schema")
+    v.exact(equivalence.get("state"), "HASH_BOUND_ZERO_FINDING_APPROVAL_RUNTIME_SAME_TREE_RESEAL_EQUIVALENCE", "equivalence state")
+    v.exact(equivalence.get("repository"), "dwp-backend", "equivalence repository")
+    v.exact(equivalence.get("originalReviewedCommit"), {
+        "branch": "codex/hris-wave7-batch06-hrm013-approval-runtime-backend-20261026-r1",
+        "commit": ORIGINAL_APPROVAL_COMMIT, "parent": BACKEND_BASE,
+        "tree": RESEALED_APPROVAL_TREE, "committedAt": "2026-10-26T23:03:36Z",
+    }, "equivalence original commit")
+    v.exact(equivalence.get("exactSuccessorCommit"), {
+        "branch": RESEALED_APPROVAL_BRANCH, "commit": RESEALED_APPROVAL_COMMIT,
+        "parent": BACKEND_BASE, "tree": RESEALED_APPROVAL_TREE,
+        "committedAt": "2026-10-27T00:02:58Z",
+        "remoteRef": f"refs/remotes/origin/{RESEALED_APPROVAL_BRANCH}",
+        "remoteRefCommit": RESEALED_APPROVAL_COMMIT,
+    }, "equivalence successor commit")
+    proof = equivalence.get("equivalenceProof")
+    v.require(isinstance(proof, dict), "equivalence proof missing")
+    if isinstance(proof, dict):
+        v.exact(set(proof), {
+            "sameImmediateParent", "sameTree", "originalToSuccessorChangedPaths",
+            "originalToSuccessorDiffEmpty", "successorChangedPathCountFromParent",
+            "successorChangedPathsFromParent", "contentAddressedConclusion",
+        }, "equivalence proof key set")
+        v.exact(proof.get("sameImmediateParent"), True, "same-parent proof")
+        v.exact(proof.get("sameTree"), True, "same-tree proof")
+        v.exact(proof.get("originalToSuccessorChangedPaths"), [], "empty-diff proof")
+        v.exact(proof.get("originalToSuccessorDiffEmpty"), True, "empty-diff flag")
+        v.exact(proof.get("successorChangedPathCountFromParent"), 45, "equivalence path count")
+        v.exact(proof.get("successorChangedPathsFromParent"), changed_paths, "equivalence paths")
+    v.exact(equivalence.get("predecessorGovernanceReceipt"), {
+        "path": str(PREVIOUS_GOVERNANCE_RECEIPT), "mode": "0600", "bytes": 5739,
+        "sha256": "e2d60685644680ced28dfcf14a8848a7fe04fdd3804e654389da83cb3b86e4a4",
+        "recordedAt": "2026-10-26T23:31:54Z",
+    }, "equivalence predecessor receipt")
+    v.exact(equivalence.get("reusedReviewedEvidence"), [
+        {
+            "purpose": "TARGETED_VERIFICATION_OF_THE_EXACT_CONTENT_ADDRESSED_TREE",
+            "path": str(TARGETED_RECEIPT), "mode": "0600", "bytes": 3217,
+            "sha256": "903abb7ffdbd7153a95f21144eda24b7978f8c4d1d50f36bcd6e02323f0d8d2b",
+            "commit": ORIGINAL_APPROVAL_COMMIT, "tree": RESEALED_APPROVAL_TREE,
+            "recordedAt": "2026-10-26T23:04:11Z",
+        },
+        {
+            "purpose": "INDEPENDENT_POST_IMPLEMENTATION_REVIEW_OF_THE_EXACT_CONTENT_ADDRESSED_TREE",
+            "path": str(POST_REVIEW_RECEIPT), "mode": "0600", "bytes": 1992,
+            "sha256": "b0d52957d72e87f15797e41a043bda491a35ee63255f83d86e9dcbb6b5984e5e",
+            "commit": ORIGINAL_APPROVAL_COMMIT, "tree": RESEALED_APPROVAL_TREE,
+            "recordedAt": "2026-10-26T23:04:11Z",
+        },
+    ], "equivalence reused evidence")
+    v.exact(equivalence.get("testRerun"), {
+        "performed": False,
+        "reason": "NO_TEST_RERUN_BECAUSE_THE_SUCCESSOR_GIT_TREE_IS_BYTE_IDENTICAL_TO_THE_ALREADY_TARGETED_AND_INDEPENDENTLY_REVIEWED_TREE",
+        "scopeExpansionAuthorized": False,
+    }, "equivalence test rerun")
+    v.exact(equivalence.get("findings"), {"p0": [], "p1": [], "p2": []}, "equivalence findings")
+    v.exact(equivalence.get("decision"), "GO_FOR_EXACT_3970B26C_SAME_TREE_RESEAL_EVIDENCE_REUSE_ONLY", "equivalence decision")
+    v.exact(equivalence.get("authority"), {
+        "exactSuccessorEvidenceReuseRecorded": True,
+        "originalEvidenceMutated": False,
+        "newRuntimeContentAuthorized": False,
+        "additionalSourceOrTestChangeAuthorized": False,
+        "backendDwpDevIntegrationAuthorized": False,
+        "featureActivationAuthorized": False,
+        "tenantEnrollmentAuthorized": False,
+        "productionReleaseAuthorized": False,
+        "businessCompletionCredit": 0,
+    }, "equivalence authority")
+    v.exact(equivalence.get("causalOrder"), [
+        {"event": "ORIGINAL_COMMIT", "at": "2026-10-26T23:03:36Z"},
+        {
+            "event": "ORIGINAL_TARGETED_VERIFICATION_AND_POST_IMPLEMENTATION_REVIEW",
+            "at": "2026-10-26T23:04:11Z",
+        },
+        {"event": "IMMEDIATE_PARENT_GOVERNANCE_RECEIPT", "at": "2026-10-26T23:31:54Z"},
+        {"event": "EXACT_SAME_TREE_SUCCESSOR_COMMIT", "at": "2026-10-27T00:02:58Z"},
+        {
+            "event": "SAME_TREE_RESEAL_EQUIVALENCE_REVIEW_AND_RECORD",
+            "at": "2026-10-27T00:11:11Z",
+        },
+    ], "equivalence causal order")
+    v.exact(
+        equivalence.get("reviewedAt"), equivalence.get("recordedAt"),
+        "equivalence review/record time mismatch",
+    )
+    v.exact(
+        equivalence.get("recordedBy"),
+        "INDEPENDENT_HRM013_APPROVAL_RUNTIME_SAME_TREE_RESEAL_REVIEW",
+        "equivalence recorder",
+    )
+
+    v.exact(
+        text("rev-list", "--parents", "-n", "1", GOVERNANCE_COMMIT).split(),
+        [GOVERNANCE_COMMIT, GOVERNANCE_PARENT], "governance carrier parent",
+    )
+    v.exact(text("rev-parse", f"{GOVERNANCE_COMMIT}^{{tree}}"), GOVERNANCE_TREE, "governance carrier tree")
+    v.exact(between(GOVERNANCE_PARENT, GOVERNANCE_COMMIT), {GOVERNANCE_AUTHORITY, GOVERNANCE_REVIEW}, "governance carrier paths")
+    v.exact(text("rev-parse", f"origin/{GOVERNANCE_BRANCH}"), GOVERNANCE_COMMIT, "governance branch push")
+    v.require(ancestor(GOVERNANCE_COMMIT, RESEAL_BASE), "governance carrier missing from reseal base")
+    governance_pins = {
+        GOVERNANCE_AUTHORITY: (9846, "61f0a6fbde31295d1f0ef91a7b2ce9be6a88ff0d0aa501cc7a4a0a55d50f4a80"),
+        GOVERNANCE_REVIEW: (2187, "57aea401fdd2a62de9a3dd2687fca0e7bfeda6e992e80632283f4a12464ee24f"),
+        SHARED_VALIDATOR: (78934, "d177b30ca101a1cc3fd69749ff064d5a8e73224ff308fe812f18690ef291d49e"),
+        "package.json": (14858, "ca2693e843d440191a84f29d417e553c8296b5b93a1dcdc8644b13d1a92eb1bb"),
+    }
+    for path, (size, digest) in governance_pins.items():
+        data = blob(GOVERNANCE_COMMIT, path)
+        v.require(data is not None, f"governance artifact missing: {path}")
+        v.exact(pin(path, data or b""), {"path": path, "bytes": size, "sha256": digest}, f"governance artifact pin: {path}")
+        v.exact(mode(GOVERNANCE_COMMIT, path), "100644", f"governance artifact mode: {path}")
+
+    governance_receipt, _ = secure_receipt(
+        v, GOVERNANCE_RECEIPT, 10234,
+        "d43c7c5e9556633989638c9f29627611afa117edda93fcf4ca22113d7844423d",
+    )
+    v.exact(set(governance_receipt), {
+        "schema", "state", "sharedIntegrationCommit", "sharedIntegrationTree",
+        "immediateParentCommit", "descendantCommit", "descendantTree",
+        "descendantChangedPaths", "sharedElevenBlobPins",
+        "governingFrontendCarrierCommit", "governingFrontendCarrierTree",
+        "governingAuthorityArtifact", "governingValidatorArtifact",
+        "governingIndependentReviewArtifact", "governingPackageArtifact",
+        "previousGovernanceReceiptSha256", "p0", "p1", "p2", "decision",
+        "recordedAt", "recordedBy",
+    }, "governance receipt key set")
+    v.exact(governance_receipt.get("schema"), "dwp.hris.wave7.hrm013-shared-contract-backend-descendant-governance-receipt.v1", "governance receipt schema")
+    v.exact(governance_receipt.get("state"), "REVIEWED_ORDERED_BACKEND_DESCENDANT_GOVERNANCE_SHARED_ELEVEN_BLOBS_IMMUTABLE", "governance receipt state")
+    v.exact(governance_receipt.get("immediateParentCommit"), BACKEND_BASE, "governance receipt parent")
+    v.exact(governance_receipt.get("descendantCommit"), RESEALED_APPROVAL_COMMIT, "governance receipt commit")
+    v.exact(governance_receipt.get("descendantTree"), RESEALED_APPROVAL_TREE, "governance receipt tree")
+    v.exact(governance_receipt.get("descendantChangedPaths"), changed_paths, "governance receipt paths")
+    v.exact(
+        governance_receipt.get("sharedIntegrationCommit"),
+        predecessor_governance.get("sharedIntegrationCommit"),
+        "governance shared integration commit",
+    )
+    v.exact(
+        governance_receipt.get("sharedIntegrationTree"),
+        predecessor_governance.get("sharedIntegrationTree"),
+        "governance shared integration tree",
+    )
+    v.exact(
+        governance_receipt.get("sharedElevenBlobPins"),
+        predecessor_governance.get("sharedElevenBlobPins"),
+        "governance shared-eleven pin drift",
+    )
+    v.exact(governance_receipt.get("governingFrontendCarrierCommit"), GOVERNANCE_COMMIT, "governance receipt carrier")
+    v.exact(governance_receipt.get("governingFrontendCarrierTree"), GOVERNANCE_TREE, "governance receipt carrier tree")
+    v.exact(governance_receipt.get("governingAuthorityArtifact"), {
+        "path": GOVERNANCE_AUTHORITY, "bytes": 9846,
+        "sha256": "61f0a6fbde31295d1f0ef91a7b2ce9be6a88ff0d0aa501cc7a4a0a55d50f4a80",
+    }, "governance receipt authority")
+    v.exact(governance_receipt.get("governingIndependentReviewArtifact"), {
+        "path": GOVERNANCE_REVIEW, "bytes": 2187,
+        "sha256": "57aea401fdd2a62de9a3dd2687fca0e7bfeda6e992e80632283f4a12464ee24f",
+    }, "governance receipt review")
+    v.exact(governance_receipt.get("governingValidatorArtifact"), {
+        "path": SHARED_VALIDATOR, "bytes": 78934,
+        "sha256": "d177b30ca101a1cc3fd69749ff064d5a8e73224ff308fe812f18690ef291d49e",
+    }, "governance receipt validator")
+    v.exact(governance_receipt.get("governingPackageArtifact"), {
+        "path": "package.json", "bytes": 14858,
+        "sha256": "ca2693e843d440191a84f29d417e553c8296b5b93a1dcdc8644b13d1a92eb1bb",
+    }, "governance receipt package")
+    v.exact(governance_receipt.get("previousGovernanceReceiptSha256"), "e2d60685644680ced28dfcf14a8848a7fe04fdd3804e654389da83cb3b86e4a4", "governance receipt chain")
+    v.exact(
+        (governance_receipt.get("p0"), governance_receipt.get("p1"), governance_receipt.get("p2"), governance_receipt.get("decision")),
+        (0, 0, 0, "GO_FOR_EXACT_BACKEND_DESCENDANT_GOVERNANCE_ONLY"),
+        "governance receipt verdict",
+    )
+
+    governance_review = load(
+        blob(GOVERNANCE_COMMIT, GOVERNANCE_REVIEW) or b"",
+        "governance independent review",
+    )
+    times = [
+        parse_time(targeted.get("verifiedAt"), "targeted verifiedAt"),
+        parse_time(post.get("reviewedAt"), "post reviewedAt"),
+        parse_time(predecessor_governance.get("recordedAt"), "predecessor governance recordedAt"),
+        parse_time(
+            text_backend("show", "-s", "--format=%cI", RESEALED_APPROVAL_COMMIT),
+            "resealed Approval committedAt",
+        ),
+        parse_time(equivalence.get("recordedAt"), "equivalence recordedAt"),
+        parse_time(governance_review.get("reviewedAt"), "governance reviewedAt"),
+        parse_time(
+            text("show", "-s", "--format=%cI", GOVERNANCE_COMMIT),
+            "governance carrier committedAt",
+        ),
+        parse_time(governance_receipt.get("recordedAt"), "governance recordedAt"),
+    ]
+    v.require(all(left <= right for left, right in zip(times, times[1:])), "reseal receipt causal order")
+    v.require(times[-1] <= datetime.now(timezone.utc) + timedelta(minutes=5), "reseal receipt is in the future")
+    return times[-1]
+
+
+def validate_reseal_authority_review(
+    v: V, blobs: dict[str, bytes], commit: str | None, evidence_at: datetime,
+) -> None:
+    authority = load(blobs[RESEAL_AUTHORITY], "reseal authority")
+    v.exact(authority, expected_reseal_authority(), "reseal authority drift")
+    review = load(blobs[RESEAL_REVIEW], "reseal review")
+    v.exact(set(review), {
+        "schema", "state", "reviewedAt", "reviewer", "scope", "findings",
+        "finalVerdict", "authority", "artifactPins",
+    }, "reseal review key set")
+    v.exact(review.get("schema"), "dwp.hris.wave7.hrm013-approval-reseal-central-integration-independent-review.v1", "reseal review schema")
+    v.exact(review.get("state"), "INDEPENDENT_ZERO_FINDING_REVIEW_OF_EXACT_TWELVE_PATH_APPROVAL_RESEAL_INTEGRATION", "reseal review state")
+    v.exact(review.get("reviewer"), "INDEPENDENT_HRM013_APPROVAL_RESEAL_INTEGRATION_REVIEW", "reseal reviewer")
+    v.exact(review.get("scope"), {
+        "authorityPath": RESEAL_AUTHORITY,
+        "governingValidatorPath": VALIDATOR,
+        "modifiedValidatorPaths": RESEAL_MODIFIED_VALIDATORS,
+        "packagePath": "package.json",
+        "reviewedBoundaries": [
+            "EXACT_DIRECT_CHILD_TWELVE_PATH_CARRIER",
+            "B9880EC6_REMAINS_IMMUTABLE_HISTORICAL_EVIDENCE_ONLY",
+            "ONLY_EXACT_3970B26C_SAME_TREE_SUCCESSOR_MAY_FAST_FORWARD",
+            "EXACT_ORDERED_DESCENDANT_GOVERNANCE_AND_SECURE_EXTERNAL_RECEIPTS",
+            "TEN_CURRENT_VALIDATOR_BLOBS_AND_UNCHANGED_EIGHTEEN_COMMAND_PACKAGE",
+            "NO_FEATURE_TENANT_CREDENTIAL_OR_PRODUCTION_AUTHORITY",
+        ],
+    }, "reseal review scope")
+    v.exact(review.get("findings"), {"p0": [], "p1": [], "p2": []}, "reseal review findings")
+    v.exact(review.get("finalVerdict"), {
+        "p0": 0, "p1": 0, "p2": 0,
+        "decision": "GO_FOR_EXACT_APPROVAL_SAME_TREE_RESEAL_CORRECTION_AND_3970_FAST_FORWARD_AFTER_GOVERNANCE_CLOSURE",
+    }, "reseal review verdict")
+    v.exact(review.get("authority"), {
+        "independentReviewComplete": True,
+        "exactTwelvePathCarrierCommitAndPushAuthorized": True,
+        "exact3970FastForwardAuthorizedAfterGovernanceClosure": True,
+        "originalB988IntegrationAuthorized": False,
+        "additionalSourceOrTestChangeAuthorized": False,
+        "featureActivationOrTenantOrCredentialOrProductionAuthority": False,
+        "businessCompletionCredit": 0,
+    }, "reseal review authority")
+    v.exact(review.get("artifactPins"), [
+        pin(RESEAL_AUTHORITY, blobs[RESEAL_AUTHORITY]),
+        *[pin(path, blobs[path]) for path in RESEAL_MODIFIED_VALIDATORS],
+        pin("package.json", blobs["package.json"]),
+    ], "reseal review pins")
+    reviewed_at = parse_time(review.get("reviewedAt"), "reseal reviewedAt")
+    v.require(evidence_at <= reviewed_at, "reseal review predates external evidence")
+    v.require(reviewed_at <= datetime.now(timezone.utc) + timedelta(minutes=5), "reseal review is in the future")
+    if commit is None:
+        latest = max(
+            datetime.fromtimestamp(int((ROOT / path).stat().st_mtime), timezone.utc)
+            for path in [RESEAL_AUTHORITY, *RESEAL_MODIFIED_VALIDATORS, "package.json"]
+        )
+        v.require(latest <= reviewed_at, "reseal review predates authoring snapshot")
+    else:
+        committed_at = parse_time(text("show", "-s", "--format=%cI", commit), "reseal carrier committedAt")
+        v.require(reviewed_at <= committed_at, "reseal review follows carrier commit")
+
+
+def validate_reseal_successor(v: V, authoring: bool) -> dict[str, Any]:
+    v.exact(text("rev-parse", f"{RESEAL_BASE}^{{tree}}"), RESEAL_BASE_TREE, "reseal base tree")
+    if authoring:
+        v.exact(text("branch", "--show-current"), RESEAL_BRANCH, "reseal authoring branch")
+        v.exact(text("rev-parse", "HEAD"), RESEAL_BASE, "reseal authoring head")
+        v.exact(changes(), RESEAL_PATHS, "reseal authoring path set")
+        commit = None
+    else:
+        additions: list[str] = []
+        for path in (RESEAL_AUTHORITY, RESEAL_REVIEW):
+            found = list(filter(None, text(
+                "log", "--diff-filter=A", "--format=%H", "--", path,
+            ).splitlines()))
+            v.exact(len(found), 1, f"reseal artifact introduction count: {path}")
+            additions.extend(found)
+        v.exact(len(set(additions)), 1, "reseal authority/review introduced separately")
+        commit = additions[0] if additions else ""
+        v.exact(
+            text("rev-list", "--parents", "-n", "1", commit).split(),
+            [commit, RESEAL_BASE], "reseal carrier is not exact direct child",
+        )
+        v.exact(between(RESEAL_BASE, commit), RESEAL_PATHS, "reseal carrier path set")
+        head = text("rev-parse", "HEAD")
+        origin = text("rev-parse", "origin/dwp-dev")
+        v.exact(head, origin, "frontend HEAD/origin drift after reseal")
+        v.require(ancestor(commit, head) and ancestor(commit, origin), "reseal carrier not on pushed dwp-dev")
+        v.exact(changes(), set(), "frontend dirty after reseal")
+
+    blobs: dict[str, bytes] = {}
+    for path in [RESEAL_AUTHORITY, RESEAL_REVIEW, *RESEAL_MODIFIED_VALIDATORS]:
+        if commit is None:
+            data = regular_live(v, path)
+        else:
+            v.exact(mode(commit, path), "100644", f"reseal carrier mode: {path}")
+            data = blob(commit, path)
+            v.require(data is not None, f"reseal carrier blob missing: {path}")
+            data = data or b""
+            v.exact(mode(text("rev-parse", "HEAD"), path), "100644", f"current reseal mode: {path}")
+            v.exact(pin(path, regular_live(v, path)), pin(path, data), f"current reseal drift: {path}")
+        blobs[path] = data
+    package_data = regular_live(v, "package.json")
+    blobs["package.json"] = package_data
+    validate_reseal_package(v, package_data)
+    evidence_at = validate_reseal_external_evidence(v)
+    validate_reseal_authority_review(v, blobs, commit, evidence_at)
+
+    v.exact(text_backend("branch", "--show-current"), "dwp-dev", "backend branch")
+    backend_head = text_backend("rev-parse", "HEAD")
+    v.require(backend_head in {BACKEND_BASE, RESEALED_APPROVAL_COMMIT}, "backend head outside reseal lifecycle")
+    v.exact(text_backend("rev-parse", "origin/dwp-dev"), backend_head, "backend origin drift")
+    v.exact(output_backend("status", "--porcelain=v1", "--untracked-files=all").decode(), "", "backend dirty")
+    if authoring:
+        v.exact(backend_head, BACKEND_BASE, "backend moved during reseal authoring")
+    return {"commit": commit, "blobs": blobs, "backendHead": backend_head}
+
+
+def validate(authoring: bool, reseal_authoring: bool = False) -> int:
     v = V()
-    runtime(v, authoring)
+    v.require(not (authoring and reseal_authoring), "authoring modes are mutually exclusive")
+    runtime(v, authoring or reseal_authoring)
     for left, right in (
         ({"x": True}, {"x": 1}),
         ([False], [0]),
@@ -494,12 +1184,23 @@ def validate(authoring: bool) -> int:
         v.exact(between(BASE, commit), CARRIER_PATHS, "successor path set")
         head = text("rev-parse", "HEAD")
         origin = text("rev-parse", "origin/dwp-dev")
-        v.exact(head, origin, "frontend HEAD/origin drift")
         v.require(ancestor(commit, head) and ancestor(commit, origin), "successor not on pushed dwp-dev")
-        v.exact(changes(), set(), "frontend dirty")
+        if reseal_authoring:
+            v.exact(text("branch", "--show-current"), RESEAL_BRANCH, "reseal branch during historical lifecycle validation")
+            v.exact(head, RESEAL_BASE, "reseal base during historical lifecycle validation")
+            v.exact(changes(), RESEAL_PATHS, "reseal path set during historical lifecycle validation")
+        else:
+            v.exact(head, origin, "frontend HEAD/origin drift")
+            v.exact(changes(), set(), "frontend dirty")
 
-    head_for_evidence = BASE if commit is None else text("rev-parse", "HEAD")
-    validate_approval_hardening(v, head_for_evidence)
+    reseal = None if authoring else validate_reseal_successor(v, reseal_authoring)
+    reseal_blobs = None if reseal is None else reseal["blobs"]
+    head_for_evidence = BASE if commit is None else (
+        RESEAL_BASE if reseal_authoring else text("rev-parse", "HEAD")
+    )
+    validate_approval_hardening(
+        v, head_for_evidence, reseal_blobs, reseal_authoring=reseal_authoring,
+    )
     blobs: dict[str, bytes] = {}
     for path in [AUTHORITY, REVIEW, VALIDATOR, *MODIFIED_VALIDATORS, "package.json"]:
         if commit is None:
@@ -510,7 +1211,12 @@ def validate(authoring: bool) -> int:
             v.require(data is not None, f"successor blob missing: {path}")
             data = data or b""
             v.exact(mode(text("rev-parse", "HEAD"), path), "100644", f"current mode: {path}")
-            v.exact(pin(path, regular_live(v, path)), pin(path, data), f"current successor drift: {path}")
+            expected_live = (
+                reseal_blobs[path]
+                if reseal_blobs is not None and path in reseal_blobs
+                else data
+            )
+            v.exact(pin(path, regular_live(v, path)), pin(path, expected_live), f"current successor drift: {path}")
         blobs[path] = data
     validate_package(v, blobs["package.json"])
     v.exact(pin("package.json", regular_live(v, "package.json")), pin("package.json", blobs["package.json"]), "live package drift")
@@ -526,11 +1232,18 @@ def validate(authoring: bool) -> int:
         }, f"original validator pin: {path}")
         v.require(pin(path, original or b"") != pin(path, blobs[path]), f"validator has no lifecycle correction: {path}")
     validate_review(v, blobs, commit)
-    state = (
-        "VALIDATOR_LIFECYCLE_SUCCESSOR_READY_TO_COMMIT_AND_PUSH"
-        if commit is None
-        else "VALIDATOR_LIFECYCLE_SUCCESSOR_IN_FORCE"
-    )
+    if reseal_authoring:
+        state = "APPROVAL_RESEAL_INTEGRATION_SUCCESSOR_READY_TO_COMMIT_AND_PUSH"
+    elif reseal is not None and reseal["backendHead"] == BACKEND_BASE:
+        state = "APPROVAL_RESEAL_INTEGRATION_SUCCESSOR_IN_FORCE_READY_FOR_BACKEND_FAST_FORWARD"
+    elif reseal is not None:
+        state = "APPROVAL_RESEAL_INTEGRATION_SUCCESSOR_IN_FORCE_BACKEND_INTEGRATED"
+    else:
+        state = (
+            "VALIDATOR_LIFECYCLE_SUCCESSOR_READY_TO_COMMIT_AND_PUSH"
+            if commit is None
+            else "VALIDATOR_LIFECYCLE_SUCCESSOR_IN_FORCE"
+        )
     print(f"PASS state={state} checks={v.checks}")
     return 0
 
@@ -538,9 +1251,10 @@ def validate(authoring: bool) -> int:
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--authoring", action="store_true")
+    parser.add_argument("--approval-reseal-authoring", action="store_true")
     args = parser.parse_args()
     try:
-        return validate(args.authoring)
+        return validate(args.authoring, args.approval_reseal_authoring)
     except (
         VerificationError, OSError, UnicodeError, KeyError, TypeError,
         ValueError, json.JSONDecodeError,

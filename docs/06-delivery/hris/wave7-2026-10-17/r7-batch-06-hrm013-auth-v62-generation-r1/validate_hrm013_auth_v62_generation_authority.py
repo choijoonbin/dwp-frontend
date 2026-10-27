@@ -92,6 +92,41 @@ APPROVAL_INTEGRATION_PATHS = {
     "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-approval-runtime-integration-r1/validate_hrm013_approval_runtime_integration.py",
 }
 
+RESEAL_BASE = "6c79565649861f8bd1e9658495edc85155c10744"
+RESEAL_BASE_TREE = "aa7049f0429cfba465995e3b46fad7e7caebf64c"
+RESEAL_BRANCH = (
+    "codex/hris-wave7-batch06-hrm013-approval-reseal-"
+    "integration-frontend-20261027-r2"
+)
+RESEAL_ROOT = (
+    "docs/06-delivery/hris/wave7-2026-10-17/"
+    "r7-batch-06-hrm013-approval-reseal-integration-r1"
+)
+RESEAL_AUTHORITY = f"{RESEAL_ROOT}/approval-reseal-central-integration-authority.v1.json"
+RESEAL_REVIEW = f"{RESEAL_ROOT}/independent-review.v1.json"
+RESEAL_DIRECT_VALIDATORS = [
+    "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-approval-readiness-authority-r1/validate_hrm013_approval_readiness_authority.py",
+    "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-approval-readiness-successor-r1/validate_hrm013_approval_readiness_successor.py",
+    "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-approval-readiness-integration-r1/validate_hrm013_approval_readiness_integration.py",
+    "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-owner-runtime-phase4-authority-r1/validate_hrm013_owner_runtime_phase4_authority.py",
+    "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-approval-drain-clarification-r1/validate_hrm013_approval_drain_clarification.py",
+    "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-approval-runtime-integration-r1/validate_hrm013_approval_runtime_integration.py",
+]
+RESEAL_VALIDATORS = [
+    *LIFECYCLE_VALIDATORS,
+    *RESEAL_DIRECT_VALIDATORS,
+    LIFECYCLE_CORRECTION_VALIDATOR,
+]
+RESEAL_PATHS = {*RESEAL_VALIDATORS, RESEAL_AUTHORITY, RESEAL_REVIEW}
+RESEAL_AUTHORITY_PIN = {
+    "path": RESEAL_AUTHORITY, "bytes": 14019,
+    "sha256": "e116042f691f96d750b1cff6f129a9e0c5284ae83880e9446c18b20efaa0a5a4",
+}
+RESEAL_PACKAGE_PIN = {
+    "path": "package.json", "bytes": 16620,
+    "sha256": "2852cdd0cb616ff419479018e9d30d3602d606a9014fbf64e9a40d6b8d889bb6",
+}
+
 
 FRONTEND_BASE = "b3841a03d3ee60864b721cc1d98397c3004de1d8"
 FRONTEND_TREE = "127540e50eae673fbf63bb96b025a8a0e641e5ea"
@@ -1146,7 +1181,7 @@ def future_carrier(
         if path != "package.json":
             v.require(symlink_free(FRONTEND, path), f"future carrier artifact symlinked: {path}")
             expected_live = (
-                correction["blobs"][path]
+                correction["currentBlobs"][path]
                 if path == FUTURE_VALIDATOR_REL else blobs[path]
             )
             v.exact(artifact(path, (FRONTEND / path).read_bytes()), artifact(path, expected_live), f"future carrier artifact mutated: {path}")
@@ -1349,7 +1384,7 @@ def historical(v: V) -> dict[str, Any]:
         if path != "package.json":
             v.require(symlink_free(FRONTEND, path), f"current artifact missing/symlinked: {path}")
             expected_live = (
-                correction["blobs"][path]
+                correction["currentBlobs"][path]
                 if path == VALIDATOR_REL else blobs[path]
             )
             v.exact(artifact(path, (FRONTEND / path).read_bytes()), artifact(path, expected_live), f"artifact mutated: {path}")
@@ -1442,7 +1477,153 @@ def expected_lifecycle_correction_authority() -> dict[str, Any]:
     }
 
 
-def lifecycle_correction(v: V, authoring: bool = False) -> dict[str, Any]:
+def approval_reseal_successor(
+    v: V, authoring: bool = False,
+) -> dict[str, Any] | None:
+    v.exact(
+        text(FRONTEND, "rev-parse", f"{RESEAL_BASE}^{{tree}}"),
+        RESEAL_BASE_TREE,
+        "Approval reseal base tree",
+    )
+    if authoring:
+        v.exact(text(FRONTEND, "branch", "--show-current"), RESEAL_BRANCH, "Approval reseal branch")
+        v.exact(text(FRONTEND, "rev-parse", "HEAD"), RESEAL_BASE, "Approval reseal authoring head")
+        v.exact(changes(FRONTEND), RESEAL_PATHS, "Approval reseal authoring paths")
+        commit = None
+    else:
+        additions = [
+            [line for line in text(
+                FRONTEND, "log", "--diff-filter=A", "--format=%H", "--", path,
+            ).splitlines() if line]
+            for path in (RESEAL_AUTHORITY, RESEAL_REVIEW)
+        ]
+        if not any(additions):
+            return None
+        for path, found in zip((RESEAL_AUTHORITY, RESEAL_REVIEW), additions):
+            v.exact(len(found), 1, f"Approval reseal introduction count: {path}")
+        commits = [item for found in additions for item in found]
+        v.exact(len(set(commits)), 1, "Approval reseal artifacts introduced separately")
+        commit = commits[0] if commits else ""
+        v.exact(
+            text(FRONTEND, "rev-list", "--parents", "-n", "1", commit).split(),
+            [commit, RESEAL_BASE],
+            "Approval reseal carrier is not the exact direct child",
+        )
+        v.exact(between(FRONTEND, RESEAL_BASE, commit), RESEAL_PATHS, "Approval reseal carrier paths")
+        head = text(FRONTEND, "rev-parse", "HEAD")
+        origin = text(FRONTEND, "rev-parse", "origin/dwp-dev")
+        v.exact(head, origin, "frontend HEAD/origin drift after Approval reseal")
+        v.require(
+            ancestor(FRONTEND, commit, head) and ancestor(FRONTEND, commit, origin),
+            "Approval reseal carrier is not on pushed frontend dwp-dev",
+        )
+        v.exact(changes(FRONTEND), set(), "frontend dirty after Approval reseal")
+
+    blobs: dict[str, bytes] = {}
+    for path in [RESEAL_AUTHORITY, RESEAL_REVIEW, *RESEAL_VALIDATORS]:
+        candidate = FRONTEND / path
+        v.require(candidate.is_file() and not candidate.is_symlink(), f"Approval reseal artifact missing/symlinked: {path}")
+        v.exact(stat.S_IMODE(candidate.stat().st_mode), 0o644, f"Approval reseal live mode: {path}")
+        live = candidate.read_bytes()
+        if commit is None:
+            data = live
+        else:
+            v.exact(mode(FRONTEND, commit, path), "100644", f"Approval reseal carrier mode: {path}")
+            data = blob(FRONTEND, commit, path)
+            v.require(data is not None, f"Approval reseal carrier artifact missing: {path}")
+            data = data or b""
+            v.exact(artifact(path, live), artifact(path, data), f"Approval reseal live drift: {path}")
+        blobs[path] = data
+
+    package_data = (FRONTEND / "package.json").read_bytes()
+    base_package = blob(FRONTEND, RESEAL_BASE, "package.json")
+    v.require(base_package is not None, "Approval reseal base package missing")
+    v.exact(package_data, base_package or b"", "Approval reseal package changed")
+    v.exact(artifact("package.json", package_data), RESEAL_PACKAGE_PIN, "Approval reseal package pin")
+    package = load_json(package_data, "Approval reseal package")
+    scripts = package.get("scripts")
+    v.require(isinstance(scripts, dict), "Approval reseal scripts missing")
+    command = scripts.get("hris:current-contracts:check") if isinstance(scripts, dict) else None
+    v.require(isinstance(command, str), "Approval reseal current-contract chain missing")
+    if isinstance(scripts, dict):
+        v.require("prehris:current-contracts:check" not in scripts, "Approval reseal npm pre-hook")
+        v.require("posthris:current-contracts:check" not in scripts, "Approval reseal npm post-hook")
+    if isinstance(command, str):
+        parts = command.split(" && ")
+        matches = [re.fullmatch(
+            r"python3 (docs/06-delivery/hris/[A-Za-z0-9._/-]+/validate_[A-Za-z0-9_]+\.py)",
+            item,
+        ) for item in parts]
+        v.require(all(matches), "Approval reseal chain contains a non-validator command")
+        paths = [match.group(1) for match in matches if match]
+        v.exact(len(paths), 18, "Approval reseal command count")
+        v.exact(len(paths), len(set(paths)), "Approval reseal duplicate validator command")
+        v.exact(paths[-1], LIFECYCLE_CORRECTION_VALIDATOR, "Approval reseal governing validator order")
+    blobs["package.json"] = package_data
+
+    v.exact(artifact(RESEAL_AUTHORITY, blobs[RESEAL_AUTHORITY]), RESEAL_AUTHORITY_PIN, "Approval reseal authority pin")
+    load_json(blobs[RESEAL_AUTHORITY], "Approval reseal authority")
+    review = load_json(blobs[RESEAL_REVIEW], "Approval reseal review")
+    v.exact(set(review), {
+        "schema", "state", "reviewedAt", "reviewer", "scope", "findings",
+        "finalVerdict", "authority", "artifactPins",
+    }, "Approval reseal review key set")
+    v.exact(review.get("schema"), "dwp.hris.wave7.hrm013-approval-reseal-central-integration-independent-review.v1", "Approval reseal review schema")
+    v.exact(review.get("state"), "INDEPENDENT_ZERO_FINDING_REVIEW_OF_EXACT_TWELVE_PATH_APPROVAL_RESEAL_INTEGRATION", "Approval reseal review state")
+    v.exact(review.get("reviewer"), "INDEPENDENT_HRM013_APPROVAL_RESEAL_INTEGRATION_REVIEW", "Approval reseal reviewer")
+    v.exact(review.get("scope"), {
+        "authorityPath": RESEAL_AUTHORITY,
+        "governingValidatorPath": LIFECYCLE_CORRECTION_VALIDATOR,
+        "modifiedValidatorPaths": RESEAL_VALIDATORS,
+        "packagePath": "package.json",
+        "reviewedBoundaries": [
+            "EXACT_DIRECT_CHILD_TWELVE_PATH_CARRIER",
+            "B9880EC6_REMAINS_IMMUTABLE_HISTORICAL_EVIDENCE_ONLY",
+            "ONLY_EXACT_3970B26C_SAME_TREE_SUCCESSOR_MAY_FAST_FORWARD",
+            "EXACT_ORDERED_DESCENDANT_GOVERNANCE_AND_SECURE_EXTERNAL_RECEIPTS",
+            "TEN_CURRENT_VALIDATOR_BLOBS_AND_UNCHANGED_EIGHTEEN_COMMAND_PACKAGE",
+            "NO_FEATURE_TENANT_CREDENTIAL_OR_PRODUCTION_AUTHORITY",
+        ],
+    }, "Approval reseal review scope")
+    v.exact(review.get("findings"), {"p0": [], "p1": [], "p2": []}, "Approval reseal findings")
+    v.exact(review.get("finalVerdict"), {
+        "p0": 0, "p1": 0, "p2": 0,
+        "decision": "GO_FOR_EXACT_APPROVAL_SAME_TREE_RESEAL_CORRECTION_AND_3970_FAST_FORWARD_AFTER_GOVERNANCE_CLOSURE",
+    }, "Approval reseal verdict")
+    v.exact(review.get("authority"), {
+        "independentReviewComplete": True,
+        "exactTwelvePathCarrierCommitAndPushAuthorized": True,
+        "exact3970FastForwardAuthorizedAfterGovernanceClosure": True,
+        "originalB988IntegrationAuthorized": False,
+        "additionalSourceOrTestChangeAuthorized": False,
+        "featureActivationOrTenantOrCredentialOrProductionAuthority": False,
+        "businessCompletionCredit": 0,
+    }, "Approval reseal review authority")
+    v.exact(review.get("artifactPins"), [
+        artifact(RESEAL_AUTHORITY, blobs[RESEAL_AUTHORITY]),
+        *[artifact(path, blobs[path]) for path in RESEAL_VALIDATORS],
+        artifact("package.json", package_data),
+    ], "Approval reseal review pins")
+    reviewed_at = parse_time(review.get("reviewedAt"), "Approval reseal reviewedAt")
+    v.require(reviewed_at <= datetime.now(timezone.utc) + timedelta(minutes=5), "Approval reseal review is in the future")
+    if commit is None:
+        latest = max(
+            datetime.fromtimestamp(int((FRONTEND / path).stat().st_mtime), timezone.utc)
+            for path in [RESEAL_AUTHORITY, *RESEAL_VALIDATORS, "package.json"]
+        )
+        v.require(latest <= reviewed_at, "Approval reseal review predates authoring snapshot")
+    else:
+        committed_at = parse_time(
+            text(FRONTEND, "show", "-s", "--format=%cI", commit),
+            "Approval reseal carrier committedAt",
+        )
+        v.require(reviewed_at <= committed_at, "Approval reseal review follows carrier commit")
+    return {"commit": commit, "blobs": blobs}
+
+
+def lifecycle_correction(
+    v: V, authoring: bool = False, reseal_authoring: bool = False,
+) -> dict[str, Any]:
     v.exact(
         text(FRONTEND, "rev-parse", f"{LIFECYCLE_CORRECTION_BASE}^{{tree}}"),
         LIFECYCLE_CORRECTION_BASE_TREE,
@@ -1513,8 +1694,16 @@ def lifecycle_correction(v: V, authoring: bool = False) -> dict[str, Any]:
             ancestor(FRONTEND, commit, head) and ancestor(FRONTEND, commit, origin),
             "lifecycle correction is not on pushed frontend dwp-dev",
         )
-        v.exact(head, origin, "frontend HEAD/origin drift after lifecycle correction")
-        v.exact(changes(FRONTEND), set(), "frontend dirty after lifecycle correction")
+        if reseal_authoring:
+            v.exact(text(FRONTEND, "branch", "--show-current"), RESEAL_BRANCH, "Approval reseal branch")
+            v.exact(head, RESEAL_BASE, "Approval reseal base during lifecycle validation")
+            v.exact(changes(FRONTEND), RESEAL_PATHS, "Approval reseal paths during lifecycle validation")
+        else:
+            v.exact(head, origin, "frontend HEAD/origin drift after lifecycle correction")
+            v.exact(changes(FRONTEND), set(), "frontend dirty after lifecycle correction")
+
+    reseal = None if authoring else approval_reseal_successor(v, reseal_authoring)
+    reseal_blobs = {} if reseal is None else reseal["blobs"]
 
     blobs: dict[str, bytes] = {}
     for path in [
@@ -1536,9 +1725,10 @@ def lifecycle_correction(v: V, authoring: bool = False) -> dict[str, Any]:
             data = data or b""
             v.exact(mode(FRONTEND, text(FRONTEND, "rev-parse", "HEAD"), path), "100644", f"current correction mode: {path}")
             v.require(symlink_free(FRONTEND, path), f"current correction artifact symlinked: {path}")
+            expected_live = reseal_blobs.get(path, data)
             v.exact(
                 artifact(path, (FRONTEND / path).read_bytes()),
-                artifact(path, data),
+                artifact(path, expected_live),
                 f"current correction artifact drift: {path}",
             )
         blobs[path] = data
@@ -1673,9 +1863,14 @@ def lifecycle_correction(v: V, authoring: bool = False) -> dict[str, Any]:
             "lifecycle correction committedAt",
         )
         v.require(reviewed_at <= committed_at, "lifecycle review follows correction commit")
+    current_blobs = {**blobs, **{
+        path: data for path, data in reseal_blobs.items()
+        if path in [*LIFECYCLE_VALIDATORS, LIFECYCLE_CORRECTION_VALIDATOR]
+    }}
     return {
         "commit": commit,
         "blobs": blobs,
+        "currentBlobs": current_blobs,
         "hardenedAuthRuntimeValidator": hardened or b"",
     }
 
@@ -1684,6 +1879,7 @@ def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--authoring", action="store_true")
     parser.add_argument("--lifecycle-correction-authoring", action="store_true")
+    parser.add_argument("--approval-reseal-authoring", action="store_true")
     parser.add_argument("--require-trusted", action="store_true")
     args = parser.parse_args()
     v = V()
@@ -1691,8 +1887,20 @@ def main() -> int:
         isolated = runtime(
             v,
             args.require_trusted or args.authoring
-            or args.lifecycle_correction_authoring,
+            or args.lifecycle_correction_authoring
+            or args.approval_reseal_authoring,
         )
+        v.require(
+            not (args.lifecycle_correction_authoring and args.approval_reseal_authoring),
+            "correction authoring modes are mutually exclusive",
+        )
+        if args.approval_reseal_authoring:
+            lifecycle_correction(v, reseal_authoring=True)
+            print(
+                "PASS state=APPROVAL_RESEAL_INTEGRATION_SUCCESSOR_READY_TO_COMMIT_AND_PUSH "
+                f"checks={v.checks} trusted_runtime={'true' if isolated else 'false'}"
+            )
+            return 0
         if args.lifecycle_correction_authoring:
             lifecycle_correction(v, authoring=True)
             print(
