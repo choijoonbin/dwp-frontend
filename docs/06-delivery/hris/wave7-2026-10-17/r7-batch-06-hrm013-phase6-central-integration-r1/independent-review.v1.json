@@ -1,0 +1,49 @@
+{
+  "schema": "dwp.hris.wave7.hrm013-phase6-central-integration-independent-review.v1",
+  "reviewedAt": "2026-10-27T06:06:23Z",
+  "reviewScope": "EXACT_TIME_PAYROLL_AUTH_PHASE6_OWNER_TIPS_AND_ORDERED_CENTRAL_INTEGRATION_AUTHORITY_ONLY",
+  "decision": "GO_FOR_EXACT_THREE_PATH_CARRIER_AND_ORDERED_BOUNDED_INTEGRATION_ONLY",
+  "severityCounts": {"P0": 0, "P1": 0, "P2": 3},
+  "authorityPin": {
+    "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-phase6-central-integration-r1/phase6-central-integration-authority.v1.json",
+    "bytes": 9947,
+    "sha256": "74a4de7e7151f436677c401c59abb29cb6826bed6c36680213e080571253078f"
+  },
+  "validatorPin": {
+    "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-phase6-central-integration-r1/validate_hrm013_phase6_central_integration.py",
+    "bytes": 10114,
+    "sha256": "22b0b1bc27d7c6c29116aaf812a3625c365a2e140c39874b16ae51c67b2e7769"
+  },
+  "reviewedFacts": [
+    "The frontend carrier base and backend integration base are commit and tree pinned.",
+    "The predecessor Phase-6 authority and AUTH seal successor authority, reviews and validators are byte and SHA-256 pinned.",
+    "TIME is pinned to e09603ea with nineteen paths and zero findings; PAYROLL is pinned to 7dc95ef5 with nineteen paths and zero findings.",
+    "AUTH is pinned to the final 5147d7a5 candidate with twenty-seven paths and an independent security GO with no P0 or P1 findings.",
+    "The three remaining AUTH P2 items are explicit activation prerequisites, not integration blockers, because runtime activation, credentials, tenant rollout, live network and production are all forbidden.",
+    "The integration order is TIME fast-forward, PAYROLL rebase and named verification, AUTH rebase and named verification, People handshake authoring, then one bounded twelve-condition matrix.",
+    "Only the People handshake test may be added outside the three owner-module patches, and only after TIME and PAYROLL are integrated.",
+    "Broad repository and unrelated-module reruns are prohibited; the result must be sealed by a hash-bound receipt and independent review.",
+    "The existing unrelated rooms and spaces working-tree changes are outside this carrier and must not be staged, modified or committed with it.",
+    "No activation, credential provisioning, tenant rollout, live network, production or business completion authority is granted."
+  ],
+  "activationOnlyP2": [
+    {
+      "state": "OPEN_BEFORE_ACTIVATION",
+      "finding": "Production Flyway-owner/runtime-role provisioning and inherited-ACL drift attestation remain deployment controls; V272 fails closed when the selected role is unsafe."
+    },
+    {
+      "state": "OPEN_BEFORE_ACTIVATION",
+      "finding": "The production external LeaseSource/non-exportable signer and same-channel verified-mTLS implementation, including a live handshake, remain unbound and unexercised."
+    },
+    {
+      "state": "OPEN_BEFORE_ACTIVATION",
+      "finding": "Feature/relay enablement, tenant enrollment, live rotation/cutover and operational audit/SoD monitoring remain unauthorized activation work."
+    }
+  ],
+  "nonClaims": [
+    "This review does not claim that any activation prerequisite is closed.",
+    "This review does not authorize staging or committing unrelated frontend changes.",
+    "This review does not claim that backend integration or the twelve-condition matrix has run.",
+    "This review grants no HRM-013, Batch-06, menu or HRIS completion credit."
+  ]
+}

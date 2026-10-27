@@ -1,0 +1,195 @@
+{
+  "schema": "dwp.hris.wave7.hrm013-phase6-central-integration-authority.v1",
+  "state": "INDEPENDENTLY_REVIEWED_HASH_BOUND_ORDERED_PHASE6_CENTRAL_INTEGRATION_AUTHORITY",
+  "recordedAt": "2026-10-27T06:06:23Z",
+  "sliceId": "BASE-TFR-HRM-013",
+  "module": "HRM",
+  "moduleSession": "HRIS-HRM",
+  "lane": "TIME_PAYROLL_AUTH_TASK_OWNER_ORDERED_CENTRAL_INTEGRATION",
+  "carrier": {
+    "repository": "dwp-frontend",
+    "branch": "dwp-dev",
+    "baseCommit": "a08b287eac7dcfb99d39aa83093a63cb979412dc",
+    "baseTree": "596d7e6531a958058e0b90a57037bff68bf8d21c",
+    "originMustMatchBaseAtAuthoring": true,
+    "requiredDirectChild": true,
+    "exactChangedPathCount": 3,
+    "packageJsonModificationAuthorized": false,
+    "existingValidatorModificationAuthorized": false
+  },
+  "backendBase": {
+    "repository": "dwp-backend",
+    "branch": "dwp-dev",
+    "commit": "8ccc7baeff43b60dc6cdf719449514f56b6dbca5",
+    "tree": "f17b244d9d47da035dfe09f7c9a604796f19eb74",
+    "originMustMatchBeforeFirstIntegration": true,
+    "integrationScopeMustBeClean": true,
+    "unrelatedDirtyPathsMayExistButMustNotBeModifiedStagedOrCommitted": true
+  },
+  "predecessorPins": [
+    {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-phase6-authority-r1/phase6-task-owner-execution-authority.v1.json",
+      "bytes": 14899,
+      "sha256": "852ac6bf6f8b41042b5ae16a4782cb25c07f862e93d66a67f7ec0c5ee9f5a6b2"
+    },
+    {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-phase6-authority-r1/independent-review.v1.json",
+      "bytes": 4131,
+      "sha256": "23d0317d90bf4adb8a207bb2a87c44260ea2069dde8fbae3686774e0081454b6"
+    },
+    {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-phase6-authority-r1/validate_hrm013_phase6_authority.py",
+      "bytes": 33625,
+      "sha256": "7809b6861d3256972ef9a9d4a71118f5db3274024af2a143a4a48651f6686eb6"
+    },
+    {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-phase6-auth-seal-successor-r1/auth-seal-successor-authority.v1.json",
+      "bytes": 11333,
+      "sha256": "543cee22859cf3602d80b618955d6ca8b8b5f9d9fd2cf9450857dd6c68d481df"
+    },
+    {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-phase6-auth-seal-successor-r1/independent-review.v1.json",
+      "bytes": 3037,
+      "sha256": "cac9eb83b072026c74717385b8009886f81b42d7ec311bec6f6cfed0df4f6de0"
+    },
+    {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-phase6-auth-seal-successor-r1/validate_hrm013_auth_seal_successor.py",
+      "bytes": 7321,
+      "sha256": "1b0932a249f9b1497ad4b2c94b669b28069908e0418b882a450996a8811f5d83"
+    }
+  ],
+  "reviewedOwnerTips": {
+    "time": {
+      "branch": "codex/hris-wave7-batch06-hrm013-phase6-time-backend-20261027-r1",
+      "commit": "e09603ea1270278e720462ba7d00b116ef12bb9c",
+      "tree": "76d818fad77af29364d20ce4cb3980d899f86213",
+      "baseCommit": "8ccc7baeff43b60dc6cdf719449514f56b6dbca5",
+      "commitCount": 1,
+      "changedPathCount": 19,
+      "reviewFindings": {"P0": 0, "P1": 0, "P2": 0}
+    },
+    "payroll": {
+      "branch": "codex/hris-wave7-batch06-hrm013-phase6-payroll-backend-20261027-r1",
+      "commit": "7dc95ef5ffe40d67448c58b5be99d68d4f66fdfa",
+      "tree": "b83c5e839af9d7fa4a6fdef2d21b531bb61e2e19",
+      "baseCommit": "8ccc7baeff43b60dc6cdf719449514f56b6dbca5",
+      "commitCount": 1,
+      "changedPathCount": 19,
+      "reviewFindings": {"P0": 0, "P1": 0, "P2": 0}
+    },
+    "auth": {
+      "branch": "codex/hris-wave7-batch06-hrm013-phase6-auth-backend-20261027-r1",
+      "commit": "5147d7a50360ccf85643e616826f3747fa584eca",
+      "tree": "99085b55a0c2c222ac8460385d3c1adbab238fc4",
+      "baseCommit": "8ccc7baeff43b60dc6cdf719449514f56b6dbca5",
+      "commitCount": 1,
+      "changedPathCount": 27,
+      "expectedRemoteBeforeFinalSealPush": "0a8faf23386966b861cf019d306a1cfbd3e6c3fb",
+      "remoteMustMatchFinalTipBeforeIntegration": true,
+      "finalCrossReviewDecision": "GO",
+      "reviewFindings": {"P0": 0, "P1": 0, "P2": 3},
+      "activationOnlyP2": [
+        "Production Flyway-owner/runtime-role provisioning and inherited-ACL drift attestation remain deployment controls; V272 fails closed when the selected role is unsafe.",
+        "The production external LeaseSource/non-exportable signer and same-channel verified-mTLS implementation, including a live handshake, remain unbound and unexercised.",
+        "Feature/relay enablement, tenant enrollment, live rotation/cutover and operational audit/SoD monitoring remain unauthorized activation work."
+      ]
+    }
+  },
+  "sourcePathPolicy": {
+    "timePrefix": "dwp-time-server/",
+    "timeExactPathCount": 19,
+    "payrollPrefix": "dwp-payroll-server/",
+    "payrollExactPathCount": 19,
+    "authPrefix": "dwp-auth-server/",
+    "authExactPathCount": 27,
+    "peopleHandshakeOnlyAdditionalPath": "dwp-people-server/src/test/java/com/dwp/services/people/hris/separation/hrm013/Hrm013TaskDispatchReceiptHandshakeTest.java",
+    "peopleHandshakeMayBeAuthoredOnlyAfterTimeAndPayrollAreIntegrated": true,
+    "otherPeopleSourceOrTestAuthoringAuthorized": false
+  },
+  "targetedVerification": {
+    "time": {
+      "compileTask": ":dwp-time-server:compileJava",
+      "testClassCount": 10,
+      "selectorGlob": "com.dwp.services.time.hris.separation.hrm013.*"
+    },
+    "payroll": {
+      "compileTask": ":dwp-payroll-server:compileJava",
+      "testClassCount": 10,
+      "selectorGlob": "com.dwp.services.payroll.hris.separation.hrm013.*"
+    },
+    "auth": {
+      "compileTask": ":dwp-auth-server:compileJava",
+      "testClassCount": 14,
+      "selectors": [
+        "com.dwp.services.auth.hris.separation.hrm013.Hrm013IdentityCallbackAuthorityTest",
+        "com.dwp.services.auth.hris.separation.hrm013.Hrm013IdentityDrainContinuationCallbackTest",
+        "com.dwp.services.auth.hris.separation.hrm013.Hrm013IdentityOutboundTlsBoundaryTest",
+        "com.dwp.services.auth.hris.separation.hrm013.Hrm013IdentityTaskDispatchControllerTest",
+        "com.dwp.services.auth.hris.separation.hrm013.Hrm013IdentityTaskDispatchDefaultOffTest",
+        "com.dwp.services.auth.hris.separation.hrm013.Hrm013IdentityTaskDispatchIngressFilterTest",
+        "com.dwp.services.auth.hris.separation.hrm013.Hrm013IdentityTaskDispatchStorePostgresTest",
+        "com.dwp.services.auth.hris.separation.hrm013.Hrm013IdentityTaskReceiptRelayTest",
+        "com.dwp.services.auth.hris.separation.hrm013.Hrm013IdentityWorkloadCredentialProviderTest",
+        "com.dwp.services.auth.hrisservicegrant.HrisServiceGrantAuthLocalRoleOperationTest",
+        "com.dwp.services.auth.hrisservicegrant.HrisServiceGrantAuthorityRepositoryPostgresTest",
+        "com.dwp.services.auth.hrisservicegrant.Hrm013IdentityGrantRotationReadinessTest",
+        "com.dwp.services.auth.identity.WorkforceIdentitySyncServiceTest",
+        "com.dwp.services.auth.service.IdentityAccountServiceTest"
+      ]
+    },
+    "peopleHandshakeSelector": "com.dwp.services.people.hris.separation.hrm013.Hrm013TaskDispatchReceiptHandshakeTest",
+    "completeTwelveConditionMatrixRunCount": 1,
+    "broadRepositoryRerunAuthorized": false,
+    "unrelatedModuleRerunAuthorized": false
+  },
+  "orderedIntegrationPlan": [
+    "COMMIT_AND_PUSH_EXACT_THREE_PATH_FRONTEND_CARRIER",
+    "REQUIRE_AUTH_FINAL_CROSS_REVIEW_GO_AND_REMOTE_EXACT_FINAL_TIP",
+    "FAST_FORWARD_EXACT_TIME_TIP_TO_BACKEND_DWP_DEV_AND_PUSH",
+    "REBASE_PAYROLL_PATCH_ON_LATEST_DWP_DEV_AND_RUN_ONLY_PAYROLL_COMPILE_AND_TEN_TARGETS",
+    "FORCE_WITH_LEASE_PAYROLL_BRANCH_THEN_FAST_FORWARD_DWP_DEV_AND_PUSH",
+    "REBASE_AUTH_PATCH_ON_LATEST_DWP_DEV_PRESERVING_EXACT_TWENTY_SEVEN_PATHS",
+    "AUTHOR_ONLY_PEOPLE_HANDSHAKE_TEST_AS_SEPARATE_AUTH_LANE_DESCENDANT_COMMIT",
+    "RUN_ONLY_AUTH_COMPILE_FOURTEEN_TARGETS_AND_PEOPLE_HANDSHAKE_ONCE",
+    "FORCE_WITH_LEASE_AUTH_BRANCH_THEN_FAST_FORWARD_DWP_DEV_AND_PUSH",
+    "RUN_COMPLETE_TWELVE_CONDITION_BOUNDED_MATRIX_EXACTLY_ONCE",
+    "WRITE_HASH_BOUND_RESULT_RECEIPT_AND_INDEPENDENT_REVIEW_WITHOUT_COMPLETION_CREDIT"
+  ],
+  "acceptanceMatrixPin": {
+    "conditionCount": 12,
+    "canonicalCompactJsonSha256": "72c40f9a0a7ec19cc4b27e3caec7443a4d653a2aa42546113601af32f64f383b",
+    "ids": [
+      "HRM013-RBG-01", "HRM013-RBG-02", "HRM013-RBG-03", "HRM013-RBG-04",
+      "HRM013-RBG-05", "HRM013-RBG-06", "HRM013-RBG-07", "HRM013-RBG-08",
+      "HRM013-RBG-09", "HRM013-RBG-10", "HRM013-RBG-11", "HRM013-RBG-12"
+    ]
+  },
+  "authority": {
+    "independentReviewComplete": true,
+    "carrierCommitAndPushAuthorized": true,
+    "orderedBackendDwpDevIntegrationAuthorizedAfterCarrierPush": true,
+    "timeExactTipFastForwardAuthorized": true,
+    "payrollRebaseTargetedVerificationAndFastForwardAuthorized": true,
+    "authFinalSealPushRebaseTargetedVerificationAndFastForwardAuthorized": true,
+    "peopleHandshakeTestAuthoringAuthorizedAfterTimeAndPayrollIntegration": true,
+    "finalBoundedMatrixAndReceiptAuthorized": true,
+    "activationAuthorized": false,
+    "tenantRolloutAuthorized": false,
+    "runtimeCredentialProvisioningAuthorized": false,
+    "liveNetworkHandshakeAuthorized": false,
+    "productionBindingAuthorized": false,
+    "productionReleaseAuthorized": false,
+    "hrm013BusinessCompletionAuthorized": false,
+    "batch06CompletionAuthorized": false,
+    "hrisCompletionAuthorized": false,
+    "businessCompletionCredit": 0
+  },
+  "nonClaims": [
+    "The three activation-only AUTH P2 prerequisites are closed.",
+    "This authority permits activation, tenant rollout, runtime credential provisioning or production release.",
+    "Any owner runtime is enabled, enrolled, credentialed or connected to a live network.",
+    "The complete twelve-condition matrix has passed.",
+    "HRM-013, Batch-06, module menus or HRIS are complete."
+  ],
+  "nextAction": "COMMIT_AND_PUSH_THIS_EXACT_THREE_PATH_CARRIER_THEN_EXECUTE_THE_ORDERED_PLAN_WITH_ONLY_ITS_BOUNDED_SELECTORS"
+}
