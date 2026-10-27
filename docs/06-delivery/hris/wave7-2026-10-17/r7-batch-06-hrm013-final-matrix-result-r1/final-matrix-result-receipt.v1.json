@@ -1,0 +1,237 @@
+{
+  "schema": "dwp.hris.wave7.hrm013-final-matrix-result-receipt.v1",
+  "state": "EXACT_SINGLE_INVOCATION_TWELVE_CONDITION_MATRIX_PASS_DEFAULT_OFF_SOURCE_INTEGRATION_ONLY",
+  "recordedAt": "2026-10-27T07:16:15Z",
+  "sliceId": "BASE-TFR-HRM-013",
+  "module": "HRM",
+  "moduleSession": "HRIS-HRM",
+  "repositoryState": {
+    "repository": "dwp-backend",
+    "branch": "codex/hris-wave7-batch06-hrm013-phase6-integration-backend-20261027-r1",
+    "targetBranch": "dwp-dev",
+    "head": "2a765439beb50d40f91eb65c5350984cfc4b52de",
+    "tree": "4c57372f0ebb8f62db3ef8ab469ab6c5eb5e4bbd",
+    "originHead": "2a765439beb50d40f91eb65c5350984cfc4b52de",
+    "cleanBefore": true,
+    "cleanAfter": true,
+    "executionWorktree": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261027/batch06/hrm013-phase6/integration"
+  },
+  "authorityPin": {
+    "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-final-matrix-authority-r1/final-matrix-execution-authority.v1.json",
+    "mode": "0644",
+    "bytes": 23324,
+    "sha256": "8664710f8e0e9573ad4fb3d84186e0530d8b9ac2ed9dc0d80d68e739c4463e36",
+    "carrierCommit": "665e7857239acc852b8e6af19341b0047df26964"
+  },
+  "successfulExecution": {
+    "invocationCount": 1,
+    "singleGradleInvocation": true,
+    "rerunTasks": true,
+    "taskScopedSelectorOrdering": true,
+    "taskCount": 5,
+    "selectorCount": 21,
+    "exitCode": 0,
+    "buildResult": "BUILD_SUCCESSFUL",
+    "gradleReportedElapsed": "1m 56s",
+    "elapsedMilliseconds": 116000,
+    "elapsedPrecision": "GRADLE_REPORTED_SECONDS",
+    "xmlFileCount": 19,
+    "tests": 22,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "selectorSetExact": true,
+    "missingSelectorCount": 0,
+    "unexpectedSelectorCount": 0,
+    "xmlManifestSha256": "07bd27c699668bb11d54464cdcf21609843e969b3f2f2846101f468137196153",
+    "xmlManifestConstruction": "SHA-256 of the LC_ALL=C sorted lines '<xml-sha256><two spaces><repository-relative-path>\\n' for the nineteen TEST-*.xml files",
+    "sourceChangedDuringExecution": false,
+    "broadRepositoryRerunExecuted": false,
+    "unrelatedTaskOrSelectorExecuted": false
+  },
+  "taskResults": [
+    {
+      "task": ":dwp-platform-contracts:test",
+      "selectorIds": ["P01", "P02", "P03", "P04", "P05"],
+      "selectorCount": 5,
+      "xmlFileCount": 4,
+      "tests": 5,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "result": "PASS"
+    },
+    {
+      "task": ":dwp-auth-server:test",
+      "selectorIds": ["A01", "A02", "A03", "A04"],
+      "selectorCount": 4,
+      "xmlFileCount": 4,
+      "tests": 4,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "result": "PASS"
+    },
+    {
+      "task": ":dwp-approval-server:test",
+      "selectorIds": ["R01", "R02", "R03", "R04", "R05"],
+      "selectorCount": 5,
+      "xmlFileCount": 5,
+      "tests": 5,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "result": "PASS"
+    },
+    {
+      "task": ":dwp-people-server:test",
+      "selectorIds": ["E01", "E02", "E03", "E04", "E05", "E06"],
+      "selectorCount": 6,
+      "xmlFileCount": 5,
+      "tests": 7,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "result": "PASS"
+    },
+    {
+      "task": ":dwp-approval-server:crossServiceTest",
+      "selectorIds": ["X01"],
+      "selectorCount": 1,
+      "xmlFileCount": 1,
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "result": "PASS"
+    }
+  ],
+  "conditionResults": [
+    {
+      "id": "HRM013-RBG-01",
+      "result": "PASS",
+      "evidenceMode": "CURRENT_MATRIX_AND_PINNED_PREDECESSOR",
+      "selectorIds": ["P01", "P02", "P03", "P04", "P05"],
+      "predecessorEvidence": ["BINDING_GATE", "PREREQUISITE_MATRIX_RECEIPT"]
+    },
+    {
+      "id": "HRM013-RBG-02",
+      "result": "PASS",
+      "evidenceMode": "CURRENT_MATRIX_AND_PINNED_PREDECESSOR",
+      "selectorIds": ["P02", "A01", "A02", "R01", "E04", "E06", "X01"],
+      "predecessorEvidence": ["PHASE6_CENTRAL_AUTHORITY", "PREREQUISITE_MATRIX_RECEIPT", "PREREQUISITE_MATRIX_REVIEW"]
+    },
+    {
+      "id": "HRM013-RBG-03",
+      "result": "PASS",
+      "evidenceMode": "CURRENT_MATRIX_AND_PINNED_PREDECESSOR",
+      "selectorIds": ["P04", "P05", "A01", "A02", "A03", "A04", "E01", "E02", "E05", "X01"],
+      "predecessorEvidence": ["PHASE6_CENTRAL_AUTHORITY", "PHASE6_CENTRAL_REVIEW", "PREREQUISITE_MATRIX_RECEIPT"]
+    },
+    {
+      "id": "HRM013-RBG-04",
+      "result": "PASS",
+      "evidenceMode": "PINNED_PHASE6_DEFAULT_OFF_EVIDENCE",
+      "selectorIds": [],
+      "predecessorEvidence": ["PHASE6_CENTRAL_AUTHORITY", "PHASE6_CENTRAL_REVIEW"]
+    },
+    {
+      "id": "HRM013-RBG-05",
+      "result": "PASS",
+      "evidenceMode": "CURRENT_MATRIX_AND_PINNED_PREDECESSOR",
+      "selectorIds": ["A03", "A04", "R01", "R02", "R03", "E03"],
+      "predecessorEvidence": ["PREREQUISITE_MATRIX_RECEIPT", "PREREQUISITE_MATRIX_REVIEW"]
+    },
+    {
+      "id": "HRM013-RBG-06",
+      "result": "PASS",
+      "evidenceMode": "CURRENT_MATRIX_AND_PINNED_PREDECESSOR",
+      "selectorIds": ["A04", "R02"],
+      "predecessorEvidence": ["PREREQUISITE_MATRIX_RECEIPT", "PREREQUISITE_MATRIX_REVIEW"]
+    },
+    {
+      "id": "HRM013-RBG-07",
+      "result": "PASS",
+      "evidenceMode": "CURRENT_MATRIX_AND_PINNED_PREDECESSOR",
+      "selectorIds": ["R04", "E04"],
+      "predecessorEvidence": ["PREREQUISITE_MATRIX_RECEIPT"]
+    },
+    {
+      "id": "HRM013-RBG-08",
+      "result": "PASS",
+      "evidenceMode": "CURRENT_MATRIX_AND_PINNED_PREDECESSOR",
+      "selectorIds": ["R04"],
+      "predecessorEvidence": ["PREREQUISITE_MATRIX_RECEIPT", "PREREQUISITE_MATRIX_REVIEW"]
+    },
+    {
+      "id": "HRM013-RBG-09",
+      "result": "PASS",
+      "evidenceMode": "CURRENT_MATRIX_AND_PINNED_PREDECESSOR",
+      "selectorIds": ["R04", "E01", "E02", "E03", "E04", "E05", "E06"],
+      "predecessorEvidence": ["PHASE6_CENTRAL_AUTHORITY", "PREREQUISITE_MATRIX_RECEIPT"]
+    },
+    {
+      "id": "HRM013-RBG-10",
+      "result": "PASS",
+      "evidenceMode": "CURRENT_MATRIX_AND_PINNED_PREDECESSOR",
+      "selectorIds": ["A01", "A02", "R03", "E03", "E05"],
+      "predecessorEvidence": ["PREREQUISITE_MATRIX_RECEIPT"]
+    },
+    {
+      "id": "HRM013-RBG-11",
+      "result": "PASS",
+      "evidenceMode": "CURRENT_MATRIX_AND_PINNED_PREDECESSOR",
+      "selectorIds": ["P01", "R02", "R05", "E03", "E06"],
+      "predecessorEvidence": ["PHASE6_CENTRAL_AUTHORITY", "PREREQUISITE_MATRIX_RECEIPT"]
+    },
+    {
+      "id": "HRM013-RBG-12",
+      "result": "PASS",
+      "evidenceMode": "COMPLETE_CURRENT_MATRIX_AND_ALL_PINNED_PREDECESSORS",
+      "selectorIds": ["P01", "P02", "P03", "P04", "P05", "A01", "A02", "A03", "A04", "R01", "R02", "R03", "R04", "R05", "E01", "E02", "E03", "E04", "E05", "E06", "X01"],
+      "predecessorEvidence": ["BINDING_GATE", "PHASE6_CENTRAL_AUTHORITY", "PHASE6_CENTRAL_REVIEW", "PREREQUISITE_MATRIX_AUTHORITY", "PREREQUISITE_MATRIX_CORRECTION", "PREREQUISITE_MATRIX_RECEIPT", "PREREQUISITE_MATRIX_REVIEW"]
+    }
+  ],
+  "conditionPassCount": 12,
+  "activationOnlyOpenConditions": [
+    {
+      "severity": "P2",
+      "state": "OPEN_BEFORE_ACTIVATION",
+      "finding": "Production Flyway-owner/runtime-role provisioning and inherited-ACL drift attestation remain deployment controls."
+    },
+    {
+      "severity": "P2",
+      "state": "OPEN_BEFORE_ACTIVATION",
+      "finding": "The production external LeaseSource/non-exportable signer and same-channel verified-mTLS implementation, including a live handshake, remain unbound and unexercised."
+    },
+    {
+      "severity": "P2",
+      "state": "OPEN_BEFORE_ACTIVATION",
+      "finding": "Feature and relay enablement, tenant enrollment, live rotation or cutover and operational audit or SoD monitoring remain unauthorized."
+    }
+  ],
+  "claimBoundary": {
+    "phase6SourceIntegrationMatrixPassed": true,
+    "defaultOff": true,
+    "activationOnlyOpenCount": 3,
+    "reviewFindings": {"P0": 0, "P1": 0, "P2": 3},
+    "activationAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "runtimeCredentialProvisioningAuthorized": false,
+    "liveNetworkHandshakeExecuted": false,
+    "productionBindingAuthorized": false,
+    "productionReleaseAuthorized": false,
+    "hrm013BusinessComplete": false,
+    "batch06Complete": false,
+    "hrisComplete": false,
+    "businessCompletionCredit": 0
+  },
+  "nonClaims": [
+    "Passing the default-OFF source-integration matrix enables any owner runtime.",
+    "Any activation-only P2 condition is closed.",
+    "Any tenant is enrolled or any production credential is provisioned.",
+    "A live-network or production mTLS handshake was executed.",
+    "HRM-013, Batch-06, module menus or HRIS are business-complete."
+  ],
+  "nextAction": "INDEPENDENTLY_REVIEW_THIS_RECEIPT_AND_SEAL_IT_WITH_A_FAIL_CLOSED_RESULT_VALIDATOR_WITHOUT_RERUNNING_THE_MATRIX"
+}

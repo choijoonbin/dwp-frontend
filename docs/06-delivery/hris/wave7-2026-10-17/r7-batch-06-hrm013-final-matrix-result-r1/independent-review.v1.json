@@ -1,0 +1,78 @@
+{
+  "schema": "dwp.hris.wave7.hrm013-final-matrix-result-independent-review.v1",
+  "reviewedAt": "2026-10-27T07:20:00Z",
+  "reviewScope": "EXACT_SEALED_SINGLE_INVOCATION_RESULT_LIVE_XML_SELECTOR_CONDITION_AND_CLAIM_BOUNDARY_ONLY",
+  "decision": "GO_TO_SEAL_DEFAULT_OFF_SOURCE_INTEGRATION_RESULT_ONLY",
+  "newSeverityCounts": {"P0": 0, "P1": 0, "P2": 0},
+  "inheritedActivationOnlySeverityCounts": {"P0": 0, "P1": 0, "P2": 3},
+  "receiptPin": {
+    "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-final-matrix-result-r1/final-matrix-result-receipt.v1.json",
+    "mode": "0644",
+    "bytes": 8860,
+    "sha256": "647cef84024d66720f5bcf48c99bb14ed548e731f5d85f0d806dcc093e1e321f"
+  },
+  "authorityPin": {
+    "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-final-matrix-authority-r1/final-matrix-execution-authority.v1.json",
+    "mode": "0644",
+    "bytes": 23324,
+    "sha256": "8664710f8e0e9573ad4fb3d84186e0530d8b9ac2ed9dc0d80d68e739c4463e36",
+    "carrierCommit": "665e7857239acc852b8e6af19341b0047df26964"
+  },
+  "validatorPin": {
+    "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-final-matrix-result-r1/validate_hrm013_final_matrix_result.py",
+    "mode": "0644",
+    "bytes": 18708,
+    "sha256": "7b5819318f115af8e855ac55e40465591a1279fe18c7f7edc8b7f616423f91a5"
+  },
+  "reviewedFacts": [
+    "The backend execution worktree is clean at exact HEAD and origin/dwp-dev 2a765439 with tree 4c57372f before and after the authorized invocation.",
+    "The authority carrier is committed and pushed at frontend dwp-dev 665e7857, and its exact 23324-byte authority SHA-256 is pinned by the receipt and this review.",
+    "The authorized matrix ran once as one Gradle invocation with --rerun-tasks, five task-scoped selector groups and no broad or unrelated task or selector.",
+    "The live XML independently totals nineteen files and twenty-two tests in the exact 5/4/5/7/1 task distribution, with zero failures, zero errors and zero skipped tests.",
+    "The twenty-two concrete testcase identities exactly expand the twenty method selectors plus both methods of the People receipt-handshake class, with no missing or unexpected testcase.",
+    "The sorted live XML manifest SHA-256 is 07bd27c699668bb11d54464cdcf21609843e969b3f2f2846101f468137196153 and matches the receipt.",
+    "All twelve HRM013-RBG condition results reproduce the authority's exact selector and pinned-predecessor mapping and are PASS for the default-OFF source-integration boundary.",
+    "The result introduces no P0, P1 or P2 finding; the three pre-existing activation-only P2 controls remain open and are not source-integration blockers.",
+    "Activation, tenant enrollment, runtime credential provisioning, live-network handshake, production binding and release remain false and unauthorized.",
+    "The result grants zero business-completion credit and does not claim HRM-013, Batch-06, module-menu or HRIS completion."
+  ],
+  "activationOnlyP2": [
+    {
+      "severity": "P2",
+      "state": "OPEN_BEFORE_ACTIVATION",
+      "finding": "Production Flyway-owner/runtime-role provisioning and inherited-ACL drift attestation remain deployment controls."
+    },
+    {
+      "severity": "P2",
+      "state": "OPEN_BEFORE_ACTIVATION",
+      "finding": "The production external LeaseSource/non-exportable signer and same-channel verified-mTLS implementation, including a live handshake, remain unbound and unexercised."
+    },
+    {
+      "severity": "P2",
+      "state": "OPEN_BEFORE_ACTIVATION",
+      "finding": "Feature and relay enablement, tenant enrollment, live rotation or cutover and operational audit or SoD monitoring remain unauthorized."
+    }
+  ],
+  "claimBoundary": {
+    "phase6SourceIntegrationMatrixPassed": true,
+    "defaultOff": true,
+    "activationAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "runtimeCredentialProvisioningAuthorized": false,
+    "liveNetworkHandshakeExecuted": false,
+    "productionBindingAuthorized": false,
+    "productionReleaseAuthorized": false,
+    "hrm013BusinessComplete": false,
+    "batch06Complete": false,
+    "hrisComplete": false,
+    "businessCompletionCredit": 0
+  },
+  "nonClaims": [
+    "This review does not authorize enabling an HRM-013 owner runtime or relay.",
+    "This review does not close any inherited activation-only P2 control.",
+    "This review does not claim a live-network or production mTLS handshake was executed.",
+    "This review does not authorize tenant enrollment, credential provisioning, production binding or release.",
+    "This review grants no HRM-013, Batch-06, module-menu or HRIS business-completion credit."
+  ],
+  "nextAction": "RUN_THE_FAIL_CLOSED_RESULT_VALIDATOR_THEN_COMMIT_AND_PUSH_ONLY_THE_EXACT_THREE_RESULT_ARTIFACTS"
+}
