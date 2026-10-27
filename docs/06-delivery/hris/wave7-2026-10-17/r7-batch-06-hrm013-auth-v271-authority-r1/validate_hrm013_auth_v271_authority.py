@@ -169,6 +169,34 @@ PEOPLE_GOVERNANCE_REVIEW = (
     f"{PEOPLE_BACKEND_COMMIT}/independent-review.v1.json"
 )
 
+PEOPLE_CARRIER_COMMIT = "c8cb2900ffca1776ae2aaa7b82577d4fadd62190"
+PEOPLE_CARRIER_TREE = "a84ce21ba95aafce48bfe326daeab2edadccc101"
+PEOPLE_MERGE_COMMIT = "e8dce61220684019663abff2e281485cb9716034"
+PEOPLE_MERGE_TREE = "27a39d7cad472e3f14275c6552225768ae7dd698"
+PEOPLE_CORRECTION_BRANCH = (
+    "codex/hris-wave7-batch06-hrm013-people-validator-lifecycle-"
+    "correction-frontend-20261027-r1"
+)
+PEOPLE_CORRECTION_ROOT = (
+    "docs/06-delivery/hris/wave7-2026-10-17/"
+    "r7-batch-06-hrm013-people-validator-lifecycle-correction-r1"
+)
+PEOPLE_CORRECTION_AUTHORITY = (
+    f"{PEOPLE_CORRECTION_ROOT}/people-validator-lifecycle-correction-authority.v1.json"
+)
+PEOPLE_CORRECTION_REVIEW = f"{PEOPLE_CORRECTION_ROOT}/independent-review.v1.json"
+PEOPLE_CORRECTION_VALIDATORS = [
+    LIFECYCLE_SEVENTH_VALIDATOR,
+    LIFECYCLE_EIGHTH_VALIDATOR,
+    LIFECYCLE_NINTH_VALIDATOR,
+    LIFECYCLE_CORRECTION_VALIDATOR,
+]
+PEOPLE_CORRECTION_PATHS = {
+    *PEOPLE_CORRECTION_VALIDATORS,
+    PEOPLE_CORRECTION_AUTHORITY,
+    PEOPLE_CORRECTION_REVIEW,
+}
+
 
 
 FRONTEND_BASE = "4b24bdefb0f61d5cb61d89d08397975e45ac389e"
@@ -1435,6 +1463,8 @@ def expected_lifecycle_correction_authority() -> dict[str, Any]:
 
 def approval_reseal_successor(
     v: V, authoring: bool = False, people_authoring: bool = False,
+    successor_blobs: dict[str, bytes] | None = None,
+    successor_authoring: bool = False,
 ) -> dict[str, Any] | None:
     v.exact(
         text(FRONTEND, "rev-parse", f"{RESEAL_BASE}^{{tree}}"),
@@ -1473,7 +1503,12 @@ def approval_reseal_successor(
             ancestor(FRONTEND, commit, head) and ancestor(FRONTEND, commit, origin),
             "Approval reseal carrier is not on pushed frontend dwp-dev",
         )
-        if people_authoring:
+        if successor_authoring:
+            v.exact(text(FRONTEND, "branch", "--show-current"), PEOPLE_CORRECTION_BRANCH, "People validator correction branch during Approval reseal validation")
+            v.exact(head, PEOPLE_MERGE_COMMIT, "People validator correction base during Approval reseal validation")
+            v.exact(origin, PEOPLE_MERGE_COMMIT, "People validator correction origin during Approval reseal validation")
+            v.exact(changes(FRONTEND), PEOPLE_CORRECTION_PATHS, "People validator correction paths during Approval reseal validation")
+        elif people_authoring:
             v.exact(text(FRONTEND, "branch", "--show-current"), PEOPLE_BRANCH, "People branch during Approval reseal validation")
             v.exact(head, PEOPLE_BASE, "People base during Approval reseal validation")
             v.exact(changes(FRONTEND), PEOPLE_PATHS, "People paths during Approval reseal validation")
@@ -1493,8 +1528,9 @@ def approval_reseal_successor(
             data = blob(FRONTEND, commit, path)
             v.require(data is not None, f"Approval reseal carrier artifact missing: {path}")
             data = data or b""
+            expected_live = (successor_blobs or {}).get(path, data)
             if not (people_authoring and path in PEOPLE_VALIDATORS):
-                v.exact(artifact(path, live), artifact(path, data), f"Approval reseal live drift: {path}")
+                v.exact(artifact(path, live), artifact(path, expected_live), f"Approval reseal live drift: {path}")
         blobs[path] = data
 
     package_data = (FRONTEND / "package.json").read_bytes()
@@ -1599,6 +1635,8 @@ def people_receipt(v: V, path: Path, size: int, sha256: str) -> dict[str, Any]:
 
 def people_rebase_successor(
     v: V, authoring: bool = False,
+    successor_blobs: dict[str, bytes] | None = None,
+    successor_authoring: bool = False,
 ) -> dict[str, Any] | None:
     v.exact(
         text(FRONTEND, "rev-parse", f"{PEOPLE_BASE}^{{tree}}"),
@@ -1648,7 +1686,12 @@ def people_rebase_successor(
             ancestor(FRONTEND, commit, head) and ancestor(FRONTEND, commit, origin),
             "People integration authority carrier is not in force",
         )
-        v.exact(changes(FRONTEND), set(), "frontend dirty after People integration")
+        if successor_authoring:
+            v.exact(text(FRONTEND, "branch", "--show-current"), PEOPLE_CORRECTION_BRANCH, "People validator correction branch")
+            v.exact(head, PEOPLE_MERGE_COMMIT, "People validator correction base")
+            v.exact(changes(FRONTEND), PEOPLE_CORRECTION_PATHS, "People validator correction paths")
+        else:
+            v.exact(changes(FRONTEND), set(), "frontend dirty after People integration")
 
     blobs: dict[str, bytes] = {}
     for path in [PEOPLE_AUTHORITY, PEOPLE_REVIEW, *PEOPLE_VALIDATORS]:
@@ -1663,7 +1706,8 @@ def people_rebase_successor(
             data = blob(FRONTEND, commit, path)
             v.require(data is not None, f"People carrier artifact missing: {path}")
             data = data or b""
-            v.exact(artifact(path, live), artifact(path, data), f"People live drift: {path}")
+            expected_live = (successor_blobs or {}).get(path, data)
+            v.exact(artifact(path, live), artifact(path, expected_live), f"People live drift: {path}")
         blobs[path] = data
 
     package_data = (FRONTEND / "package.json").read_bytes()
@@ -1880,7 +1924,7 @@ def people_rebase_successor(
             governed = blob(FRONTEND, PEOPLE_GOVERNANCE_COMMIT, path)
             v.require(merged is not None and governed is not None, f"People governance merge blob missing: {path}")
             v.exact(merged, governed, f"People governance merge blob drift: {path}")
-        expected = git(
+        expected = run(
             FRONTEND, "merge-tree", "--write-tree", "--no-messages",
             commit, PEOPLE_GOVERNANCE_COMMIT, check=False,
         )
@@ -1901,9 +1945,282 @@ def people_rebase_successor(
 
 
 
+def expected_people_validator_correction_authority() -> dict[str, Any]:
+    return {
+        "schema": "dwp.hris.wave7.hrm013-people-validator-lifecycle-correction-authority.v1",
+        "state": "INDEPENDENTLY_REVIEWED_HASH_BOUND_EXACT_SIX_PATH_PEOPLE_VALIDATOR_LIFECYCLE_CORRECTION",
+        "sliceId": "BASE-TFR-HRM-013",
+        "lane": "FRONTEND_PEOPLE_VALIDATOR_LIFECYCLE_CORRECTION",
+        "carrier": {
+            "repository": "dwp-frontend",
+            "branch": PEOPLE_CORRECTION_BRANCH,
+            "baseCommit": PEOPLE_MERGE_COMMIT,
+            "baseTree": PEOPLE_MERGE_TREE,
+            "requiredDirectChild": True,
+            "exactChangedPathCount": 6,
+            "exactChangedPaths": [
+                *PEOPLE_CORRECTION_VALIDATORS,
+                PEOPLE_CORRECTION_AUTHORITY,
+                PEOPLE_CORRECTION_REVIEW,
+            ],
+        },
+        "predecessor": {
+            "peopleIntegrationCarrier": {
+                "commit": PEOPLE_CARRIER_COMMIT,
+                "parent": PEOPLE_BASE,
+                "tree": PEOPLE_CARRIER_TREE,
+                "exactChangedPathCount": 12,
+                "authorityPin": PEOPLE_AUTHORITY_PIN,
+                "reviewPin": {
+                    "path": PEOPLE_REVIEW, "bytes": 6589,
+                    "sha256": "ae229fab6fca6dc45734a8ef44cf855d69332b3046e38b38d621e737fe91cd84",
+                },
+            },
+            "governanceMerge": {
+                "commit": PEOPLE_MERGE_COMMIT,
+                "tree": PEOPLE_MERGE_TREE,
+                "orderedParents": [PEOPLE_CARRIER_COMMIT, PEOPLE_GOVERNANCE_COMMIT],
+                "exactFirstParentChangedPaths": [
+                    PEOPLE_GOVERNANCE_AUTHORITY, PEOPLE_GOVERNANCE_REVIEW,
+                ],
+                "governanceCarrier": {
+                    "commit": PEOPLE_GOVERNANCE_COMMIT,
+                    "parent": PEOPLE_GOVERNANCE_PARENT,
+                    "tree": PEOPLE_GOVERNANCE_TREE,
+                    "authorityPin": {
+                        "path": PEOPLE_GOVERNANCE_AUTHORITY, "bytes": 9928,
+                        "sha256": "01b59c84d3ebedaa0081ac321432724128bf0ef3ea5f7eb8077ebf77f5faa05b",
+                    },
+                    "reviewPin": {
+                        "path": PEOPLE_GOVERNANCE_REVIEW, "bytes": 2187,
+                        "sha256": "849416fbf4ec8664ae8c999007be755a14e58158a10a0509d869fa14995eba42",
+                    },
+                },
+                "governanceReceiptPin": {
+                    "path": str(RECEIPTS / "backend-descendants" / f"{PEOPLE_BACKEND_COMMIT}.hrm013-shared-contract-governance.v1.json"),
+                    "mode": "0600", "bytes": 10313,
+                    "sha256": "51a0f53b0333c4a998a91c6a1e8eef3034cb5411af8cd640201c422010ef306f",
+                },
+            },
+            "backendLifecycle": {
+                "allowedDwpDevCommits": [PEOPLE_BACKEND_BASE, PEOPLE_BACKEND_COMMIT],
+                "successorCommit": PEOPLE_BACKEND_COMMIT,
+                "successorParent": PEOPLE_BACKEND_BASE,
+                "successorTree": PEOPLE_BACKEND_TREE,
+                "targetedVerificationReceiptPin": {
+                    "path": str(RECEIPTS / "people-owner-runtime-post-rebase-targeted-verification-receipt.v1.json"),
+                    "mode": "0600", "bytes": 7063,
+                    "sha256": "d9768f87e11b6bfa516f79ed20423d33af7cfd5bd58aa059dd9d4d0c69c57881",
+                },
+                "independentReviewReceiptPin": {
+                    "path": str(RECEIPTS / "people-owner-runtime-post-rebase-independent-review.v1.json"),
+                    "mode": "0600", "bytes": 7184,
+                    "sha256": "52bd5980120e9c2c19df94ed8fc53eaf607687f426c69d4579fc8b4bd3648d38",
+                },
+            },
+            "packagePin": RESEAL_PACKAGE_PIN,
+        },
+        "correction": {
+            "modifiedValidatorPaths": PEOPLE_CORRECTION_VALIDATORS,
+            "effectiveValidatorBlobPrecedence": [
+                "EXACT_PEOPLE_VALIDATOR_CORRECTION_CARRIER",
+                "EXACT_C8CB2900_PEOPLE_INTEGRATION_CARRIER",
+                "EXACT_91B47DDA_APPROVAL_RESEAL_STATE",
+                "HISTORICAL_VALIDATOR_INTRODUCTION",
+            ],
+            "nestedApprovalResealComparisonsUseEffectiveMapping": True,
+            "peopleIntegrationComparisonsUseEffectiveMapping": True,
+            "lifecycleAndHardeningComparisonsUseEffectiveMapping": True,
+            "historicalAuthorityReviewTokenBlobsRemainPinned": True,
+            "packageUnchanged": True,
+            "currentContractCommandCount": 18,
+            "governingValidatorPath": LIFECYCLE_CORRECTION_VALIDATOR,
+        },
+        "authority": {
+            "independentReviewComplete": True,
+            "exactSixPathCarrierCommitAndPushAuthorized": True,
+            "frontendDwpDevDirectFastForwardToExactCarrierAuthorized": True,
+            "currentContractChainRevalidationAuthorized": True,
+            "existingPeopleBackendFastForwardAuthorizedAfterCorrectionClosure": True,
+            "newBackendIntegrationAuthorityGranted": False,
+            "additionalSourceOrTestChangeAuthorized": False,
+            "featureActivationAuthorized": False,
+            "tenantEnrollmentAuthorized": False,
+            "runtimeCredentialProvisioningAuthorized": False,
+            "productionReleaseAuthorized": False,
+            "businessCompletionCredit": 0,
+        },
+        "next": "RERUN_CURRENT_CONTRACT_CHAIN_THEN_CONTINUE_ONLY_UNDER_EXISTING_PEOPLE_BACKEND_FAST_FORWARD_AUTHORITY",
+    }
+
+
+def people_validator_correction(v: V, authoring: bool) -> dict[str, Any]:
+    v.exact(text(FRONTEND, "rev-parse", f"{PEOPLE_MERGE_COMMIT}^{{tree}}"), PEOPLE_MERGE_TREE, "People correction base tree")
+    v.exact(
+        text(FRONTEND, "rev-list", "--parents", "-n", "1", PEOPLE_MERGE_COMMIT).split(),
+        [PEOPLE_MERGE_COMMIT, PEOPLE_CARRIER_COMMIT, PEOPLE_GOVERNANCE_COMMIT],
+        "People correction base ordered parents",
+    )
+    v.exact(text(FRONTEND, "rev-parse", f"{PEOPLE_CARRIER_COMMIT}^{{tree}}"), PEOPLE_CARRIER_TREE, "People carrier tree")
+    v.exact(
+        text(FRONTEND, "rev-list", "--parents", "-n", "1", PEOPLE_CARRIER_COMMIT).split(),
+        [PEOPLE_CARRIER_COMMIT, PEOPLE_BASE], "People carrier direct parent",
+    )
+    v.exact(between(FRONTEND, PEOPLE_BASE, PEOPLE_CARRIER_COMMIT), PEOPLE_PATHS, "People carrier exact paths")
+    governance_paths = {PEOPLE_GOVERNANCE_AUTHORITY, PEOPLE_GOVERNANCE_REVIEW}
+    v.exact(between(FRONTEND, PEOPLE_CARRIER_COMMIT, PEOPLE_MERGE_COMMIT), governance_paths, "People merge exact first-parent paths")
+    for path in governance_paths:
+        v.exact(mode(FRONTEND, PEOPLE_MERGE_COMMIT, path), "100644", f"People merge mode: {path}")
+        v.exact(blob(FRONTEND, PEOPLE_MERGE_COMMIT, path), blob(FRONTEND, PEOPLE_GOVERNANCE_COMMIT, path), f"People merge blob: {path}")
+
+    if authoring:
+        v.exact(text(FRONTEND, "branch", "--show-current"), PEOPLE_CORRECTION_BRANCH, "People correction branch")
+        v.exact(text(FRONTEND, "rev-parse", "HEAD"), PEOPLE_MERGE_COMMIT, "People correction authoring head")
+        v.exact(text(FRONTEND, "rev-parse", "origin/dwp-dev"), PEOPLE_MERGE_COMMIT, "People correction authoring origin")
+        v.exact(changes(FRONTEND), PEOPLE_CORRECTION_PATHS, "People correction authoring paths")
+        commit = None
+    else:
+        introductions: list[str] = []
+        for path in (PEOPLE_CORRECTION_AUTHORITY, PEOPLE_CORRECTION_REVIEW):
+            found = [line for line in text(FRONTEND, "log", "--diff-filter=A", "--format=%H", "--", path).splitlines() if line]
+            v.exact(len(found), 1, f"People correction introduction count: {path}")
+            introductions.extend(found)
+        v.exact(len(set(introductions)), 1, "People correction authority/review introduced separately")
+        commit = introductions[0] if introductions else ""
+        v.exact(text(FRONTEND, "rev-list", "--parents", "-n", "1", commit).split(), [commit, PEOPLE_MERGE_COMMIT], "People correction is not exact direct child")
+        v.exact(between(FRONTEND, PEOPLE_MERGE_COMMIT, commit), PEOPLE_CORRECTION_PATHS, "People correction exact paths")
+        v.exact(text(FRONTEND, "rev-parse", f"origin/{PEOPLE_CORRECTION_BRANCH}"), commit, "People correction remote branch")
+        head = text(FRONTEND, "rev-parse", "HEAD")
+        origin = text(FRONTEND, "rev-parse", "origin/dwp-dev")
+        v.exact(head, origin, "People correction HEAD/origin drift")
+        v.require(ancestor(FRONTEND, commit, head) and ancestor(FRONTEND, commit, origin), "People correction not on pushed dwp-dev")
+        v.exact(changes(FRONTEND), set(), "frontend dirty after People correction")
+
+    blobs: dict[str, bytes] = {}
+    for path in [PEOPLE_CORRECTION_AUTHORITY, PEOPLE_CORRECTION_REVIEW, *PEOPLE_CORRECTION_VALIDATORS]:
+        candidate = FRONTEND / path
+        v.require(candidate.is_file() and not candidate.is_symlink(), f"People correction artifact missing/symlinked: {path}")
+        v.exact(stat.S_IMODE(candidate.stat().st_mode), 0o644, f"People correction live mode: {path}")
+        if commit is None:
+            data = candidate.read_bytes()
+        else:
+            v.exact(mode(FRONTEND, commit, path), "100644", f"People correction carrier mode: {path}")
+            v.exact(mode(FRONTEND, text(FRONTEND, "rev-parse", "HEAD"), path), "100644", f"People correction HEAD mode: {path}")
+            data = blob(FRONTEND, commit, path)
+            v.require(data is not None, f"People correction carrier blob missing: {path}")
+            data = data or b""
+            v.exact(artifact(path, candidate.read_bytes()), artifact(path, data), f"People correction live drift: {path}")
+        blobs[path] = data
+
+    package_path = FRONTEND / "package.json"
+    v.require(package_path.is_file() and not package_path.is_symlink(), "People correction package missing/symlinked")
+    v.exact(stat.S_IMODE(package_path.stat().st_mode), 0o644, "People correction package live mode")
+    package_data = package_path.read_bytes()
+    base_package = blob(FRONTEND, PEOPLE_MERGE_COMMIT, "package.json")
+    v.require(base_package is not None, "People correction base package missing")
+    v.exact(package_data, base_package or b"", "People correction package changed")
+    v.exact(artifact("package.json", package_data), RESEAL_PACKAGE_PIN, "People correction package pin")
+    package = load_json(package_data, "People correction package")
+    scripts = package.get("scripts")
+    v.require(isinstance(scripts, dict), "People correction scripts missing")
+    command = scripts.get("hris:current-contracts:check") if isinstance(scripts, dict) else None
+    v.require(isinstance(command, str), "People correction chain missing")
+    if isinstance(scripts, dict):
+        v.require("prehris:current-contracts:check" not in scripts, "People correction npm pre-hook")
+        v.require("posthris:current-contracts:check" not in scripts, "People correction npm post-hook")
+    if isinstance(command, str):
+        matches = [re.fullmatch(r"python3 (docs/06-delivery/hris/[A-Za-z0-9._/-]+/validate_[A-Za-z0-9_]+\.py)", item) for item in command.split(" && ")]
+        v.require(all(matches), "People correction chain contains non-validator command")
+        paths = [match.group(1) for match in matches if match]
+        v.exact(len(paths), 18, "People correction command count")
+        v.exact(len(paths), len(set(paths)), "People correction duplicate command")
+        v.exact(paths[-1], LIFECYCLE_CORRECTION_VALIDATOR, "People correction governing validator order")
+
+    for path, expected in {
+        PEOPLE_AUTHORITY: PEOPLE_AUTHORITY_PIN,
+        PEOPLE_REVIEW: {"path": PEOPLE_REVIEW, "bytes": 6589, "sha256": "ae229fab6fca6dc45734a8ef44cf855d69332b3046e38b38d621e737fe91cd84"},
+    }.items():
+        data = blob(FRONTEND, PEOPLE_CARRIER_COMMIT, path)
+        v.require(data is not None, f"People predecessor artifact missing: {path}")
+        v.exact(artifact(path, data or b""), expected, f"People predecessor pin: {path}")
+    for path, expected in {
+        PEOPLE_GOVERNANCE_AUTHORITY: {"path": PEOPLE_GOVERNANCE_AUTHORITY, "bytes": 9928, "sha256": "01b59c84d3ebedaa0081ac321432724128bf0ef3ea5f7eb8077ebf77f5faa05b"},
+        PEOPLE_GOVERNANCE_REVIEW: {"path": PEOPLE_GOVERNANCE_REVIEW, "bytes": 2187, "sha256": "849416fbf4ec8664ae8c999007be755a14e58158a10a0509d869fa14995eba42"},
+    }.items():
+        data = blob(FRONTEND, PEOPLE_GOVERNANCE_COMMIT, path)
+        v.require(data is not None, f"People governance artifact missing: {path}")
+        v.exact(artifact(path, data or b""), expected, f"People governance pin: {path}")
+    governance_receipt = people_receipt(v, RECEIPTS / "backend-descendants" / f"{PEOPLE_BACKEND_COMMIT}.hrm013-shared-contract-governance.v1.json", 10313, "51a0f53b0333c4a998a91c6a1e8eef3034cb5411af8cd640201c422010ef306f")
+    targeted = people_receipt(v, RECEIPTS / "people-owner-runtime-post-rebase-targeted-verification-receipt.v1.json", 7063, "d9768f87e11b6bfa516f79ed20423d33af7cfd5bd58aa059dd9d4d0c69c57881")
+    post = people_receipt(v, RECEIPTS / "people-owner-runtime-post-rebase-independent-review.v1.json", 7184, "52bd5980120e9c2c19df94ed8fc53eaf607687f426c69d4579fc8b4bd3648d38")
+    v.exact((governance_receipt.get("descendantCommit"), governance_receipt.get("governingFrontendCarrierCommit")), (PEOPLE_BACKEND_COMMIT, PEOPLE_GOVERNANCE_COMMIT), "People correction governance evidence")
+    v.exact(targeted.get("state"), "EXACT_POST_REBASE_TOKEN_COMPILE_AND_SELECTOR_VERIFICATION_PASS", "People correction targeted evidence")
+    v.exact(post.get("findings"), {"p0": 0, "p1": 0, "p2": 0}, "People correction review evidence")
+
+    v.exact(load_json(blobs[PEOPLE_CORRECTION_AUTHORITY], "People correction authority"), expected_people_validator_correction_authority(), "People correction authority drift")
+    review = load_json(blobs[PEOPLE_CORRECTION_REVIEW], "People correction review")
+    v.exact(set(review), {"schema", "state", "reviewedAt", "reviewer", "scope", "findings", "finalVerdict", "authority", "artifactPins"}, "People correction review key set")
+    v.exact(review.get("schema"), "dwp.hris.wave7.hrm013-people-validator-lifecycle-correction-independent-review.v1", "People correction review schema")
+    v.exact(review.get("state"), "INDEPENDENT_ZERO_FINDING_REVIEW_OF_EXACT_SIX_PATH_PEOPLE_VALIDATOR_LIFECYCLE_CORRECTION", "People correction review state")
+    v.exact(review.get("reviewer"), "INDEPENDENT_HRM013_PEOPLE_VALIDATOR_LIFECYCLE_CORRECTION_REVIEW", "People correction reviewer")
+    v.exact(review.get("scope"), {
+        "authorityPath": PEOPLE_CORRECTION_AUTHORITY,
+        "reviewPath": PEOPLE_CORRECTION_REVIEW,
+        "modifiedValidatorPaths": PEOPLE_CORRECTION_VALIDATORS,
+        "packagePath": "package.json",
+        "reviewedBoundaries": [
+            "EXACT_DIRECT_CHILD_SIX_PATH_CORRECTION_CARRIER",
+            "CORRECTION_OVER_PEOPLE_OVER_RESEAL_OVER_HISTORICAL_BLOB_PRECEDENCE",
+            "EXACT_C8CB2900_PEOPLE_CARRIER_AND_E8DCE612_GOVERNANCE_MERGE",
+            "UNCHANGED_EIGHTEEN_COMMAND_PACKAGE_WITH_EXISTING_FINAL_GOVERNING_VALIDATOR",
+            "EXISTING_PEOPLE_BACKEND_AUTHORITY_ONLY_AND_NO_SOURCE_OR_ACTIVATION_AUTHORITY",
+        ],
+    }, "People correction review scope")
+    v.exact(review.get("findings"), {"p0": [], "p1": [], "p2": []}, "People correction review findings")
+    v.exact(review.get("finalVerdict"), {"p0": 0, "p1": 0, "p2": 0, "decision": "GO_FOR_EXACT_SIX_PATH_PEOPLE_VALIDATOR_LIFECYCLE_CORRECTION_ONLY"}, "People correction review verdict")
+    v.exact(review.get("authority"), {
+        "independentReviewComplete": True,
+        "exactSixPathCarrierCommitAndPushAuthorized": True,
+        "frontendDwpDevFastForwardToExactCarrierAuthorized": True,
+        "currentContractChainRevalidationAuthorized": True,
+        "existingPeopleBackendFastForwardAuthorityPreserved": True,
+        "additionalSourceOrTestChangeAuthorized": False,
+        "featureActivationOrTenantOrCredentialOrProductionAuthority": False,
+        "businessCompletionCredit": 0,
+    }, "People correction review authority")
+    v.exact(review.get("artifactPins"), [
+        artifact(PEOPLE_CORRECTION_AUTHORITY, blobs[PEOPLE_CORRECTION_AUTHORITY]),
+        *[artifact(path, blobs[path]) for path in PEOPLE_CORRECTION_VALIDATORS],
+        artifact("package.json", package_data),
+    ], "People correction review pins")
+    reviewed_at = parse_time(review.get("reviewedAt"), "People correction reviewedAt")
+    evidence_at = parse_time(governance_receipt.get("recordedAt"), "People governance recordedAt")
+    v.require(evidence_at <= reviewed_at <= datetime.now(timezone.utc) + timedelta(minutes=5), "People correction review causal order")
+    if commit is None:
+        latest = max(datetime.fromtimestamp(int((FRONTEND / path).stat().st_mtime), timezone.utc) for path in [PEOPLE_CORRECTION_AUTHORITY, *PEOPLE_CORRECTION_VALIDATORS, "package.json"])
+        v.require(latest <= reviewed_at, "People correction review predates authoring snapshot")
+    else:
+        committed_at = parse_time(text(FRONTEND, "show", "-s", "--format=%cI", commit), "People correction committedAt")
+        v.require(reviewed_at <= committed_at, "People correction review follows carrier commit")
+
+    v.exact(text(BACKEND, "branch", "--show-current"), "dwp-dev", "People correction backend branch")
+    backend_head = text(BACKEND, "rev-parse", "HEAD")
+    v.exact(backend_head, text(BACKEND, "rev-parse", "origin/dwp-dev"), "People correction backend HEAD/origin drift")
+    v.require(not changes(BACKEND), "People correction backend dirty")
+    v.require(backend_head in {PEOPLE_BACKEND_BASE, PEOPLE_BACKEND_COMMIT}, "People correction backend outside allowed lifecycle")
+    state = "PEOPLE_VALIDATOR_LIFECYCLE_CORRECTION_READY_TO_COMMIT_AND_PUSH" if authoring else (
+        "PEOPLE_VALIDATOR_LIFECYCLE_CORRECTION_IN_FORCE_READY_FOR_EXISTING_AUTHORIZED_BACKEND_FF"
+        if backend_head == PEOPLE_BACKEND_BASE
+        else "PEOPLE_VALIDATOR_LIFECYCLE_CORRECTION_IN_FORCE_BACKEND_INTEGRATED"
+    )
+    return {"commit": commit, "blobs": blobs, "state": state}
+
+
+
+
 def lifecycle_correction(
     v: V, authoring: bool = False, reseal_authoring: bool = False,
-    people_authoring: bool = False,
+    people_authoring: bool = False, people_correction_authoring: bool = False,
 ) -> dict[str, Any]:
     v.exact(
         text(FRONTEND, "rev-parse", f"{LIFECYCLE_CORRECTION_BASE}^{{tree}}"),
@@ -1979,6 +2296,11 @@ def lifecycle_correction(
             v.exact(text(FRONTEND, "branch", "--show-current"), RESEAL_BRANCH, "Approval reseal branch")
             v.exact(head, RESEAL_BASE, "Approval reseal base during lifecycle validation")
             v.exact(changes(FRONTEND), RESEAL_PATHS, "Approval reseal paths during lifecycle validation")
+        elif people_correction_authoring:
+            v.exact(text(FRONTEND, "branch", "--show-current"), PEOPLE_CORRECTION_BRANCH, "People correction branch during lifecycle validation")
+            v.exact(head, PEOPLE_MERGE_COMMIT, "People correction base during lifecycle validation")
+            v.exact(origin, PEOPLE_MERGE_COMMIT, "People correction origin during lifecycle validation")
+            v.exact(changes(FRONTEND), PEOPLE_CORRECTION_PATHS, "People correction paths during lifecycle validation")
         elif people_authoring:
             v.exact(text(FRONTEND, "branch", "--show-current"), PEOPLE_BRANCH, "People integration branch")
             v.exact(head, PEOPLE_BASE, "People integration base during lifecycle validation")
@@ -1987,14 +2309,25 @@ def lifecycle_correction(
             v.exact(head, origin, "frontend HEAD/origin drift after lifecycle correction")
             v.exact(changes(FRONTEND), set(), "frontend dirty after lifecycle correction")
 
-    reseal = None if authoring else approval_reseal_successor(
-        v, reseal_authoring, people_authoring=people_authoring,
-    )
-    reseal_blobs = {} if reseal is None else reseal["blobs"]
+    people_correction = None
+    if people_correction_authoring:
+        people_correction = people_validator_correction(v, True)
+    elif not (authoring or reseal_authoring or people_authoring):
+        people_correction = people_validator_correction(v, False)
+    people_correction_blobs = {} if people_correction is None else people_correction["blobs"]
+
     people = None if authoring or reseal_authoring else people_rebase_successor(
-        v, people_authoring,
+        v, people_authoring, successor_blobs=people_correction_blobs,
+        successor_authoring=people_correction_authoring,
     )
     people_blobs = {} if people is None else people["blobs"]
+    effective_successor_blobs = {**people_blobs, **people_correction_blobs}
+    reseal = None if authoring else approval_reseal_successor(
+        v, reseal_authoring, people_authoring=people_authoring,
+        successor_blobs=effective_successor_blobs,
+        successor_authoring=people_correction_authoring,
+    )
+    reseal_blobs = {} if reseal is None else reseal["blobs"]
 
     blobs: dict[str, bytes] = {}
     for path in [
@@ -2016,7 +2349,9 @@ def lifecycle_correction(
             data = data or b""
             v.exact(mode(FRONTEND, text(FRONTEND, "rev-parse", "HEAD"), path), "100644", f"current correction mode: {path}")
             v.require(symlink_free(FRONTEND, path), f"current correction artifact symlinked: {path}")
-            expected_live = people_blobs.get(path, reseal_blobs.get(path, data))
+            expected_live = people_correction_blobs.get(
+                path, people_blobs.get(path, reseal_blobs.get(path, data)),
+            )
             v.exact(
                 artifact(path, (FRONTEND / path).read_bytes()),
                 artifact(path, expected_live),
@@ -2160,6 +2495,9 @@ def lifecycle_correction(
     }, **{
         path: data for path, data in people_blobs.items()
         if path in [*LIFECYCLE_VALIDATORS, LIFECYCLE_CORRECTION_VALIDATOR]
+    }, **{
+        path: data for path, data in people_correction_blobs.items()
+        if path in [*LIFECYCLE_VALIDATORS, LIFECYCLE_CORRECTION_VALIDATOR]
     }}
     return {
         "commit": commit,
@@ -2175,18 +2513,29 @@ def main() -> int:
     parser.add_argument("--lifecycle-correction-authoring", action="store_true")
     parser.add_argument("--approval-reseal-authoring", action="store_true")
     parser.add_argument("--people-rebase-authoring", action="store_true")
+    parser.add_argument("--people-validator-lifecycle-authoring", action="store_true")
     parser.add_argument("--require-trusted", action="store_true")
     args = parser.parse_args()
     v = V()
     try:
         v.require(
             sum((
+                args.authoring,
                 args.lifecycle_correction_authoring,
                 args.approval_reseal_authoring,
                 args.people_rebase_authoring,
+                args.people_validator_lifecycle_authoring,
             )) <= 1,
             "correction authoring modes are mutually exclusive",
         )
+        if args.people_validator_lifecycle_authoring:
+            isolated = lifecycle_authoring_runtime(v)
+            lifecycle_correction(v, people_correction_authoring=True)
+            print(
+                "PASS state=PEOPLE_VALIDATOR_LIFECYCLE_CORRECTION_READY_TO_COMMIT_AND_PUSH "
+                f"checks={v.checks} trusted_runtime={'true' if isolated else 'false'}"
+            )
+            return 0
         if args.people_rebase_authoring:
             isolated = lifecycle_authoring_runtime(v)
             lifecycle_correction(v, people_authoring=True)

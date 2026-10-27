@@ -1,0 +1,77 @@
+{
+  "schema": "dwp.hris.wave7.hrm013-people-validator-lifecycle-correction-independent-review.v1",
+  "state": "INDEPENDENT_ZERO_FINDING_REVIEW_OF_EXACT_SIX_PATH_PEOPLE_VALIDATOR_LIFECYCLE_CORRECTION",
+  "reviewedAt": "2026-10-27T02:22:30Z",
+  "reviewer": "INDEPENDENT_HRM013_PEOPLE_VALIDATOR_LIFECYCLE_CORRECTION_REVIEW",
+  "scope": {
+    "authorityPath": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-people-validator-lifecycle-correction-r1/people-validator-lifecycle-correction-authority.v1.json",
+    "reviewPath": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-people-validator-lifecycle-correction-r1/independent-review.v1.json",
+    "modifiedValidatorPaths": [
+      "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-auth-v62-generation-r1/validate_hrm013_auth_v62_generation_authority.py",
+      "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-auth-v62-generation-integration-r1/validate_hrm013_auth_v62_generation_integration.py",
+      "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-auth-v271-authority-r1/validate_hrm013_auth_v271_authority.py",
+      "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-validator-lifecycle-successor-r1/validate_hrm013_validator_lifecycle_successor.py"
+    ],
+    "packagePath": "package.json",
+    "reviewedBoundaries": [
+      "EXACT_DIRECT_CHILD_SIX_PATH_CORRECTION_CARRIER",
+      "CORRECTION_OVER_PEOPLE_OVER_RESEAL_OVER_HISTORICAL_BLOB_PRECEDENCE",
+      "EXACT_C8CB2900_PEOPLE_CARRIER_AND_E8DCE612_GOVERNANCE_MERGE",
+      "UNCHANGED_EIGHTEEN_COMMAND_PACKAGE_WITH_EXISTING_FINAL_GOVERNING_VALIDATOR",
+      "EXISTING_PEOPLE_BACKEND_AUTHORITY_ONLY_AND_NO_SOURCE_OR_ACTIVATION_AUTHORITY"
+    ]
+  },
+  "findings": {
+    "p0": [],
+    "p1": [],
+    "p2": []
+  },
+  "finalVerdict": {
+    "p0": 0,
+    "p1": 0,
+    "p2": 0,
+    "decision": "GO_FOR_EXACT_SIX_PATH_PEOPLE_VALIDATOR_LIFECYCLE_CORRECTION_ONLY"
+  },
+  "authority": {
+    "independentReviewComplete": true,
+    "exactSixPathCarrierCommitAndPushAuthorized": true,
+    "frontendDwpDevFastForwardToExactCarrierAuthorized": true,
+    "currentContractChainRevalidationAuthorized": true,
+    "existingPeopleBackendFastForwardAuthorityPreserved": true,
+    "additionalSourceOrTestChangeAuthorized": false,
+    "featureActivationOrTenantOrCredentialOrProductionAuthority": false,
+    "businessCompletionCredit": 0
+  },
+  "artifactPins": [
+    {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-people-validator-lifecycle-correction-r1/people-validator-lifecycle-correction-authority.v1.json",
+      "bytes": 7682,
+      "sha256": "6d0f0c09ca32621b266cb414bbd6e2d9271bc05d681c415c7d61f51db0225ab6"
+    },
+    {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-auth-v62-generation-r1/validate_hrm013_auth_v62_generation_authority.py",
+      "bytes": 148130,
+      "sha256": "f060da92cc95c02f35ba585da1bad9e642282e28f5449623bb12f6e391e5954d"
+    },
+    {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-auth-v62-generation-integration-r1/validate_hrm013_auth_v62_generation_integration.py",
+      "bytes": 143458,
+      "sha256": "708fe89aa47caba192ae041f295c8627439471869354e7777db33830799f8bc6"
+    },
+    {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-auth-v271-authority-r1/validate_hrm013_auth_v271_authority.py",
+      "bytes": 140756,
+      "sha256": "1b389113a2b383899f2b9b5fcc3a41fdd3756354c202a8a61405f6fadd888a74"
+    },
+    {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-validator-lifecycle-successor-r1/validate_hrm013_validator_lifecycle_successor.py",
+      "bytes": 113569,
+      "sha256": "75ad2f55cf847ea122da5bd7a7dec9277b671269a3c4ffee63f212f5b4c4861c"
+    },
+    {
+      "path": "package.json",
+      "bytes": 16620,
+      "sha256": "2852cdd0cb616ff419479018e9d30d3602d606a9014fbf64e9a40d6b8d889bb6"
+    }
+  ]
+}
