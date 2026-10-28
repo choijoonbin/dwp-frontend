@@ -1,0 +1,34 @@
+{
+  "schema": "dwp.hris.wave7.r7-batch-06-pay005-backend-integration-rebase-independent-review.v1",
+  "reviewId": "HRIS-WAVE7-R7-BATCH-06-PAY005-BACKEND-REBASE-REVIEW-20261028-R1",
+  "reviewedAt": "2026-10-28T18:10:00+09:00",
+  "reviewedBy": "INDEPENDENT_PAY005_MERGE_SAFETY_AUDIT",
+  "authorityPin": {
+    "sha256": "fae1ea0621698ad44231ed1fb7c7f87f89ee3856d5de0647b49e6612dc2bc3ab",
+    "bytes": 3094
+  },
+  "validatorPin": {
+    "sha256": "6bef0dc444a006942fc7d3813a438eecffa043b056478aed3c939cc394f20031",
+    "bytes": 2510
+  },
+  "reviewedFacts": [
+    "Backend origin/dwp-dev advanced to exact f89afe10 while PAY-005 remained at exact reviewed 32ae1348; both descend from 95cdefd9.",
+    "The concurrent four-path development-runtime image/tooling delta and the sixteen-path dwp-payroll-server PAY-005 delta have an empty path intersection.",
+    "Read-only merge-tree analysis reports no conflict and predicts exact tree 3ea7866294cfd3bcb2ee950ff8b882f56f6f1317.",
+    "The root build.gradle change affects optional external build directories and reproducible Jar metadata, not dependencies, plugins or PAY-005 test sources.",
+    "Policy explicitly permits reuse of the already sealed PAY-005 parent evidence because the concurrent delta is path-disjoint; no source correction or test rerun is authorized."
+  ],
+  "severityCounts": {
+    "P0": 0,
+    "P1": 0,
+    "P2": 0
+  },
+  "decision": "GO_TO_EXACT_NON_OVERLAPPING_BACKEND_MERGE",
+  "nonClaims": [
+    "The future materialized merge commit was independently compiled or retested.",
+    "The concurrent devctl/runtime-image behavior was tested with PAY-005.",
+    "A later ref movement or dirty default checkout is covered.",
+    "Any activation, tenant enrollment or production admission is authorized."
+  ],
+  "nextAction": "RUN_THE_REBASE_VALIDATOR_ONCE_COMMIT_AND_PUSH_THE_THREE_ARTIFACTS_THEN_MATERIALIZE_THE_EXACT_CLEAN_MERGE"
+}

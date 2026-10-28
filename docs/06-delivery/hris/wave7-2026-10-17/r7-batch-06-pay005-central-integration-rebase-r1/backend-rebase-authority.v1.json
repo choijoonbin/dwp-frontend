@@ -1,0 +1,66 @@
+{
+  "schema": "dwp.hris.wave7.r7-batch-06-pay005-backend-integration-rebase-authority.v1",
+  "authorityId": "HRIS-WAVE7-R7-BATCH-06-PAY005-BACKEND-INTEGRATION-REBASE-20261028-R1",
+  "issuedAt": "2026-10-28T18:10:00+09:00",
+  "issuedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "state": "ACTIVE_EXACT_NON_OVERLAPPING_BACKEND_MERGE_COMMIT_AUTHORIZED",
+  "sliceId": "BASE-TFR-PAY-005",
+  "predecessorAuthority": {
+    "path": "../r7-batch-06-pay005-central-integration-authority-r1/central-integration-authority.v1.json",
+    "sha256": "852dfa727d7493068334a357799c5b72d30e3e6a2c23f7b5e027d7f42f6f6280",
+    "bytes": 4682,
+    "carrierCommit": "2684f08f"
+  },
+  "concurrentBackendAdvance": {
+    "previousBase": "95cdefd98c6fa35b9e2cb4ee737b6cc756c57c22",
+    "currentDwpDev": "f89afe101f1b7d383ad3ac5bf627799dd81e326f",
+    "currentTree": "f809157ba32e0af64eb85cd540755d8b3e13d6a2",
+    "changedPaths": [
+      "build.gradle",
+      "docs/dev-runtime-images.md",
+      "scripts/devctl.py",
+      "scripts/tests/test_devctl_images.py"
+    ],
+    "semanticScope": "DEVELOPMENT_RUNTIME_IMAGE_AND_TOOLING",
+    "authoredByPay005": false
+  },
+  "pay005Module": {
+    "finalCommit": "32ae1348135db9f728a87b5cce3e6bbe01c4b2bb",
+    "finalTree": "811e4a0ac3c2806082bb3969f103f12fec3cf002",
+    "remoteRef": "origin/codex/hris-wave7-batch06-pay005-backend-20261028-r1",
+    "changedPathCount": 16
+  },
+  "mergeProof": {
+    "mergeBase": "95cdefd98c6fa35b9e2cb4ee737b6cc756c57c22",
+    "pathOverlap": [],
+    "overlapCount": 0,
+    "mergeTreeCommand": "git merge-tree --write-tree f89afe101f1b7d383ad3ac5bf627799dd81e326f 32ae1348135db9f728a87b5cce3e6bbe01c4b2bb",
+    "mergeTreeExitCode": 0,
+    "predictedMergedTree": "3ea7866294cfd3bcb2ee950ff8b882f56f6f1317",
+    "sourceConflict": false,
+    "testRerunRequired": false,
+    "reasonNoRerun": "The concurrent delta and reviewed PAY-005 delta have zero path overlap; only merge structure is revalidated."
+  },
+  "integrationWorktree": {
+    "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261028/batch06/pay005/integration-backend",
+    "branch": "codex/hris-wave7-batch06-pay005-backend-central-integration-20261028-r1",
+    "createFrom": "f89afe101f1b7d383ad3ac5bf627799dd81e326f",
+    "mustBeClean": true,
+    "defaultCheckoutDirtyStateIncluded": false
+  },
+  "authority": {
+    "exactNoEditMergeCommitAuthorized": true,
+    "pushMergedCommitToBackendDwpDevAuthorized": true,
+    "sourceConflictResolutionAuthorized": false,
+    "anySourceEditAuthorized": false,
+    "testRerunAuthorizedOrRequired": false,
+    "frontendAuthorityUnchanged": true,
+    "activationOrProductionAuthorityChanged": false
+  },
+  "nonClaims": [
+    "The concurrent runtime-image work belongs to PAY-005 or receives PAY-005 completion credit.",
+    "The dirty Backend default checkout is clean or included in the integration.",
+    "Any route, menu, feature, tenant, legal-rate, provider or production state changes."
+  ],
+  "nextAction": "VALIDATE_COMMIT_AND_PUSH_THIS_SUCCESSOR_THEN_CREATE_THE_CLEAN_WORKTREE_AND_MERGE_THE_TWO_EXACT_COMMITS_WITH_NO_SOURCE_EDIT"
+}
