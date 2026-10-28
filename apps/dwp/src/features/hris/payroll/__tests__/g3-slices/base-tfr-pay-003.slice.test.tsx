@@ -204,7 +204,7 @@ function socialWire(amount = '825000.0000') {
     projectionVersion: '1',
     asOf: '2026-10-19T05:00:00Z',
     variantKey: 'TAX_SOCIAL_INSURANCE',
-    queryState: queryState('PARTIAL', 2),
+    queryState: queryState('PARTIAL', 2, 1),
     items: [
       {
         itemPublicId: ids.workerResult,
@@ -455,7 +455,7 @@ describe('[SLICE:BASE-TFR-PAY-003] statutory insurance contract', () => {
     expect(() => parseStatutoryConfigurationProjection(duplicates)).toThrow(/duplicate/u);
   });
 
-  it('keeps IAQ-048 on workerResultId with two groups, exact missing-tax failure, and no actions', () => {
+  it('keeps the PAY-003 partial IAQ-048 result on workerResultId with exact missing-tax failure and no actions', () => {
     const projection = parseSocialInsuranceProjection(socialWire());
     expect(projection.items[0]).toMatchObject({
       itemPublicId: ids.workerResult,
@@ -466,8 +466,13 @@ describe('[SLICE:BASE-TFR-PAY-003] statutory insurance contract', () => {
       'SOCIAL_INSURANCE',
     ]);
     const complete = structuredClone(socialWire());
-    complete.queryState = queryState('COMPLETE', 2);
-    expect(() => parseSocialInsuranceProjection(complete)).toThrow(/taxProducer/u);
+    complete.queryState = queryState('COMPLETE', 2, 1);
+    complete.queryState.nextCursor = null;
+    complete.queryState.partialFailures = [];
+    expect(parseSocialInsuranceProjection(complete).queryState.state).toBe('COMPLETE');
+    const inconsistent = structuredClone(socialWire());
+    inconsistent.queryState = queryState('COMPLETE', 2);
+    expect(() => parseSocialInsuranceProjection(inconsistent)).toThrow();
     const action = structuredClone(socialWire());
     (action.items[0]!.availableActions as unknown[]).push(
       structuredClone(settingsWire().items[0]!.availableActions[0]!)
@@ -480,7 +485,8 @@ describe('[SLICE:BASE-TFR-PAY-003] statutory insurance contract', () => {
       decision: 'VIEW',
       value: { amount: '1.0000', currency: 'KRW' },
     };
-    expect(() => parseSocialInsuranceProjection(tax)).toThrow();
+    tax.queryState.fieldDecisionSummary.viewCount = 3;
+    expect(() => parseSocialInsuranceProjection(tax)).toThrow(/taxProducer/u);
   });
 
   it('enforces canonical identifiers, PostedMoney NUMERIC(19,4), and positive receipt revisions', () => {
@@ -746,7 +752,7 @@ describe('[SLICE:BASE-TFR-PAY-003] statutory insurance contract', () => {
     expect(operationsRead).toHaveBeenCalledOnce();
     expect(button('Activate country pack')).not.toBeNull();
     const operations = document.querySelector('[data-testid="pay003-operations-workbench"]');
-    expect(operations?.textContent).toContain('Tax producer not yet available');
+    expect(operations?.textContent).toContain('Some payroll result evidence is unavailable');
     expect(operations?.textContent).not.toContain('Activate country pack');
     expect(operations?.textContent).not.toContain(ids.pack);
     expect(document.body.textContent).toContain('대한민국 사회보험 공식 패키지');

@@ -55,7 +55,7 @@ export const SOCIAL_INSURANCE_ENTRY_QUERY = Object.freeze({
   routeContractKey: SOCIAL_INSURANCE_DATA_ROUTE_CONTRACT_KEY,
   purpose: 'PAYROLL_OPERATIONS',
   pageLimit: 100,
-  fieldGroups: Object.freeze(['SOCIAL_INSURANCE', 'POLICY_VERSION'] as const),
+  fieldGroups: Object.freeze(['TAX_RESULT', 'SOCIAL_INSURANCE', 'POLICY_VERSION'] as const),
 });
 
 export const COUNTRY_PACK_ACTIVATE_ACTION_KEY = 'hris.action.pay.country.pack.activate' as const;
@@ -146,6 +146,7 @@ export type SocialInsuranceItem = Readonly<{
   title: string;
   statusCode: string;
   fieldGroups: Readonly<{
+    TAX_RESULT?: FieldDecision<PostedMoney>;
     SOCIAL_INSURANCE?: FieldDecision<PostedMoney>;
     POLICY_VERSION?: FieldDecision<PolicyValue>;
   }>;
@@ -704,7 +705,10 @@ export function parseSocialInsuranceProjection(value: unknown): SocialInsuranceP
     return invalid('projection.identity');
   }
   const state = queryState(source.queryState);
-  if (!Array.isArray(source.items) || source.items.length > SOCIAL_INSURANCE_ENTRY_QUERY.pageLimit) {
+  if (
+    !Array.isArray(source.items) ||
+    source.items.length > SOCIAL_INSURANCE_ENTRY_QUERY.pageLimit
+  ) {
     return invalid('items');
   }
   const items = source.items.map((entry, index): SocialInsuranceItem => {
@@ -726,6 +730,11 @@ export function parseSocialInsuranceProjection(value: unknown): SocialInsuranceP
     );
     if (Object.keys(groups).length === 0) return invalid(`${path}.fieldGroups`);
     const fieldGroups: SocialInsuranceItem['fieldGroups'] = Object.freeze({
+      ...(groups.TAX_RESULT === undefined
+        ? {}
+        : {
+            TAX_RESULT: fieldDecision(groups.TAX_RESULT, `${path}.fieldGroups.TAX_RESULT`, money),
+          }),
       ...(groups.SOCIAL_INSURANCE === undefined
         ? {}
         : {
@@ -763,18 +772,30 @@ export function parseSocialInsuranceProjection(value: unknown): SocialInsuranceP
   });
   assertUniqueItemPublicIds(items);
   assertCardinality(state, items.length);
-  if (items.length > 0) {
-    const [taxFailure] = state.partialFailures;
+  const taxComponentFailures = state.partialFailures.filter(
+    (failure) => failure.componentKey === MISSING_TAX_PRODUCER_COMPONENT
+  );
+  if (taxComponentFailures.length > 0) {
+    const [taxFailure] = taxComponentFailures;
     if (
       state.state !== 'PARTIAL' ||
-      state.partialFailures.length !== 1 ||
-      taxFailure?.componentKey !== MISSING_TAX_PRODUCER_COMPONENT ||
+      taxComponentFailures.length !== 1 ||
       taxFailure.errorCode !== MISSING_TAX_PRODUCER_ERROR ||
       taxFailure.retryable !== true ||
-      taxFailure.correlationId !== state.correlationId
+      taxFailure.correlationId !== state.correlationId ||
+      items.every((item) => item.fieldGroups.TAX_RESULT !== undefined)
     ) {
       return invalid('queryState.partialFailures.taxProducer');
     }
+  }
+  if (
+    items.length > 0 &&
+    state.state === 'PARTIAL' &&
+    items.every((item) => item.fieldGroups.TAX_RESULT === undefined) &&
+    state.fieldDecisionSummary.omittedCount === 0 &&
+    taxComponentFailures.length === 0
+  ) {
+    return invalid('queryState.partialFailures.taxProducer');
   }
   assertFieldDecisionSummary(
     state,
