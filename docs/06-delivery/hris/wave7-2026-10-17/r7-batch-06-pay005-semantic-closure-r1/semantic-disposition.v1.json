@@ -1,0 +1,128 @@
+{
+  "schema": "dwp.hris.wave7.r7-batch-06-pay005-semantic-disposition.v1",
+  "dispositionId": "HRIS-WAVE7-R7-BATCH-06-BASE-TFR-PAY-005-SEMANTIC-DISPOSITION-20261028-R1",
+  "recordedAt": "2026-10-28T17:20:00+09:00",
+  "recordedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "state": "PAY005_TYPED_TAX_RESULT_AND_IAQ048_CONTRIBUTION_SEALED_EXACT_PACKET_REQUIRED_SOURCE_NO_GO",
+  "sliceId": "BASE-TFR-PAY-005",
+  "sourceRef": "TFR-PAY-005",
+  "module": "PAY",
+  "moduleSession": "HRIS-PAY",
+  "boundedContext": "PAYROLL_STATUTORY",
+  "semanticLineage": "TFR-PAY-005::PAY-KR-TAX::PEP-PAY-028|PEP-PAY-012|PEP-PAY-014|EVT-PAY:PayrollCalculated",
+  "predecessorPins": {
+    "sequencingExit": {
+      "path": "../r7-batch-06-hrm013-sequencing-exit-r1/sequencing-exit-receipt.v1.json",
+      "sha256": "4fe3633943aa54af13630e0b3cc14c0a2f280798af1b87b85ff5584b3a40d256",
+      "bytes": 5245,
+      "carrierCommit": "a892ff834786f787484fbca4dde485e949d07a03",
+      "carrierTree": "ac355646eb9e489081b82861ce1bf1b849f9e5b0"
+    },
+    "batch06Preflight": {
+      "path": "../r7-batch-06-preflight-r1/semantic-dependency-migration-preflight.v1.json",
+      "sha256": "33d95637c2887bfae43b2369370662c3a0d06d8e0420df05c868299da2b752dd",
+      "bytes": 58498,
+      "sourceFamilySha256": "e8fbf7b7340bc32a3fbadfec536a6ca5a6622da1bf7027702967f0b08fcd8677",
+      "sourceRowCount": 16
+    }
+  },
+  "dependencySnapshot": [
+    {"id": "DEP-001", "status": "READY", "contract": "HRIS_APP_ENTITLEMENT_AND_ACCESS_PACKAGE_V1"},
+    {"id": "DEP-002", "status": "READY", "contract": "EFFECTIVE_PERMISSION_SCOPE_FIELD_REVISION_V1"},
+    {"id": "DEP-003", "status": "READY", "contract": "EVENT_ENVELOPE_OUTBOX_INBOX_V1"},
+    {"id": "DEP-016", "status": "READY", "contract": "AUDIT_OUTBOX_EVENT_V1"}
+  ],
+  "exactOwnerDelta": [
+    "An append-only immutable typed TAX_RESULT fact bound to one existing V50 workerResultId.",
+    "A TAX_RESULT field-group contribution to the existing IAQ-048 query on that same workerResultId."
+  ],
+  "reuseOnlyNoRecount": [
+    "BASE-TFR-PAY-003 owns signed country-pack activation, IAQ-026 and the IAQ-048 shell and SOCIAL_INSURANCE projection.",
+    "BASE-TFR-PAY-011 owns generic calculation and PayrollCalculated.v1.",
+    "BASE-TFR-PAY-012 owns immutable result access.",
+    "V50 calculation, result, receipt and outbox structures remain unchanged.",
+    "V53 country-pack snapshot, activation, audit and social-insurance fact structures remain unchanged."
+  ],
+  "entryQuery": {
+    "id": "IAQ-048",
+    "method": "GET",
+    "browserPath": "/api/payroll/v1/workbench/pay-tax-social-insurance",
+    "ownerPath": "/v1/workbench/pay-tax-social-insurance",
+    "canonicalRoute": "/hr/operations/payroll/tax-social-insurance",
+    "variant": "TAX_SOCIAL_INSURANCE",
+    "fieldGroupsInExactOrder": ["TAX_RESULT", "SOCIAL_INSURANCE", "POLICY_VERSION"],
+    "itemIdentity": "workerResultId",
+    "availableActions": [],
+    "states": ["COMPLETE", "EMPTY", "PARTIAL", "UNAVAILABLE"],
+    "zeroValueSemantics": "A present TAX_RESULT of 0.0000 is data and is never producer-missing.",
+    "missingProducerSemantics": "Missing admitted typed tax fact is PRODUCER_UNAVAILABLE and yields deterministic partial completeness without inventing zero.",
+    "stableJoin": "Tax and social facts join only by the exact same tenant, run, attempt and workerResultId."
+  },
+  "typedFact": {
+    "table": "pay_tax_result_facts",
+    "identity": "tenant-first composite identity plus public UUID",
+    "workerLineage": "exact V50 tenant, run, attempt and workerResultId",
+    "packLineage": "exact V53 signed snapshot and ACTIVE activation revision for the same scope and effective date",
+    "money": "NUMERIC(19,4) with explicit currency and application-declared rounding",
+    "sourceReconciliation": "source line public identity, revision and canonical digest",
+    "replay": "same identity and digest is a no-op",
+    "conflict": "same identity with a different digest fails closed",
+    "mutation": "append-only; UPDATE and DELETE forbidden",
+    "genericRelabelForbidden": true
+  },
+  "migrationDisposition": {
+    "preflightCandidateV56Stale": true,
+    "currentHighWater": "V56",
+    "currentV56Path": "dwp-payroll-server/src/main/resources/db/migration/V56__hrm013_payroll_task_dispatch_inbox.sql",
+    "currentV56Sha256": "cef8aa7937cc88eb7db371c11afd179a47e6fdb0b9cc6839f34ef54a673999e8",
+    "currentV56Bytes": 29230,
+    "requiredVersion": "V57",
+    "exactPath": "dwp-payroll-server/src/main/resources/db/migration/V57__pay_base_tfr_pay_005_tax_result.sql",
+    "createExactly": ["pay_tax_result_facts"],
+    "preserveV1ThroughV56ByteForByte": true,
+    "noSeedOrBackfill": true,
+    "leaseState": "NOT_ISSUED_BY_THIS_DISPOSITION"
+  },
+  "forbidden": [
+    "Renaming V50 DEDUCTION or control totals as TAX_RESULT.",
+    "Weakening the V53 SOCIAL_INSURANCE constraint or ownership boundary.",
+    "Changing or re-emitting PayrollCalculated.v1, whose payload stays runId, attemptNo, workerCount, resultDigest and controlTotals.",
+    "Creating a PAY-005 command receipt, generic audit store, outbox or tax-specific event.",
+    "Hardcoding an official legal rate, filing rule, provider credential or tenant-specific policy.",
+    "Mounting a new route or menu, enabling the feature, enrolling a tenant or claiming production readiness."
+  ],
+  "sourceEvidenceBoundary": {
+    "approvedFamilyDigestAndRowCountAvailable": true,
+    "restoredSourceCoverageCsvPresent": false,
+    "claimAllowed": "Use the approved family SHA-256 and sixteen-row semantic successor.",
+    "claimForbidden": "Do not claim that the sixteen original SKKF source rows were directly reread in this execution."
+  },
+  "acceptanceCriteria": [
+    {"id": "PAY005-AC-01", "criterion": "IAQ-048 preserves the accepted method, browser and owner paths, canonical route, TAX_SOCIAL_INSURANCE variant, stable workerResultId and empty availableActions while exposing exactly TAX_RESULT, SOCIAL_INSURANCE and POLICY_VERSION in the sealed order."},
+    {"id": "PAY005-AC-02", "criterion": "The authoritative item set and tax/social union rule are tenant, run, attempt and workerResultId exact; filtering, sorting and cursor behavior remain deterministic."},
+    {"id": "PAY005-AC-03", "criterion": "A real zero tax amount is distinct from missing producer data, and COMPLETE, EMPTY, PARTIAL and UNAVAILABLE completeness and cardinality are deterministic."},
+    {"id": "PAY005-AC-04", "criterion": "Tax filters, sorts and revision-bound cursors use real TAX_RESULT values with stable workerResultId tie-breaking and reject stale scope or authorization revisions."},
+    {"id": "PAY005-AC-05", "criterion": "Trusted tenant, exact population scope, VIEW, MASK and OMIT plus field-decision summaries are enforced before serialization; denied and cross-tenant reads fail closed."},
+    {"id": "PAY005-AC-06", "criterion": "Tax and social facts agree on explicit currency, effective policy period and the exact active signed country-pack revision for the same scope and effective date."},
+    {"id": "PAY005-AC-07", "criterion": "TAX_RESULT facts are append-only and exactly source-line reconciled with canonical digests."},
+    {"id": "PAY005-AC-08", "criterion": "Same-digest replay has no duplicate effect and reuse of the same source identity with a different digest conflicts."},
+    {"id": "PAY005-AC-09", "criterion": "Generic V50 deduction or control totals are never relabeled as TAX_RESULT and V53 SOCIAL_INSURANCE ownership or constraints are not weakened."},
+    {"id": "PAY005-AC-10", "criterion": "PAY-003, PAY-011 and PAY-012 ownership and PayrollCalculated.v1 remain unchanged and are not recounted; PAY-005 creates no command receipt, generic audit table, outbox or tax-specific event."},
+    {"id": "PAY005-AC-11", "criterion": "Payroll V57 creates exactly pay_tax_result_facts, preserves V1 through V56 byte-for-byte, has tenant-first same-tenant identity, least-privilege grants, ENABLE plus FORCE RLS and immutable guards, and passes clean-through-V57 plus V56-to-V57 PostgreSQL validation."},
+    {"id": "PAY005-AC-12", "criterion": "The frontend proves loading, empty, partial, unavailable, denied, stale and complete states, accessibility, responsive widths, themes and feature-OFF zero calls; production activation remains barred before official rate, rounding, filing, statutory-golden and legal-signoff evidence."}
+  ],
+  "verificationPolicy": "RUN_EACH_NEW_TARGET_GROUP_ONCE; AFTER_FAILURE_RERUN_ONLY_THE_SMALLEST_AFFECTED_TARGET; RUN_ONE_BOUNDED_CROSS_CONTRACT_CHECK_AFTER_TARGETS_PASS; NO_REPOSITORY_WIDE_SUITE_PER_CORRECTION",
+  "authority": {
+    "semanticDispositionSealed": true,
+    "exactOwnerPacketMayBePrepared": true,
+    "exclusiveV57LeaseMayBePrepared": true,
+    "worktreeMayBePreparedOnlyAfterPacketCarrierPush": true,
+    "sourceAuthoringAuthorizedByThisDisposition": false,
+    "migrationAuthoringAuthorizedByThisDisposition": false,
+    "testExecutionAuthorizedByThisDisposition": false,
+    "moduleCommitOrPushAuthorizedByThisDisposition": false,
+    "directDwpDevSourceMergeAuthorized": false,
+    "productionActivationAuthorized": false
+  },
+  "nextAction": "INDEPENDENTLY_VALIDATE_AND_COMMIT_THIS_DISPOSITION_THEN_ISSUE_AN_EXACT_OWNER_PACKET_AND_RESERVED_V57_LEASE"
+}

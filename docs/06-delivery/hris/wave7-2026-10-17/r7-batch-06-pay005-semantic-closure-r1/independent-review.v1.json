@@ -1,0 +1,35 @@
+{
+  "schema": "dwp.hris.wave7.r7-batch-06-pay005-semantic-disposition-independent-review.v1",
+  "reviewId": "HRIS-WAVE7-R7-BATCH-06-PAY005-SEMANTIC-REVIEW-20261028-R1",
+  "reviewedAt": "2026-10-28T17:20:00+09:00",
+  "reviewedBy": "INDEPENDENT_PAY005_PREFLIGHT_AUDIT",
+  "dispositionPin": {
+    "sha256": "82caed41a94ea91ec92d0a991dceaee962f4b143eba882b137124913f0abf811",
+    "bytes": 9270
+  },
+  "validatorPin": {
+    "sha256": "b0895cbcfb394f879e0a2be8af7eec2064da1e46ce6f9507648c55661de04cba",
+    "bytes": 2852
+  },
+  "reviewedFacts": [
+    "PAY-005 owns only the immutable typed TAX_RESULT fact and its contribution to existing IAQ-048 on the same workerResultId.",
+    "PAY-003 signed-pack and IAQ-048 shell ownership, PAY-011 generic calculation and PayrollCalculated.v1 ownership and PAY-012 immutable-result ownership remain reuse-only with no completion recount.",
+    "IAQ-048 retains the existing route and capability, exact three field groups, deterministic union semantics and empty actions.",
+    "Zero tax remains distinguishable from producer-missing data.",
+    "The preflight V56 candidate is stale because HRM-013 already occupies V56; V57 is the only eligible next Payroll migration.",
+    "The restored repository does not contain the referenced source-coverage CSV, so this execution relies on the sealed family digest and sixteen-row semantic successor and does not claim direct rereading of the original rows.",
+    "The twelve acceptance criteria cover query semantics, authorization, lineage, immutability, replay, migration controls, targeted regressions and frontend states without authorizing activation."
+  ],
+  "severityCounts": {
+    "P0": 0,
+    "P1": 0,
+    "P2": 0
+  },
+  "decision": "GO_TO_EXACT_PAY005_PACKET_AND_V57_RESERVATION_SOURCE_NO_GO",
+  "nonClaims": [
+    "No PAY-005 source, test or V57 migration was authored or executed by this semantic review.",
+    "No legal rate, filing rule, provider credential, route, menu, feature enablement, tenant enrollment or production binding is admitted.",
+    "PAY-005, Batch-06 and HRIS are not complete."
+  ],
+  "nextAction": "RUN_THE_TARGETED_SEMANTIC_VALIDATOR_ONCE_COMMIT_AND_PUSH_THE_THREE_ARTIFACTS_THEN_ISSUE_THE_EXACT_PACKET_AND_RESERVED_V57_LEASE"
+}
