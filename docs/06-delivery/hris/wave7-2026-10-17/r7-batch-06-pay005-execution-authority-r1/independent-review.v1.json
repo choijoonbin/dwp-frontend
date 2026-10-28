@@ -1,0 +1,39 @@
+{
+  "schema": "dwp.hris.wave7.r7-batch-06-pay005-execution-authority-independent-review.v1",
+  "reviewId": "HRIS-WAVE7-R7-BATCH-06-PAY005-EXECUTION-AUTHORITY-REVIEW-20261028-R1",
+  "reviewedAt": "2026-10-28T17:35:00+09:00",
+  "reviewedBy": "INDEPENDENT_PAY005_AUTHORITY_AUDIT",
+  "packetPin": {
+    "sha256": "fc922ad549c4d72e82f0330a8666d5d8d955ee191ec376c9a583e78a95c0ed2f",
+    "bytes": 11330
+  },
+  "reservationPin": {
+    "sha256": "09271dafb7a67446d73118b8ea1933fe5f8cc2617488f652747cfa56dda40687",
+    "bytes": 4959
+  },
+  "validatorPin": {
+    "sha256": "5eb4d49831a3fc5d7109f129e7073c8aaa622899c41c7b340c5684583e3f90b0",
+    "bytes": 4056
+  },
+  "reviewedFacts": [
+    "The packet pins the current post-refactor shared frontend and backend files rather than the stale preflight hashes.",
+    "The backend committed PAY-005 base is origin-aligned; unrelated uncommitted default-checkout changes are explicitly excluded and will not enter the clean module worktree.",
+    "V56 is occupied by HRM-013 and no V57 exists, so the exact one-table PAY-005 path is exclusively reservable as V57.",
+    "The writable boundary is limited to the typed TAX_RESULT producer, the exact IAQ-048 contribution, the one V57 migration, targeted tests and result evidence.",
+    "Existing PAY-003 route, security and authority, PAY-011 and PAY-012 source, central Auth/Gateway/shell/menu/i18n and the Agent repository remain no-touch.",
+    "The packet contains twelve exact acceptance criteria and prohibits repository-wide reruns per correction.",
+    "This carrier grants only clean worktree materialization; it grants no source, migration, test, module commit or push authority until a later active V57 lease and executable token."
+  ],
+  "severityCounts": {
+    "P0": 0,
+    "P1": 0,
+    "P2": 0
+  },
+  "decision": "GO_TO_CLEAN_PAY005_WORKTREE_MATERIALIZATION_SOURCE_NO_GO",
+  "nonClaims": [
+    "No source, test or migration authoring is authorized by this review alone.",
+    "No direct dwp-dev source merge, route or menu mount, feature enablement, tenant enrollment, legal-rate admission, provider binding or production release is authorized.",
+    "PAY-005, Batch-06 and HRIS are not complete."
+  ],
+  "nextAction": "RUN_THE_TARGETED_AUTHORITY_VALIDATOR_ONCE_COMMIT_AND_PUSH_THE_FOUR_ARTIFACTS_THEN_MATERIALIZE_THE_TWO_EXACT_CLEAN_WORKTREES"
+}

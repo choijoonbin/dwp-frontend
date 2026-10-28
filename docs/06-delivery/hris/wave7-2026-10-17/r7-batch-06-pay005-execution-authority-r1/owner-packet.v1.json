@@ -1,0 +1,178 @@
+{
+  "schema": "dwp.hris.wave7.r7-batch-06-pay005-owner-packet.v1",
+  "packetId": "HRIS-WAVE7-R7-BATCH-06-OWNER-BASE-TFR-PAY-005-20261028-R1",
+  "issuedAt": "2026-10-28T17:35:00+09:00",
+  "issuedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "state": "SEALED_EXACT_PAY005_OWNER_PACKET_WORKTREES_AND_ACTIVE_V57_LEASE_PENDING_SOURCE_NO_GO",
+  "sliceId": "BASE-TFR-PAY-005",
+  "module": "PAY",
+  "moduleSession": "HRIS-PAY",
+  "boundedContext": "PAYROLL_STATUTORY",
+  "immutableAuthorityBasis": {
+    "semanticDisposition": {
+      "path": "../r7-batch-06-pay005-semantic-closure-r1/semantic-disposition.v1.json",
+      "sha256": "82caed41a94ea91ec92d0a991dceaee962f4b143eba882b137124913f0abf811",
+      "bytes": 9270,
+      "carrierCommit": "ae31d9ac6b31a3e8a2788fdf4634f17d6d90685d",
+      "carrierTree": "040d10c286c601ddeac857adaf143c2100969bd6"
+    },
+    "semanticReview": {
+      "path": "../r7-batch-06-pay005-semantic-closure-r1/independent-review.v1.json",
+      "sha256": "76b7d806a74bcef3c91a5507a12094ca9c70848333fb3911398826c9c1c11c30",
+      "bytes": 2243
+    },
+    "v57Reservation": {
+      "path": "migration-lease-v57-reservation.v1.json",
+      "sha256": "09271dafb7a67446d73118b8ea1933fe5f8cc2617488f652747cfa56dda40687",
+      "bytes": 4959,
+      "requiredState": "RESERVED_NOT_ACTIVE"
+    }
+  },
+  "basePins": {
+    "frontend": {
+      "repository": "dwp-frontend",
+      "branch": "dwp-dev",
+      "commit": "ae31d9ac6b31a3e8a2788fdf4634f17d6d90685d",
+      "tree": "040d10c286c601ddeac857adaf143c2100969bd6",
+      "originExactAtIssue": true
+    },
+    "backend": {
+      "repository": "dwp-backend",
+      "branch": "dwp-dev",
+      "commit": "95cdefd98c6fa35b9e2cb4ee737b6cc756c57c22",
+      "tree": "0ac8cfa880db521961f752097d5a403f6c1cba8c",
+      "originExactAtIssue": true,
+      "pay005ScopeClean": true,
+      "defaultCheckoutCleanClaimed": false,
+      "outOfScopeUncommittedPathsExcluded": ["build.gradle", "scripts/devctl.py", "docs/dev-runtime-images.md"]
+    },
+    "agentReadOnly": {
+      "repository": "dwp_agent",
+      "branch": "dwp-dev",
+      "commit": "9beb5439cad065e7d919a98c9f9becb44481508a",
+      "tree": "fe3880719360f4bdeff88bbbac1edc6f8affed88",
+      "writeRequired": false
+    }
+  },
+  "currentSharedFilePins": {
+    "frontend": [
+      {"path": "apps/dwp/src/features/hris/payroll/statutory-insurance/statutory-insurance-contract.ts", "sha256": "2d88a2467d44880fff57f5139505d7ba149e117ae77d7e8f8ebb6198f6839540", "bytes": 31351},
+      {"path": "apps/dwp/src/features/hris/payroll/statutory-insurance/statutory-insurance-copy.ts", "sha256": "8b7f3a8580772ff400a31daf0c2a3285ab59a5ed5328077b783b9ec2420200c7", "bytes": 5355},
+      {"path": "apps/dwp/src/features/hris/payroll/statutory-insurance/statutory-insurance-workbenches.tsx", "sha256": "5b349c82b29ddec6ef5ddf7084a4293b005e2deaaa04d4e3214ef175b95bc8ab", "bytes": 29561},
+      {"path": "apps/dwp/src/features/hris/payroll/__tests__/g3-slices/base-tfr-pay-003.slice.test.tsx", "sha256": "acef722c629a49f1ed357e6117f7f948a2bcaa7ac6b39a2db5779402ff20f4d7", "bytes": 33936}
+    ],
+    "backend": [
+      {"path": "dwp-payroll-server/src/main/java/com/dwp/services/payroll/PayrollDatabaseMigrationConfiguration.java", "sha256": "a4d8977de4f27261e8e064f520ea40f1be90510b5f10c3f9c3faf0861ea4437a", "bytes": 16825},
+      {"path": "dwp-payroll-server/src/main/java/com/dwp/services/payroll/statutory/pay003/Pay003Models.java", "sha256": "d3ba1b9a7332b1ceccfa341d7c7de3bfb320cebe34a5e2cf7e4c6923eb950418", "bytes": 26839},
+      {"path": "dwp-payroll-server/src/main/java/com/dwp/services/payroll/statutory/pay003/Pay003Service.java", "sha256": "277ea16d7c6632016628c8b3b000063af23f7dfc7d932526b94ef2bb67fe899a", "bytes": 24776},
+      {"path": "dwp-payroll-server/src/main/java/com/dwp/services/payroll/statutory/pay003/Pay003Store.java", "sha256": "601f4dabac94eaa91f85b889e588f8817049815f84682e47b31928ebbf3b2fe7", "bytes": 1003},
+      {"path": "dwp-payroll-server/src/main/java/com/dwp/services/payroll/statutory/pay003/JdbcPay003Store.java", "sha256": "f8cddfb16d23c9a0d985347c98f70692552d6d9726bd0f82f42a44792841822c", "bytes": 26559},
+      {"path": "dwp-payroll-server/src/test/java/com/dwp/services/payroll/PayrollServerApplicationContextTest.java", "sha256": "b222be077de13bd0a8d412a1dc6618bc81bd35cd6d6be03ed903194e3f6bb0db", "bytes": 15037},
+      {"path": "dwp-payroll-server/src/test/java/com/dwp/services/payroll/statutory/pay003/Pay003ContractTest.java", "sha256": "b36ecfbf7cb29a53f4ff87642a4f6694cc353cb6519bde9babc10989fdd993e0", "bytes": 33126},
+      {"path": "dwp-payroll-server/src/test/java/com/dwp/services/payroll/statutory/pay003/Pay003ServiceTest.java", "sha256": "51ca9888a2f927e94b9f68b6d816446b6a7eb2f67851382263e013c3bbb9636a", "bytes": 23735},
+      {"path": "dwp-payroll-server/src/test/java/com/dwp/services/payroll/statutory/pay003/Pay003PostgresContractTest.java", "sha256": "e4a64c67d81bc6fc2cdcea83e16bd3f36f0b4a13ddf7c3299ac7ae02965c7d32", "bytes": 45861},
+      {"path": "dwp-payroll-server/src/test/java/com/dwp/services/payroll/statutory/pay003/Pay003TestFixtures.java", "sha256": "271ef45bc1ef60f777ab053aa3a936f576883a009e545f4477271fc0088cfd45", "bytes": 3112}
+    ]
+  },
+  "ownerWritableBoundaryAfterExecutableToken": {
+    "backendCreate": [
+      "dwp-payroll-server/src/main/java/com/dwp/services/payroll/statutory/pay005/Pay005Models.java",
+      "dwp-payroll-server/src/main/java/com/dwp/services/payroll/statutory/pay005/Pay005Canonical.java",
+      "dwp-payroll-server/src/main/java/com/dwp/services/payroll/statutory/pay005/Pay005TaxResultOutcomePublisher.java",
+      "dwp-payroll-server/src/test/java/com/dwp/services/payroll/statutory/pay005/Pay005ContractTest.java",
+      "dwp-payroll-server/src/test/java/com/dwp/services/payroll/statutory/pay005/Pay005PostgresContractTest.java",
+      "dwp-payroll-server/src/test/java/com/dwp/services/payroll/statutory/pay005/Pay005V57MigrationContractTest.java",
+      "dwp-payroll-server/src/test/java/com/dwp/services/payroll/statutory/pay005/Pay005V57MigrationPostgresTest.java",
+      "dwp-payroll-server/src/main/resources/db/migration/V57__pay_base_tfr_pay_005_tax_result.sql"
+    ],
+    "backendModify": [
+      "dwp-payroll-server/src/main/java/com/dwp/services/payroll/PayrollDatabaseMigrationConfiguration.java",
+      "dwp-payroll-server/src/main/java/com/dwp/services/payroll/statutory/pay003/Pay003Models.java",
+      "dwp-payroll-server/src/main/java/com/dwp/services/payroll/statutory/pay003/Pay003Service.java",
+      "dwp-payroll-server/src/main/java/com/dwp/services/payroll/statutory/pay003/Pay003Store.java",
+      "dwp-payroll-server/src/main/java/com/dwp/services/payroll/statutory/pay003/JdbcPay003Store.java",
+      "dwp-payroll-server/src/test/java/com/dwp/services/payroll/PayrollServerApplicationContextTest.java",
+      "dwp-payroll-server/src/test/java/com/dwp/services/payroll/statutory/pay003/Pay003ContractTest.java",
+      "dwp-payroll-server/src/test/java/com/dwp/services/payroll/statutory/pay003/Pay003ServiceTest.java",
+      "dwp-payroll-server/src/test/java/com/dwp/services/payroll/statutory/pay003/Pay003PostgresContractTest.java",
+      "dwp-payroll-server/src/test/java/com/dwp/services/payroll/statutory/pay003/Pay003TestFixtures.java"
+    ],
+    "frontendModify": [
+      "apps/dwp/src/features/hris/payroll/statutory-insurance/statutory-insurance-contract.ts",
+      "apps/dwp/src/features/hris/payroll/statutory-insurance/statutory-insurance-copy.ts",
+      "apps/dwp/src/features/hris/payroll/statutory-insurance/statutory-insurance-workbenches.tsx",
+      "apps/dwp/src/features/hris/payroll/__tests__/g3-slices/base-tfr-pay-003.slice.test.tsx"
+    ],
+    "frontendCreate": [
+      "apps/dwp/src/features/hris/payroll/__tests__/g3-slices/base-tfr-pay-005.slice.test.tsx"
+    ],
+    "evidenceCreateOnly": [
+      "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-results/pay-005/**"
+    ],
+    "outsideBoundaryRule": "STOP_AND_REQUEST_APPEND_ONLY_REALLOCATION_BEFORE_EDIT"
+  },
+  "explicitNoTouch": [
+    "existing Payroll migrations V1 through V56",
+    "PAY-003 controller, route, security and authority classes",
+    "PAY-011 and PAY-012 calculation and result source",
+    "statutory-insurance-api.ts, statutory-insurance-query-contract.ts and use-statutory-insurance-workbenches.ts",
+    "central product authorization, Auth, Gateway, shared security, shell, route, menu and shared i18n",
+    "dwp_agent repository",
+    "backend default-checkout build.gradle, scripts/devctl.py and docs/dev-runtime-images.md changes"
+  ],
+  "plannedWorktrees": {
+    "backend": {
+      "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261028/batch06/pay005/backend",
+      "branch": "codex/hris-wave7-batch06-pay005-backend-20261028-r1",
+      "baseCommit": "95cdefd98c6fa35b9e2cb4ee737b6cc756c57c22",
+      "baseTree": "0ac8cfa880db521961f752097d5a403f6c1cba8c"
+    },
+    "frontend": {
+      "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261028/batch06/pay005/frontend",
+      "branch": "codex/hris-wave7-batch06-pay005-frontend-20261028-r1",
+      "base": "THE_COMMITTED_AND_PUSHED_PACKET_AND_V57_RESERVATION_CARRIER_DESCENDING_FROM_AE31D9AC"
+    },
+    "materializedNow": false
+  },
+  "acceptanceContract": {
+    "criteriaSource": "../r7-batch-06-pay005-semantic-closure-r1/semantic-disposition.v1.json#/acceptanceCriteria",
+    "criteriaCount": 12,
+    "criteriaIds": ["PAY005-AC-01", "PAY005-AC-02", "PAY005-AC-03", "PAY005-AC-04", "PAY005-AC-05", "PAY005-AC-06", "PAY005-AC-07", "PAY005-AC-08", "PAY005-AC-09", "PAY005-AC-10", "PAY005-AC-11", "PAY005-AC-12"]
+  },
+  "targetedVerification": {
+    "policy": "RUN_EACH_NEW_TARGET_GROUP_ONCE; AFTER_FAILURE_RERUN_ONLY_THE_SMALLEST_AFFECTED_TARGET; ONE_BOUNDED_CROSS_CONTRACT_CHECK_AFTER_TARGETS_PASS; NO_REPOSITORY_WIDE_SUITE_PER_CORRECTION",
+    "backend": [
+      "Pay005ContractTest",
+      "Pay005PostgresContractTest",
+      "Pay005V57MigrationContractTest",
+      "Pay005V57MigrationPostgresTest",
+      "Pay003ContractTest",
+      "Pay003ServiceTest",
+      "Pay003PostgresContractTest",
+      "PayrollG3SliceContractTest#payGold001IsDeterministicAndByteEquivalentOnReplay",
+      "PayrollCalculationDurabilityPostgresTest#postgresGuardsSealFactsRejectMakerFinalizeAndPersistExactEvents"
+    ],
+    "frontend": [
+      "base-tfr-pay-003.slice.test.tsx",
+      "base-tfr-pay-005.slice.test.tsx"
+    ],
+    "databaseUnavailableRule": "BLOCKED_NOT_PASS"
+  },
+  "authority": {
+    "packetSealed": true,
+    "v57ReservedNotActive": true,
+    "cleanWorktreeMaterializationMayProceedAfterCarrierPush": true,
+    "activeLeaseMayIssueOnlyAfterCleanWorktreeReceipt": true,
+    "executableStartTokenMayIssueOnlyAfterActiveLease": true,
+    "sourceAuthoringAuthorizedNow": false,
+    "migrationAuthoringAuthorizedNow": false,
+    "testExecutionAuthorizedNow": false,
+    "moduleCommitOrPushAuthorizedNow": false,
+    "directDwpDevMergeAuthorized": false,
+    "routeOrMenuMountAuthorized": false,
+    "featureEnablementAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "productionLegalOrProviderBindingAuthorized": false
+  },
+  "nextAction": "INDEPENDENTLY_VALIDATE_COMMIT_AND_PUSH_THIS_PACKET_AND_RESERVATION_THEN_MATERIALIZE_EXACT_CLEAN_WORKTREES_AND_ISSUE_ACTIVE_V57_LEASE_PLUS_EXECUTABLE_TOKEN"
+}

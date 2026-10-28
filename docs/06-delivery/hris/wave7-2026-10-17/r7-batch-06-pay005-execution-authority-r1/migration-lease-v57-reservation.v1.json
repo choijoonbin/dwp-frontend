@@ -1,0 +1,100 @@
+{
+  "schema": "dwp.hris.wave7.r7-batch-06-pay005-v57-migration-lease-reservation.v1",
+  "reservationId": "HRIS-WAVE7-R7-BATCH-06-PAY005-PAYROLL-V57-RESERVATION-20261028-R1",
+  "recordedAt": "2026-10-28T17:35:00+09:00",
+  "recordedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "state": "RESERVED_NOT_ACTIVE",
+  "sliceId": "BASE-TFR-PAY-005",
+  "module": "PAY",
+  "moduleSession": "HRIS-PAY",
+  "authorityBasis": {
+    "semanticDisposition": {
+      "path": "../r7-batch-06-pay005-semantic-closure-r1/semantic-disposition.v1.json",
+      "sha256": "82caed41a94ea91ec92d0a991dceaee962f4b143eba882b137124913f0abf811",
+      "bytes": 9270,
+      "carrierCommit": "ae31d9ac6b31a3e8a2788fdf4634f17d6d90685d",
+      "carrierTree": "040d10c286c601ddeac857adaf143c2100969bd6"
+    },
+    "semanticReview": {
+      "path": "../r7-batch-06-pay005-semantic-closure-r1/independent-review.v1.json",
+      "sha256": "76b7d806a74bcef3c91a5507a12094ca9c70848333fb3911398826c9c1c11c30",
+      "bytes": 2243,
+      "requiredDecision": "GO_TO_EXACT_PAY005_PACKET_AND_V57_RESERVATION_SOURCE_NO_GO"
+    }
+  },
+  "backendCommittedPin": {
+    "repository": "dwp-backend",
+    "branch": "dwp-dev",
+    "commit": "95cdefd98c6fa35b9e2cb4ee737b6cc756c57c22",
+    "tree": "0ac8cfa880db521961f752097d5a403f6c1cba8c",
+    "originExactAtReservation": true,
+    "defaultCheckoutCleanClaimed": false,
+    "outOfScopeUncommittedPathsExcluded": ["build.gradle", "scripts/devctl.py", "docs/dev-runtime-images.md"]
+  },
+  "predecessorManifest": {
+    "range": "EXISTING_PAYROLL_MIGRATIONS_THROUGH_V56_GAPS_INTENTIONAL",
+    "fileCount": 14,
+    "manifestConstruction": "SHA-256 of LC_ALL=C path-sorted shasum -a 256 output using repository-relative paths",
+    "manifestSha256": "7c0485762ca46c7681e44d1b184efae430c2e39095ea8992f65bda70af1bae46",
+    "manifestBytes": 2236,
+    "sqlBytes": 346844,
+    "preservation": "BYTE_FOR_BYTE_NO_EDIT"
+  },
+  "lease": {
+    "leaseId": "HRIS-WAVE7-R7-BATCH-06-PAYROLL-MAIN-V57-PAY005-20261028-R1",
+    "stream": "PAYROLL_MAIN",
+    "version": "V57",
+    "predecessorHighWater": "V56",
+    "exactPath": "dwp-payroll-server/src/main/resources/db/migration/V57__pay_base_tfr_pay_005_tax_result.sql",
+    "candidatePathPresentAtReservation": false,
+    "competingV57PresentAtReservation": false,
+    "state": "RESERVED_NOT_ACTIVE",
+    "plannedBackendWorktree": {
+      "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261028/batch06/pay005/backend",
+      "branch": "codex/hris-wave7-batch06-pay005-backend-20261028-r1",
+      "createFrom": "95cdefd98c6fa35b9e2cb4ee737b6cc756c57c22",
+      "expectedTree": "0ac8cfa880db521961f752097d5a403f6c1cba8c",
+      "expectedPorcelainSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  "exactSchemaDelta": {
+    "createExactly": ["pay_tax_result_facts"],
+    "requiredControls": [
+      "tenant-first composite identity and public UUID",
+      "same-tenant V50 run, attempt and workerResultId foreign key",
+      "same-tenant V53 pack snapshot and active activation revision foreign key",
+      "TAX_RESULT and TYPED_COUNTRY_RULE_OUTPUT provider semantics",
+      "NUMERIC(19,4), explicit currency and application-declared rounding",
+      "canonical ordered source-result-line identities plus set, outcome and result digests",
+      "source-line amount reconciliation and tax/social currency, policy and activation agreement",
+      "PUBLIC revocation and least-privilege SELECT and INSERT grants to the non-BYPASSRLS application role",
+      "ENABLE and FORCE RLS using trusted dwp.payroll_tenant_id",
+      "append-only UPDATE and DELETE rejection",
+      "same-digest replay no-op and different-digest conflict"
+    ],
+    "forbidden": [
+      "any edit to V1 through V56",
+      "a second V57 or later migration",
+      "seed or backfill",
+      "new command receipt, audit store, outbox or tax-specific event",
+      "hardcoded law, rate, filing rule, credential, provider or tenant data"
+    ]
+  },
+  "authority": {
+    "oneExactV57PathReserved": true,
+    "activeLeaseCount": 0,
+    "v57AuthoringAuthorizedByReservation": false,
+    "sourceAuthoringAuthorizedByReservation": false,
+    "testExecutionAuthorizedByReservation": false,
+    "moduleCommitOrPushAuthorizedByReservation": false,
+    "directDwpDevMergeAuthorized": false,
+    "productionExecutionAuthorized": false
+  },
+  "invalidationConditions": [
+    "Any V57 path appears from another owner before worktree materialization.",
+    "Payroll high-water changes from V56 before active lease issue.",
+    "The backend worktree path or branch exists with a different head, tree, upstream or non-empty porcelain.",
+    "The exact one-table schema delta proves insufficient or any predecessor migration, seed, backfill, second migration, receipt, outbox or event becomes necessary."
+  ],
+  "nextAction": "HASH_BIND_THIS_RESERVATION_IN_THE_OWNER_PACKET_COMMIT_AND_PUSH_THEN_MATERIALIZE_THE_EXACT_CLEAN_WORKTREES"
+}
