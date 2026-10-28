@@ -1,0 +1,171 @@
+{
+  "schema": "dwp.hris.authorization-carrier-correction.v2",
+  "correctionId": "R7-B06-PER009-AUTHORIZATION-CARRIER-CORRECTION-R2",
+  "sliceId": "BASE-TFR-PER-009",
+  "module": "PER",
+  "moduleSession": "HRIS-PER",
+  "recordedAt": "2026-10-28T19:15:00+09:00",
+  "recordedBy": "HRIS central integration",
+  "state": "SEALED_APPEND_ONLY_R1_VALIDATION_LIFECYCLE_CORRECTION_INDEPENDENT_REVIEW_REQUIRED_SOURCE_WITHHELD",
+  "purpose": "Preserve the already pushed R1 carrier byte-for-byte while adding a post-commit validator lifecycle that proves synchronized branch blobs, closed changed paths and a complete review authority boundary.",
+  "sealedR1Predecessor": {
+    "repository": "dwp-frontend",
+    "branch": "dwp-dev",
+    "commit": "8ffb5f0d4ed420807e7ce0200ed61b518f49f903",
+    "tree": "86d958a7f8eeb869e4d5a53f68e1e21218d63833",
+    "originMatchedAtSeal": true,
+    "artifacts": [
+      {
+        "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-per009-authorization-successor-r1/per-009-transport-and-central-authorization-successor.v1.json",
+        "bytes": 50965,
+        "sha256": "43db9ff57f5712e366321bb0962be689fa6e6d175023398576d9dd8a4bff3cd1"
+      },
+      {
+        "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-per009-authorization-successor-r1/independent-review.v1.json",
+        "bytes": 10554,
+        "sha256": "52d1499ca353bc89fdfb1cd79c41f9bb88c775a14dc2d8cee74cb07d6d33df96"
+      },
+      {
+        "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-per009-authorization-successor-r1/validate_per009_authorization_successor.py",
+        "bytes": 79272,
+        "sha256": "a1ef769efe8398446883a9cd0623fdf4f048f44f19b41f8416676839045180bc"
+      }
+    ]
+  },
+  "repositoryBaselines": {
+    "frontendSemanticPredecessor": {
+      "repository": "dwp-frontend",
+      "branch": "dwp-dev",
+      "commit": "f5eaa06792a4949993f6cb8bd36474ceaf1d1830",
+      "tree": "7ebe8f711396b5b1189dc079e2bffc75e23b2494"
+    },
+    "backend": {
+      "repository": "dwp-backend",
+      "branch": "dwp-dev",
+      "commit": "699ef730f21a89200be6dfed6d2e34148014cd10",
+      "tree": "3ea7866294cfd3bcb2ee950ff8b882f56f6f1317"
+    },
+    "agent": {
+      "repository": "dwp_agent",
+      "branch": "dwp-dev",
+      "commit": "9beb5439cad065e7d919a98c9f9becb44481508a",
+      "tree": "fe3880719360f4bdeff88bbbac1edc6f8affed88"
+    }
+  },
+  "resolvedFindings": [
+    {
+      "id": "PER009-AUTH-009",
+      "priorSeverity": "P1",
+      "finding": "The R1 validator interpreted its sealed Frontend semantic predecessor as the current branch head and therefore could not pass after the carrier commit containing the validator itself.",
+      "resolution": "Retain the semantic predecessor as immutable evidence, pin the pushed R1 commit as the validation-lifecycle predecessor, and require it to be an ancestor of synchronized local and origin dwp-dev.",
+      "state": "RESOLVED_BY_APPEND_ONLY_R2"
+    },
+    {
+      "id": "PER009-AUTH-010",
+      "priorSeverity": "P1",
+      "finding": "The R1 review validation required artifact pins and zero severity but did not compare every review identity, authority and completion-credit field as a closed set.",
+      "resolution": "The R2 validator compares review identity, exact two-artifact pins, reviewer dispositions, complete authority object, zero completion credit and next action by exact equality.",
+      "state": "RESOLVED_BY_APPEND_ONLY_R2"
+    },
+    {
+      "id": "PER009-AUTH-011",
+      "priorSeverity": "P1",
+      "finding": "An ancestry-only post-commit check could accept unrelated descendant paths or worktree bytes that differed from synchronized local and origin branch blobs.",
+      "resolution": "Require exact R1-to-current and semantic-predecessor-to-current changed-path sets, compare all six carrier files with local and origin blobs, reject staged or unstaged carrier differences, and require a clean Frontend worktree.",
+      "state": "RESOLVED_BY_APPEND_ONLY_R2"
+    },
+    {
+      "id": "PER009-AUTH-012",
+      "priorSeverity": "P1",
+      "finding": "An in-place correction of the already sealed and pushed R1 review and validator would violate their APPEND_ONLY_SUCCESSOR_WITH_NEW_ID_AND_SHA256 amendment policy.",
+      "resolution": "Restore all R1 artifacts exactly and place every lifecycle correction in this separately identified, separately reviewed R2 directory.",
+      "state": "RESOLVED_BY_APPEND_ONLY_R2"
+    },
+    {
+      "id": "PER009-AUTH-013",
+      "priorSeverity": "P1",
+      "finding": "Unrelated Calendar quality changes in the shared Frontend checkout prevent that checkout from satisfying the required clean-worktree post-push admission without risking another owner's work.",
+      "resolution": "Stage and commit only the three R2 paths, then execute post-push admission from a clean isolated verification worktree whose HEAD equals synchronized local and origin dwp-dev; a named branch checkout is not required.",
+      "state": "RESOLVED_BY_APPEND_ONLY_R2"
+    }
+  ],
+  "carrierClosure": {
+    "branch": "dwp-dev",
+    "sealedR1MustRemainAncestor": true,
+    "localAndOriginMustMatch": true,
+    "r1ArtifactsMustRemainByteExact": true,
+    "r1ToCurrentChangedPaths": [
+      "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-per009-authorization-successor-r2/independent-review.v2.json",
+      "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-per009-authorization-successor-r2/per-009-authorization-carrier-correction.v2.json",
+      "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-per009-authorization-successor-r2/validate_per009_authorization_carrier_correction.py"
+    ],
+    "semanticPredecessorToCurrentChangedPaths": [
+      "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-per009-authorization-successor-r1/independent-review.v1.json",
+      "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-per009-authorization-successor-r1/per-009-transport-and-central-authorization-successor.v1.json",
+      "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-per009-authorization-successor-r1/validate_per009_authorization_successor.py",
+      "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-per009-authorization-successor-r2/independent-review.v2.json",
+      "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-per009-authorization-successor-r2/per-009-authorization-carrier-correction.v2.json",
+      "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-per009-authorization-successor-r2/validate_per009_authorization_carrier_correction.py"
+    ],
+    "allSixCarrierWorktreeFilesMustEqualLocalAndOriginBlobs": true,
+    "validationWorktreeHeadMustEqualDwpDev": true,
+    "validationWorktreeBranchNameRequired": false,
+    "stagedCarrierDifferenceAllowed": false,
+    "unstagedCarrierDifferenceAllowed": false,
+    "unrelatedFrontendWorktreeDifferenceAllowed": false,
+    "backendAndAgentExactHeadsPreserved": true
+  },
+  "semanticPreservation": {
+    "runR1SemanticValidatorWithLifecycleBaselineAdapter": true,
+    "adapterMayChangeR1Files": false,
+    "adapterMayChangeR1ExpectedSemanticPins": false,
+    "adapterScope": "Replace only the obsolete exact-current-Frontend-head assertion with immutable semantic-predecessor ancestry while retaining exact Backend and Agent heads; all R1 transport, authorization, migration, allowlist, lineage, ownership, review-pin and source-withheld checks still execute.",
+    "expectedR1SemanticResult": "PASS"
+  },
+  "validationAdmission": {
+    "preCommitExpectedState": "FAIL_UNTIL_R2_IS_COMMITTED_AND_A_CLEAN_EXACT_HEAD_VALIDATION_WORKTREE_IS_USED",
+    "postPushRequiredState": "PASS_ZERO_FAILURES",
+    "postPushValidationWorktree": "CLEAN_HEAD_EQUAL_TO_LOCAL_AND_ORIGIN_DWP_DEV_MAY_BE_DETACHED",
+    "fullSuiteRequired": false,
+    "sourceTestsRequired": false,
+    "reason": "This append-only correction changes documentation and admission validation only; product authorization v63, Auth V273 and all runtime source remain unauthorized and absent."
+  },
+  "authority": {
+    "independentReviewComplete": false,
+    "correctionCarrierCommitAndPushAuthorized": false,
+    "separateCentralAuthorityPreparationEligibleAfterCarrierPush": false,
+    "boundedCentralImplementationAuthorized": false,
+    "centralBackendWorktreeAuthorized": false,
+    "centralFrontendWorktreeAuthorized": false,
+    "centralExecutableTokenAuthorized": false,
+    "backendSourceAuthoringAuthorized": false,
+    "frontendMirrorSourceAuthoringAuthorized": false,
+    "authV273SqlAuthoringAuthorized": false,
+    "moduleOwnerPacketAuthorized": false,
+    "moduleSourceAuthoringAuthorized": false,
+    "moduleWorktreeAuthorized": false,
+    "moduleStartTokenAuthorized": false,
+    "performanceV21LeaseAuthorized": false,
+    "routeOrMenuMountAuthorized": false,
+    "featureEnablementAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "bundleApprovalAuthorized": false,
+    "bundleActivationAuthorized": false,
+    "productionReleaseAuthorized": false,
+    "businessCompletionCredit": 0
+  },
+  "nextAction": "Independently review this exact R2 correction, commit and push only its three files on Frontend dwp-dev, require a post-push PASS, then prepare a separate clean Backend and Frontend central execution authority and one-shot tokens for the allowlisted v63, V273 and unmounted mirror implementation.",
+  "nonClaims": [
+    "This correction does not replace, amend or re-seal any R1 artifact.",
+    "Product authorization v63, Auth V273 and the Frontend v63 mirror have not been authored, generated, admitted, approved or activated.",
+    "No central or module worktree or executable token exists.",
+    "No Goal handler, persistence, receipt, outbox, event producer or PERFORMANCE V21 exists.",
+    "No route, page, menu, navigation, provider, feature or tenant is mounted, enabled or enrolled.",
+    "No PER-009, Batch 06, Wave 7 or HRIS completion is claimed."
+  ],
+  "immutability": {
+    "sealed": true,
+    "sealedAt": "2026-10-28T19:15:00+09:00",
+    "amendmentPolicy": "APPEND_ONLY_SUCCESSOR_WITH_NEW_ID_AND_SHA256"
+  }
+}

@@ -1,0 +1,120 @@
+{
+  "schema": "dwp.hris.independent-review.v2",
+  "reviewId": "R7-B06-PER009-AUTHORIZATION-CARRIER-CORRECTION-INDEPENDENT-REVIEW-R2",
+  "sliceId": "BASE-TFR-PER-009",
+  "module": "PER",
+  "moduleSession": "HRIS-PER",
+  "recordedAt": "2026-10-28T19:20:00+09:00",
+  "recordedBy": "HRIS central integration",
+  "state": "INDEPENDENTLY_REVIEWED_PASS_ZERO_P0_ZERO_P1_ZERO_P2_APPEND_ONLY_R2_CARRIER_COMMIT_AND_PUSH_AUTHORIZED_CENTRAL_SOURCE_STILL_WITHHELD",
+  "independentReviewers": [
+    {
+      "reviewer": "per009_auth_delta_review",
+      "scope": "Exact R1 and R2 changed-path closure, local and origin blob equality, staged and unstaged rejection, clean Frontend worktree and immutable Backend and Agent baselines",
+      "disposition": "PASS_ZERO_P0_P1_P2"
+    },
+    {
+      "reviewer": "per009_auth_precedent",
+      "scope": "Append-only amendment policy, sealed R1 commit and artifact preservation, separate R2 identity and lifecycle-predecessor semantics",
+      "disposition": "PASS_ZERO_P0_P1_P2"
+    },
+    {
+      "reviewer": "per009_auth_generation_audit",
+      "scope": "R1 semantic-adapter execution, exact review pins and authority closed set, post-commit admission and representative bypass mutation rejection",
+      "disposition": "PASS_ZERO_P0_P1_P2"
+    }
+  ],
+  "reviewedArtifacts": [
+    {
+      "repository": "dwp-frontend",
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-per009-authorization-successor-r2/per-009-authorization-carrier-correction.v2.json",
+      "bytes": 10030,
+      "sha256": "9fe326084990120570c7c0ff6ae040c9d1c4600b1f54f47e3f9c48d0c025b8b1"
+    },
+    {
+      "repository": "dwp-frontend",
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-per009-authorization-successor-r2/validate_per009_authorization_carrier_correction.py",
+      "bytes": 21890,
+      "sha256": "7efb095e8f68a730aaafd82f762f0099116961deb51abfd8039b8c88b1f0b9a8"
+    }
+  ],
+  "resolvedFindingIds": [
+    "PER009-AUTH-009",
+    "PER009-AUTH-010",
+    "PER009-AUTH-011",
+    "PER009-AUTH-012",
+    "PER009-AUTH-013"
+  ],
+  "verifiedBoundaries": [
+    "The pushed R1 commit 8ffb5f0d4ed420807e7ce0200ed61b518f49f903 and all three R1 artifact bytes remain unchanged.",
+    "R2 has a new correction id, directory, review id and validator and therefore satisfies the R1 append-only amendment policy.",
+    "The R1-to-current delta is exactly three R2 files and the semantic-predecessor-to-current delta is exactly the three R1 plus three R2 files.",
+    "Every one of the six carrier worktree files must equal both the local dwp-dev and origin/dwp-dev blobs.",
+    "Local and origin dwp-dev must match, R1 must remain an ancestor, staged and unstaged carrier differences are denied, and the entire Frontend worktree must be clean.",
+    "Unrelated Calendar quality edits remain untouched in the shared checkout; post-push admission runs in a clean isolated worktree whose HEAD equals local and origin dwp-dev even when that worktree is detached.",
+    "Backend and Agent remain pinned to their unchanged exact dwp-dev commits and trees; unrelated existing Backend worktree edits are neither changed nor admitted by this carrier.",
+    "The R1 semantic validator still executes every transport, authorization, migration, allowlist, lineage, ownership, review-pin and source-withheld check; only its obsolete current-Frontend-head assertion is adapted to ancestry.",
+    "The R2 review compares its identity, exact two-artifact pins, reviewer dispositions, complete authority object, zero business completion credit and next action as closed sets.",
+    "Product authorization v63, Auth V273, the Frontend v63 mirror and all PER-009 runtime source remain absent and unauthorized.",
+    "No route, page, menu, provider, feature, tenant enrollment, bundle approval, activation or production release is authorized."
+  ],
+  "verification": {
+    "r1CommitAndTreePinReconciled": true,
+    "r1ThreeArtifactBytePinsReconciled": true,
+    "appendOnlyR2IdentityReconciled": true,
+    "r1AndCumulativeChangedPathClosureReconciled": true,
+    "localOriginBlobAndDirtyClosureReconciled": true,
+    "backendAndAgentExactHeadsReconciled": true,
+    "adaptedR1SemanticValidatorReconciled": true,
+    "reviewAuthorityClosedSetReconciled": true,
+    "adversarialMutationAuditPassed": true,
+    "targetedValidationOnly": true,
+    "fullSuiteRun": false,
+    "sourceTestsRun": false,
+    "reasonNoSourceTests": "This append-only R2 carrier corrects validation lifecycle only; product authorization v63, Auth V273 and PER-009 runtime source remain explicitly unauthorized."
+  },
+  "postResolutionSeverityCounts": {
+    "P0": 0,
+    "P1": 0,
+    "P2": 0
+  },
+  "authority": {
+    "independentReviewComplete": true,
+    "correctionCarrierCommitAndPushAuthorized": true,
+    "separateCentralAuthorityPreparationEligibleAfterCarrierPush": true,
+    "boundedCentralImplementationAuthorized": false,
+    "centralBackendWorktreeAuthorized": false,
+    "centralFrontendWorktreeAuthorized": false,
+    "centralExecutableTokenAuthorized": false,
+    "backendSourceAuthoringAuthorized": false,
+    "frontendMirrorSourceAuthoringAuthorized": false,
+    "authV273SqlAuthoringAuthorized": false,
+    "moduleOwnerPacketAuthorized": false,
+    "moduleSourceAuthoringAuthorized": false,
+    "moduleWorktreeAuthorized": false,
+    "moduleStartTokenAuthorized": false,
+    "performanceV21LeaseAuthorized": false,
+    "routeOrMenuMountAuthorized": false,
+    "featureEnablementAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "bundleApprovalAuthorized": false,
+    "bundleActivationAuthorized": false,
+    "productionReleaseAuthorized": false,
+    "businessCompletionCredit": 0
+  },
+  "nextAction": "After this exact R2 correction is committed and pushed on Frontend dwp-dev and its validator passes, prepare and independently review a separate clean Backend and Frontend central execution authority and one-shot tokens for the allowlisted v63, V273 and unmounted mirror implementation.",
+  "nonClaims": [
+    "This review authorizes committing and pushing only the three R2 correction-carrier files.",
+    "It does not amend or replace any R1 artifact.",
+    "Product authorization v63, Auth V273 and the Frontend v63 mirror have not been authored, generated, tested, admitted, approved or activated.",
+    "No central or module worktree or executable token exists.",
+    "No Goal handler, persistence, receipt, outbox, event producer or PERFORMANCE V21 exists.",
+    "No route, page, menu, navigation, provider, feature or tenant is mounted, enabled or enrolled.",
+    "No PER-009, Batch 06, Wave 7 or HRIS completion is claimed."
+  ],
+  "immutability": {
+    "sealed": true,
+    "sealedAt": "2026-10-28T19:20:00+09:00",
+    "amendmentPolicy": "APPEND_ONLY_SUCCESSOR_WITH_NEW_ID_AND_SHA256"
+  }
+}
