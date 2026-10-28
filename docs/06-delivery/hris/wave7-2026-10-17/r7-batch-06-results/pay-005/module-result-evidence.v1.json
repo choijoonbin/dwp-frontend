@@ -1,0 +1,173 @@
+{
+  "schema": "dwp.hris.wave7.r7-batch-06-pay005-module-result-evidence.v1",
+  "evidenceId": "HRIS-WAVE7-R7-BATCH-06-PAY005-MODULE-RESULT-20261028-R1",
+  "recordedAt": "2026-10-28T17:58:07+09:00",
+  "recordedBy": "HRIS_PAY_MODULE_SESSION",
+  "state": "IMPLEMENTED_TARGETED_VERIFICATION_PASS_MODULE_BRANCHES_PUSHED_CENTRAL_REVIEW_PENDING",
+  "sliceId": "BASE-TFR-PAY-005",
+  "sourceRef": "TFR-PAY-005",
+  "module": "PAY",
+  "moduleSession": "HRIS-PAY",
+  "authority": {
+    "tokenId": "HRIS-WAVE7-R7-BATCH-06-START-BASE-TFR-PAY-005-20261028-R1",
+    "tokenPath": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-pay005-execution-authority-r1/implementation-token.v1.json",
+    "tokenCarrierCommit": "166866132920c8039571f7997ee671d7661bc038",
+    "tokenSha256": "9e7c45d6e3d8e14600c215940a9c946d2530beee2d9360d5ec547f9fe628e8cd",
+    "tokenBytes": 6715,
+    "writableBoundaryRespected": true,
+    "directDwpDevMergeAuthorizedByToken": false,
+    "centralReviewRequired": true
+  },
+  "repositories": {
+    "backend": {
+      "repository": "dwp-backend",
+      "branch": "codex/hris-wave7-batch06-pay005-backend-20261028-r1",
+      "baseCommit": "95cdefd98c6fa35b9e2cb4ee737b6cc756c57c22",
+      "sourceCommits": [
+        "d495480d909c9489172163dad2df39f07566d907",
+        "32ae1348135db9f728a87b5cce3e6bbe01c4b2bb"
+      ],
+      "finalCommit": "32ae1348135db9f728a87b5cce3e6bbe01c4b2bb",
+      "finalTree": "811e4a0ac3c2806082bb3969f103f12fec3cf002",
+      "remoteRef": "origin/codex/hris-wave7-batch06-pay005-backend-20261028-r1",
+      "remoteExact": true,
+      "clean": true,
+      "changedPathCount": 16,
+      "changedPaths": [
+        "dwp-payroll-server/src/main/java/com/dwp/services/payroll/PayrollDatabaseMigrationConfiguration.java",
+        "dwp-payroll-server/src/main/java/com/dwp/services/payroll/statutory/pay003/JdbcPay003Store.java",
+        "dwp-payroll-server/src/main/java/com/dwp/services/payroll/statutory/pay003/Pay003Models.java",
+        "dwp-payroll-server/src/main/java/com/dwp/services/payroll/statutory/pay003/Pay003Service.java",
+        "dwp-payroll-server/src/main/java/com/dwp/services/payroll/statutory/pay003/Pay003Store.java",
+        "dwp-payroll-server/src/main/java/com/dwp/services/payroll/statutory/pay005/Pay005Canonical.java",
+        "dwp-payroll-server/src/main/java/com/dwp/services/payroll/statutory/pay005/Pay005Models.java",
+        "dwp-payroll-server/src/main/java/com/dwp/services/payroll/statutory/pay005/Pay005TaxResultOutcomePublisher.java",
+        "dwp-payroll-server/src/main/resources/db/migration/V57__pay_base_tfr_pay_005_tax_result.sql",
+        "dwp-payroll-server/src/test/java/com/dwp/services/payroll/PayrollServerApplicationContextTest.java",
+        "dwp-payroll-server/src/test/java/com/dwp/services/payroll/statutory/pay003/Pay003PostgresContractTest.java",
+        "dwp-payroll-server/src/test/java/com/dwp/services/payroll/statutory/pay003/Pay003ServiceTest.java",
+        "dwp-payroll-server/src/test/java/com/dwp/services/payroll/statutory/pay005/Pay005ContractTest.java",
+        "dwp-payroll-server/src/test/java/com/dwp/services/payroll/statutory/pay005/Pay005PostgresContractTest.java",
+        "dwp-payroll-server/src/test/java/com/dwp/services/payroll/statutory/pay005/Pay005V57MigrationContractTest.java",
+        "dwp-payroll-server/src/test/java/com/dwp/services/payroll/statutory/pay005/Pay005V57MigrationPostgresTest.java"
+      ]
+    },
+    "frontend": {
+      "repository": "dwp-frontend",
+      "branch": "codex/hris-wave7-batch06-pay005-frontend-20261028-r1",
+      "baseCommit": "3f922a4d42c7b83f2a4bcaf28a0ed780fc85dff5",
+      "sourceCommit": "bafee28ee62e7e4bbfcc6c5969c2622c029c10c4",
+      "sourceTree": "f75df4d392c31705df2ef7b8965d9daf142783f6",
+      "remoteRef": "origin/codex/hris-wave7-batch06-pay005-frontend-20261028-r1",
+      "sourceCommitPushed": true,
+      "cleanBeforeEvidence": true,
+      "changedPathCount": 5,
+      "changedPaths": [
+        "apps/dwp/src/features/hris/payroll/__tests__/g3-slices/base-tfr-pay-003.slice.test.tsx",
+        "apps/dwp/src/features/hris/payroll/__tests__/g3-slices/base-tfr-pay-005.slice.test.tsx",
+        "apps/dwp/src/features/hris/payroll/statutory-insurance/statutory-insurance-contract.ts",
+        "apps/dwp/src/features/hris/payroll/statutory-insurance/statutory-insurance-copy.ts",
+        "apps/dwp/src/features/hris/payroll/statutory-insurance/statutory-insurance-workbenches.tsx"
+      ]
+    },
+    "agent": {
+      "repository": "dwp_agent",
+      "changed": false
+    }
+  },
+  "implementation": {
+    "migration": "V57__pay_base_tfr_pay_005_tax_result.sql",
+    "tablesCreated": ["pay_tax_result_facts"],
+    "entryQuery": "IAQ-048",
+    "fieldGroupsInOrder": ["TAX_RESULT", "SOCIAL_INSURANCE", "POLICY_VERSION"],
+    "stableIdentity": "workerResultId",
+    "availableActions": [],
+    "ownerDelta": [
+      "immutable typed TAX_RESULT producer",
+      "TAX_RESULT contribution to existing IAQ-048"
+    ],
+    "reuseOnlyNoRecount": ["PAY-003", "PAY-011", "PAY-012", "PayrollCalculated.v1"]
+  },
+  "verification": {
+    "policy": "PASSING_TARGETS_RETAINED_FAILURE_RERUN_ONLY_SMALLEST_AFFECTED_TARGET_ONE_FINAL_BOUNDED_CROSS_CONTRACT_NO_REPOSITORY_WIDE_SUITE",
+    "backend": {
+      "compileJava": "PASS",
+      "compileTestJava": "PASS",
+      "finalBoundedXmlFiles": 9,
+      "finalBoundedTests": 47,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "targets": [
+        "Pay005ContractTest",
+        "Pay005PostgresContractTest",
+        "Pay005V57MigrationContractTest",
+        "Pay005V57MigrationPostgresTest",
+        "Pay003ContractTest",
+        "Pay003ServiceTest",
+        "Pay003PostgresContractTest",
+        "PayrollG3SliceContractTest#payGold001IsDeterministicAndByteEquivalentOnReplay",
+        "PayrollCalculationDurabilityPostgresTest#postgresGuardsSealFactsRejectMakerFinalizeAndPersistExactEvents"
+      ],
+      "postgresEvidence": [
+        "clean migration through V57",
+        "V56 to V57 upgrade",
+        "RLS and FORCE RLS",
+        "runtime and publisher least privilege",
+        "tenant isolation",
+        "append-only mutation rejection",
+        "same-digest replay and different-digest conflict",
+        "source reconciliation and bidirectional tax/social lineage",
+        "asymmetric asOf union and mismatch UNAVAILABLE"
+      ],
+      "diffCheck": "PASS"
+    },
+    "frontend": {
+      "finalBoundedTests": 21,
+      "passed": 21,
+      "failures": 0,
+      "targets": [
+        "base-tfr-pay-003.slice.test.tsx",
+        "base-tfr-pay-005.slice.test.tsx"
+      ],
+      "prettier": "PASS",
+      "eslint": "PASS",
+      "diffCheck": "PASS",
+      "browserScreenshots": "NOT_RUN_ROUTE_AND_MENU_REMAIN_UNMOUNTED_BY_TOKEN"
+    },
+    "independentReview": {
+      "frontend": {"P0": 0, "P1": 0, "P2": 0, "decision": "GO"},
+      "backend": {"P0": 0, "P1": 0, "P2": 0, "decision": "GO"},
+      "closedFindings": [
+        "mixed PARTIAL frontend union",
+        "theme, forced-colors and reduced-motion evidence",
+        "pre-join asymmetric asOf",
+        "current disclosed page completeness",
+        "null-last stable sorting",
+        "lineage mismatch fail-closed"
+      ]
+    }
+  },
+  "acceptanceMapping": [
+    {"id": "PAY005-AC-01", "state": "PASS", "evidence": "Exact IAQ-048 route/version, three ordered fields, stable workerResultId and empty actions in backend and frontend contract tests."},
+    {"id": "PAY005-AC-02", "state": "PASS", "evidence": "Deterministic tax/social union, current-page completeness and stable tie-break tests."},
+    {"id": "PAY005-AC-03", "state": "PASS", "evidence": "Typed 0.0000 preserved; missing producer remains distinct PARTIAL evidence."},
+    {"id": "PAY005-AC-04", "state": "PASS", "evidence": "Actual tax filters, ASC/DESC null-last sorts, itemPublicId tie-break and existing revision-bound cursor."},
+    {"id": "PAY005-AC-05", "state": "PASS", "evidence": "Existing tenant/scope VIEW/MASK/OMIT retained; hidden and later-page rows do not leak completeness."},
+    {"id": "PAY005-AC-06", "state": "PASS", "evidence": "V57 and PostgreSQL tests enforce currency, policy, active pack and bidirectional lineage."},
+    {"id": "PAY005-AC-07", "state": "PASS", "evidence": "Canonical ordered source identities, exact amount reconciliation and immutable digests."},
+    {"id": "PAY005-AC-08", "state": "PASS", "evidence": "Same-digest replay no-op and different-digest conflict in real PostgreSQL."},
+    {"id": "PAY005-AC-09", "state": "PASS", "evidence": "Typed source semantics required; generic totals not relabeled and V53 constraints retained."},
+    {"id": "PAY005-AC-10", "state": "PASS", "evidence": "No new receipt, audit store, outbox or event; minimal PAY-003/011/012 regressions pass."},
+    {"id": "PAY005-AC-11", "state": "PASS", "evidence": "V57 one-table clean/upgrade, RLS/FORCE RLS, ACL, tenant isolation and immutability pass."},
+    {"id": "PAY005-AC-12", "state": "PASS", "evidence": "Frontend states, mixed partial, keyboard, responsive/zoom, light/dark, forced-colors, reduced-motion and feature-OFF zero-call tests pass; route remains unmounted."}
+  ],
+  "decision": "GO_TO_SEPARATE_CENTRAL_REVIEW_AND_DWP_DEV_INTEGRATION",
+  "nonClaims": [
+    "The PAY-005 module branches are already merged to dwp-dev.",
+    "The route or menu is newly mounted, the feature is enabled or a tenant is enrolled.",
+    "An official rate, filing rule, production country-pack, provider or legal signoff is admitted.",
+    "PAY-005 is production-active or Batch-06 or HRIS is complete."
+  ],
+  "nextAction": "VALIDATE_AND_PUSH_THIS_RESULT_EVIDENCE_THEN_ISSUE_SEPARATE_CENTRAL_INTEGRATION_AUTHORITY"
+}
