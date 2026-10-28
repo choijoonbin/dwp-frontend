@@ -1,17 +1,27 @@
 import { axiosInstance } from '../axios-instance';
-import { assertSupportedApprovalFormSchema } from './approval-management-contract';
+import {
+  assertSupportedApprovalFormSchema,
+  isApprovalFormDetailProjection,
+  isApprovalFormOversightProjection,
+  isApprovalWorkflowDetailProjection,
+  isApprovalWorkflowOversightProjection,
+} from './approval-management-contract';
 
 import type {
   ApprovalAdminPulse,
   ApprovalForm,
   ApprovalFormCategory,
   ApprovalFormDetail,
+  ApprovalFormReadProjection,
+  ApprovalFormSchema,
   ApprovalOperations,
   ApprovalPolicy,
   ApprovalPolicyVersion,
   ApprovalSignatureProvider,
   ApprovalWorkflow,
   ApprovalWorkflowDetail,
+  ApprovalWorkflowListProjection,
+  ApprovalWorkflowReadProjection,
 } from './approval-management-contract';
 import type { ApiResponse } from '../types';
 
@@ -39,7 +49,7 @@ export async function getApprovalAdminOverview(
 export async function getApprovalWorkflows(
   contextScopeKey?: string,
   signal?: AbortSignal
-): Promise<ApprovalWorkflow[]> {
+): Promise<ApprovalWorkflowListProjection[]> {
   return getApprovalStudioWorkflows(contextScopeKey, signal);
 }
 
@@ -47,12 +57,16 @@ export async function getApprovalWorkflows(
 export async function getApprovalStudioWorkflows(
   contextScopeKey?: string,
   signal?: AbortSignal
-): Promise<ApprovalWorkflow[]> {
-  const response = await axiosInstance.get<ApiResponse<ApprovalWorkflow[]>>(
+): Promise<ApprovalWorkflowListProjection[]> {
+  const response = await axiosInstance.get<ApiResponse<unknown>>(
     `${base}/workflows`,
     selectedScope(contextScopeKey, signal)
   );
-  return response.data.data;
+  const projections = response.data.data;
+  if (!Array.isArray(projections) || !projections.every(isApprovalWorkflowOversightProjection)) {
+    throw new Error('Invalid approval workflow list projection');
+  }
+  return projections;
 }
 
 export async function getApprovalWorkflow(
@@ -69,11 +83,33 @@ export async function getApprovalStudioWorkflow(
   contextScopeKey?: string,
   signal?: AbortSignal
 ): Promise<ApprovalWorkflowDetail> {
-  const response = await axiosInstance.get<ApiResponse<ApprovalWorkflowDetail>>(
+  const projection = await getApprovalStudioWorkflowReadProjection(
+    workflowId,
+    contextScopeKey,
+    signal
+  );
+  if (!isApprovalWorkflowDetailProjection(projection)) {
+    throw new Error('Approval workflow detail is unavailable for the current authority projection');
+  }
+  return projection;
+}
+
+/** Workflow Studio accepts only the registered full-management or oversight detail projection. */
+export async function getApprovalStudioWorkflowReadProjection(
+  workflowId: string,
+  contextScopeKey?: string,
+  signal?: AbortSignal
+): Promise<ApprovalWorkflowReadProjection> {
+  const response = await axiosInstance.get<ApiResponse<unknown>>(
     `${base}/workflows/${workflowId}`,
     selectedScope(contextScopeKey, signal)
   );
-  return response.data.data;
+  const projection = response.data.data;
+  if (isApprovalWorkflowDetailProjection(projection)) return projection;
+  if (!isApprovalWorkflowOversightProjection(projection)) {
+    throw new Error('Invalid approval workflow read projection');
+  }
+  return projection;
 }
 
 /** Form Studio may only consume the registry's workflow-reference projection. */
@@ -128,12 +164,37 @@ export async function getApprovalForm(
   contextScopeKey?: string,
   signal?: AbortSignal
 ): Promise<ApprovalFormDetail> {
-  const response = await axiosInstance.get<ApiResponse<ApprovalFormDetail>>(
+  const projection = await getApprovalFormReadProjection(formId, contextScopeKey, signal);
+  if (!isApprovalFormDetailProjection(projection)) {
+    throw new Error('Approval form detail is unavailable for the current authority projection');
+  }
+  return projection;
+}
+
+export async function getApprovalFormReadProjection(
+  formId: string,
+  contextScopeKey?: string,
+  signal?: AbortSignal
+): Promise<ApprovalFormReadProjection> {
+  const response = await axiosInstance.get<ApiResponse<unknown>>(
     `${base}/forms/${formId}`,
     selectedScope(contextScopeKey, signal)
   );
-  assertSupportedApprovalFormSchema(response.data.data.schema);
-  return response.data.data;
+  const projection = response.data.data;
+  if (
+    typeof projection === 'object' &&
+    projection !== null &&
+    !Array.isArray(projection) &&
+    'schema' in projection
+  ) {
+    assertSupportedApprovalFormSchema(projection.schema as ApprovalFormSchema);
+  }
+  if (isApprovalFormDetailProjection(projection)) {
+    return projection;
+  } else if (!isApprovalFormOversightProjection(projection)) {
+    throw new Error('Invalid approval form read projection');
+  }
+  return projection;
 }
 
 export async function getApprovalPolicies(

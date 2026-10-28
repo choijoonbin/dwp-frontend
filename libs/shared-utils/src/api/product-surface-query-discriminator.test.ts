@@ -31,7 +31,32 @@ describe('Product Surface query discriminator contract', () => {
   afterEach(() => vi.unstubAllGlobals());
 
   it('matches every ACTIVE approvals FIXED/ABSENT workflow binding in registry v3', async () => {
-    const fetchMock = vi.fn().mockResolvedValue(jsonResponse([]));
+    const workflowDetail = {
+      workflow: {
+        workflowId: 'workflow-studio-1',
+        workflowKey: 'WORKFLOW_STUDIO_1',
+        nameKo: '결재 프로세스',
+        nameEn: 'Approval process',
+        descriptionKo: '',
+        descriptionEn: '',
+        category: 'GENERAL',
+        dataClassification: 'INTERNAL',
+        lifecycleState: 'DRAFT',
+        currentVersion: 1,
+        slaMinutes: 60,
+        allowSelfApproval: false,
+        ownerGroupRef: null,
+        version: 0,
+        updatedAt: '2026-10-27T00:00:00Z',
+      },
+      definition: { schemaVersion: 1, steps: [], guardrails: {} },
+      definitionHash: 'a'.repeat(64),
+    };
+    const fetchMock = vi
+      .fn()
+      .mockImplementation((url: string) =>
+        Promise.resolve(jsonResponse(url.includes('workflow-studio-1') ? workflowDetail : []))
+      );
     vi.stubGlobal('fetch', fetchMock);
     const controller = new AbortController();
     const scope = 'scope:approvals/design-east';

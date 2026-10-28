@@ -8,7 +8,7 @@ import { alpha } from '@mui/material/styles';
 
 import { StatusChip } from './approval-ui';
 
-import type { ApprovalWorkflow } from '@dwp-frontend/shared-utils';
+import type { ApprovalWorkflowListProjection } from '@dwp-frontend/shared-utils';
 
 export function ApprovalWorkflowListItem({
   workflow,
@@ -17,7 +17,7 @@ export function ApprovalWorkflowListItem({
   locale,
   onSelect,
 }: {
-  workflow: ApprovalWorkflow;
+  workflow: ApprovalWorkflowListProjection;
   selected: boolean;
   disabled: boolean;
   locale?: string;
@@ -62,7 +62,8 @@ export function ApprovalWorkflowListItem({
             </Box>
           </Stack>
           <Box sx={{ typography: 'caption', color: 'text.secondary', overflowWrap: 'anywhere' }}>
-            {workflow.ownerGroupRef ?? t('admin.integrations.notAvailable')}
+            {('ownerGroupRef' in workflow ? workflow.ownerGroupRef : null) ??
+              t('admin.integrations.notAvailable')}
           </Box>
         </Stack>
       </ButtonBase>

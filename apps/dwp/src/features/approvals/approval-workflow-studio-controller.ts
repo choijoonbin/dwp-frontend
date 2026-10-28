@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
   createApprovalWorkflowDraft,
-  getApprovalStudioWorkflow,
+  getApprovalStudioWorkflowReadProjection,
   getApprovalStudioWorkflows,
   publishApprovalWorkflow,
   updateApprovalWorkflowDraft,
@@ -20,10 +20,10 @@ import {
   useApprovalManagementScopeReset,
 } from './approval-management-scope';
 import { createApprovalWorkflowDraftSeed } from './approval-workflow-model';
+import { approvalWorkflowReadModel } from './approval-workflow-read-projection';
 import {
   approvalWorkflowOwnerDraft,
   approvalWorkflowWorkspaceValid,
-  captureApprovalWorkflowOwnerDetail,
   createApprovalWorkflowWorkspaceSeed,
   isApprovalTypedWorkflowDraft,
 } from './approval-workflow-typed-workspace-model';
@@ -109,8 +109,12 @@ export function useApprovalWorkflowStudioController() {
       ...requestScope.cacheKey,
     ],
     queryFn: async ({ signal }) =>
-      captureApprovalWorkflowOwnerDetail(
-        await getApprovalStudioWorkflow(selectedId!, requestScope.contextScopeKey, signal)
+      approvalWorkflowReadModel(
+        await getApprovalStudioWorkflowReadProjection(
+          selectedId!,
+          requestScope.contextScopeKey,
+          signal
+        )
       ),
     enabled: scopeReady && Boolean(selectedId),
     retry: retryApprovalManagementRead,
@@ -119,25 +123,24 @@ export function useApprovalWorkflowStudioController() {
 
   const workflowsState = approvalManagementSourceState(workflows);
   const detailState = approvalManagementSourceState(detail);
+  const owner = detail.data?.owner;
   const catalogWriteReady = scopeReady && workflowsState === 'READY' && !workflows.isFetching;
-  const detailWriteReady = catalogWriteReady && detailState === 'READY' && !detail.isFetching;
+  const detailWriteReady =
+    catalogWriteReady && detailState === 'READY' && !detail.isFetching && Boolean(owner);
   const draftBindingMatches =
     approvalManagementDraftBindingMatches(
       draftBinding,
-      detail.data
-        ? { objectId: detail.data.workflow.workflowId, ...detail.data.workflow }
-        : undefined
-    ) && draftBinding?.definitionHash === detail.data?.definitionHash;
+      owner ? { objectId: owner.workflow.workflowId, ...owner.workflow } : undefined
+    ) && draftBinding?.definitionHash === owner?.definitionHash;
   const draftWriteReady = creating ? catalogWriteReady : detailWriteReady && draftBindingMatches;
   const conditionSource = useApprovalWorkflowConditionSource(
-    scopeReady &&
-      ((isApprovalTypedWorkflowDraft(draft) && editorOpen) || detail.data?.kind === 'typed'),
+    scopeReady && ((isApprovalTypedWorkflowDraft(draft) && editorOpen) || owner?.kind === 'typed'),
     requestScope
   );
   const baseConditional =
     !creating &&
-    detail.data?.kind === 'typed' &&
-    detail.data.definition.stages.some((stage) => stage.routeCondition);
+    owner?.kind === 'typed' &&
+    owner.definition.stages.some((stage) => stage.routeCondition);
   const needsConditionSource = Boolean(
     baseConditional ||
     (editorOpen &&
@@ -152,7 +155,7 @@ export function useApprovalWorkflowStudioController() {
     editorOpen,
     canEdit: experience.canEditDesign,
     needsConditionSource,
-    owner: detail.data,
+    owner,
     canPublish: experience.canPublish,
   });
   latest.current = {
@@ -163,7 +166,7 @@ export function useApprovalWorkflowStudioController() {
     editorOpen,
     canEdit: experience.canEditDesign,
     needsConditionSource,
-    owner: detail.data,
+    owner,
     canPublish: experience.canPublish,
   };
   const visibleWorkflows = useMemo(() => {
@@ -172,7 +175,12 @@ export function useApprovalWorkflowStudioController() {
       (workflow) =>
         (lifecycleFilter === 'ALL' || workflow.lifecycleState === lifecycleFilter) &&
         (!needle ||
-          [workflow.workflowKey, workflow.nameKo, workflow.nameEn, workflow.ownerGroupRef]
+          [
+            workflow.workflowKey,
+            workflow.nameKo,
+            workflow.nameEn,
+            'ownerGroupRef' in workflow ? workflow.ownerGroupRef : undefined,
+          ]
             .join(' ')
             .toLocaleLowerCase()
             .includes(needle))
@@ -354,16 +362,16 @@ export function useApprovalWorkflowStudioController() {
     setEditorOpen(true);
   };
   const openEdit = () => {
-    if (!detail.data || !detailWriteReady || !experience.canEditDesign || editorOpen) return;
-    const workflow = detail.data.workflow;
+    if (!owner || !detailWriteReady || !experience.canEditDesign || editorOpen) return;
+    const workflow = owner.workflow;
     if (workflow.lifecycleState !== 'DRAFT') return;
     setCreating(false);
     setDraftBinding({
       objectId: workflow.workflowId,
       version: workflow.version,
-      definitionHash: detail.data.definitionHash,
+      definitionHash: owner.definitionHash,
     });
-    setDraft(approvalWorkflowOwnerDraft(detail.data));
+    setDraft(approvalWorkflowOwnerDraft(owner));
     setEditorOpen(true);
   };
   const save = async () => {
@@ -416,18 +424,14 @@ export function useApprovalWorkflowStudioController() {
     }
   };
 
-  const displayDraft = editorOpen
-    ? draft
-    : detail.data
-      ? approvalWorkflowOwnerDraft(detail.data)
-      : null;
+  const displayDraft = editorOpen ? draft : owner ? approvalWorkflowOwnerDraft(owner) : null;
   const retryRead = () => {
     void workflows.refetch();
     if (!(editorOpen && creating) && selectedId) void detail.refetch();
   };
   const publish = async () => {
     if (
-      !detail.data ||
+      !owner ||
       !detailWriteReady ||
       !experience.canPublish ||
       editorOpen ||
@@ -435,7 +439,6 @@ export function useApprovalWorkflowStudioController() {
       highRiskPublish.controller.busy
     )
       return;
-    const owner = detail.data;
     const conditional =
       owner.kind === 'typed' && owner.definition.stages.some((stage) => stage.routeCondition);
     if (conditional) {
@@ -463,7 +466,7 @@ export function useApprovalWorkflowStudioController() {
       form: conditional ? conditionSource.pin : null,
     };
     void highRiskPublish.begin(
-      approvalWorkflowPublishCommand(detail.data.workflow.workflowId, detail.data.workflow.version)
+      approvalWorkflowPublishCommand(owner.workflow.workflowId, owner.workflow.version)
     );
   };
 
@@ -475,6 +478,7 @@ export function useApprovalWorkflowStudioController() {
     detailState,
     workflows,
     detail,
+    owner,
     selectedId,
     setSelectedId,
     experience,

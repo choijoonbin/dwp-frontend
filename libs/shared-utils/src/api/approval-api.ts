@@ -57,6 +57,10 @@ export { readApprovalTypedWorkflowDetail } from './approval-workflow-typed-contr
 export {
   isApprovalTypedFormSchema,
   assertSupportedApprovalFormSchema,
+  isApprovalFormDetailProjection,
+  isApprovalFormOversightProjection,
+  isApprovalWorkflowDetailProjection,
+  isApprovalWorkflowOversightProjection,
 } from './approval-management-contract';
 export type * from './approval-request-contract';
 export * from './approval-management-api';

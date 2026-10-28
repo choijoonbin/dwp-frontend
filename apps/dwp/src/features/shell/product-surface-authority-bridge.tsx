@@ -37,6 +37,12 @@ import {
   mapProductSurfaceAccessError,
   mapProductSurfaceDirectEvaluation,
 } from './product-surface-context';
+import {
+  resolveProductSurfaceEvaluationScopeKey,
+  useProductSurfaceUrlScope,
+} from './product-surface-url-scope';
+
+export { resolveProductSurfaceEvaluationScopeKey } from './product-surface-url-scope';
 
 import type {
   ProductSurfaceEffectiveContext,
@@ -340,14 +346,6 @@ export function resolveGovernedPageEvaluationRoutes<
   return productId ? routes.filter((route) => route.productId === productId) : [];
 }
 
-export function resolveProductSurfaceEvaluationScopeKey(
-  routeContractKey: string,
-  activeRouteContractKey: string | undefined,
-  requestedScope: string | undefined
-): string | undefined {
-  return routeContractKey === activeRouteContractKey ? requestedScope : undefined;
-}
-
 function routeSegments(path: string): string[] {
   return normalizeProductPath(path).split('/').filter(Boolean);
 }
@@ -615,10 +613,6 @@ export function ProductSurfaceAuthorityBridge({
       ) as Record<string, ProductSurfaceRolloutFlags>,
     [authority, runtime.productIds]
   );
-  const requestedScope = useMemo(
-    () => new URLSearchParams(location.search).get('scope') ?? undefined,
-    [location.search]
-  );
   const activeSurfaceId = useMemo(
     () =>
       resolveActiveGovernedSurfaceId(
@@ -652,6 +646,12 @@ export function ProductSurfaceAuthorityBridge({
       ),
     [location.pathname, runtime.legacyRoutes, runtime.pageRoutes, runtime.productBoundaries]
   );
+  const requestedScope = useProductSurfaceUrlScope({
+    activeProductId: evaluationRoutes[0]?.productId,
+    activeSurface: activePageRoute,
+    envelope,
+    nowMs: authority.serverNowMs,
+  });
   const activeOperationTarget = useMemo(
     () => resolveGovernedSurfaceOperationTarget(activeSurfaceId, runtime.pageRoutes),
     [activeSurfaceId, runtime.pageRoutes]

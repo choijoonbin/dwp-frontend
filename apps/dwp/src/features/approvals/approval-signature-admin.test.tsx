@@ -18,16 +18,26 @@ import {
   diagnosticPolicy,
 } from '@dwp-frontend/shared-utils/api/approval-signature-diagnostics.test-support';
 import type { useApprovalSignatureProviderDiagnostics as useController } from './use-approval-signature-provider-diagnostics';
+import type { useApprovalSignatureReadProjection as useReadController } from './use-approval-signature-read-projection';
 import { ApprovalSignatureAdmin } from './approval-signature-admin';
 
 type Controller = ReturnType<typeof useController>;
+type ReadController = ReturnType<typeof useReadController>;
 
 const state = vi.hoisted(() => ({
   controller: null as unknown,
+  readController: null as unknown,
+  diagnosticsCalls: 0,
 }));
 
 vi.mock('./use-approval-signature-provider-diagnostics', () => ({
-  useApprovalSignatureProviderDiagnostics: () => state.controller,
+  useApprovalSignatureProviderDiagnostics: () => {
+    state.diagnosticsCalls += 1;
+    return state.controller;
+  },
+}));
+vi.mock('./use-approval-signature-read-projection', () => ({
+  useApprovalSignatureReadProjection: () => state.readController,
 }));
 vi.mock('./approval-admin-attachment-policy-controller', () => ({
   ApprovalAdminAttachmentPolicyController: () => null,
@@ -81,8 +91,48 @@ function controller(patch: Partial<Controller> = {}): Controller {
   } as unknown as Controller;
 }
 
-async function render(value: Controller, locale: 'en' | 'ko' = 'en') {
+function readController(patch: Partial<ReadController> = {}): ReadController {
+  return {
+    scopeReady: true,
+    sourceState: 'READY',
+    source: {
+      data: {
+        mode: 'FULL_MANAGEMENT',
+        providers: [
+          {
+            providerId: diagnosticFixtureDraftId,
+            providerKey: 'DOCUSIGN',
+            displayName: 'DocuSign',
+            providerType: 'REMOTE',
+            lifecycleState: 'ACTIVE',
+            credentialConfigured: true,
+            lastHealthCheckedAt: diagnosticFixtureNow,
+            version: 2,
+            capabilities: {
+              internalAttestation: false,
+              auditEvidence: true,
+              verifiedIdentity: true,
+              remoteSigningSupported: true,
+              readiness: 'EXTERNAL_VERIFICATION_REQUIRED',
+            },
+          },
+        ],
+      },
+      dataUpdatedAt: Date.parse(diagnosticFixtureNow),
+      isFetching: false,
+      refetch: vi.fn(async () => undefined),
+    },
+    ...patch,
+  } as unknown as ReadController;
+}
+
+async function render(
+  value: Controller,
+  locale: 'en' | 'ko' = 'en',
+  readValue: ReadController = readController()
+) {
   state.controller = value;
+  state.readController = readValue;
   const i18n = createInstance();
   await i18n.init({
     lng: locale,
@@ -119,6 +169,7 @@ describe('APR16B production signature administration', () => {
     container = document.createElement('div');
     document.body.append(container);
     root = createRoot(container);
+    state.diagnosticsCalls = 0;
   });
 
   afterEach(async () => {
@@ -147,6 +198,68 @@ describe('APR16B production signature administration', () => {
     expect(container.textContent).toContain(en.admin.signatureDiagnostics.secretBoundary);
     expect(container.textContent).not.toContain('credentialSecret');
     expect(container.textContent).not.toContain('admin.signatureDiagnostics.');
+  });
+
+  it('renders the oversight oneOf projection as metadata without mounting management diagnostics', async () => {
+    const oversight = readController({
+      source: {
+        data: {
+          mode: 'OVERSIGHT',
+          providers: [
+            {
+              providerId: diagnosticFixtureDraftId,
+              providerKey: 'DOCUSIGN',
+              displayName: 'DocuSign oversight',
+              providerType: 'REMOTE',
+              lifecycleState: 'ACTIVE',
+              credentialConfigured: true,
+              lastHealthCheckedAt: diagnosticFixtureNow,
+              version: 2,
+            },
+          ],
+        },
+        dataUpdatedAt: Date.parse(diagnosticFixtureNow),
+        isFetching: false,
+        refetch: vi.fn(async () => undefined),
+      },
+    } as unknown as Partial<ReadController>);
+
+    await render(controller(), 'en', oversight);
+
+    expect(container.textContent).toContain('DocuSign oversight');
+    expect(
+      container.querySelector('[data-approval-signature-projection="OVERSIGHT"]')
+    ).not.toBeNull();
+    expect(state.diagnosticsCalls).toBe(0);
+    expect(
+      queryByRole(container, 'button', {
+        name: en.admin.signatureDiagnostics.labels.runAllProbes,
+      })
+    ).toBeNull();
+    expect(
+      queryByRole(container, 'button', {
+        name: en.admin.signatureDiagnostics.labels.viewConfiguration,
+      })
+    ).toBeNull();
+  });
+
+  it('demotes a stale full projection to metadata and keeps all commands unmounted', async () => {
+    await render(controller(), 'en', readController({ sourceState: 'STALE' }));
+
+    expect(
+      container.querySelector('[data-approval-signature-projection="STALE_FULL"]')
+    ).not.toBeNull();
+    expect(state.diagnosticsCalls).toBe(0);
+    expect(
+      queryByRole(container, 'button', {
+        name: en.admin.signatureDiagnostics.labels.runAllProbes,
+      })
+    ).toBeNull();
+    expect(
+      queryByRole(container, 'button', {
+        name: en.admin.signatureDiagnostics.labels.viewConfiguration,
+      })
+    ).toBeNull();
   });
 
   it('dispatches provider inspection and governed probes from the current controller only', async () => {

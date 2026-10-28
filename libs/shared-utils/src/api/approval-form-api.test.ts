@@ -4,6 +4,8 @@ import { resetCsrfToken } from '../axios-instance';
 import {
   createApprovalFormDraft,
   getApprovalForm,
+  getApprovalFormReadProjection,
+  isApprovalFormDetailProjection,
   updateApprovalFormDraft,
   claimApprovalTask,
   decideApprovalTask,
@@ -127,6 +129,83 @@ describe('approval form versioned API boundary', () => {
     );
     await expect(getApprovalForm('form-1', 'opaque-scope')).rejects.toThrow('Unsupported');
   });
+
+  it('preserves the registered oversight metadata projection without treating it as malformed detail', async () => {
+    const oversight = {
+      formId: '11111111-1111-1111-1111-111111111111',
+      formKey: 'EXPENSE_FORM',
+      categoryId: '22222222-2222-2222-2222-222222222222',
+      categoryKey: 'FINANCE',
+      categoryNameKo: '재무',
+      categoryNameEn: 'Finance',
+      nameKo: '비용 요청',
+      nameEn: 'Expense request',
+      formKind: 'REQUEST',
+      lifecycleState: 'PUBLISHED',
+      currentVersion: 2,
+      fieldCount: 4,
+      routeCount: 1,
+      usageCount: 8,
+      version: 3,
+      updatedAt: '2026-10-27T00:00:00Z',
+    } as const;
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue(json(oversight)));
+
+    const projection = await getApprovalFormReadProjection('form-1', 'opaque-scope');
+
+    expect(isApprovalFormDetailProjection(projection)).toBe(false);
+    expect(projection).toEqual(oversight);
+    await expect(getApprovalForm('form-1', 'opaque-scope')).rejects.toThrow(
+      'detail is unavailable'
+    );
+  });
+
+  it.each([
+    null,
+    7,
+    {},
+    { formId: 'form-1', formKey: 'FORM' },
+    {
+      form: {},
+      schema: { schemaVersion: 1, fields: [] },
+      schemaHash: 'schema-hash',
+      routes: [],
+    },
+    {
+      form: {
+        formId: 'form-1',
+        formKey: 'FORM',
+        categoryId: 'category-1',
+        categoryKey: 'GENERAL',
+        categoryNameKo: '공통',
+        categoryNameEn: 'General',
+        nameKo: '양식',
+        nameEn: 'Form',
+        descriptionKo: '',
+        descriptionEn: '',
+        formKind: 'REQUEST',
+        lifecycleState: 'DRAFT',
+        currentVersion: 1,
+        fieldCount: 0,
+        routeCount: 0,
+        usageCount: 0,
+        version: 0,
+        updatedAt: '2026-10-27T00:00:00Z',
+      },
+      schema: { schemaVersion: 1, fields: [] },
+      schemaHash: 'schema-hash',
+      routes: {},
+    },
+  ])(
+    'rejects a malformed successful projection without a runtime TypeError (%#)',
+    async (value) => {
+      vi.stubGlobal('fetch', vi.fn().mockResolvedValue(json(value)));
+
+      await expect(getApprovalFormReadProjection('form-1', 'opaque-scope')).rejects.toThrow(
+        'Invalid approval form read projection'
+      );
+    }
+  );
 
   it.each(['claim', 'decision', 'draft'] as const)(
     'rejects an unknown form schema in a successful %s response without repeating the command',

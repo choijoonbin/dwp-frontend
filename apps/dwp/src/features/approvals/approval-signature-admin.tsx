@@ -7,6 +7,7 @@ import {
   ErrorState,
   FormDialog,
   InlineFeedback,
+  LoadingState,
 } from '@dwp-frontend/design-system';
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
@@ -17,10 +18,71 @@ import { SignatureDiagnosticsInspector } from './approval-signature-diagnostics-
 import { SignatureDiagnosticsOverview } from './approval-signature-diagnostics-overview';
 import { SignatureDiagnosticsPolicyInspector } from './approval-signature-diagnostics-policy-inspector';
 import { ApprovalSignaturePolicyWorkspace } from './approval-signature-policy-workspace';
+import { ApprovalSignatureOversight } from './approval-signature-oversight';
 import { approvalTone, ApprovalSurface } from './approval-ui';
 import { useApprovalSignatureProviderDiagnostics } from './use-approval-signature-provider-diagnostics';
+import { useApprovalSignatureReadProjection } from './use-approval-signature-read-projection';
 
 export function ApprovalSignatureAdmin() {
+  const { t } = useTranslation('approvals');
+  const read = useApprovalSignatureReadProjection();
+
+  if (!read.scopeReady) {
+    return (
+      <ErrorState
+        title={t('admin.loadError')}
+        description={t('pages.signatures.description')}
+        size="compact"
+      />
+    );
+  }
+
+  if (read.sourceState === 'LOADING') {
+    return (
+      <LoadingState
+        label={t('pages.signatures.title')}
+        description={t('pages.signatures.description')}
+        variant="skeleton"
+        skeletonRows={3}
+        size="compact"
+      />
+    );
+  }
+
+  if (read.sourceState === 'DENIED' || read.sourceState === 'UNAVAILABLE' || !read.source.data) {
+    return (
+      <ErrorState
+        title={t('admin.loadError')}
+        description={t('admin.signatures.sourceUnavailable')}
+        retryLabel={t('actions.retry')}
+        retrying={read.source.isFetching}
+        onRetry={() => void read.source.refetch()}
+        size="compact"
+      />
+    );
+  }
+
+  if (read.sourceState === 'STALE' || read.source.data.mode === 'OVERSIGHT') {
+    return (
+      <ApprovalSignatureOversight
+        providers={read.source.data.providers}
+        stale={read.sourceState === 'STALE'}
+        refreshing={read.source.isFetching}
+        dataUpdatedAt={read.source.dataUpdatedAt}
+        projection={
+          read.sourceState === 'STALE' && read.source.data.mode === 'FULL_MANAGEMENT'
+            ? 'STALE_FULL'
+            : 'OVERSIGHT'
+        }
+        onRefresh={() => void read.source.refetch()}
+      />
+    );
+  }
+
+  return <ApprovalSignatureFullManagement />;
+}
+
+function ApprovalSignatureFullManagement() {
   const { t } = useTranslation('approvals');
   const controller = useApprovalSignatureProviderDiagnostics();
   const [now, setNow] = useState(() => Date.now());

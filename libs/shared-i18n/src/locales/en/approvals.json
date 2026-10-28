@@ -1777,7 +1777,8 @@
       "meta": "Versioned stages and controls",
       "search": "Search process name, key, or owner",
       "lifecycle": "Process lifecycle",
-      "all": "All processes"
+      "all": "All processes",
+      "metadataOnly": "Your current access shows process metadata only. Stage definitions and edit or publish commands are not included."
     },
     "workflowPublished": "Process published.",
     "workflowPublishError": "The process could not be published.",
@@ -2136,7 +2137,8 @@
         "fields": "Input fields",
         "routes": "Linked routes",
         "usage": "Requests created",
-        "version": "Current version"
+        "version": "Current version",
+        "metadataOnly": "Your current authority exposes form metadata only. Field schemas and approval route definitions are not included."
       },
       "route": {
         "title": "Default approval route",

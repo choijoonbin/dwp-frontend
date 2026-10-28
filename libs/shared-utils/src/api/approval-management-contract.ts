@@ -96,6 +96,25 @@ export type ApprovalWorkflowDetail = {
   definitionHash: string;
 };
 
+export type ApprovalWorkflowOversightProjection = Pick<
+  ApprovalWorkflow,
+  | 'workflowId'
+  | 'workflowKey'
+  | 'nameKo'
+  | 'nameEn'
+  | 'category'
+  | 'dataClassification'
+  | 'lifecycleState'
+  | 'currentVersion'
+  | 'slaMinutes'
+  | 'version'
+  | 'updatedAt'
+>;
+
+export type ApprovalWorkflowListProjection = ApprovalWorkflow | ApprovalWorkflowOversightProjection;
+export type ApprovalWorkflowReadProjection =
+  ApprovalWorkflowDetail | ApprovalWorkflowOversightProjection;
+
 export type ApprovalForm = {
   formId: string;
   formKey: string;
@@ -187,6 +206,228 @@ export type ApprovalFormDetail = {
   formVersionId?: string | null;
   routes: ApprovalFormRoute[];
 };
+
+export type ApprovalFormOversightProjection = Pick<
+  ApprovalForm,
+  | 'formId'
+  | 'formKey'
+  | 'categoryId'
+  | 'categoryKey'
+  | 'categoryNameKo'
+  | 'categoryNameEn'
+  | 'nameKo'
+  | 'nameEn'
+  | 'formKind'
+  | 'lifecycleState'
+  | 'currentVersion'
+  | 'fieldCount'
+  | 'routeCount'
+  | 'usageCount'
+  | 'version'
+  | 'updatedAt'
+>;
+
+export type ApprovalFormReadProjection = ApprovalFormDetail | ApprovalFormOversightProjection;
+
+const approvalFormProjectionStringFields = [
+  'formId',
+  'formKey',
+  'categoryId',
+  'categoryKey',
+  'categoryNameKo',
+  'categoryNameEn',
+  'nameKo',
+  'nameEn',
+  'formKind',
+  'lifecycleState',
+  'updatedAt',
+] as const;
+const approvalFormProjectionNumberFields = [
+  'currentVersion',
+  'fieldCount',
+  'routeCount',
+  'usageCount',
+  'version',
+] as const;
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === 'object' && value !== null && !Array.isArray(value);
+}
+
+const approvalWorkflowProjectionStringFields = [
+  'workflowId',
+  'workflowKey',
+  'nameKo',
+  'nameEn',
+  'category',
+  'dataClassification',
+  'lifecycleState',
+  'updatedAt',
+] as const;
+const approvalWorkflowProjectionNumberFields = ['currentVersion', 'slaMinutes', 'version'] as const;
+
+function hasApprovalWorkflowProjectionFields(
+  value: unknown
+): value is ApprovalWorkflowOversightProjection {
+  if (!isRecord(value)) return false;
+  return (
+    approvalWorkflowProjectionStringFields.every((key) => typeof value[key] === 'string') &&
+    approvalWorkflowProjectionNumberFields.every(
+      (key) => typeof value[key] === 'number' && Number.isFinite(value[key])
+    )
+  );
+}
+
+export function isApprovalWorkflowOversightProjection(
+  value: unknown
+): value is ApprovalWorkflowOversightProjection {
+  return hasApprovalWorkflowProjectionFields(value);
+}
+
+function isApprovalWorkflow(value: unknown): value is ApprovalWorkflow {
+  if (!hasApprovalWorkflowProjectionFields(value)) return false;
+  const record = value as unknown as Record<string, unknown>;
+  return (
+    typeof record.descriptionKo === 'string' &&
+    typeof record.descriptionEn === 'string' &&
+    typeof record.allowSelfApproval === 'boolean' &&
+    (record.ownerGroupRef === undefined ||
+      record.ownerGroupRef === null ||
+      typeof record.ownerGroupRef === 'string')
+  );
+}
+
+function isApprovalWorkflowStep(value: unknown): value is ApprovalWorkflowStep {
+  if (!isRecord(value)) return false;
+  return (
+    typeof value.key === 'string' &&
+    typeof value.name === 'string' &&
+    value.mode === 'ANY' &&
+    typeof value.candidateRole === 'string' &&
+    typeof value.slaMinutes === 'number' &&
+    Number.isFinite(value.slaMinutes)
+  );
+}
+
+function isApprovalTypedWorkflowStage(value: unknown): boolean {
+  if (!isRecord(value) || !isRecord(value.quorum) || !Array.isArray(value.predecessors)) {
+    return false;
+  }
+  const quorum = value.quorum;
+  const quorumValid =
+    quorum.mode === 'ANY' ||
+    quorum.mode === 'ALL' ||
+    ((quorum.mode === 'COUNT' || quorum.mode === 'PERCENT') &&
+      typeof quorum.value === 'number' &&
+      Number.isSafeInteger(quorum.value));
+  return (
+    typeof value.key === 'string' &&
+    typeof value.name === 'string' &&
+    typeof value.candidateRole === 'string' &&
+    typeof value.slaMinutes === 'number' &&
+    Number.isFinite(value.slaMinutes) &&
+    value.predecessors.every((key) => typeof key === 'string') &&
+    quorumValid &&
+    (value.routeCondition === undefined || isRecord(value.routeCondition))
+  );
+}
+
+function isApprovalWorkflowDefinition(value: unknown): boolean {
+  if (!isRecord(value)) return false;
+  if ('schemaContract' in value) {
+    return (
+      value.schemaContract === 'DWP_APPROVAL_WORKFLOW_QUORUM_V2' &&
+      value.schemaVersion === 2 &&
+      typeof value.slaMinutes === 'number' &&
+      Number.isFinite(value.slaMinutes) &&
+      Array.isArray(value.stages) &&
+      value.stages.length > 0 &&
+      value.stages.every(isApprovalTypedWorkflowStage)
+    );
+  }
+  return (
+    typeof value.schemaVersion === 'number' &&
+    Number.isFinite(value.schemaVersion) &&
+    Array.isArray(value.steps) &&
+    value.steps.every(isApprovalWorkflowStep) &&
+    isRecord(value.guardrails)
+  );
+}
+
+export function isApprovalWorkflowDetailProjection(
+  value: unknown
+): value is ApprovalWorkflowDetail {
+  return (
+    isRecord(value) &&
+    isApprovalWorkflow(value.workflow) &&
+    isApprovalWorkflowDefinition(value.definition) &&
+    typeof value.definitionHash === 'string' &&
+    /^[0-9a-f]{64}$/.test(value.definitionHash)
+  );
+}
+
+function hasApprovalFormProjectionFields(value: unknown): value is ApprovalFormOversightProjection {
+  if (!isRecord(value)) return false;
+  return (
+    approvalFormProjectionStringFields.every((key) => typeof value[key] === 'string') &&
+    approvalFormProjectionNumberFields.every(
+      (key) => typeof value[key] === 'number' && Number.isFinite(value[key])
+    ) &&
+    (value.formKind === 'REQUEST' ||
+      value.formKind === 'DOCUMENT' ||
+      value.formKind === 'SIGNATURE')
+  );
+}
+
+export function isApprovalFormOversightProjection(
+  value: unknown
+): value is ApprovalFormOversightProjection {
+  return hasApprovalFormProjectionFields(value);
+}
+
+function isApprovalForm(value: unknown): value is ApprovalForm {
+  if (!hasApprovalFormProjectionFields(value)) return false;
+  const record = value as unknown as Record<string, unknown>;
+  return (
+    typeof record.descriptionKo === 'string' &&
+    typeof record.descriptionEn === 'string' &&
+    (record.ownerGroupRef === undefined ||
+      record.ownerGroupRef === null ||
+      typeof record.ownerGroupRef === 'string')
+  );
+}
+
+function isApprovalFormRoute(value: unknown): value is ApprovalFormRoute {
+  if (!isRecord(value)) return false;
+  return (
+    ['bindingId', 'workflowId', 'workflowKey', 'workflowNameKo', 'workflowNameEn'].every(
+      (key) => typeof value[key] === 'string'
+    ) &&
+    typeof value.workflowLifecycleState === 'string' &&
+    typeof value.workflowVersion === 'number' &&
+    typeof value.slaMinutes === 'number' &&
+    (value.bindingType === 'DEFAULT' || value.bindingType === 'CONDITIONAL') &&
+    typeof value.priority === 'number'
+  );
+}
+
+export function isApprovalFormDetailProjection(value: unknown): value is ApprovalFormDetail {
+  if (!isRecord(value) || !isApprovalForm(value.form) || !isRecord(value.schema)) return false;
+  if (
+    !Array.isArray(value.schema.fields) ||
+    typeof value.schemaHash !== 'string' ||
+    value.schemaHash.length === 0 ||
+    !Array.isArray(value.routes) ||
+    !value.routes.every(isApprovalFormRoute)
+  ) {
+    return false;
+  }
+  return (
+    value.formVersionId === undefined ||
+    value.formVersionId === null ||
+    typeof value.formVersionId === 'string'
+  );
+}
 
 export type ApprovalPolicy = {
   policyId: string;

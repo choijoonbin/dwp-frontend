@@ -20,10 +20,10 @@ import { ApprovalSurface } from './approval-ui';
 import { ApprovalWorkflowInlineEditor } from './approval-workflow-inline-editor';
 import { ApprovalWorkflowTypedInlineEditor } from './approval-workflow-typed-inline-editor';
 import { ApprovalWorkflowListItem } from './approval-workflow-library';
+import { ApprovalWorkflowOversightInspector } from './approval-workflow-oversight-inspector';
 import { isApprovalTypedWorkflowDraft } from './approval-workflow-typed-workspace-model';
 import { useApprovalWorkflowStudioController } from './approval-workflow-studio-controller';
 import { ApprovalWorkflowPlanningPanel } from './approval-workflow-planning-panel';
-import { readApprovalTypedWorkflowDetail } from '@dwp-frontend/shared-utils/api/approval-workflow-typed-contract';
 
 export function ApprovalWorkflowStudio() {
   const {
@@ -34,6 +34,7 @@ export function ApprovalWorkflowStudio() {
     detailState,
     workflows,
     detail,
+    owner,
     selectedId,
     setSelectedId,
     experience,
@@ -163,8 +164,8 @@ export function ApprovalWorkflowStudio() {
     workflowsState === 'READY' &&
     detailState === 'READY' &&
     !detail.isFetching &&
-    detail.data
-      ? readApprovalTypedWorkflowDetail(detail.data)
+    owner?.kind === 'typed'
+      ? owner
       : null;
   return (
     <>
@@ -231,11 +232,9 @@ export function ApprovalWorkflowStudio() {
           }
           sourceConflict={editorOpen && !creating && !draftBindingMatches}
           readRetrying={workflows.isFetching || detail.isFetching}
-          lifecycle={
-            editorOpen && creating ? 'DRAFT' : (detail.data?.workflow.lifecycleState ?? 'DRAFT')
-          }
-          definitionHash={detail.data?.definitionHash}
-          updatedAt={detail.data?.workflow.updatedAt}
+          lifecycle={editorOpen && creating ? 'DRAFT' : (owner?.workflow.lifecycleState ?? 'DRAFT')}
+          definitionHash={owner?.definitionHash}
+          updatedAt={owner?.workflow.updatedAt}
           canEdit={experience.canEditDesign && detailWriteReady}
           canPublish={
             experience.canPublish &&
@@ -262,11 +261,9 @@ export function ApprovalWorkflowStudio() {
           writeReady={editorOpen ? draftWriteReady : detailWriteReady}
           sourceConflict={editorOpen && !creating && !draftBindingMatches}
           readRetrying={workflows.isFetching || detail.isFetching}
-          lifecycle={
-            editorOpen && creating ? 'DRAFT' : (detail.data?.workflow.lifecycleState ?? 'DRAFT')
-          }
-          definitionHash={detail.data?.definitionHash}
-          updatedAt={detail.data?.workflow.updatedAt}
+          lifecycle={editorOpen && creating ? 'DRAFT' : (owner?.workflow.lifecycleState ?? 'DRAFT')}
+          definitionHash={owner?.definitionHash}
+          updatedAt={owner?.workflow.updatedAt}
           canEdit={experience.canEditDesign && detailWriteReady}
           canPublish={experience.canPublish && detailWriteReady}
           publishing={highRiskPublish.controller.busy}
@@ -299,6 +296,11 @@ export function ApprovalWorkflowStudio() {
               retrying={detail.isFetching}
               onRetry={() => void detail.refetch()}
               size="compact"
+            />
+          ) : detailState === 'READY' && detail.data && !owner ? (
+            <ApprovalWorkflowOversightInspector
+              workflow={detail.data.workflow}
+              locale={i18n.resolvedLanguage}
             />
           ) : (
             <LoadingState

@@ -22,8 +22,8 @@ import { resolveSupportedLocale } from '@dwp-frontend/shared-i18n';
 import {
   createApprovalFormCategory,
   createApprovalFormDraft,
-  getApprovalForm,
   getApprovalFormCategories,
+  getApprovalFormReadProjection,
   getApprovalFormReferenceWorkflows,
   getApprovalForms,
   isApprovalTypedFormSchema,
@@ -65,6 +65,8 @@ import {
 import { queryApprovalFormCatalog } from './approval-form-catalog-query';
 import { ApprovalFormCatalogWorkspace } from './approval-form-catalog-workspace';
 import { ApprovalFormInspector } from './approval-form-inspector';
+import { ApprovalFormOversightInspector } from './approval-form-oversight-inspector';
+import { approvalFormReadModel } from './approval-form-read-projection';
 import { ApprovalFormWorkspacePanel } from './approval-form-version-history';
 import { ApprovalFormPublishReviewQueue } from './approval-form-publish-review';
 import { useApprovalFormWorkspaceController } from './approval-form-workspace-controller';
@@ -167,19 +169,23 @@ export function ApprovalFormStudio() {
   });
   const detail = useQuery({
     queryKey: ['approvals', 'admin', 'forms', selectedId, ...requestScope.cacheKey],
-    queryFn: ({ signal }) => getApprovalForm(selectedId!, requestScope.contextScopeKey, signal),
+    queryFn: ({ signal }) =>
+      getApprovalFormReadProjection(selectedId!, requestScope.contextScopeKey, signal),
     enabled: scopeReady && Boolean(selectedId),
     retry: retryApprovalManagementRead,
     staleTime: 30_000,
   });
+  const detailReadModel = detail.data ? approvalFormReadModel(detail.data) : undefined;
+  const fullDetail = detailReadModel?.detail;
+  const projectedForm = detailReadModel?.form;
   const storedSchema =
-    detail.data && isApprovalTypedFormSchema(detail.data.schema) ? detail.data.schema : undefined;
+    fullDetail && isApprovalTypedFormSchema(fullDetail.schema) ? fullDetail.schema : undefined;
   const storedValidation = useApprovalFormSchemaValidation(
     storedSchema,
     scopeReady && Boolean(selectedId)
   );
   const storedSchemaVerified =
-    !storedSchema || storedValidation.compiled?.schemaSha256 === detail.data?.schemaHash;
+    !storedSchema || storedValidation.compiled?.schemaSha256 === fullDetail?.schemaHash;
 
   const formsState = approvalManagementSourceState(forms);
   const categoriesState = approvalManagementSourceState(categories);
@@ -194,10 +200,14 @@ export function ApprovalFormStudio() {
     !categories.isFetching &&
     !workflows.isFetching;
   const detailWriteReady =
-    catalogWriteReady && detailState === 'READY' && !detail.isFetching && storedSchemaVerified;
+    Boolean(fullDetail) &&
+    catalogWriteReady &&
+    detailState === 'READY' &&
+    !detail.isFetching &&
+    storedSchemaVerified;
   const draftBindingMatches = approvalManagementDraftBindingMatches(
     draftBinding,
-    detail.data ? { objectId: detail.data.form.formId, ...detail.data.form } : undefined
+    fullDetail ? { objectId: fullDetail.form.formId, ...fullDetail.form } : undefined
   );
   const formChanged = useCallback(
     async (formId: string) => {
@@ -311,9 +321,9 @@ export function ApprovalFormStudio() {
       if (
         !detailWriteReady ||
         !experience.canPublish ||
-        detail.data?.form.lifecycleState !== 'DRAFT' ||
-        detail.data.form.formId !== command.targetId ||
-        detail.data.form.version !== command.expectedObjectVersion
+        fullDetail?.form.lifecycleState !== 'DRAFT' ||
+        fullDetail.form.formId !== command.targetId ||
+        fullDetail.form.version !== command.expectedObjectVersion
       )
         throw new ProductSurfaceOperationCancelledError();
       return publishApprovalForm(command.targetId, command.expectedObjectVersion, execution);
@@ -466,18 +476,18 @@ export function ApprovalFormStudio() {
     setFormEditorOpen(true);
   };
   const openEditForm = () => {
-    if (!detail.data || !detailWriteReady || !experience.canEditDesign) return;
-    if (detail.data.form.lifecycleState !== 'DRAFT') return;
-    setDraftBinding({ objectId: detail.data.form.formId, version: detail.data.form.version });
-    setFormDraft(approvalFormEditorDraft(detail.data));
+    if (!fullDetail || !detailWriteReady || !experience.canEditDesign) return;
+    if (fullDetail.form.lifecycleState !== 'DRAFT') return;
+    setDraftBinding({ objectId: fullDetail.form.formId, version: fullDetail.form.version });
+    setFormDraft(approvalFormEditorDraft(fullDetail));
     setCreatingForm(false);
     setFormEditorOpen(true);
   };
   const openEditWorkingDraft = () => {
-    if (!detail.data || !workspaceController.updateReady) return;
+    if (!fullDetail || !workspaceController.updateReady) return;
     const original = workspaceController.openEditor();
     if (!original) return;
-    const draft = approvalFormWorkingDraftEditor(original.workspace, detail.data.form.formKey);
+    const draft = approvalFormWorkingDraftEditor(original.workspace, fullDetail.form.formKey);
     if (!draft) return;
     setFormDraft(draft);
     setCreatingForm(false);
@@ -787,7 +797,9 @@ export function ApprovalFormStudio() {
               onRetry={() => void detail.refetch()}
               size="compact"
             />
-          ) : detail.data && storedSchema && !storedValidation.compiled ? (
+          ) : projectedForm && !fullDetail ? (
+            <ApprovalFormOversightInspector form={projectedForm} locale={i18n.resolvedLanguage} />
+          ) : fullDetail && storedSchema && !storedValidation.compiled ? (
             storedValidation.pending ? (
               <LoadingState label={t('admin.typedForm.validating')} size="compact" />
             ) : (
@@ -795,7 +807,7 @@ export function ApprovalFormStudio() {
                 {t('admin.typedForm.schemaMismatch')}
               </InlineFeedback>
             )
-          ) : detail.data ? (
+          ) : fullDetail ? (
             <>
               <ApprovalFormWorkspacePanel
                 controller={workspaceController}
@@ -810,7 +822,7 @@ export function ApprovalFormStudio() {
                 </InlineFeedback>
               ) : null}
               <ApprovalFormInspector
-                detail={detail.data}
+                detail={fullDetail}
                 locale={i18n.resolvedLanguage}
                 canEdit={
                   !workspaceController.installed && experience.canEditDesign && detailWriteReady
@@ -837,7 +849,7 @@ export function ApprovalFormStudio() {
                   )
                     return;
                   void highRiskPublish.begin(
-                    approvalFormPublishCommand(detail.data.form.formId, detail.data.form.version)
+                    approvalFormPublishCommand(fullDetail.form.formId, fullDetail.form.version)
                   );
                 }}
               />
