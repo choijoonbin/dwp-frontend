@@ -1,0 +1,32 @@
+{
+  "schema": "dwp.hris.wave7.r7-batch-06-pay005-central-integration-authority-independent-review.v1",
+  "reviewId": "HRIS-WAVE7-R7-BATCH-06-PAY005-CENTRAL-INTEGRATION-REVIEW-20261028-R1",
+  "reviewedAt": "2026-10-28T18:05:00+09:00",
+  "reviewedBy": "INDEPENDENT_PAY005_CENTRAL_REVIEW",
+  "authorityPin": {
+    "sha256": "852dfa727d7493068334a357799c5b72d30e3e6a2c23f7b5e027d7f42f6f6280",
+    "bytes": 4682
+  },
+  "validatorPin": {
+    "sha256": "ab647591fbbf87e60675aca1ff2b33fff10bf58c0b7f32d333bec8e751c7c811",
+    "bytes": 2886
+  },
+  "reviewedFacts": [
+    "Both exact module refs are pushed and resolve to the reviewed commits and trees.",
+    "The result carrier pins twelve passing acceptance conditions, forty-seven Backend and twenty-one Frontend tests and final P0, P1 and P2 counts of zero.",
+    "Backend dwp-dev can fast-forward from the exact base to the authorized final module commit.",
+    "Frontend source and result evidence can merge into the authority-carrier descendant without changing central product authorization, Auth, Gateway, shell, route, menu or i18n.",
+    "The integration remains default OFF with zero tenant enrollment and no official legal-rate, provider or production binding."
+  ],
+  "severityCounts": {
+    "P0": 0,
+    "P1": 0,
+    "P2": 0
+  },
+  "decision": "GO_TO_EXACT_DWP_DEV_INTEGRATION",
+  "nonClaims": [
+    "Integration authorizes activation, tenant enrollment, legal-rate admission, provider binding or production release.",
+    "PAY-005, Batch-06 or HRIS receives production business-completion credit."
+  ],
+  "nextAction": "RUN_THE_TARGETED_AUTHORITY_VALIDATOR_ONCE_COMMIT_AND_PUSH_THE_THREE_ARTIFACTS_THEN_INTEGRATE_ONLY_THE_EXACT_COMMITS"
+}

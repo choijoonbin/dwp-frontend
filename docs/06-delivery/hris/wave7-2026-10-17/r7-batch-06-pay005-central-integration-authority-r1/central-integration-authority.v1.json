@@ -1,0 +1,101 @@
+{
+  "schema": "dwp.hris.wave7.r7-batch-06-pay005-central-integration-authority.v1",
+  "authorityId": "HRIS-WAVE7-R7-BATCH-06-PAY005-CENTRAL-INTEGRATION-20261028-R1",
+  "issuedAt": "2026-10-28T18:05:00+09:00",
+  "issuedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "state": "ACTIVE_EXACT_MODULE_COMMITS_TO_DWP_DEV_DEFAULT_OFF_SOURCE_ONLY",
+  "sliceId": "BASE-TFR-PAY-005",
+  "module": "PAY",
+  "moduleSession": "HRIS-PAY",
+  "authorityCarrierBase": {
+    "repository": "dwp-frontend",
+    "branch": "dwp-dev",
+    "commit": "166866132920c8039571f7997ee671d7661bc038",
+    "tree": "8c7dfa0a56b089ad38e019ad37b6720ed3e7d5ff",
+    "originExactAtIssue": true
+  },
+  "resultEvidencePins": {
+    "carrierCommit": "d5b46cd0194526632fcbae90fbcee844856bbebc",
+    "carrierTree": "01cf9b679db22c818be11968178e7d4232277678",
+    "evidence": {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-results/pay-005/module-result-evidence.v1.json",
+      "sha256": "c15fcc08791e3bbbdd18797694f6dabfa04cbba645c65a0bf1e133e77bd94d58",
+      "bytes": 9668
+    },
+    "independentReview": {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-results/pay-005/independent-review.v1.json",
+      "sha256": "7e46aeac343141dd2a0bc9eda34519bb115cac66f555754db89e00a72314218a",
+      "bytes": 2118,
+      "requiredDecision": "GO_TO_CENTRAL_INTEGRATION_AUTHORITY"
+    },
+    "validator": {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-results/pay-005/validate_pay005_module_result.py",
+      "sha256": "e40f8fedaafa935f86f3d2c4f450564676887447647b8cb6b520b53ab564e166",
+      "bytes": 3061
+    }
+  },
+  "exactModuleCommits": {
+    "backend": {
+      "repository": "dwp-backend",
+      "branch": "codex/hris-wave7-batch06-pay005-backend-20261028-r1",
+      "baseCommit": "95cdefd98c6fa35b9e2cb4ee737b6cc756c57c22",
+      "finalCommit": "32ae1348135db9f728a87b5cce3e6bbe01c4b2bb",
+      "finalTree": "811e4a0ac3c2806082bb3969f103f12fec3cf002",
+      "remoteRef": "origin/codex/hris-wave7-batch06-pay005-backend-20261028-r1",
+      "changedPathCount": 16
+    },
+    "frontend": {
+      "repository": "dwp-frontend",
+      "branch": "codex/hris-wave7-batch06-pay005-frontend-20261028-r1",
+      "baseCommit": "3f922a4d42c7b83f2a4bcaf28a0ed780fc85dff5",
+      "sourceCommit": "bafee28ee62e7e4bbfcc6c5969c2622c029c10c4",
+      "finalEvidenceCommit": "d5b46cd0194526632fcbae90fbcee844856bbebc",
+      "finalTree": "01cf9b679db22c818be11968178e7d4232277678",
+      "remoteRef": "origin/codex/hris-wave7-batch06-pay005-frontend-20261028-r1",
+      "sourceChangedPathCount": 5,
+      "evidenceChangedPathCount": 3
+    }
+  },
+  "reviewSummary": {
+    "acceptanceCriteriaPassed": 12,
+    "acceptanceCriteriaFailed": 0,
+    "backendTests": 47,
+    "backendFailures": 0,
+    "frontendTests": 21,
+    "frontendFailures": 0,
+    "finalFindings": {"P0": 0, "P1": 0, "P2": 0},
+    "repositoryWideSuiteExecuted": false
+  },
+  "integrationOrder": [
+    "Fast-forward Backend dwp-dev from 95cdefd9 to exact 32ae1348 in a clean integration worktree and push.",
+    "Merge exact Frontend module branch d5b46cd0 into the authority-carrier descendant of this document and push dwp-dev.",
+    "Record both resulting dwp-dev commits and trees in a separate append-only central integration receipt."
+  ],
+  "postIntegrationState": {
+    "featureFlag": "EXISTING_PAY003_IAQ048_ADMISSION_UNCHANGED_DEFAULT_OFF_FOR_PAY005_ACTIVATION",
+    "routeOrMenuDelta": false,
+    "tenantEnrollmentCount": 0,
+    "productionLegalRateBinding": false,
+    "productionProviderBinding": false
+  },
+  "authority": {
+    "backendExactCommitMergeToDwpDevAuthorized": true,
+    "frontendExactCommitMergeToDwpDevAuthorized": true,
+    "integrationReceiptAuthoringAuthorized": true,
+    "anyOtherSourceCommitAuthorized": false,
+    "routeOrMenuMountAuthorized": false,
+    "featureEnablementAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "officialLegalRateOrProviderBindingAuthorized": false,
+    "productionReleaseAuthorized": false,
+    "pay005BusinessCompletionAuthorized": false,
+    "batch06CompletionAuthorized": false
+  },
+  "invalidationConditions": [
+    "Either module remote ref, commit, tree, changed-path count or result evidence pin differs.",
+    "Backend dwp-dev is no longer the exact base or cannot fast-forward to the authorized commit.",
+    "Frontend integration requires a source conflict or any path outside the exact module and evidence deltas.",
+    "Any activation, route, menu, tenant, legal-rate, provider or production change is introduced."
+  ],
+  "nextAction": "INDEPENDENTLY_VALIDATE_COMMIT_AND_PUSH_THIS_AUTHORITY_THEN_INTEGRATE_ONLY_THE_TWO_EXACT_MODULE_BRANCHES"
+}
