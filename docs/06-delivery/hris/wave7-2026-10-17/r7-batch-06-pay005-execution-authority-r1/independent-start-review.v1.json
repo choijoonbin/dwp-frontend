@@ -1,0 +1,42 @@
+{
+  "schema": "dwp.hris.wave7.r7-batch-06-pay005-start-authority-independent-review.v1",
+  "reviewId": "HRIS-WAVE7-R7-BATCH-06-PAY005-START-AUTHORITY-REVIEW-20261028-R1",
+  "reviewedAt": "2026-10-28T17:45:00+09:00",
+  "reviewedBy": "INDEPENDENT_PAY005_WORKTREE_AND_LEASE_AUDIT",
+  "receiptPin": {
+    "sha256": "de4386e09634167617a50dc5d0686c33b7fee33b75ca85edbdb692fd0a9104c1",
+    "bytes": 3058
+  },
+  "leasePin": {
+    "sha256": "e72b03018be7e0c74eb61d5b5424f111b5ce57465eedd1c2caa7d295f51d4bbf",
+    "bytes": 2993
+  },
+  "tokenPin": {
+    "sha256": "9e7c45d6e3d8e14600c215940a9c946d2530beee2d9360d5ec547f9fe628e8cd",
+    "bytes": 6715
+  },
+  "validatorPin": {
+    "sha256": "ac88a988c86dec044973bce12833a53962dfd7b477e6951cb4ba17374100179d",
+    "bytes": 4228
+  },
+  "reviewedFacts": [
+    "The Backend worktree is a clean no-upstream branch at exact committed dwp-dev 95cdefd9 and excludes all unrelated dirty default-checkout paths.",
+    "The Frontend worktree is a clean no-upstream branch at exact packet carrier 3f922a4d.",
+    "No V57 file exists at activation, and exactly one active exclusive lease binds the required V57 tax-result path to BASE-TFR-PAY-005.",
+    "The executable token reuses the packet's exact allowlist and no-touch boundary rather than broadening it.",
+    "The token authorizes only bounded module source, V57, targeted verification and module branch commit and push.",
+    "Direct dwp-dev source merge, Agent writes, central Auth/Gateway/shell/menu/i18n writes, route or menu mount, feature enablement, tenant enrollment, legal-rate or provider binding, full completion and production release remain unauthorized."
+  ],
+  "severityCounts": {
+    "P0": 0,
+    "P1": 0,
+    "P2": 0
+  },
+  "decision": "GO_TO_BOUNDED_PAY005_MODULE_IMPLEMENTATION",
+  "nonClaims": [
+    "No PAY-005 source, test or migration has yet been authored or executed.",
+    "The module branches are not merged to dwp-dev and PAY-005 is not centrally admitted or complete.",
+    "No tenant-visible menu, route, legal rate, filing rule, provider or production binding is active."
+  ],
+  "nextAction": "RUN_THE_START_AUTHORITY_VALIDATOR_ONCE_COMMIT_AND_PUSH_THE_FIVE_ARTIFACTS_THEN_HAND_OFF_THE_EXACT_TOKEN_TO_HRIS_PAY"
+}

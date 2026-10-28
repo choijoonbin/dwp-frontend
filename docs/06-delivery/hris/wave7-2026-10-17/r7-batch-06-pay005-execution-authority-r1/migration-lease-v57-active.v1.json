@@ -1,0 +1,64 @@
+{
+  "schema": "dwp.hris.wave7.r7-batch-06-pay005-v57-active-migration-lease.v1",
+  "activationId": "HRIS-WAVE7-R7-BATCH-06-PAY005-PAYROLL-V57-ACTIVE-20261028-R1",
+  "activatedAt": "2026-10-28T17:45:00+09:00",
+  "activatedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "state": "ACTIVE_EXCLUSIVE",
+  "sliceId": "BASE-TFR-PAY-005",
+  "module": "PAY",
+  "moduleSession": "HRIS-PAY",
+  "predecessorPins": {
+    "reservation": {
+      "path": "migration-lease-v57-reservation.v1.json",
+      "sha256": "09271dafb7a67446d73118b8ea1933fe5f8cc2617488f652747cfa56dda40687",
+      "bytes": 4959,
+      "reservationId": "HRIS-WAVE7-R7-BATCH-06-PAY005-PAYROLL-V57-RESERVATION-20261028-R1"
+    },
+    "worktreeReceipt": {
+      "path": "worktree-materialization-receipt.v1.json",
+      "sha256": "de4386e09634167617a50dc5d0686c33b7fee33b75ca85edbdb692fd0a9104c1",
+      "bytes": 3058,
+      "receiptId": "HRIS-WAVE7-R7-BATCH-06-PAY005-WORKTREE-MATERIALIZATION-20261028-R1"
+    }
+  },
+  "lease": {
+    "leaseId": "HRIS-WAVE7-R7-BATCH-06-PAYROLL-MAIN-V57-PAY005-20261028-R1",
+    "stream": "PAYROLL_MAIN",
+    "version": "V57",
+    "predecessorHighWater": "V56",
+    "exactPath": "dwp-payroll-server/src/main/resources/db/migration/V57__pay_base_tfr_pay_005_tax_result.sql",
+    "exclusiveOwner": "BASE-TFR-PAY-005",
+    "activeLeaseCountForVersion": 1,
+    "backendWorktree": {
+      "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261028/batch06/pay005/backend",
+      "branch": "codex/hris-wave7-batch06-pay005-backend-20261028-r1",
+      "headAtActivation": "95cdefd98c6fa35b9e2cb4ee737b6cc756c57c22",
+      "treeAtActivation": "0ac8cfa880db521961f752097d5a403f6c1cba8c",
+      "porcelainSha256AtActivation": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  "authoringBoundary": {
+    "createExactly": ["pay_tax_result_facts"],
+    "predecessorsImmutable": "V1_THROUGH_V56_BYTE_FOR_BYTE",
+    "seedOrBackfillAuthorized": false,
+    "secondMigrationAuthorized": false,
+    "receiptOutboxEventAuthorized": false,
+    "legalRateOrProviderContentAuthorized": false
+  },
+  "authority": {
+    "exactV57MigrationAuthoringMayBeGrantedByExecutableToken": true,
+    "anyOtherMigrationAuthoringAuthorized": false,
+    "sourceAuthoringAuthorizedByLeaseAlone": false,
+    "testExecutionAuthorizedByLeaseAlone": false,
+    "moduleCommitOrPushAuthorizedByLeaseAlone": false,
+    "directDwpDevMergeAuthorized": false,
+    "productionExecutionAuthorized": false
+  },
+  "invalidationConditions": [
+    "The worktree head, tree, branch, path, upstream or initial clean state differs before the first authorized edit.",
+    "Another V57 path or lease appears.",
+    "Any predecessor migration, second migration, seed, backfill, receipt, outbox, event, legal rate or provider content becomes necessary.",
+    "The exact one-table schema delta proves insufficient."
+  ],
+  "nextAction": "ISSUE_ONE_EXECUTABLE_START_TOKEN_BOUND_TO_THIS_ACTIVE_LEASE_THE_PACKET_AND_BOTH_EXACT_WORKTREES"
+}

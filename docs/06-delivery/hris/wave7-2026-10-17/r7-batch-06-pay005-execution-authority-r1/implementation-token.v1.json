@@ -1,0 +1,133 @@
+{
+  "schema": "dwp.hris.wave7.r7-batch-06-pay005-executable-start-token.v1",
+  "tokenId": "HRIS-WAVE7-R7-BATCH-06-START-BASE-TFR-PAY-005-20261028-R1",
+  "issuedAt": "2026-10-28T17:45:00+09:00",
+  "issuedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "state": "ACTIVE_EXECUTABLE_EXACT_WORKTREES_V57_AND_BOUNDED_PAY005_SOURCE_ONLY",
+  "sliceId": "BASE-TFR-PAY-005",
+  "module": "PAY",
+  "moduleSession": "HRIS-PAY",
+  "predecessorPins": {
+    "ownerPacket": {
+      "path": "owner-packet.v1.json",
+      "sha256": "fc922ad549c4d72e82f0330a8666d5d8d955ee191ec376c9a583e78a95c0ed2f",
+      "bytes": 11330
+    },
+    "worktreeReceipt": {
+      "path": "worktree-materialization-receipt.v1.json",
+      "sha256": "de4386e09634167617a50dc5d0686c33b7fee33b75ca85edbdb692fd0a9104c1",
+      "bytes": 3058
+    },
+    "activeV57Lease": {
+      "path": "migration-lease-v57-active.v1.json",
+      "sha256": "e72b03018be7e0c74eb61d5b5424f111b5ce57465eedd1c2caa7d295f51d4bbf",
+      "bytes": 2993,
+      "requiredState": "ACTIVE_EXCLUSIVE"
+    }
+  },
+  "exactExecutionWorktrees": {
+    "backend": {
+      "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261028/batch06/pay005/backend",
+      "branch": "codex/hris-wave7-batch06-pay005-backend-20261028-r1",
+      "initialHead": "95cdefd98c6fa35b9e2cb4ee737b6cc756c57c22",
+      "initialTree": "0ac8cfa880db521961f752097d5a403f6c1cba8c",
+      "initialUpstream": null,
+      "initialPorcelainSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "pushTarget": "origin/codex/hris-wave7-batch06-pay005-backend-20261028-r1"
+    },
+    "frontend": {
+      "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261028/batch06/pay005/frontend",
+      "branch": "codex/hris-wave7-batch06-pay005-frontend-20261028-r1",
+      "initialHead": "3f922a4d42c7b83f2a4bcaf28a0ed780fc85dff5",
+      "initialTree": "266030eb075fd5babb356eea6740beb057e857d2",
+      "initialUpstream": null,
+      "initialPorcelainSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "pushTarget": "origin/codex/hris-wave7-batch06-pay005-frontend-20261028-r1"
+    }
+  },
+  "writableBoundary": {
+    "sourceOfTruth": "owner-packet.v1.json#/ownerWritableBoundaryAfterExecutableToken",
+    "migration": "dwp-payroll-server/src/main/resources/db/migration/V57__pay_base_tfr_pay_005_tax_result.sql",
+    "resultEvidence": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-results/pay-005/**",
+    "outsideBoundaryRule": "STOP_AND_REQUEST_APPEND_ONLY_REALLOCATION_BEFORE_EDIT",
+    "noTouchSource": "owner-packet.v1.json#/explicitNoTouch"
+  },
+  "implementationContract": {
+    "ownerDelta": [
+      "immutable typed TAX_RESULT producer",
+      "TAX_RESULT projection contribution to existing IAQ-048 on the same workerResultId"
+    ],
+    "entryQuery": {
+      "id": "IAQ-048",
+      "methodAndPath": "GET /api/payroll/v1/workbench/pay-tax-social-insurance",
+      "fieldGroups": ["TAX_RESULT", "SOCIAL_INSURANCE", "POLICY_VERSION"],
+      "availableActions": [],
+      "stableIdentity": "workerResultId"
+    },
+    "migration": {
+      "version": "V57",
+      "createExactly": ["pay_tax_result_facts"],
+      "preserveV1ThroughV56": true,
+      "seedOrBackfill": false
+    },
+    "reuseOnly": [
+      "PAY-003 signed country-pack, IAQ-026 and IAQ-048 route ownership",
+      "PAY-011 generic calculation and PayrollCalculated.v1",
+      "PAY-012 immutable result access"
+    ],
+    "noNew": ["command", "receipt", "generic audit store", "outbox", "tax-specific event", "route", "menu", "central authorization"]
+  },
+  "acceptanceContract": {
+    "source": "../r7-batch-06-pay005-semantic-closure-r1/semantic-disposition.v1.json#/acceptanceCriteria",
+    "requiredCount": 12,
+    "requiredIds": ["PAY005-AC-01", "PAY005-AC-02", "PAY005-AC-03", "PAY005-AC-04", "PAY005-AC-05", "PAY005-AC-06", "PAY005-AC-07", "PAY005-AC-08", "PAY005-AC-09", "PAY005-AC-10", "PAY005-AC-11", "PAY005-AC-12"]
+  },
+  "verificationPolicy": {
+    "rule": "RUN_EACH_NEW_TARGET_GROUP_ONCE; AFTER_FAILURE_RERUN_ONLY_THE_SMALLEST_AFFECTED_TARGET; ONE_BOUNDED_CROSS_CONTRACT_CHECK_AFTER_TARGETS_PASS; NO_REPOSITORY_WIDE_SUITE_PER_CORRECTION",
+    "backendTargets": [
+      "Pay005ContractTest",
+      "Pay005PostgresContractTest",
+      "Pay005V57MigrationContractTest",
+      "Pay005V57MigrationPostgresTest",
+      "Pay003ContractTest",
+      "Pay003ServiceTest",
+      "Pay003PostgresContractTest",
+      "PayrollG3SliceContractTest#payGold001IsDeterministicAndByteEquivalentOnReplay",
+      "PayrollCalculationDurabilityPostgresTest#postgresGuardsSealFactsRejectMakerFinalizeAndPersistExactEvents"
+    ],
+    "frontendTargets": [
+      "apps/dwp/src/features/hris/payroll/__tests__/g3-slices/base-tfr-pay-003.slice.test.tsx",
+      "apps/dwp/src/features/hris/payroll/__tests__/g3-slices/base-tfr-pay-005.slice.test.tsx"
+    ],
+    "requiredDatabaseEvidence": ["clean install through V57", "V56 to V57 upgrade", "RLS and FORCE RLS", "tenant isolation", "least-privilege grants", "immutability and replay conflict"],
+    "databaseUnavailableRule": "BLOCKED_NOT_PASS"
+  },
+  "authority": {
+    "useExactMaterializedWorktreesAuthorized": true,
+    "additionalWorktreeMaterializationAuthorized": false,
+    "boundedBackendSourceAndTestAuthoringAuthorized": true,
+    "boundedFrontendSourceAndTestAuthoringAuthorized": true,
+    "exactV57MigrationAuthoringAuthorized": true,
+    "boundedVerificationAuthorized": true,
+    "moduleBranchCommitAuthorized": true,
+    "moduleBranchPushAuthorized": true,
+    "dwpAgentWriteAuthorized": false,
+    "centralProductAuthorizationWriteAuthorized": false,
+    "authGatewaySharedSecurityShellMenuOrI18nWriteAuthorized": false,
+    "directDwpDevMergeAuthorized": false,
+    "routeOrMenuMountAuthorized": false,
+    "featureEnablementAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "officialLegalRateOrProviderBindingAuthorized": false,
+    "fullSliceCompletionAuthorized": false,
+    "productionReleaseAuthorized": false
+  },
+  "invalidationConditions": [
+    "Any predecessor hash, worktree identity, initial head, tree, upstream or clean digest differs.",
+    "Any write outside the exact packet boundary is required.",
+    "V57 is occupied by another owner or another migration is required.",
+    "A predecessor migration, seed, backfill, new receipt, outbox, event, route, menu, central authorization, legal rate or provider binding becomes necessary.",
+    "Either module branch is merged, rebased or retargeted before evidence review."
+  ],
+  "nextAction": "HRIS_PAY_MAY_IMPLEMENT_VERIFY_COMMIT_AND_PUSH_ONLY_THE_EXACT_BOUNDED_PAY005_MODULE_BRANCHES_THEN_RETURN_HASHED_RESULT_EVIDENCE_FOR_SEPARATE_CENTRAL_REVIEW"
+}

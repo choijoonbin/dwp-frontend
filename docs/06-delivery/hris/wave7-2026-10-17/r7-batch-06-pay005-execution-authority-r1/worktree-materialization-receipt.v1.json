@@ -1,0 +1,71 @@
+{
+  "schema": "dwp.hris.wave7.r7-batch-06-pay005-worktree-materialization-receipt.v1",
+  "receiptId": "HRIS-WAVE7-R7-BATCH-06-PAY005-WORKTREE-MATERIALIZATION-20261028-R1",
+  "recordedAt": "2026-10-28T17:45:00+09:00",
+  "recordedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "state": "MATERIALIZED_CLEAN_EXACT_PACKET_PINS_NO_SOURCE_EDITS_NO_UPSTREAM",
+  "sliceId": "BASE-TFR-PAY-005",
+  "module": "PAY",
+  "moduleSession": "HRIS-PAY",
+  "immutablePredecessors": {
+    "ownerPacket": {
+      "path": "owner-packet.v1.json",
+      "sha256": "fc922ad549c4d72e82f0330a8666d5d8d955ee191ec376c9a583e78a95c0ed2f",
+      "bytes": 11330,
+      "carrierCommit": "3f922a4d42c7b83f2a4bcaf28a0ed780fc85dff5",
+      "carrierTree": "266030eb075fd5babb356eea6740beb057e857d2"
+    },
+    "v57Reservation": {
+      "path": "migration-lease-v57-reservation.v1.json",
+      "sha256": "09271dafb7a67446d73118b8ea1933fe5f8cc2617488f652747cfa56dda40687",
+      "bytes": 4959,
+      "requiredState": "RESERVED_NOT_ACTIVE"
+    }
+  },
+  "materializedWorktrees": {
+    "backend": {
+      "repository": "dwp-backend",
+      "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261028/batch06/pay005/backend",
+      "branch": "codex/hris-wave7-batch06-pay005-backend-20261028-r1",
+      "head": "95cdefd98c6fa35b9e2cb4ee737b6cc756c57c22",
+      "tree": "0ac8cfa880db521961f752097d5a403f6c1cba8c",
+      "porcelainSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "clean": true,
+      "upstream": null,
+      "sourceChangesAtReceipt": [],
+      "materialized": true
+    },
+    "frontend": {
+      "repository": "dwp-frontend",
+      "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261028/batch06/pay005/frontend",
+      "branch": "codex/hris-wave7-batch06-pay005-frontend-20261028-r1",
+      "head": "3f922a4d42c7b83f2a4bcaf28a0ed780fc85dff5",
+      "tree": "266030eb075fd5babb356eea6740beb057e857d2",
+      "porcelainSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "clean": true,
+      "upstream": null,
+      "sourceChangesAtReceipt": [],
+      "materialized": true
+    }
+  },
+  "migrationObservation": {
+    "stream": "PAYROLL_MAIN",
+    "observedHighWater": "V56",
+    "candidateVersion": "V57",
+    "exactReservedPath": "dwp-payroll-server/src/main/resources/db/migration/V57__pay_base_tfr_pay_005_tax_result.sql",
+    "candidatePathPresent": false,
+    "competingV57Present": false
+  },
+  "authority": {
+    "receiptSealed": true,
+    "activeV57LeaseMayBeIssued": true,
+    "executableStartTokenMayBeIssuedOnlyAfterActiveLease": true,
+    "sourceAuthoringAuthorizedByReceiptAlone": false,
+    "migrationAuthoringAuthorizedByReceiptAlone": false,
+    "testExecutionAuthorizedByReceiptAlone": false,
+    "moduleCommitOrPushAuthorizedByReceiptAlone": false,
+    "directDwpDevMergeAuthorized": false,
+    "productionExecutionAuthorized": false
+  },
+  "nextAction": "ISSUE_ONE_APPEND_ONLY_ACTIVE_EXCLUSIVE_V57_LEASE_BOUND_TO_THIS_RECEIPT_THEN_ISSUE_ONE_EXECUTABLE_PAY005_START_TOKEN"
+}
