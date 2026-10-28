@@ -1,0 +1,35 @@
+{
+  "schema": "dwp.hris.wave7.r7-batch-06-pay005-central-integration-independent-review.v1",
+  "reviewId": "HRIS-WAVE7-R7-BATCH-06-PAY005-CENTRAL-INTEGRATION-REVIEW-20261028-R1",
+  "reviewedAt": "2026-10-28T18:20:00+09:00",
+  "reviewedBy": "INDEPENDENT_PAY005_CENTRAL_ADMISSION_AUDIT",
+  "receiptPin": {
+    "sha256": "8d0761fa1737b67e7d3c9075148e48552a0f0bcebf26fb854384ee1796025409",
+    "bytes": 5229
+  },
+  "validatorPin": {
+    "sha256": "7af695b7e5c954f9266bc91dcae9a4e8358da77484623f67a77622338666305f",
+    "bytes": 3047
+  },
+  "reviewedFacts": [
+    "Backend dwp-dev is exact merge 699ef730 with reviewed PAY-005 32ae1348 as second parent and the path-disjoint concurrent tooling commit as first parent.",
+    "Frontend dwp-dev is exact merge 663be606 with the reviewed module and evidence carrier d5b46cd0 as second parent.",
+    "Both repositories are pushed; the clean integration worktrees match the recorded commits and trees, and dwp_agent is unchanged.",
+    "All twelve acceptance criteria remain PASS with forty-seven Backend and twenty-one Frontend bounded tests and no final P0, P1 or P2 finding.",
+    "No integration test rerun was needed because merge trees were exact and the only concurrent Backend delta had zero path overlap under an append-only rebase authority.",
+    "PAY-005 receives default-OFF source-integration sequencing credit only; three activation-only groups remain open and business-completion credit is zero.",
+    "The immutable next slice is BASE-TFR-PER-009; this receipt authorizes only its semantic closure preparation."
+  ],
+  "severityCounts": {
+    "P0": 0,
+    "P1": 0,
+    "P2": 0
+  },
+  "decision": "GO_TO_SEAL_PAY005_DEFAULT_OFF_SOURCE_INTEGRATION_AND_PER009_SEMANTIC_CLOSURE",
+  "nonClaims": [
+    "PAY-005 activation, tenant enrollment, legal-rate admission, provider binding, production release or business completion.",
+    "PER-009 packet, token, worktree, migration or source authority.",
+    "Batch-06 or HRIS completion."
+  ],
+  "nextAction": "RUN_THE_CENTRAL_INTEGRATION_VALIDATOR_ONCE_COMMIT_AND_PUSH_THE_THREE_ARTIFACTS_THEN_STOP_AT_PER009_SEMANTIC_CLOSURE"
+}

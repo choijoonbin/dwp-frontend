@@ -1,0 +1,125 @@
+{
+  "schema": "dwp.hris.wave7.r7-batch-06-pay005-central-integration-receipt.v1",
+  "receiptId": "HRIS-WAVE7-R7-BATCH-06-PAY005-CENTRAL-INTEGRATION-20261028-R1",
+  "recordedAt": "2026-10-28T18:20:00+09:00",
+  "recordedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "state": "EXACT_PAY005_SOURCE_AND_EVIDENCE_MERGED_PUSHED_DEFAULT_OFF_SEQUENCE_CLOSED_PER009_NEXT",
+  "sliceId": "BASE-TFR-PAY-005",
+  "module": "PAY",
+  "moduleSession": "HRIS-PAY",
+  "integrationPins": {
+    "backend": {
+      "repository": "dwp-backend",
+      "branch": "dwp-dev",
+      "commit": "699ef730f21a89200be6dfed6d2e34148014cd10",
+      "tree": "3ea7866294cfd3bcb2ee950ff8b882f56f6f1317",
+      "firstParent": "f89afe101f1b7d383ad3ac5bf627799dd81e326f",
+      "secondParent": "32ae1348135db9f728a87b5cce3e6bbe01c4b2bb",
+      "originExact": true,
+      "integrationWorktreeClean": true,
+      "defaultCheckoutCleanClaimed": false
+    },
+    "frontend": {
+      "repository": "dwp-frontend",
+      "branch": "dwp-dev",
+      "commit": "663be60694b2ee3553f9265b2abb5d442da5e9e4",
+      "tree": "d531d04cf92497bf1430aa01040d1ff291edde08",
+      "firstParent": "c52d9532d57c0837702860ecdc240cb79c173e94",
+      "secondParent": "d5b46cd0194526632fcbae90fbcee844856bbebc",
+      "originExact": true,
+      "clean": true
+    },
+    "agent": {
+      "repository": "dwp_agent",
+      "branch": "dwp-dev",
+      "commit": "9beb5439cad065e7d919a98c9f9becb44481508a",
+      "tree": "fe3880719360f4bdeff88bbbac1edc6f8affed88",
+      "changed": false,
+      "originExact": true
+    }
+  },
+  "evidencePins": {
+    "moduleResult": {
+      "path": "../r7-batch-06-results/pay-005/module-result-evidence.v1.json",
+      "sha256": "c15fcc08791e3bbbdd18797694f6dabfa04cbba645c65a0bf1e133e77bd94d58",
+      "bytes": 9668,
+      "requiredState": "IMPLEMENTED_TARGETED_VERIFICATION_PASS_MODULE_BRANCHES_PUSHED_CENTRAL_REVIEW_PENDING"
+    },
+    "moduleIndependentReview": {
+      "path": "../r7-batch-06-results/pay-005/independent-review.v1.json",
+      "sha256": "7e46aeac343141dd2a0bc9eda34519bb115cac66f555754db89e00a72314218a",
+      "bytes": 2118,
+      "requiredDecision": "GO_TO_CENTRAL_INTEGRATION_AUTHORITY"
+    },
+    "centralAuthority": {
+      "path": "../r7-batch-06-pay005-central-integration-authority-r1/central-integration-authority.v1.json",
+      "sha256": "852dfa727d7493068334a357799c5b72d30e3e6a2c23f7b5e027d7f42f6f6280",
+      "bytes": 4682
+    },
+    "backendRebaseAuthority": {
+      "path": "../r7-batch-06-pay005-central-integration-rebase-r1/backend-rebase-authority.v1.json",
+      "sha256": "fae1ea0621698ad44231ed1fb7c7f87f89ee3856d5de0647b49e6612dc2bc3ab",
+      "bytes": 3094
+    }
+  },
+  "resultSummary": {
+    "acceptanceCriteriaPassed": 12,
+    "acceptanceCriteriaFailed": 0,
+    "backendBoundedTests": 47,
+    "frontendBoundedTests": 21,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "finalFindings": {"P0": 0, "P1": 0, "P2": 0},
+    "mergeConflictCount": 0,
+    "integrationTestRerunCount": 0,
+    "integrationEvidenceReuse": "AUTHORIZED_EXACT_PARENT_EVIDENCE_WITH_ZERO_PATH_OVERLAP_FOR_CONCURRENT_BACKEND_DELTA"
+  },
+  "implementedBoundary": {
+    "migration": "V57__pay_base_tfr_pay_005_tax_result.sql",
+    "table": "pay_tax_result_facts",
+    "typedProducer": "TAX_RESULT",
+    "entryQuery": "IAQ-048",
+    "fieldGroups": ["TAX_RESULT", "SOCIAL_INSURANCE", "POLICY_VERSION"],
+    "stableIdentity": "workerResultId",
+    "availableActions": [],
+    "routeOrMenuDelta": false,
+    "newReceiptOutboxOrEvent": false
+  },
+  "sequenceDisposition": {
+    "closedSlice": "BASE-TFR-PAY-005",
+    "sequencingCredit": "DEFAULT_OFF_SOURCE_INTEGRATION_ONLY",
+    "businessCompletionCredit": 0,
+    "nextSlice": "BASE-TFR-PER-009",
+    "remainingFixedOrder": ["BASE-TFR-PER-009", "BASE-TFR-SYS-010", "BASE-TFR-TIM-005"],
+    "reorderingAuthorized": false
+  },
+  "activationOnlyOpenConditions": [
+    "Official rate, rounding, filing, statutory-golden and legal-signoff evidence for ACT-G6-KR-PAY.",
+    "Feature admission and tenant enrollment for the typed TAX_RESULT contribution.",
+    "Production country-pack and provider binding, operational audit and release controls."
+  ],
+  "authority": {
+    "pay005DefaultOffSourceIntegrationAccepted": true,
+    "pay005SequenceClosed": true,
+    "per009SemanticClosureMayBegin": true,
+    "per009PacketTokenWorktreeLeaseOrSourceAuthorizedByThisReceipt": false,
+    "laterLaneWorkMayBeginBeforePer009Exit": false,
+    "routeOrMenuMountAuthorized": false,
+    "featureEnablementAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "officialLegalRateOrProviderBindingAuthorized": false,
+    "productionReleaseAuthorized": false,
+    "pay005BusinessComplete": false,
+    "batch06Complete": false,
+    "hrisComplete": false
+  },
+  "nonClaims": [
+    "PAY-005 is production-active or business-complete.",
+    "The activation-only open conditions are closed.",
+    "The concurrent Backend runtime-image/tooling work belongs to PAY-005.",
+    "PER-009 source, packet, token, worktree or migration is authorized by this receipt alone.",
+    "Batch-06 or HRIS is complete."
+  ],
+  "nextAction": "INDEPENDENTLY_VALIDATE_COMMIT_AND_PUSH_THIS_RECEIPT_THEN_BEGIN_ONLY_PER009_SEMANTIC_CLOSURE"
+}
