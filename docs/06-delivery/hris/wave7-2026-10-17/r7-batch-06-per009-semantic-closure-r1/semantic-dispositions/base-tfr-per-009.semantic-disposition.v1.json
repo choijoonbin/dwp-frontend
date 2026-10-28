@@ -1,0 +1,717 @@
+{
+  "schema": "dwp.hris.semantic-disposition.v1",
+  "dispositionId": "R7-B06-PER009-SEMANTIC-CLOSURE-R1",
+  "sliceId": "BASE-TFR-PER-009",
+  "sourceRef": "TFR-PER-009",
+  "sourceFamily": {
+    "sha256": "21fa3ac9605bfe264bea52502bd41e1a4608e0feec4e30ea2ecaf276c99b3286",
+    "rowCount": 77
+  },
+  "module": "PER",
+  "moduleSession": "HRIS-PER",
+  "boundedContext": "PERFORMANCE",
+  "recordedAt": "2026-10-28T18:17:26+09:00",
+  "recordedBy": "HRIS central integration with independent PER-009 semantic, current-surface and migration-allocation audits",
+  "state": "SEMANTIC_GAPS_CLOSED_AUTHORIZATION_SUCCESSOR_ELIGIBLE_SOURCE_PACKET_TOKEN_WORKTREE_AND_MIGRATION_LEASE_NO_GO",
+  "decision": "CONDITIONAL_GO_FOR_BOUNDED_PEP010_PEP011_AUTHORIZATION_SUCCESSOR_PREPARATION_SOURCE_START_NO_GO",
+  "businessMeaning": "Goal variants consolidate into canonical create and submit commands with optimistic revision, durable receipt semantics and a minimized PerformanceGoalCommitted event while preserving the proven personal-goal read and progress surface.",
+  "semanticLineage": "TFR-PER-009::PER-GOAL-001::PEP-PER-010|PEP-PER-011|EVT-PER:PerformanceGoalCommitted.v1",
+  "authority": {
+    "semanticClosureCommitAndPushAuthorized": true,
+    "boundedAuthorizationSuccessorPreparationEligible": true,
+    "centralAuthorizationSuccessorIssued": false,
+    "ownerPacketAuthorized": false,
+    "startTokenAuthorized": false,
+    "worktreeAuthorized": false,
+    "migrationLeaseAuthorized": false,
+    "sourceAuthoringAuthorized": false,
+    "routeMenuOrTenantActivationAuthorized": false,
+    "completionCreditAuthorized": false
+  },
+  "authorityBasis": {
+    "frontendBaseline": {
+      "repository": "dwp-frontend",
+      "branch": "dwp-dev",
+      "commit": "c8cac282c69fe7a2500c3abface054f46de4836b",
+      "tree": "6a55da6cbe7b84f780ea0c336e960b1ef7859dd7",
+      "originMatchedAtAudit": true,
+      "worktreeCleanAtAudit": true
+    },
+    "backendBaseline": {
+      "repository": "dwp-backend",
+      "branch": "dwp-dev",
+      "commit": "699ef730f21a89200be6dfed6d2e34148014cd10",
+      "tree": "3ea7866294cfd3bcb2ee950ff8b882f56f6f1317",
+      "originMatchedAtAudit": true,
+      "per009ScopeCleanAtAudit": true,
+      "unrelatedDefaultCheckoutChangesExcluded": true
+    },
+    "agentBaseline": {
+      "repository": "dwp_agent",
+      "branch": "dwp-dev",
+      "commit": "9beb5439cad065e7d919a98c9f9becb44481508a",
+      "tree": "fe3880719360f4bdeff88bbbac1edc6f8affed88",
+      "originMatchedAtAudit": true
+    },
+    "acceptedEvidence": [
+      {
+        "repository": "dwp-frontend",
+        "path": "docs/06-delivery/hris/wave7-2026-10-17/execution-roadmap-successor.v20.json",
+        "bytes": 20200,
+        "sha256": "c0bb60884e5d99758296ea6f4024bfc4bf557352bbffedf8aa9d8d0f19bacba1"
+      },
+      {
+        "repository": "dwp-frontend",
+        "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-preflight-r1/semantic-dependency-migration-preflight.v1.json",
+        "bytes": 58498,
+        "sha256": "33d95637c2887bfae43b2369370662c3a0d06d8e0420df05c868299da2b752dd"
+      },
+      {
+        "repository": "dwp-frontend",
+        "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-c0-reclassification-r1/base-slice-reclassification.v1.json",
+        "bytes": 141708,
+        "sha256": "73c02c6d945f2b62ae716d2dbbf76e5123a2863f50d19de51e27085943291de8"
+      },
+      {
+        "repository": "dwp-frontend",
+        "path": "docs/06-delivery/hris/recovery/hris-porting-blueprint-2026-09-09/coding-readiness/module-exact-business-start-canonical.v1.json",
+        "bytes": 38400,
+        "sha256": "483ae9f1aefaa59ed2758a0d0fb0e0280b7e961fb0e1340a60e75d1bbec81b36"
+      },
+      {
+        "repository": "dwp-frontend",
+        "path": "docs/06-delivery/hris/recovery/hris-porting-blueprint-2026-09-09/session-evidence/per/g2-readiness/state-guard-idempotency-recovery.md",
+        "bytes": 12472,
+        "sha256": "ab6000d5a14b329b58a04e497545933575708d3e22264db238186e94f9cd91c0"
+      },
+      {
+        "repository": "dwp-frontend",
+        "path": "docs/06-delivery/hris/recovery/hris-porting-blueprint-2026-09-09/session-evidence/per/g2-readiness/api-event-contracts.yaml",
+        "bytes": 47246,
+        "sha256": "559c345053d205902613f502be18dcbc22577e9286686827ad6383a5d2211f5a"
+      },
+      {
+        "repository": "dwp-frontend",
+        "path": "docs/06-delivery/hris/recovery/hris-porting-blueprint-2026-09-09/session-evidence/per/g2-readiness/physical-schema.sql",
+        "bytes": 49003,
+        "sha256": "0099544d7a5fa22bd4b565664b21e5f8f1a68288cce16cdbec83a212f5e70d44"
+      },
+      {
+        "repository": "dwp-frontend",
+        "path": "docs/06-delivery/hris/recovery/hris-porting-blueprint-2026-09-09/coding-readiness/api-pep-binding-register.csv",
+        "bytes": 126576,
+        "sha256": "0e38d724516a8b271069241ffa0fb6400984dc703758767de53cbaffb4f93da3"
+      },
+      {
+        "repository": "dwp-frontend",
+        "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-05-module-start-r1/semantic-dispositions/base-tfr-per-008.semantic-disposition.v1.json",
+        "bytes": 60642,
+        "sha256": "b97eba63703d040e6526ec9280d13ca18b7a74d875da3508d25331c444d6f016"
+      },
+      {
+        "repository": "dwp-frontend",
+        "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-pay005-central-admission-r1/central-integration-receipt.v1.json",
+        "bytes": 5229,
+        "sha256": "8d0761fa1737b67e7d3c9075148e48552a0f0bcebf26fb854384ee1796025409"
+      },
+      {
+        "repository": "dwp-backend",
+        "path": "dwp-people-server/src/main/resources/product-authorization/hcm-people-pep-v62.generated.json",
+        "bytes": 397350,
+        "sha256": "f2dd15d542194b065595fe7c507f6eff4624d6390c4d6c3519c02d1921f2fcf4"
+      },
+      {
+        "repository": "dwp-backend",
+        "path": "dwp-auth-server/src/main/resources/product-authorization/product-surfaces-v1.bundle-v62.generated.json",
+        "bytes": 2769238,
+        "sha256": "a9b38f542031866dd226d7296c643e9e934152ce7c801d5b618ae2fb97b0e8a5"
+      },
+      {
+        "repository": "dwp-backend",
+        "path": "dwp-people-server/src/main/resources/db/performance-migration/V20__per_base_tfr_per_008.sql",
+        "bytes": 75843,
+        "sha256": "da9598012f6428083852c4e9c21c40cb8e38c9b099c0548c7d60da97e4085c96"
+      }
+    ]
+  },
+  "scopeDecision": {
+    "classification": "EXACT_DELTA_BEYOND_PRESERVED_PARTIAL_SURFACE",
+    "newOwnerDelta": [
+      "PEP-PER-010:createGoal",
+      "PEP-PER-011:submitGoal",
+      "Goal aggregate persistence for canonical create and submit",
+      "durable command receipt linkage",
+      "EVT-PER:PerformanceGoalCommitted.v1 producer",
+      "canonical route and action authorization bindings"
+    ],
+    "preserveWithoutReimplementationOrRecount": [
+      "PEP-PER-001 and BASE:my-goals-performance at /hr/talent",
+      "PEP-PER-002 and BASE:performance-goal-cycles",
+      "BASE:team-performance and IAQ-038 primary ownership by BASE-TFR-PER-008",
+      "legacy GET /api/people/v1/hr/talent",
+      "legacy PUT /api/people/v1/hr/talent/goals/{goalId} progress adapter",
+      "BASE-TFR-PER-011 command-receipt query ownership"
+    ],
+    "forbiddenExpansion": [
+      "IAQ-038 query ownership transfer",
+      "PER-008 completion recount",
+      "legacy tal_goals replacement by dual read or dual write",
+      "return, approve, activate, complete or cancel command implementation",
+      "route, menu, tenant, provider or feature activation"
+    ]
+  },
+  "preservedPartialSurface": {
+    "provenBehavior": [
+      "legacy personal-goal read",
+      "ACTIVE or AT_RISK progress update",
+      "scope replacement and late-response rejection",
+      "403 fail-closed",
+      "409 rebase to latest server version",
+      "provenance display",
+      "no automatic COMPLETED transition at 100 percent",
+      "private-cache minimization"
+    ],
+    "pins": [
+      {
+        "repository": "dwp-frontend",
+        "path": "apps/dwp/src/features/hris/performance/model/performance-goal-model.ts",
+        "bytes": 10508,
+        "sha256": "a7d8ef35363f0dcaffdb8d51b96384f3ea819189f5cb48db03eae34b44176f65",
+        "blob": "ddb372477b3deefad7ebba4cfefa9288544d4aa9"
+      },
+      {
+        "repository": "dwp-frontend",
+        "path": "apps/dwp/src/features/hris/performance/pages/hris-performance-workspace.tsx",
+        "bytes": 9669,
+        "sha256": "5107424a61a80ee87991d33c8bf910d6f23bd363017594bfcace5f7ec8d552f0",
+        "blob": "abcaa7b437e30c4d91367f487c7994674fc2d127"
+      },
+      {
+        "repository": "dwp-frontend",
+        "path": "apps/dwp/src/features/hris/performance/hooks/use-hris-performance-workspace.ts",
+        "bytes": 8558,
+        "sha256": "bb97b6f56ed225fa07ea22b3acfb73b5d9e4e11cbd026521fb51272218e57eab",
+        "blob": "010283904b837084d2478a12fb79ec946e7806d5"
+      },
+      {
+        "repository": "dwp-frontend",
+        "path": "apps/dwp/src/features/hris/performance/api/performance-talent-api.ts",
+        "bytes": 1073,
+        "sha256": "0296548ce6eecba11df106d110a5323bd9cf3c40740d043f07e8e4ec7d89fe05",
+        "blob": "c3381398e319fc09f6d047a7b55957bfc0a04d0e"
+      },
+      {
+        "repository": "dwp-frontend",
+        "path": "apps/dwp/src/features/hris/performance/testing/hris-performance-workspace.runtime.test.tsx",
+        "bytes": 27672,
+        "sha256": "a16a5b28127ee19b4ffa70adbdd7448d9a6bb726438088af2cab0849f9aeebe7",
+        "blob": "726c8bb66edf36147b61be54dd4627867b030ea3"
+      },
+      {
+        "repository": "dwp-frontend",
+        "path": "libs/shared-utils/src/api/hr-api.ts",
+        "bytes": 16920,
+        "sha256": "d34ccd4a4878c1ba26464068acefe7202f0fa132775ae1e87b71681957a32bd7",
+        "blob": "625831876816e499dbdfb92f41b401954850d758"
+      }
+    ]
+  },
+  "aggregate": {
+    "name": "Goal",
+    "states": [
+      "DRAFT",
+      "SUBMITTED",
+      "RETURNED",
+      "APPROVED",
+      "ACTIVE",
+      "COMPLETED",
+      "CANCELLED"
+    ],
+    "initialState": "DRAFT",
+    "terminalStates": [
+      "COMPLETED",
+      "CANCELLED"
+    ],
+    "transitions": [
+      "create:EMPTY->DRAFT",
+      "submit:DRAFT|RETURNED->SUBMITTED",
+      "return:SUBMITTED->RETURNED",
+      "approve:SUBMITTED->APPROVED",
+      "activate:APPROVED->ACTIVE",
+      "progress:ACTIVE->ACTIVE",
+      "complete:ACTIVE->COMPLETED",
+      "cancel:DRAFT|SUBMITTED|RETURNED|ACTIVE->CANCELLED"
+    ],
+    "per009OwnedTransitions": [
+      "create:EMPTY->DRAFT",
+      "submit:DRAFT|RETURNED->SUBMITTED"
+    ],
+    "vocabularyOnlyNotImplementedByPer009": [
+      "return:SUBMITTED->RETURNED",
+      "approve:SUBMITTED->APPROVED",
+      "activate:APPROVED->ACTIVE",
+      "progress:ACTIVE->ACTIVE",
+      "complete:ACTIVE->COMPLETED",
+      "cancel:DRAFT|SUBMITTED|RETURNED|ACTIVE->CANCELLED"
+    ],
+    "returnedDecision": "RETURNED_IS_A_CANONICAL_GOAL_STATE_AND_MUST_APPEAR_IDENTICALLY_IN_THE_PUBLIC_GOAL_ENUM_AND_DATABASE_CHECK",
+    "progressHealthSeparation": "AT_RISK is a legacy progress-health or projection value, not a canonical Goal lifecycle state and never an event state.",
+    "automaticCompletionRule": "Progress reaching 100 percent does not transition ACTIVE to COMPLETED."
+  },
+  "commandContracts": [
+    {
+      "contractId": "PEP-PER-010",
+      "operationId": "createGoal",
+      "method": "POST",
+      "browserPath": "/api/people/v1/hris/performance/goals",
+      "ownerPath": "/v1/hris/performance/goals",
+      "requiredRequestHeaders": [
+        "Idempotency-Key",
+        "If-Match"
+      ],
+      "ifMatchSemantics": "The newly sealed create absent-version CAS is the strong literal \"0\". The server creates goalId before receipt reservation and rejects any nonzero or weak validator.",
+      "closedRequestFields": [
+        "cycleVersionId",
+        "ownerType",
+        "ownerPublicId",
+        "title",
+        "measurement",
+        "weight",
+        "periodStart",
+        "periodEnd"
+      ],
+      "ownerTypes": [
+        "WORKER",
+        "ORGANIZATION",
+        "TEAM"
+      ],
+      "measurementKinds": [
+        "QUANTITATIVE",
+        "MILESTONE",
+        "BOOLEAN"
+      ],
+      "weightRule": "Decimal arithmetic only; create validates the individual value in [0,1]. It does not require the owner-group total to be complete at draft creation.",
+      "successStatus": 201,
+      "successBody": "Goal",
+      "implementationAuthorizedNow": false
+    },
+    {
+      "contractId": "PEP-PER-011",
+      "operationId": "submitGoal",
+      "method": "POST",
+      "browserPath": "/api/people/v1/hris/performance/goals/{goalId}/submit",
+      "ownerPath": "/v1/hris/performance/goals/{goalId}/submit",
+      "requiredRequestHeaders": [
+        "Idempotency-Key",
+        "If-Match"
+      ],
+      "ifMatchSemantics": "Strong ETag of the current aggregateVersion; weak, absent and stale validators fail closed.",
+      "closedRequestFields": [],
+      "allowedFromStates": [
+        "DRAFT",
+        "RETURNED"
+      ],
+      "groupWeightGuard": "Submit locks and reads the transaction-consistent current non-cancelled Goal revisions for the same tenant, cycleVersionId, ownerType and ownerPublicId; their decimal weights must total exactly 1.000000.",
+      "revisionSemantics": "Submit does not append or modify a content revision. It preserves current revisionNo and contentHash and changes only goalState plus aggregateVersion under CAS. Editing returned content requires a separately authorized revise command.",
+      "successStatus": 200,
+      "successBody": "Goal",
+      "implementationAuthorizedNow": false
+    }
+  ],
+  "publicGoalResponse": {
+    "closedBodyFields": [
+      "goalId",
+      "goalState",
+      "revisionNo",
+      "aggregateVersion"
+    ],
+    "requiredHeaders": [
+      "ETag",
+      "X-DWP-Command-Receipt-Id",
+      "X-Correlation-Id",
+      "Cache-Control: private, no-store"
+    ],
+    "receiptLinkDecision": "The Goal body remains unchanged. The newly sealed X-DWP-Command-Receipt-Id response header exposes the durable receipt locator for first success and exact replay.",
+    "replayRule": "Same idempotency key and same frozen request digest returns the original status, Goal body, ETag, receipt locator and correlation metadata without a new effect.",
+    "resultUnknownRule": "A stable problem response includes X-DWP-Command-Receipt-Id when the durable receipt is RESULT_UNKNOWN; the client polls the receipt and must not retry with a new key."
+  },
+  "idempotencyAndReceipt": {
+    "receiptTable": "hris_performance.prf_command_receipts",
+    "outboxTable": "hris_performance.prf_outbox_events",
+    "newGenericReceiptOrOutboxForbidden": true,
+    "reservationTuple": [
+      "tenantId",
+      "subjectPrincipalPublicId",
+      "originatingAction",
+      "idempotencyKey"
+    ],
+    "receiptStates": [
+      "ACCEPTED",
+      "RUNNING",
+      "SUCCEEDED",
+      "FAILED",
+      "RESULT_UNKNOWN",
+      "QUARANTINED"
+    ],
+    "reserveOrder": "Reserve and compare the trusted-tenant receipt before any business effect or dynamic re-resolution.",
+    "sameKeySameDigest": "RETURN_ORIGINAL_STATUS_BODY_HEADERS_AND_FROZEN_BINDINGS_NO_NEW_EFFECT",
+    "sameKeyDifferentDigest": "409_IDEMPOTENCY_KEY_REUSED",
+    "concurrentDuplicate": "ONE_RECEIPT_WINNER_ONE_AGGREGATE_EFFECT_ONE_OUTBOX_EVENT",
+    "receiptQuery": {
+      "method": "GET",
+      "browserPath": "/api/people/v1/hris/performance/command-receipts/{receiptId}",
+      "primaryOwner": "BASE-TFR-PER-011",
+      "reuseWithoutRecount": true,
+      "authorization": "Apply the more restrictive of originating-command and current authorization; tenant, subject or population mismatch returns opaque 404."
+    }
+  },
+  "eventContract": {
+    "eventType": "PerformanceGoalCommitted.v1",
+    "aggregate": "Goal",
+    "payloadClosedSet": [
+      "goalId",
+      "ownerType",
+      "ownerPublicId",
+      "revisionNo",
+      "state"
+    ],
+    "producedForFirstSuccess": [
+      "create:DRAFT",
+      "submit:SUBMITTED"
+    ],
+    "forbiddenPayloadFields": [
+      "title",
+      "measurement",
+      "weight",
+      "periodStart",
+      "periodEnd",
+      "actor",
+      "PII",
+      "contentHash",
+      "populationCount"
+    ],
+    "atomicity": "Create inserts Goal plus immutable revisionNo 1; submit references the existing immutable revision without inserting or changing it. Each command commits its aggregate mutation, SUCCEEDED receipt and exactly one outbox row in one transaction.",
+    "replay": "Idempotent replay emits zero additional events.",
+    "delivery": "Broker delivery is at least once; consumers deduplicate by trusted tenant and eventId and quarantine payload-hash mismatch."
+  },
+  "authorizationSuccessorRequirement": {
+    "state": "BOUNDED_SUCCESSOR_REQUIRED_BEFORE_OWNER_PACKET",
+    "currentVersion": 62,
+    "missingBindings": [
+      "PEP-PER-010 createGoal browser and owner routes",
+      "PEP-PER-011 submitGoal browser and owner routes",
+      "hris.action.per.create-goal",
+      "hris.action.per.submit-goal"
+    ],
+    "sevenLayers": [
+      "APP.HCM:VIEW product access",
+      "profile",
+      "duty",
+      "capability",
+      "population",
+      "field policy",
+      "purpose"
+    ],
+    "exactBindings": [
+      {
+        "contractId": "PEP-PER-010",
+        "sourceAuthorizationAliases": [
+          "per.goal.self.write",
+          "per.goal.team.approve"
+        ],
+        "canonicalAppEntitlement": "APP.HCM:VIEW",
+        "profilesAndDuties": [
+          {
+            "profile": "HRIS_EMPLOYEE",
+            "duty": "HRIS_DUTY_SELF_GOAL_AUTHOR"
+          },
+          {
+            "profile": "HRIS_LINE_MANAGER",
+            "duty": "HRIS_DUTY_MANAGER_PERFORMANCE_REVIEWER"
+          }
+        ],
+        "canonicalCapabilities": [
+          "hcm.team.performance.review",
+          "per.goal.self.write"
+        ],
+        "canonicalResourceTypes": [
+          "DATA"
+        ],
+        "canonicalResourceKeys": [
+          "DATA.HRIS_PERFORMANCE_GOAL",
+          "DATA.HRIS_PERFORMANCE_REVIEW"
+        ],
+        "canonicalActions": [
+          "UPDATE"
+        ],
+        "canonicalPopulationTypes": [
+          "ASSIGNED_REVIEW_POPULATION",
+          "SELF"
+        ],
+        "canonicalFieldGroupKeys": [
+          "PERFORMANCE_ASSIGNED",
+          "PERFORMANCE_GOAL"
+        ],
+        "purposeCodes": [
+          "PERFORMANCE_GOAL"
+        ],
+        "pepLayers": [
+          "GATEWAY_APP_ENTITLEMENT",
+          "OWNER_API_OPERATION",
+          "RESOURCE_POPULATION",
+          "REPOSITORY_TENANT_PREDICATE",
+          "FIELD_PROJECTION",
+          "PURPOSE_POLICY",
+          "AUDIT_DECISION"
+        ],
+        "evidenceState": "G3_BINDING_SPECIFIED_NOT_IMPLEMENTED"
+      },
+      {
+        "contractId": "PEP-PER-011",
+        "sourceAuthorizationAliases": [
+          "per.goal.self.write",
+          "per.goal.team.approve"
+        ],
+        "canonicalAppEntitlement": "APP.HCM:VIEW",
+        "profilesAndDuties": [
+          {
+            "profile": "HRIS_EMPLOYEE",
+            "duty": "HRIS_DUTY_SELF_GOAL_AUTHOR"
+          },
+          {
+            "profile": "HRIS_LINE_MANAGER",
+            "duty": "HRIS_DUTY_MANAGER_PERFORMANCE_REVIEWER"
+          }
+        ],
+        "canonicalCapabilities": [
+          "hcm.team.performance.review",
+          "per.goal.self.write"
+        ],
+        "canonicalResourceTypes": [
+          "DATA"
+        ],
+        "canonicalResourceKeys": [
+          "DATA.HRIS_PERFORMANCE_GOAL",
+          "DATA.HRIS_PERFORMANCE_REVIEW"
+        ],
+        "canonicalActions": [
+          "UPDATE"
+        ],
+        "canonicalPopulationTypes": [
+          "ASSIGNED_REVIEW_POPULATION",
+          "SELF"
+        ],
+        "canonicalFieldGroupKeys": [
+          "PERFORMANCE_ASSIGNED",
+          "PERFORMANCE_GOAL"
+        ],
+        "purposeCodes": [
+          "PERFORMANCE_GOAL"
+        ],
+        "pepLayers": [
+          "GATEWAY_APP_ENTITLEMENT",
+          "OWNER_API_OPERATION",
+          "RESOURCE_POPULATION",
+          "REPOSITORY_TENANT_PREDICATE",
+          "FIELD_PROJECTION",
+          "PURPOSE_POLICY",
+          "AUDIT_DECISION"
+        ],
+        "evidenceState": "G3_BINDING_SPECIFIED_NOT_IMPLEMENTED"
+      }
+    ],
+    "populationRules": [
+      "SELF requires authenticated worker equality",
+      "manager actions require a current assigned-manager population binding",
+      "cross-tenant or out-of-population targets return opaque 404"
+    ],
+    "ownershipBoundary": "The successor adds only PEP-PER-010 and PEP-PER-011 transport and action bindings; IAQ-038 remains owned by BASE-TFR-PER-008."
+  },
+  "legacyAdapterCutover": {
+    "readPath": "GET /api/people/v1/hr/talent",
+    "progressWritePath": "PUT /api/people/v1/hr/talent/goals/{goalId}",
+    "role": "PRESERVED_PROGRESS_ADAPTER_NOT_CANONICAL_CREATE_OR_SUBMIT",
+    "canonicalCreateSubmitAreSoleWritersForTheirOperations": true,
+    "dualReadForbidden": true,
+    "dualWriteForbidden": true,
+    "legacyCompletionInferenceForbidden": true,
+    "cutoverRule": "Canonical create and submit are introduced as separate operations. The legacy progress adapter remains bounded to ACTIVE or AT_RISK progress until a separately authorized successor retires it."
+  },
+  "migrationDecision": {
+    "stream": "PERFORMANCE",
+    "observedHighWater": "V20",
+    "candidateVersion": "V21",
+    "candidatePathAfterLease": "dwp-people-server/src/main/resources/db/performance-migration/V21__per_base_tfr_per_009.sql",
+    "leaseState": "NOT_ISSUED",
+    "reservationAuthorizedNow": false,
+    "sourceAuthorizedNow": false,
+    "physicalCollisionAtAudit": false,
+    "historicalSuccessionV21Disposition": "NON_CANONICAL_DESIGN_RESERVATION_MUST_BE_EXPLICITLY_SUPERSEDED_OR_REBASED_BY_CENTRAL_ALLOCATOR",
+    "forbiddenPaths": [
+      "dwp-people-server/src/main/resources/db/performance-migration/V9__per_base_tfr_per_009.sql",
+      "dwp-people-server/src/main/resources/db/performance-migration/V21__per_modern_succession.sql"
+    ],
+    "exactCandidateTables": [
+      "hris_performance.prf_goals",
+      "hris_performance.prf_goal_revisions",
+      "hris_performance.prf_goal_alignments"
+    ],
+    "sharedTablesReusedNotRecreated": [
+      "hris_performance.prf_command_receipts",
+      "hris_performance.prf_outbox_events"
+    ],
+    "requiredControls": [
+      "tenant-first composite uniqueness and foreign keys",
+      "ENABLE and FORCE row-level security",
+      "trusted dwp.tenant_id USING and WITH CHECK policies",
+      "PUBLIC privilege revoke and least-privilege runtime grants",
+      "RETURNED included in prf_goals.goal_state check",
+      "V1 through V20 immutable",
+      "clean upgrade validation only after a separate lease"
+    ]
+  },
+  "acceptanceConditions": [
+    {
+      "id": "PER009-AC-01",
+      "criterion": "The exact browser and owner POST paths require Idempotency-Key and strong If-Match, accept closed requests, return 201 or 200 with the closed Goal body, and return ETag, X-DWP-Command-Receipt-Id, correlation and private no-store headers.",
+      "verificationTargets": [
+        "generated transport and authorization contract test",
+        "backend controller response contract test",
+        "frontend client closed-shape test"
+      ]
+    },
+    {
+      "id": "PER009-AC-02",
+      "criterion": "The seven-state Goal matrix is identical in code, public API and database; RETURNED is present, AT_RISK is excluded from lifecycle state, and PER-009 owns only create and submit.",
+      "verificationTargets": [
+        "state-machine unit test",
+        "OpenAPI enum assertion",
+        "V21 goal_state check assertion"
+      ]
+    },
+    {
+      "id": "PER009-AC-03",
+      "criterion": "Create validates trusted tenant, active cycle version, owner identity and population, period bounds, closed measurement schema, individual decimal weight in [0,1] and absent-version CAS, then creates revisionNo 1 without requiring the group total or accepting caller tenant or authority fields.",
+      "verificationTargets": [
+        "create service validation test",
+        "request deserialization rejection test",
+        "tenant-bound repository test"
+      ]
+    },
+    {
+      "id": "PER009-AC-04",
+      "criterion": "Submit accepts only DRAFT or RETURNED with a current strong ETag, validates the transaction-consistent owner-group weight total as exactly 1.000000, preserves the existing revisionNo and contentHash without appending a revision, increments aggregateVersion exactly once and leaves no partial effect on stale or illegal transitions.",
+      "verificationTargets": [
+        "submit state-guard test",
+        "stale If-Match concurrency test",
+        "rollback and revision immutability test"
+      ]
+    },
+    {
+      "id": "PER009-AC-05",
+      "criterion": "APP.HCM:VIEW plus exact profile, duty, capability, population, field and purpose checks guard both commands; SELF equality and assigned-manager population are enforced and cross-tenant or out-of-population targets are opaque 404.",
+      "verificationTargets": [
+        "generated seven-layer PEP parity test",
+        "SELF and manager population matrix test",
+        "cross-tenant 404 and RLS test"
+      ]
+    },
+    {
+      "id": "PER009-AC-06",
+      "criterion": "The receipt is reserved before effects; same key and frozen digest replays exactly, key or authorization-context mismatch is 409, and concurrent duplicates create one aggregate effect and one event.",
+      "verificationTargets": [
+        "idempotency replay test",
+        "different-intent conflict test",
+        "concurrent duplicate integration test"
+      ]
+    },
+    {
+      "id": "PER009-AC-07",
+      "criterion": "RESULT_UNKNOWN always exposes the original receipt locator, supports authorized polling and recovery, preserves closed receipt transitions and applies originating versus current more-restrictive authority with opaque 404 mismatch handling.",
+      "verificationTargets": [
+        "disconnect and timeout recovery test",
+        "receipt polling authorization test",
+        "RESULT_UNKNOWN terminal reconciliation test"
+      ]
+    },
+    {
+      "id": "PER009-AC-08",
+      "criterion": "Create atomically inserts Goal and immutable revisionNo 1 with receipt and minimized outbox; submit atomically updates only state and aggregateVersion while referencing the existing revision with receipt and outbox. Rollback, retry, duplicate delivery and crash recovery preserve one committed business effect and consumer deduplication.",
+      "verificationTargets": [
+        "transaction rollback fault-injection test",
+        "outbox recovery test",
+        "event duplicate and payload-mismatch test"
+      ]
+    },
+    {
+      "id": "PER009-AC-09",
+      "criterion": "Only the exact Goal owner schema is added with tenant-first keys, FORCE and ENABLE RLS, PUBLIC revoke and least privilege; V1 through V20 remain immutable, V9 is forbidden and V21 exists only under a separate allocator lease.",
+      "verificationTargets": [
+        "migration manifest and checksum test",
+        "clean database upgrade test",
+        "RLS and privilege integration test"
+      ]
+    },
+    {
+      "id": "PER009-AC-10",
+      "criterion": "The legacy personal-goal read and progress adapter preserves scope replacement, late-response rejection, 403 fail-closed, 409 rebase, provenance, private caching and no automatic completion while canonical create and submit introduce no dual read or dual write.",
+      "verificationTargets": [
+        "pinned legacy frontend regression test",
+        "legacy backend adapter regression test",
+        "no-dual-path source and runtime assertion"
+      ]
+    },
+    {
+      "id": "PER009-AC-11",
+      "criterion": "PEP-PER-001 and PEP-PER-002 are reused, IAQ-038 and team-performance remain owned by PER-008, action provenance grants no command authority, and the existing receipt query remains BASE-TFR-PER-011 without completion recount.",
+      "verificationTargets": [
+        "IA ownership registry assertion",
+        "PER-008 no-regression test",
+        "authorization provenance versus handler test"
+      ]
+    },
+    {
+      "id": "PER009-AC-12",
+      "criterion": "Delta-only frontend and backend tests cover loading, empty, denied, conflict, result-unknown, replay, accessibility and responsive states; default OFF produces zero calls and no route, menu, tenant activation, end-to-end or full-HRIS completion claim is made.",
+      "verificationTargets": [
+        "PER-009 targeted backend suite",
+        "PER-009 targeted frontend suite",
+        "default-OFF zero-call and accessibility test"
+      ]
+    }
+  ],
+  "acceptanceVerificationPolicy": {
+    "targetedFirst": true,
+    "fullSuiteRequiredByThisClosure": false,
+    "fullSuiteTrigger": "Only a later source packet may require broader validation when shared infrastructure changes make it proportionate.",
+    "minimumFutureEvidence": "All twelve acceptance conditions must have bounded executable evidence before module result admission."
+  },
+  "nextAuthorizedAction": {
+    "order": 1,
+    "action": "Prepare and independently review a then-current PEP-PER-010 and PEP-PER-011 transport plus central-authorization successor without transferring IAQ-038 ownership.",
+    "afterThat": [
+      "seal the exact V21 migration touch manifest and central allocator supersession",
+      "issue a separate V21 lease",
+      "issue an exact delta-only owner packet",
+      "create clean module worktrees and one-shot start token",
+      "implement and validate the twelve acceptance conditions"
+    ]
+  },
+  "nonClaims": [
+    "This disposition does not issue a central authorization successor.",
+    "This disposition does not issue an owner packet, start token, worktree or migration lease.",
+    "This disposition does not authorize source or migration authoring.",
+    "This disposition does not create or reserve V21.",
+    "This disposition does not authorize historical V9 or Succession V21 paths.",
+    "This disposition does not implement return, approve, activate, progress, complete or cancel producers.",
+    "This disposition does not transfer IAQ-038, team-performance, legacy goal UI or receipt-query ownership.",
+    "This disposition does not count action metadata as a command handler.",
+    "This disposition does not activate any route, menu, tenant, provider or feature.",
+    "This disposition does not claim PER-009, Batch 06, Wave 7 or HRIS completion."
+  ],
+  "immutability": {
+    "sealed": true,
+    "sealedAt": "2026-10-28T18:17:26+09:00",
+    "amendmentPolicy": "APPEND_ONLY_SUCCESSOR_WITH_NEW_ID_AND_SHA256"
+  }
+}

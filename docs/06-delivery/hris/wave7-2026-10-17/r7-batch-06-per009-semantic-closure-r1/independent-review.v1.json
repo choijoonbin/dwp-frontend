@@ -1,0 +1,162 @@
+{
+  "schema": "dwp.hris.independent-review.v1",
+  "reviewId": "R7-B06-PER009-SEMANTIC-CLOSURE-INDEPENDENT-REVIEW-R1",
+  "sliceId": "BASE-TFR-PER-009",
+  "module": "PER",
+  "moduleSession": "HRIS-PER",
+  "recordedAt": "2026-10-28T18:17:26+09:00",
+  "recordedBy": "HRIS central integration",
+  "state": "INDEPENDENTLY_REVIEWED_PASS_ZERO_P0_ZERO_P1_ZERO_P2_SEMANTIC_CARRIER_MAY_COMMIT_AND_PUSH_AUTHORIZATION_SUCCESSOR_PREPARATION_ELIGIBLE",
+  "independentReviewers": [
+    {
+      "reviewer": "per009_semantic_audit",
+      "scope": "business meaning, state machine, response-to-receipt seal, event minimization, authorization boundary and twelve acceptance conditions",
+      "disposition": "PASS"
+    },
+    {
+      "reviewer": "per009_current_surface",
+      "scope": "current frontend and backend surface, preserved partial implementation, IAQ-038 ownership, authorization absence and repository pins",
+      "disposition": "PASS"
+    },
+    {
+      "reviewer": "per009_v21_allocator",
+      "scope": "PERFORMANCE migration high-water, V21 physical and historical collision audit, candidate path and lease boundary",
+      "disposition": "PASS"
+    }
+  ],
+  "reviewedArtifacts": [
+    {
+      "repository": "dwp-frontend",
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-per009-semantic-closure-r1/semantic-dispositions/base-tfr-per-009.semantic-disposition.v1.json",
+      "bytes": 30584,
+      "sha256": "e41424fc75211adbd6558bfc7a379949fe182a40684c1f71450a97d6bea0d8e9"
+    }
+  ],
+  "resolvedFindings": [
+    {
+      "id": "PER009-SEM-001",
+      "priorSeverity": "P0",
+      "finding": "Goal narrative allowed RETURNED while the public Goal enum and physical check omitted it.",
+      "resolution": "Seal one seven-state matrix with RETURNED in code, public API and database; distinguish legacy AT_RISK progress health from canonical lifecycle.",
+      "state": "RESOLVED_BY_SEMANTIC_DISPOSITION"
+    },
+    {
+      "id": "PER009-SEM-002",
+      "priorSeverity": "P0",
+      "finding": "Public Goal responses were not explicitly related to durable receipts and result-unknown polling.",
+      "resolution": "Keep the closed Goal body and newly seal X-DWP-Command-Receipt-Id, exact replay headers and RESULT_UNKNOWN receipt polling.",
+      "state": "RESOLVED_BY_SEMANTIC_DISPOSITION"
+    },
+    {
+      "id": "PER009-SEM-003",
+      "priorSeverity": "P0",
+      "finding": "The legacy progress PUT could be misclassified as canonical createGoal and produce dual-path writes.",
+      "resolution": "Classify it only as a preserved ACTIVE or AT_RISK progress adapter; canonical create and submit are separate sole writers for their operations and dual read or write is forbidden.",
+      "state": "RESOLVED_BY_SEMANTIC_DISPOSITION"
+    },
+    {
+      "id": "PER009-SEM-004",
+      "priorSeverity": "P1",
+      "finding": "PER-008 action metadata could be mistaken for a PER-009 handler or IAQ-038 ownership transfer.",
+      "resolution": "Keep IAQ-038 and team-performance under PER-008 with action provenance only and no completion recount.",
+      "state": "RESOLVED_BY_SEMANTIC_DISPOSITION"
+    },
+    {
+      "id": "PER009-SEM-005",
+      "priorSeverity": "P1",
+      "finding": "Historical Succession V21 and PER-009 V9 design paths could be treated as active migration authority.",
+      "resolution": "Record physical high-water V20, forbid V9 and historical Succession V21, and require a separate allocator supersession and V21 lease.",
+      "state": "RESOLVED_BY_SEMANTIC_DISPOSITION"
+    },
+    {
+      "id": "PER009-SEM-006",
+      "priorSeverity": "P1",
+      "finding": "The current v62 authorization products contain no canonical PEP-PER-010 or PEP-PER-011 route and action bindings.",
+      "resolution": "Keep source authoring NO-GO and make a bounded transport plus central-authorization successor the sole next eligible action.",
+      "state": "RESOLVED_BY_SEMANTIC_DISPOSITION"
+    },
+    {
+      "id": "PER009-SEM-007",
+      "priorSeverity": "P1",
+      "finding": "The initial carrier incorrectly required the configured owner-group weight total at single-goal draft creation, which could prevent sequential creation of multiple draft goals.",
+      "resolution": "Create now validates only the individual decimal weight in [0,1]; submit validates the transaction-consistent current owner-group total as exactly 1.000000.",
+      "state": "RESOLVED_BY_INDEPENDENT_REVIEW_CORRECTION"
+    },
+    {
+      "id": "PER009-SEM-008",
+      "priorSeverity": "P1",
+      "finding": "The initial carrier incorrectly described bodyless submit as appending a content revision.",
+      "resolution": "Create alone inserts immutable revisionNo 1; submit preserves revisionNo and contentHash and changes only goalState and aggregateVersion under CAS. Returned-content editing requires a separate successor.",
+      "state": "RESOLVED_BY_INDEPENDENT_REVIEW_CORRECTION"
+    },
+    {
+      "id": "PER009-SEM-009",
+      "priorSeverity": "P2",
+      "finding": "The initial carrier named seven authorization layers but did not seal the exact PEP-PER-010 and PEP-PER-011 register values.",
+      "resolution": "Both commands now carry exact source aliases, app entitlement, profile-duty pairs, canonical capabilities, resources, action, populations, field groups, purpose and PEP layers, and the validator compares them directly with the pinned register.",
+      "state": "RESOLVED_BY_INDEPENDENT_REVIEW_CORRECTION"
+    }
+  ],
+  "verifiedBoundaries": [
+    "PER-009 owns only createGoal, submitGoal, exact Goal persistence, durable receipt linkage and PerformanceGoalCommitted.v1 production.",
+    "The authoritative Goal states are DRAFT, SUBMITTED, RETURNED, APPROVED, ACTIVE, COMPLETED and CANCELLED.",
+    "PER-009 implements only EMPTY to DRAFT and DRAFT or RETURNED to SUBMITTED.",
+    "Create If-Match literal zero and X-DWP-Command-Receipt-Id are explicitly new semantic seals rather than claims of existing runtime behavior.",
+    "The public Goal body remains goalId, goalState, revisionNo and aggregateVersion.",
+    "The event payload remains exactly goalId, ownerType, ownerPublicId, revisionNo and state.",
+    "Create validates individual weight only; submit validates the transaction-consistent owner-group total as exactly 1.000000.",
+    "Create inserts revisionNo 1 while submit preserves the existing immutable revision and only changes state plus aggregateVersion.",
+    "PEP-PER-010 and PEP-PER-011 exact authorization matrices equal the pinned register rather than generic layer labels.",
+    "Existing prf_command_receipts and prf_outbox_events are reused and not recreated.",
+    "The preserved personal-goal surface remains byte-pinned and receives no completion recount.",
+    "IAQ-038 remains owned by PER-008 and the receipt query remains owned by BASE-TFR-PER-011.",
+    "V21 is only a technical candidate; no lease, packet, token, worktree or source authority exists."
+  ],
+  "verification": {
+    "semanticJsonParsed": true,
+    "authorityEvidencePinsReconciled": true,
+    "preservedPartialSurfacePinsReconciled": true,
+    "frontendBaselineReconciled": true,
+    "backendBaselineReconciled": true,
+    "canonicalBackendAbsenceAtPinnedBaselineReconciled": true,
+    "currentAuthorizationGapReconciled": true,
+    "exactAuthorizationMatrixReconciled": true,
+    "createSubmitWeightBoundaryReconciled": true,
+    "createSubmitRevisionBoundaryReconciled": true,
+    "migrationHighWaterAndCollisionReconciled": true,
+    "acceptanceConditionCount": 12,
+    "targetedValidationOnly": true,
+    "fullSuiteRun": false,
+    "sourceTestsRun": false,
+    "reasonNoSourceTests": "This carrier changes documentation and semantic authority only; executable source remains explicitly unauthorized."
+  },
+  "postResolutionSeverityCounts": {
+    "P0": 0,
+    "P1": 0,
+    "P2": 0
+  },
+  "authority": {
+    "independentReviewComplete": true,
+    "semanticCarrierCommitAndPushAuthorized": true,
+    "boundedAuthorizationSuccessorPreparationEligible": true,
+    "centralAuthorizationSuccessorIssued": false,
+    "ownerPacketAuthorized": false,
+    "startTokenAuthorized": false,
+    "worktreeAuthorized": false,
+    "migrationLeaseAuthorized": false,
+    "sourceAuthoringAuthorized": false,
+    "completionCreditAuthorized": false
+  },
+  "nextAction": "Prepare and independently review a then-current PEP-PER-010 and PEP-PER-011 transport plus central-authorization successor, preserving IAQ-038 ownership and all semantic pins.",
+  "nonClaims": [
+    "PASS means the semantic contradictions are closed; it does not mean PER-009 source is implemented.",
+    "No owner packet, token, worktree, V21 lease or source authority is issued.",
+    "No route, menu, tenant or feature is activated.",
+    "No PER-009, Batch 06, Wave 7 or HRIS completion is claimed."
+  ],
+  "immutability": {
+    "sealed": true,
+    "sealedAt": "2026-10-28T18:17:26+09:00",
+    "amendmentPolicy": "APPEND_ONLY_SUCCESSOR_WITH_NEW_ID_AND_SHA256"
+  }
+}
