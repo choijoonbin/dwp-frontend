@@ -1,0 +1,39 @@
+{
+  "schema": "dwp.hris.wave7.r7-batch-06-hrm013-sequencing-exit-independent-review.v1",
+  "reviewId": "HRIS-WAVE7-R7-BATCH-06-HRM013-SEQUENCING-EXIT-REVIEW-20261028-R1",
+  "reviewedAt": "2026-10-28T17:08:30+09:00",
+  "reviewedBy": "INDEPENDENT_SEQUENCE_AUTHORITY_AUDIT",
+  "receiptPin": {
+    "sha256": "4fe3633943aa54af13630e0b3cc14c0a2f280798af1b87b85ff5584b3a40d256",
+    "bytes": 5245
+  },
+  "validatorPin": {
+    "sha256": "75385df2d380905b12be893963f73523300c51ab87822751ec8b2dd44b5616fa",
+    "bytes": 3796
+  },
+  "reviewedFacts": [
+    "The exact HRM-013 final matrix result and its independent review remain byte-for-byte pinned.",
+    "The matrix passed all twelve conditions in one bounded invocation with twenty-two tests and no failure, error or skip; it was not rerun for this sequencing decision.",
+    "Backend dwp-dev is an exact origin-aligned descendant of the matrix execution commit.",
+    "The three activation-only P2 controls remain open and do not grant production activation, tenant enrollment or business-completion credit.",
+    "The immutable Batch-06 order selects BASE-TFR-PAY-005 next.",
+    "PAY-005 must receive a separate exact owner packet, exclusive V57 lease, fresh clean worktrees and executable token before any source edit."
+  ],
+  "newSeverityCounts": {
+    "P0": 0,
+    "P1": 0,
+    "P2": 0
+  },
+  "inheritedActivationOnlySeverityCounts": {
+    "P0": 0,
+    "P1": 0,
+    "P2": 3
+  },
+  "decision": "GO_TO_PAY005_AUTHORITY_PREPARATION_ONLY",
+  "nonClaims": [
+    "This review does not authorize PAY-005 source or migration authoring.",
+    "This review does not close HRM-013 activation-only controls.",
+    "This review does not authorize direct dwp-dev source merge, route or menu mounting, feature enablement, tenant enrollment, production binding or release."
+  ],
+  "nextAction": "RUN_THE_TARGETED_SEQUENCE_VALIDATOR_ONCE_COMMIT_AND_PUSH_THE_THREE_ARTIFACTS_THEN_PREPARE_PAY005_AUTHORITY"
+}

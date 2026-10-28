@@ -1,0 +1,130 @@
+{
+  "schema": "dwp.hris.wave7.r7-batch-06-hrm013-sequencing-exit-receipt.v1",
+  "receiptId": "HRIS-WAVE7-R7-BATCH-06-HRM013-SEQUENCING-EXIT-20261028-R1",
+  "recordedAt": "2026-10-28T17:08:30+09:00",
+  "recordedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "state": "HRM013_DEFAULT_OFF_SOURCE_INTEGRATION_SEQUENCE_CLOSED_PAY005_NEXT_EXACT_SLICE",
+  "immutability": {
+    "sealed": true,
+    "amendmentPolicy": "APPEND_ONLY_SUCCESSOR_WITH_NEW_RECEIPT_ID"
+  },
+  "completedSlice": {
+    "sliceId": "BASE-TFR-HRM-013",
+    "module": "HRM",
+    "moduleSession": "HRIS-HRM",
+    "sequencingCredit": "DEFAULT_OFF_SOURCE_INTEGRATION_ONLY",
+    "businessCompletionCredit": 0
+  },
+  "predecessorPins": {
+    "finalMatrixResult": {
+      "path": "../r7-batch-06-hrm013-final-matrix-result-r1/final-matrix-result-receipt.v1.json",
+      "sha256": "647cef84024d66720f5bcf48c99bb14ed548e731f5d85f0d806dcc093e1e321f",
+      "bytes": 8860,
+      "requiredState": "EXACT_SINGLE_INVOCATION_TWELVE_CONDITION_MATRIX_PASS_DEFAULT_OFF_SOURCE_INTEGRATION_ONLY",
+      "requiredConditionPassCount": 12
+    },
+    "independentReview": {
+      "path": "../r7-batch-06-hrm013-final-matrix-result-r1/independent-review.v1.json",
+      "sha256": "e71a45e1cb7e1b9511cb19a431e804e2e145cdfd486c136535d50768a6657bbe",
+      "bytes": 4777,
+      "requiredDecision": "GO_TO_SEAL_DEFAULT_OFF_SOURCE_INTEGRATION_RESULT_ONLY"
+    },
+    "resultValidator": {
+      "path": "../r7-batch-06-hrm013-final-matrix-result-r1/validate_hrm013_final_matrix_result.py",
+      "sha256": "7b5819318f115af8e855ac55e40465591a1279fe18c7f7edc8b7f616423f91a5",
+      "bytes": 18708
+    },
+    "executionRoadmap": {
+      "path": "../execution-roadmap-successor.v20.json",
+      "sha256": "c0bb60884e5d99758296ea6f4024bfc4bf557352bbffedf8aa9d8d0f19bacba1",
+      "bytes": 20200
+    },
+    "batch06Preflight": {
+      "path": "../r7-batch-06-preflight-r1/semantic-dependency-migration-preflight.v1.json",
+      "sha256": "33d95637c2887bfae43b2369370662c3a0d06d8e0420df05c868299da2b752dd",
+      "bytes": 58498
+    }
+  },
+  "repositoryPins": {
+    "frontendAuthorityCarrierBase": {
+      "repository": "dwp-frontend",
+      "branch": "dwp-dev",
+      "commit": "af9d7c59cd666dbe126d2b735a2e2885292184cf",
+      "tree": "73a82d7035ca571c33fe000ba9748638a96478c5",
+      "originExactAtIssue": true
+    },
+    "backendCurrentDescendant": {
+      "repository": "dwp-backend",
+      "branch": "dwp-dev",
+      "commit": "95cdefd98c6fa35b9e2cb4ee737b6cc756c57c22",
+      "tree": "0ac8cfa880db521961f752097d5a403f6c1cba8c",
+      "originExactAtIssue": true,
+      "containsHrm013MatrixCommit": "2a765439beb50d40f91eb65c5350984cfc4b52de",
+      "containsHrm013MatrixTree": "4c57372f0ebb8f62db3ef8ab469ab6c5eb5e4bbd"
+    },
+    "agentReadOnly": {
+      "repository": "dwp_agent",
+      "branch": "dwp-dev",
+      "commit": "9beb5439cad065e7d919a98c9f9becb44481508a",
+      "tree": "fe3880719360f4bdeff88bbbac1edc6f8affed88",
+      "writeRequired": false
+    }
+  },
+  "matrixSummary": {
+    "invocationCount": 1,
+    "taskCount": 5,
+    "selectorCount": 21,
+    "testCount": 22,
+    "xmlFileCount": 19,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "conditionPassCount": 12,
+    "broadRepositoryRerunExecuted": false
+  },
+  "activationOnlyOpenConditions": [
+    "Production Flyway-owner/runtime-role provisioning and inherited-ACL drift attestation",
+    "External LeaseSource, non-exportable signer, same-channel verified mTLS and live handshake",
+    "Feature and relay enablement, tenant enrollment, rotation/cutover and operational audit or SoD monitoring"
+  ],
+  "nextSlice": {
+    "order": 2,
+    "sliceId": "BASE-TFR-PAY-005",
+    "module": "PAY",
+    "moduleSession": "HRIS-PAY",
+    "semanticLineage": "TFR-PAY-005::PAY-KR-TAX::PEP-PAY-028|PEP-PAY-012|PEP-PAY-014|EVT-PAY:PayrollCalculated",
+    "requiredBeforeSource": [
+      "sealed exact owner packet",
+      "exclusive Payroll V57 reservation and active lease",
+      "fresh clean frontend and backend worktrees",
+      "executable start token bound to exact worktree identities"
+    ]
+  },
+  "remainingFixedOrder": [
+    "BASE-TFR-PAY-005",
+    "BASE-TFR-PER-009",
+    "BASE-TFR-SYS-010",
+    "BASE-TFR-TIM-005"
+  ],
+  "authority": {
+    "hrm013SequenceClosed": true,
+    "hrm013FullBusinessSliceComplete": false,
+    "pay005AuthorityPreparationMayProceed": true,
+    "pay005SourceAuthoringAuthorizedByThisReceipt": false,
+    "pay005MigrationAuthoringAuthorizedByThisReceipt": false,
+    "laterLaneWorkMayBeginBeforePay005Exit": false,
+    "reorderingAuthorized": false,
+    "directDwpDevSourceMergeAuthorized": false,
+    "activationAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "productionBindingAuthorized": false,
+    "productionReleaseAuthorized": false
+  },
+  "nonClaims": [
+    "HRM-013 is production-active or business-complete.",
+    "The three activation-only P2 controls are closed.",
+    "Batch-06 or HRIS is complete.",
+    "PAY-005 source, migration, route, menu, feature enablement or tenant enrollment is authorized by this receipt alone."
+  ],
+  "nextAction": "INDEPENDENTLY_VALIDATE_AND_COMMIT_THIS_SEQUENCE_EXIT_THEN_ISSUE_THE_EXACT_PAY005_OWNER_PACKET_V57_LEASE_WORKTREES_AND_EXECUTABLE_START_TOKEN"
+}
