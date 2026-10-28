@@ -1,0 +1,35 @@
+{
+  "schema": "dwp.hris.wave7.r7-batch-06-pay005-module-result-independent-review.v1",
+  "reviewId": "HRIS-WAVE7-R7-BATCH-06-PAY005-MODULE-RESULT-REVIEW-20261028-R1",
+  "reviewedAt": "2026-10-28T17:58:07+09:00",
+  "reviewedBy": "INDEPENDENT_PAY005_ACCEPTANCE_AUDIT",
+  "evidencePin": {
+    "sha256": "c15fcc08791e3bbbdd18797694f6dabfa04cbba645c65a0bf1e133e77bd94d58",
+    "bytes": 9668
+  },
+  "validatorPin": {
+    "sha256": "e40f8fedaafa935f86f3d2c4f450564676887447647b8cb6b520b53ab564e166",
+    "bytes": 3061
+  },
+  "reviewedFacts": [
+    "Backend and Frontend changes are restricted to the owner-packet allowlist and both source commits are pushed on the exact module branches.",
+    "The final Backend bounded result has nine XML suites, forty-seven tests and zero failures, errors or skips; compilation and real PostgreSQL clean and upgrade evidence passed.",
+    "The final Frontend bounded result has twenty-one passing tests plus target Prettier, ESLint and diff checks.",
+    "All twelve PAY-005 acceptance conditions map to concrete implementation and test evidence.",
+    "The initial Frontend mixed-union and theme findings and Backend asOf, current-page completeness, stable-null sorting and mismatch fail-closed findings were corrected with smallest-target reruns.",
+    "The final focused read-only reviews report no P0, P1 or P2 findings.",
+    "The route and menu remain unmounted, the feature remains default OFF and no official legal rate, provider binding, tenant enrollment or production release is admitted."
+  ],
+  "severityCounts": {
+    "P0": 0,
+    "P1": 0,
+    "P2": 0
+  },
+  "decision": "GO_TO_CENTRAL_INTEGRATION_AUTHORITY",
+  "nonClaims": [
+    "This review does not itself merge either branch to dwp-dev.",
+    "This review does not authorize route or menu mounting, feature enablement, tenant enrollment, official legal content, provider binding or production release.",
+    "PAY-005, Batch-06 and HRIS are not production-complete."
+  ],
+  "nextAction": "RUN_THE_MODULE_RESULT_VALIDATOR_ONCE_COMMIT_AND_PUSH_THE_THREE_EVIDENCE_FILES_THEN_ISSUE_SEPARATE_CENTRAL_INTEGRATION_AUTHORITY"
+}

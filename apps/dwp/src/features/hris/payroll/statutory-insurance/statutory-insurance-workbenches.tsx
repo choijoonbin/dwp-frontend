@@ -18,6 +18,8 @@ import ListItemText from '@mui/material/ListItemText';
 import Paper from '@mui/material/Paper';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
+import useMediaQuery from '@mui/material/useMediaQuery';
+import { useTheme } from '@mui/material/styles';
 
 import {
   SOCIAL_INSURANCE_PAGE_ROUTE_CONTRACT_KEY,
@@ -667,6 +669,7 @@ function OperationsDetail({ controller }: { controller: SocialInsuranceControlle
   const projection = controller.projection;
   if (!selected || !projection) return null;
   const copy = statutoryInsuranceCopy.operations;
+  const tax = visible(selected.fieldGroups.TAX_RESULT);
   const insurance = visible(selected.fieldGroups.SOCIAL_INSURANCE);
   const policy = visible(selected.fieldGroups.POLICY_VERSION);
   return (
@@ -689,6 +692,9 @@ function OperationsDetail({ controller }: { controller: SocialInsuranceControlle
             m: 0,
           }}
         >
+          <EvidenceField label={copy.tax}>
+            {tax ? `${tax.amount} ${tax.currency}` : hidden(selected.fieldGroups.TAX_RESULT)}
+          </EvidenceField>
           <EvidenceField label={copy.insurance}>
             {insurance
               ? `${insurance.amount} ${insurance.currency}`
@@ -816,14 +822,22 @@ function ActiveOperationsWorkbench({
   timeZone: string;
 }) {
   const controller = useSocialInsuranceWorkbench({ scope, ownerBinding, idFactory, now });
+  const theme = useTheme();
+  const forcedColors = useMediaQuery('(forced-colors: active)', { noSsr: true });
+  const reducedMotion = useMediaQuery('(prefers-reduced-motion: reduce)', { noSsr: true });
   const loaded = 'projection' in controller.state ? controller.state : null;
   const copy = statutoryInsuranceCopy.operations;
   const showData = ['PARTIAL', 'STALE', 'COMPLETE'].includes(controller.state.kind);
   return (
     <Stack
       data-slice="BASE-TFR-PAY-003"
+      data-slice-contributors="BASE-TFR-PAY-003 BASE-TFR-PAY-005"
       data-testid="pay003-operations-workbench"
       data-runtime-state={controller.state.kind.toLowerCase()}
+      data-page-archetype="list-detail"
+      data-color-scheme={theme.palette.mode}
+      data-forced-colors={forcedColors ? 'active' : 'inactive'}
+      data-reduced-motion={reducedMotion ? 'active' : 'inactive'}
       gap={2.5}
       sx={shellStyles()}
     >
