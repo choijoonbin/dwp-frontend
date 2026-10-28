@@ -1,0 +1,176 @@
+{
+  "schema": "dwp.hris.independent-review.v1",
+  "reviewId": "R7-B06-PER009-TRANSPORT-CENTRAL-AUTHORIZATION-INDEPENDENT-REVIEW-R1",
+  "sliceId": "BASE-TFR-PER-009",
+  "module": "PER",
+  "moduleSession": "HRIS-PER",
+  "recordedAt": "2026-10-28T19:02:41+09:00",
+  "recordedBy": "HRIS central integration",
+  "state": "INDEPENDENTLY_REVIEWED_PASS_ZERO_P0_ZERO_P1_ZERO_P2_AUTHORITY_CARRIER_COMMIT_AND_PUSH_AUTHORIZED_CENTRAL_SOURCE_STILL_WITHHELD",
+  "independentReviewers": [
+    {
+      "reviewer": "per009_auth_delta_review",
+      "scope": "PEP-PER-010 and PEP-PER-011 transport, four-branch authorization semantics, exact catalog tuples, branch separation, default-OFF and zero-derived-authority security boundary",
+      "disposition": "PASS_ZERO_P0_P1_P2"
+    },
+    {
+      "reviewer": "per009_auth_precedent",
+      "scope": "HRM-013 and PER-008 precedent, Backend v62 versus Frontend v61 lineage catch-up, changed-path scope, frozen runtime bindings and execution sequencing",
+      "disposition": "PASS_ZERO_P0_P1_P2"
+    },
+    {
+      "reviewer": "per009_auth_generation_audit",
+      "scope": "exact-byte validator coverage, v63 and V273 collision/count arithmetic, allowlist closure, review pins and adversarial in-memory mutation rejection",
+      "disposition": "PASS_ZERO_P0_P1_P2"
+    }
+  ],
+  "reviewedArtifacts": [
+    {
+      "repository": "dwp-frontend",
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-per009-authorization-successor-r1/per-009-transport-and-central-authorization-successor.v1.json",
+      "bytes": 50965,
+      "sha256": "43db9ff57f5712e366321bb0962be689fa6e6d175023398576d9dd8a4bff3cd1"
+    },
+    {
+      "repository": "dwp-frontend",
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-per009-authorization-successor-r1/validate_per009_authorization_successor.py",
+      "bytes": 79272,
+      "sha256": "a1ef769efe8398446883a9cd0623fdf4f048f44f19b41f8416676839045180bc"
+    }
+  ],
+  "resolvedFindings": [
+    {
+      "id": "PER009-AUTH-001",
+      "priorSeverity": "P1",
+      "finding": "The initial branch matrix omitted source authorization aliases and the ordered seven PEP layers from the pinned register.",
+      "resolution": "Seal per.goal.self.write and per.goal.team.approve branch aliases plus all seven ordered layers for both commands and compare them directly with the pinned CSV.",
+      "state": "RESOLVED_BY_SUCCESSOR_CORRECTION"
+    },
+    {
+      "id": "PER009-AUTH-002",
+      "priorSeverity": "P1",
+      "finding": "The initial V273 reservation did not close the new Goal resource, two duty rows, duty-capability-permission mappings, exact route bindings or zero-derived-authority predicates.",
+      "resolution": "Seal one Goal resource template, exact SELF and MANAGER catalog duties, two mappings, two route tuples, immutable V251 review grants, no-op replay and semantic-drift abort behavior.",
+      "state": "RESOLVED_BY_SUCCESSOR_CORRECTION"
+    },
+    {
+      "id": "PER009-AUTH-003",
+      "priorSeverity": "P1",
+      "finding": "The future central allowlist mixed generated central authority with People owner-runtime requirements and initially omitted the actual runtime projection binder.",
+      "resolution": "Keep HcmV3PepRegistry, HcmPeoplePepProjection, HcmScopeSelectionValidator and HcmProductSurfacePepFilter outside central authority and seal them as later module-token requirements only.",
+      "state": "RESOLVED_BY_SUCCESSOR_CORRECTION"
+    },
+    {
+      "id": "PER009-AUTH-004",
+      "priorSeverity": "P1",
+      "finding": "The Frontend authorization mirror is v61 while the Backend canonical high-water is v62, so a direct v63-only sync would skip immutable lineage.",
+      "resolution": "Require deterministic v61 to immutable v62 to v63 catch-up, explicit write/check commands, PAGE byte preservation and a 104857600-byte stop-and-rollover rule.",
+      "state": "RESOLVED_BY_SUCCESSOR_CORRECTION"
+    },
+    {
+      "id": "PER009-AUTH-005",
+      "priorSeverity": "P1",
+      "finding": "The first validator accepted same-length mutations to V273 may-create and must-not-create sets, deferred owner proof and generated-file rules.",
+      "resolution": "Compare every authority-bearing closed set and rule exactly, require both successor and validator review pins, and prove representative mutations are rejected.",
+      "state": "RESOLVED_BY_VALIDATOR_CORRECTION"
+    },
+    {
+      "id": "PER009-AUTH-006",
+      "priorSeverity": "P2",
+      "finding": "The initial SELF and MANAGER branch wording did not make actor-equals-owner selection mutually exclusive.",
+      "resolution": "Evaluate only SELF when owner equals actor, require owner inequality for MANAGER, and fail closed for ambiguous, mixed or partial branches.",
+      "state": "RESOLVED_BY_SUCCESSOR_CORRECTION"
+    },
+    {
+      "id": "PER009-AUTH-007",
+      "priorSeverity": "P2",
+      "finding": "The initial self capability risk and future test paths diverged from canonical duty evidence and current repository topology.",
+      "resolution": "Use MEDIUM for the self Goal capability and duty, preserve manager HIGH and v62 semantics, replace stale paths with ProductAuthorizationGateTopologyValidator and ProductSurfaceRoutePolicies, and reject nonexistent People test paths.",
+      "state": "RESOLVED_BY_SUCCESSOR_CORRECTION"
+    },
+    {
+      "id": "PER009-AUTH-008",
+      "priorSeverity": "P2",
+      "finding": "PER-008 IAQ-038 ownership, no-recount and preserved legacy GET and PUT routes were initially protected only by prose non-claims.",
+      "resolution": "Validate the complete ownershipAndNoRecount object by exact equality and reject ownership transfer, recount, reclassification, dual-read or dual-write mutation.",
+      "state": "RESOLVED_BY_VALIDATOR_CORRECTION"
+    }
+  ],
+  "verifiedBoundaries": [
+    "Only PEP-PER-010 createGoal and PEP-PER-011 submitGoal transports and their two ACTION route decisions are reserved.",
+    "SELF and MANAGER branches carry exact aliases, app entitlement, profile, duty, capability, resource, action, population, field, purpose and seven ordered PEP layers.",
+    "The new self capability is MEDIUM, NOT_REQUIRED and SELF-scoped; the reused manager capability remains byte-semantic equivalent to v62.",
+    "Product authorization v63 is exactly plus one capability, one predicate and two People ACTION routes over immutable v62.",
+    "Auth V273 is catalog-only, DRAFT/default OFF, zero-enrollment and creates no static or derived authority.",
+    "Frontend synchronization must preserve v1 through v61, import exact immutable v62, append v63 and stop rather than truncate above 100 MiB.",
+    "People runtime remains bound to v60 during central generation; the generated v63 People projection remains unmounted.",
+    "HcmPeoplePepProjection and the remaining People owner PEP paths require a later exact module authority and token.",
+    "IAQ-038 and BASE:team-performance remain PER-008-owned with no completion recount.",
+    "The legacy talent GET and goal-progress PUT remain isolated; no canonical replacement, dual read or dual write is authorized.",
+    "No Backend or Frontend central worktree, source token, owner packet, module worktree, PERFORMANCE V21 lease, route mount, feature activation or tenant enrollment exists.",
+    "The validator rejects representative mutations to V273, branch, lineage, allowlist, deferred runtime, ownership and review-pin authority fields."
+  ],
+  "verification": {
+    "successorJsonParsed": true,
+    "validatorPythonCompiled": true,
+    "frontendBackendAgentBaselinesReconciled": true,
+    "semanticAndEvidencePinsReconciled": true,
+    "backendV62AndPeopleProjectionReconciled": true,
+    "frontendV61MirrorReconciled": true,
+    "v63AndV273PhysicalAbsenceReconciled": true,
+    "exactTransportRouteAndBranchMatrixReconciled": true,
+    "pepRegisterDirectComparisonReconciled": true,
+    "catalogAndZeroDerivedAuthorityReconciled": true,
+    "centralAndDeferredOwnerPathSeparationReconciled": true,
+    "ownershipNoRecountAndLegacyIsolationReconciled": true,
+    "adversarialMutationAuditPassed": true,
+    "implementationGateCount": 12,
+    "targetedValidationOnly": true,
+    "fullSuiteRun": false,
+    "sourceTestsRun": false,
+    "reasonNoSourceTests": "This carrier changes documentation and execution authority only; product authorization v63, Auth V273 and all PER-009 runtime source remain explicitly unauthorized."
+  },
+  "postResolutionSeverityCounts": {
+    "P0": 0,
+    "P1": 0,
+    "P2": 0
+  },
+  "authority": {
+    "independentReviewComplete": true,
+    "authorityCarrierCommitAndPushAuthorized": true,
+    "separateCentralAuthorityPreparationEligibleAfterCarrierPush": true,
+    "boundedCentralImplementationAuthorized": false,
+    "centralBackendWorktreeAuthorized": false,
+    "centralFrontendWorktreeAuthorized": false,
+    "centralExecutableTokenAuthorized": false,
+    "backendSourceAuthoringAuthorized": false,
+    "frontendMirrorSourceAuthoringAuthorized": false,
+    "authV273SqlAuthoringAuthorized": false,
+    "moduleOwnerPacketAuthorized": false,
+    "moduleSourceAuthoringAuthorized": false,
+    "moduleWorktreeAuthorized": false,
+    "moduleStartTokenAuthorized": false,
+    "performanceV21LeaseAuthorized": false,
+    "routeOrMenuMountAuthorized": false,
+    "featureEnablementAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "bundleApprovalAuthorized": false,
+    "bundleActivationAuthorized": false,
+    "productionReleaseAuthorized": false,
+    "businessCompletionCredit": 0
+  },
+  "nextAction": "After this exact carrier is committed and pushed on frontend dwp-dev, prepare and independently review a separate clean Backend and Frontend central execution authority and one-shot tokens for the allowlisted v63, V273 and unmounted mirror implementation.",
+  "nonClaims": [
+    "The review authorizes committing and pushing only this authority carrier.",
+    "Product authorization v63, Auth V273 or a Frontend v63 mirror has not been authored, generated, tested, admitted, approved or activated.",
+    "No central or module worktree or executable token exists.",
+    "No Goal handler, persistence, receipt, outbox, event producer or PERFORMANCE V21 exists.",
+    "No route, page, menu, navigation, provider, feature or tenant is mounted, enabled or enrolled.",
+    "No PER-009, Batch 06, Wave 7 or HRIS completion is claimed."
+  ],
+  "immutability": {
+    "sealed": true,
+    "sealedAt": "2026-10-28T19:02:41+09:00",
+    "amendmentPolicy": "APPEND_ONLY_SUCCESSOR_WITH_NEW_ID_AND_SHA256"
+  }
+}

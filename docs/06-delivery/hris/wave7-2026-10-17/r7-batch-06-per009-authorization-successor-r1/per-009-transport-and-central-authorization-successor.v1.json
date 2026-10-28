@@ -1,0 +1,1158 @@
+{
+  "schema": "dwp.hris.transport-central-authorization-successor.v1",
+  "successorId": "R7-B06-PER009-TRANSPORT-CENTRAL-AUTHORIZATION-SUCCESSOR-R1",
+  "sliceId": "BASE-TFR-PER-009",
+  "sourceRef": "TFR-PER-009",
+  "module": "PER",
+  "moduleSession": "HRIS-PER",
+  "boundedContext": "PERFORMANCE",
+  "recordedAt": "2026-10-28T18:33:52+09:00",
+  "recordedBy": "HRIS central integration after PER-009 semantic closure and read-only authorization-lineage audit",
+  "state": "SEALED_EXACT_PEP010_PEP011_TRANSPORT_PRODUCT_AUTHORIZATION_V63_AUTH_V273_DEFAULT_OFF_ZERO_ENROLLMENT_INDEPENDENT_REVIEW_REQUIRED_SOURCE_WITHHELD",
+  "decision": "RESERVE_ONE_APPEND_ONLY_PRODUCT_AUTHORIZATION_V63_AND_AUTH_V273_SUCCESSOR_FOR_EXACTLY_PEP_PER_010_AND_PEP_PER_011; PRESERVE_PER008_IAQ038_AND_LEGACY_GOAL_PROGRESS; KEEP_FEATURE_OFF_WITH_ZERO_ENROLLMENT_AND_WITHHOLD_ALL_SOURCE_PACKET_TOKEN_WORKTREE_AND_V21_AUTHORITY",
+  "businessBoundary": "Add only the canonical createGoal and submitGoal transport and authorization decisions required by PER-009. Do not implement Goal persistence, receipts, event production, V21, frontend commands, navigation, feature activation or tenant enrollment.",
+  "authorityBasis": {
+    "frontendBaseline": {
+      "repository": "dwp-frontend",
+      "branch": "dwp-dev",
+      "commit": "f5eaa06792a4949993f6cb8bd36474ceaf1d1830",
+      "tree": "7ebe8f711396b5b1189dc079e2bffc75e23b2494",
+      "originMatchedAtAudit": true,
+      "worktreeCleanAtAudit": true
+    },
+    "backendBaseline": {
+      "repository": "dwp-backend",
+      "branch": "dwp-dev",
+      "commit": "699ef730f21a89200be6dfed6d2e34148014cd10",
+      "tree": "3ea7866294cfd3bcb2ee950ff8b882f56f6f1317",
+      "originMatchedAtAudit": true,
+      "authorizationScopeCleanAtAudit": true,
+      "unrelatedDefaultCheckoutChangesExcluded": true
+    },
+    "agentBaseline": {
+      "repository": "dwp_agent",
+      "branch": "dwp-dev",
+      "commit": "9beb5439cad065e7d919a98c9f9becb44481508a",
+      "tree": "fe3880719360f4bdeff88bbbac1edc6f8affed88",
+      "originMatchedAtAudit": true,
+      "sourceChangeRequired": false
+    },
+    "semanticCarrier": [
+      {
+        "repository": "dwp-frontend",
+        "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-per009-semantic-closure-r1/semantic-dispositions/base-tfr-per-009.semantic-disposition.v1.json",
+        "bytes": 30584,
+        "sha256": "e41424fc75211adbd6558bfc7a379949fe182a40684c1f71450a97d6bea0d8e9"
+      },
+      {
+        "repository": "dwp-frontend",
+        "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-per009-semantic-closure-r1/independent-review.v1.json",
+        "bytes": 8962,
+        "sha256": "2d239b82be733104c89f6dea65d290ac6ab5a7399c75feb1a5f9602b3291b0a0",
+        "state": "PASS_ZERO_P0_ZERO_P1_ZERO_P2"
+      },
+      {
+        "repository": "dwp-frontend",
+        "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-per009-semantic-closure-r1/validate_per009_semantic_disposition.py",
+        "bytes": 21621,
+        "sha256": "625722944a4e7b29eed1b71b59e75380e56d8f9be127e484666a0045a6fbc562"
+      }
+    ],
+    "acceptedEvidence": [
+      {
+        "repository": "dwp-frontend",
+        "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-preflight-r1/semantic-dependency-migration-preflight.v1.json",
+        "bytes": 58498,
+        "sha256": "33d95637c2887bfae43b2369370662c3a0d06d8e0420df05c868299da2b752dd"
+      },
+      {
+        "repository": "dwp-frontend",
+        "path": "docs/06-delivery/hris/wave7-2026-10-17/execution-roadmap-successor.v20.json",
+        "bytes": 20200,
+        "sha256": "c0bb60884e5d99758296ea6f4024bfc4bf557352bbffedf8aa9d8d0f19bacba1"
+      },
+      {
+        "repository": "dwp-frontend",
+        "path": "docs/06-delivery/hris/recovery/hris-porting-blueprint-2026-09-09/coding-readiness/api-pep-binding-register.csv",
+        "bytes": 126576,
+        "sha256": "0e38d724516a8b271069241ffa0fb6400984dc703758767de53cbaffb4f93da3",
+        "rows": [
+          "PEP-PER-010",
+          "PEP-PER-011"
+        ]
+      },
+      {
+        "repository": "dwp-backend",
+        "path": "contracts/product-authorization/product-surfaces-v1.yaml",
+        "bytes": 2617399,
+        "sha256": "44ba64c17fb8d8bd389870172a92618f2350e6edff44c43f200563d569d84f71",
+        "role": "CURRENT_MACHINE_AUTHORITY"
+      },
+      {
+        "repository": "dwp-backend",
+        "path": "contracts/product-authorization/product-surfaces-v1.bundle-v62.json",
+        "bytes": 2769238,
+        "sha256": "a9b38f542031866dd226d7296c643e9e934152ce7c801d5b618ae2fb97b0e8a5",
+        "internalChecksum": "cb370fd02a896452a64187fca8afb8bb3e3d281e490fba02e76f7a3c0d7f9770"
+      },
+      {
+        "repository": "dwp-backend",
+        "path": "scripts/generate-product-authorization-contracts.py",
+        "bytes": 278969,
+        "sha256": "f90c15d27f4cfc87ac8f76d2ef7ea46a1d09dd409ad3f9424fd9b19588054347"
+      },
+      {
+        "repository": "dwp-backend",
+        "path": "scripts/generate-product-authorization-fixtures.py",
+        "bytes": 73973,
+        "sha256": "82ee6d5f0a57852b728811254b86f5ba2d462bc20bf0f4b265ddfcfb3577d31f"
+      },
+      {
+        "repository": "dwp-backend",
+        "path": "scripts/tests/test_product_authorization_v62.py",
+        "bytes": 9528,
+        "sha256": "57d62962ae136dd8cd8dacfc6395b3d33ee8048eb95a9717f82537c3c40202cb"
+      },
+      {
+        "repository": "dwp-backend",
+        "path": "dwp-auth-server/src/main/resources/product-authorization/product-surfaces-v1.bundle-v62.generated.json",
+        "bytes": 2769238,
+        "sha256": "a9b38f542031866dd226d7296c643e9e934152ce7c801d5b618ae2fb97b0e8a5"
+      },
+      {
+        "repository": "dwp-backend",
+        "path": "dwp-people-server/src/main/resources/product-authorization/hcm-people-pep-v62.generated.json",
+        "bytes": 397350,
+        "sha256": "f2dd15d542194b065595fe7c507f6eff4624d6390c4d6c3519c02d1921f2fcf4"
+      },
+      {
+        "repository": "dwp-backend",
+        "path": "dwp-auth-server/src/main/resources/db/migration/V272__hrm013_identity_task_dispatch_inbox.sql",
+        "bytes": 65449,
+        "sha256": "6e9d1e25b99e98b7008dc2e1a6757a4fde1f91a0bcd3293e784fc12e35c753cb",
+        "role": "AUTH_MIGRATION_HIGH_WATER"
+      }
+    ]
+  },
+  "transportContracts": [
+    {
+      "contractId": "PEP-PER-010",
+      "operationId": "createGoal",
+      "actionKey": "hris.action.per.create-goal",
+      "method": "POST",
+      "browserPath": "/api/people/v1/hris/performance/goals",
+      "ownerPath": "/v1/hris/performance/goals",
+      "ownerService": "dwp-people-server",
+      "requiredHeaders": [
+        "Idempotency-Key",
+        "If-Match"
+      ],
+      "ifMatchContract": "Strong literal \"0\" absent-version CAS; missing, weak or nonzero values fail closed.",
+      "closedRequestFields": [
+        "cycleVersionId",
+        "ownerType",
+        "ownerPublicId",
+        "title",
+        "measurement",
+        "weight",
+        "periodStart",
+        "periodEnd"
+      ],
+      "successStatus": 201,
+      "successBodyClosedSet": [
+        "goalId",
+        "goalState",
+        "revisionNo",
+        "aggregateVersion"
+      ],
+      "successHeaders": [
+        "ETag",
+        "X-DWP-Command-Receipt-Id",
+        "X-Correlation-Id",
+        "Cache-Control: private, no-store"
+      ],
+      "implementationAuthorizedNow": false
+    },
+    {
+      "contractId": "PEP-PER-011",
+      "operationId": "submitGoal",
+      "actionKey": "hris.action.per.submit-goal",
+      "method": "POST",
+      "browserPath": "/api/people/v1/hris/performance/goals/{goalId}/submit",
+      "ownerPath": "/v1/hris/performance/goals/{goalId}/submit",
+      "ownerService": "dwp-people-server",
+      "requiredHeaders": [
+        "Idempotency-Key",
+        "If-Match"
+      ],
+      "ifMatchContract": "Strong current aggregateVersion ETag; missing, weak or stale values fail closed.",
+      "closedRequestFields": [],
+      "successStatus": 200,
+      "successBodyClosedSet": [
+        "goalId",
+        "goalState",
+        "revisionNo",
+        "aggregateVersion"
+      ],
+      "successHeaders": [
+        "ETag",
+        "X-DWP-Command-Receipt-Id",
+        "X-Correlation-Id",
+        "Cache-Control: private, no-store"
+      ],
+      "implementationAuthorizedNow": false
+    }
+  ],
+  "capabilityDecision": {
+    "newSelfCapability": {
+      "contractKey": "per.goal.self.write",
+      "productKey": "hcm",
+      "surfaceKey": "hcm.personal",
+      "resolvedCapabilityCode": "DATA.HRIS_PERFORMANCE_GOAL:UPDATE",
+      "resourceKey": "DATA.HRIS_PERFORMANCE_GOAL",
+      "action": "UPDATE",
+      "mappingVersion": 1,
+      "requiresProductEntitlement": true,
+      "canonicalAppEntitlement": "APP.HCM:VIEW",
+      "authorityMode": "PERMISSION_AND_RELATIONSHIP",
+      "scopeResolver": "SELF",
+      "riskTier": "MEDIUM",
+      "activationPolicy": null,
+      "responsibilityRequirement": "NOT_REQUIRED",
+      "sodPolicyId": null,
+      "legacySource": null,
+      "sunsetAt": null,
+      "owner": "People + HCM + Security",
+      "policyVersion": 1,
+      "lifecycleState": "ACTIVE",
+      "routeContractKeys": [
+        "route.hcm.performance.goal-create.action",
+        "route.hcm.performance.goal-submit.action"
+      ]
+    },
+    "reusedManagerCapability": {
+      "contractKey": "hcm.team.performance.review",
+      "existingResolvedCapabilityCode": "DATA.HRIS_PERFORMANCE_REVIEW:UPDATE",
+      "existingResourceKey": "DATA.HRIS_PERFORMANCE_REVIEW",
+      "existingAction": "UPDATE",
+      "existingAuthorityMode": "PERMISSION_AND_RELATIONSHIP",
+      "existingScopeResolver": "ASSIGNED_REVIEW_POPULATION",
+      "existingRiskTier": "HIGH",
+      "existingRequiresProductEntitlement": true,
+      "existingActivationPolicy": null,
+      "existingResponsibilityRequirement": "NOT_REQUIRED",
+      "existingSodPolicyId": "NO_REVIEW_OUTSIDE_ASSIGNMENT",
+      "requiredOwnerProfile": "HRIS_LINE_MANAGER",
+      "requiredOwnerDuty": "HRIS_DUTY_MANAGER_PERFORMANCE_REVIEWER",
+      "appendOnlyRouteContractKeys": [
+        "route.hcm.performance.goal-create.action",
+        "route.hcm.performance.goal-submit.action"
+      ],
+      "semanticMutationForbidden": true
+    },
+    "separationRule": "Self and manager branches share routes but never union authority. When ownerPublicId equals the authenticated workerPublicId, only SELF may be evaluated. MANAGER requires ownerPublicId different from the authenticated workerPublicId plus a current assigned-manager population binding. If both branches appear valid, neither is complete, or branch selection is ambiguous, deny before effect; partial success across branches is forbidden."
+  },
+  "predicateDecision": {
+    "predicatePolicyKey": "predicate.hcm-performance-goal-command.v1",
+    "inputEvidenceSchemaKey": "PerformanceGoalCommandAuthorityEvidenceV1",
+    "parameterSchemaKey": "predicate.hcm-performance-goal-command.v1.parameters.v1",
+    "parameterSchema": {
+      "type": "object",
+      "properties": {},
+      "additionalProperties": false
+    },
+    "owner": "People + HCM + Security",
+    "ownerServiceKey": "people",
+    "policyVersion": 1,
+    "lifecycleState": "ACTIVE",
+    "targetBindingKinds": [
+      "SELF",
+      "OBJECT",
+      "TARGET_POPULATION"
+    ],
+    "routeContractKeys": [
+      "route.hcm.performance.goal-create.action",
+      "route.hcm.performance.goal-submit.action"
+    ],
+    "rule": "Resolve tenant and actor only from trusted context. SELF requires ownerType WORKER and ownerPublicId equal the authenticated worker. MANAGER requires a current assigned-manager population binding for the exact owner and cycle. Bind Goal or proposed Goal owner, cycleVersionId, PERFORMANCE_GOAL or PERFORMANCE_ASSIGNED field decisions and PERFORMANCE_GOAL purpose before effect. Unknown, stale, mixed-tenant, caller-supplied population, missing field decision or missing purpose denies without existence disclosure.",
+    "callerTenantAccepted": false,
+    "callerPopulationAccepted": false,
+    "crossTenantResult": 404,
+    "implementationAuthorizedNow": false
+  },
+  "authorizationBranchMatrix": [
+    {
+      "contractId": "PEP-PER-010",
+      "branch": "SELF",
+      "profile": "HRIS_EMPLOYEE",
+      "duty": "HRIS_DUTY_SELF_GOAL_AUTHOR",
+      "sourceAuthorizationAlias": "per.goal.self.write",
+      "appEntitlement": "APP.HCM:VIEW",
+      "capability": "per.goal.self.write",
+      "resourceTypes": [
+        "DATA"
+      ],
+      "resourceKeys": [
+        "DATA.HRIS_PERFORMANCE_GOAL"
+      ],
+      "actions": [
+        "UPDATE"
+      ],
+      "populationTypes": [
+        "SELF"
+      ],
+      "fieldGroups": [
+        "PERFORMANCE_GOAL"
+      ],
+      "purposeCode": "PERFORMANCE_GOAL",
+      "pepLayers": [
+        "GATEWAY_APP_ENTITLEMENT",
+        "OWNER_API_OPERATION",
+        "RESOURCE_POPULATION",
+        "REPOSITORY_TENANT_PREDICATE",
+        "FIELD_PROJECTION",
+        "PURPOSE_POLICY",
+        "AUDIT_DECISION"
+      ],
+      "targetBindingKinds": [
+        "SELF",
+        "OBJECT"
+      ],
+      "predicatePolicyKeys": [
+        "predicate.self-person.v1",
+        "predicate.hcm-performance-goal-command.v1"
+      ],
+      "allowedOwnerTypes": [
+        "WORKER"
+      ],
+      "ownerBinding": "ownerPublicId equals authenticated workerPublicId",
+      "effectAuthorizedByThisSuccessor": false
+    },
+    {
+      "contractId": "PEP-PER-010",
+      "branch": "MANAGER",
+      "profile": "HRIS_LINE_MANAGER",
+      "duty": "HRIS_DUTY_MANAGER_PERFORMANCE_REVIEWER",
+      "sourceAuthorizationAlias": "per.goal.team.approve",
+      "appEntitlement": "APP.HCM:VIEW",
+      "capability": "hcm.team.performance.review",
+      "resourceTypes": [
+        "DATA"
+      ],
+      "resourceKeys": [
+        "DATA.HRIS_PERFORMANCE_REVIEW"
+      ],
+      "actions": [
+        "UPDATE"
+      ],
+      "populationTypes": [
+        "ASSIGNED_REVIEW_POPULATION"
+      ],
+      "fieldGroups": [
+        "PERFORMANCE_ASSIGNED",
+        "PERFORMANCE_GOAL"
+      ],
+      "purposeCode": "PERFORMANCE_GOAL",
+      "pepLayers": [
+        "GATEWAY_APP_ENTITLEMENT",
+        "OWNER_API_OPERATION",
+        "RESOURCE_POPULATION",
+        "REPOSITORY_TENANT_PREDICATE",
+        "FIELD_PROJECTION",
+        "PURPOSE_POLICY",
+        "AUDIT_DECISION"
+      ],
+      "targetBindingKinds": [
+        "OBJECT",
+        "TARGET_POPULATION"
+      ],
+      "predicatePolicyKeys": [
+        "predicate.team-target-population.v1",
+        "predicate.hcm-performance-goal-command.v1"
+      ],
+      "allowedOwnerTypes": [
+        "WORKER",
+        "ORGANIZATION",
+        "TEAM"
+      ],
+      "ownerBinding": "ownerPublicId differs from authenticated workerPublicId and the exact owner and cycle are inside the current assigned-manager population",
+      "effectAuthorizedByThisSuccessor": false
+    },
+    {
+      "contractId": "PEP-PER-011",
+      "branch": "SELF",
+      "profile": "HRIS_EMPLOYEE",
+      "duty": "HRIS_DUTY_SELF_GOAL_AUTHOR",
+      "sourceAuthorizationAlias": "per.goal.self.write",
+      "appEntitlement": "APP.HCM:VIEW",
+      "capability": "per.goal.self.write",
+      "resourceTypes": [
+        "DATA"
+      ],
+      "resourceKeys": [
+        "DATA.HRIS_PERFORMANCE_GOAL"
+      ],
+      "actions": [
+        "UPDATE"
+      ],
+      "populationTypes": [
+        "SELF"
+      ],
+      "fieldGroups": [
+        "PERFORMANCE_GOAL"
+      ],
+      "purposeCode": "PERFORMANCE_GOAL",
+      "pepLayers": [
+        "GATEWAY_APP_ENTITLEMENT",
+        "OWNER_API_OPERATION",
+        "RESOURCE_POPULATION",
+        "REPOSITORY_TENANT_PREDICATE",
+        "FIELD_PROJECTION",
+        "PURPOSE_POLICY",
+        "AUDIT_DECISION"
+      ],
+      "targetBindingKinds": [
+        "SELF",
+        "OBJECT"
+      ],
+      "predicatePolicyKeys": [
+        "predicate.self-person.v1",
+        "predicate.hcm-performance-goal-command.v1"
+      ],
+      "allowedOwnerTypes": [
+        "WORKER"
+      ],
+      "ownerBinding": "loaded Goal ownerPublicId equals authenticated workerPublicId",
+      "effectAuthorizedByThisSuccessor": false
+    },
+    {
+      "contractId": "PEP-PER-011",
+      "branch": "MANAGER",
+      "profile": "HRIS_LINE_MANAGER",
+      "duty": "HRIS_DUTY_MANAGER_PERFORMANCE_REVIEWER",
+      "sourceAuthorizationAlias": "per.goal.team.approve",
+      "appEntitlement": "APP.HCM:VIEW",
+      "capability": "hcm.team.performance.review",
+      "resourceTypes": [
+        "DATA"
+      ],
+      "resourceKeys": [
+        "DATA.HRIS_PERFORMANCE_REVIEW"
+      ],
+      "actions": [
+        "UPDATE"
+      ],
+      "populationTypes": [
+        "ASSIGNED_REVIEW_POPULATION"
+      ],
+      "fieldGroups": [
+        "PERFORMANCE_ASSIGNED",
+        "PERFORMANCE_GOAL"
+      ],
+      "purposeCode": "PERFORMANCE_GOAL",
+      "pepLayers": [
+        "GATEWAY_APP_ENTITLEMENT",
+        "OWNER_API_OPERATION",
+        "RESOURCE_POPULATION",
+        "REPOSITORY_TENANT_PREDICATE",
+        "FIELD_PROJECTION",
+        "PURPOSE_POLICY",
+        "AUDIT_DECISION"
+      ],
+      "targetBindingKinds": [
+        "OBJECT",
+        "TARGET_POPULATION"
+      ],
+      "predicatePolicyKeys": [
+        "predicate.team-target-population.v1",
+        "predicate.hcm-performance-goal-command.v1"
+      ],
+      "allowedOwnerTypes": [
+        "WORKER",
+        "ORGANIZATION",
+        "TEAM"
+      ],
+      "ownerBinding": "loaded Goal ownerPublicId differs from authenticated workerPublicId and the owner and cycle are inside the current assigned-manager population",
+      "effectAuthorizedByThisSuccessor": false
+    }
+  ],
+  "routeContracts": [
+    {
+      "routeContractKey": "route.hcm.performance.goal-create.action",
+      "routeKind": "ACTION",
+      "navigationContextId": "hcm.operations",
+      "subject": {
+        "type": "PRODUCT",
+        "productKey": "hcm",
+        "surfaceKey": "hcm.operations"
+      },
+      "uiRouteId": null,
+      "uiRoutePattern": null,
+      "sideEffectFree": null,
+      "gatewayBinding": {
+        "bindingKey": "route.hcm.performance.goal-create.action.binding.01",
+        "method": "POST",
+        "path": "/api/people/v1/hris/performance/goals",
+        "pathParameterConstraints": {}
+      },
+      "servicePepBinding": {
+        "bindingKey": "route.hcm.performance.goal-create.action.binding.01",
+        "method": "POST",
+        "path": "/v1/hris/performance/goals",
+        "pathParameterConstraints": {},
+        "serviceKey": "people"
+      },
+      "profiles": [
+        {
+          "profileKey": "manager-goal-author",
+          "precedence": 300,
+          "activeAccessModes": [
+            "NORMAL",
+            "ELEVATED"
+          ],
+          "requiredCapability": "hcm.team.performance.review",
+          "targetBindingKinds": [
+            "OBJECT",
+            "TARGET_POPULATION"
+          ],
+          "predicatePolicyKeys": [
+            "predicate.team-target-population.v1",
+            "predicate.hcm-performance-goal-command.v1"
+          ],
+          "readOnly": false
+        },
+        {
+          "profileKey": "self-goal-author",
+          "precedence": 200,
+          "activeAccessModes": [
+            "NORMAL",
+            "ELEVATED"
+          ],
+          "requiredCapability": "per.goal.self.write",
+          "targetBindingKinds": [
+            "SELF",
+            "OBJECT"
+          ],
+          "predicatePolicyKeys": [
+            "predicate.self-person.v1",
+            "predicate.hcm-performance-goal-command.v1"
+          ],
+          "readOnly": false
+        }
+      ],
+      "owner": "People + HCM + Security",
+      "policyVersion": 1,
+      "lifecycleState": "ACTIVE",
+      "implementationAuthorizedNow": false
+    },
+    {
+      "routeContractKey": "route.hcm.performance.goal-submit.action",
+      "routeKind": "ACTION",
+      "navigationContextId": "hcm.operations",
+      "subject": {
+        "type": "PRODUCT",
+        "productKey": "hcm",
+        "surfaceKey": "hcm.operations"
+      },
+      "uiRouteId": null,
+      "uiRoutePattern": null,
+      "sideEffectFree": null,
+      "gatewayBinding": {
+        "bindingKey": "route.hcm.performance.goal-submit.action.binding.01",
+        "method": "POST",
+        "path": "/api/people/v1/hris/performance/goals/{goalId}/submit",
+        "pathParameterConstraints": {}
+      },
+      "servicePepBinding": {
+        "bindingKey": "route.hcm.performance.goal-submit.action.binding.01",
+        "method": "POST",
+        "path": "/v1/hris/performance/goals/{goalId}/submit",
+        "pathParameterConstraints": {},
+        "serviceKey": "people"
+      },
+      "profiles": [
+        {
+          "profileKey": "manager-goal-author",
+          "precedence": 300,
+          "activeAccessModes": [
+            "NORMAL",
+            "ELEVATED"
+          ],
+          "requiredCapability": "hcm.team.performance.review",
+          "targetBindingKinds": [
+            "OBJECT",
+            "TARGET_POPULATION"
+          ],
+          "predicatePolicyKeys": [
+            "predicate.team-target-population.v1",
+            "predicate.hcm-performance-goal-command.v1"
+          ],
+          "readOnly": false
+        },
+        {
+          "profileKey": "self-goal-author",
+          "precedence": 200,
+          "activeAccessModes": [
+            "NORMAL",
+            "ELEVATED"
+          ],
+          "requiredCapability": "per.goal.self.write",
+          "targetBindingKinds": [
+            "SELF",
+            "OBJECT"
+          ],
+          "predicatePolicyKeys": [
+            "predicate.self-person.v1",
+            "predicate.hcm-performance-goal-command.v1"
+          ],
+          "readOnly": false
+        }
+      ],
+      "owner": "People + HCM + Security",
+      "policyVersion": 1,
+      "lifecycleState": "ACTIVE",
+      "implementationAuthorizedNow": false
+    }
+  ],
+  "ownershipAndNoRecount": {
+    "per008Primary": {
+      "sliceId": "BASE-TFR-PER-008",
+      "node": "BASE:team-performance",
+      "query": "IAQ-038",
+      "route": "/hr/team/performance",
+      "ownershipTransferred": false,
+      "completionRecount": false
+    },
+    "preservedLegacy": [
+      "GET /api/people/v1/hr/talent",
+      "PUT /api/people/v1/hr/talent/goals/{goalId}"
+    ],
+    "legacyAdapterReclassifiedAsCanonical": false,
+    "dualReadAuthorized": false,
+    "dualWriteAuthorized": false,
+    "rule": "PER-008 may expose action provenance but does not implement or grant either PER-009 command. Existing goal read and progress behavior remains unchanged and receives no completion credit."
+  },
+  "productAuthorizationLineage": {
+    "predecessor": {
+      "bundle": "product-surfaces-v1.bundle-v62.json",
+      "version": 62,
+      "bundleStatus": "DRAFT",
+      "checksum": "cb370fd02a896452a64187fca8afb8bb3e3d281e490fba02e76f7a3c0d7f9770",
+      "fileSha256": "a9b38f542031866dd226d7296c643e9e934152ce7c801d5b618ae2fb97b0e8a5",
+      "bytes": 2769238,
+      "counts": {
+        "capabilities": 280,
+        "accessPolicies": 24,
+        "entitlementExpressions": 17,
+        "predicatePolicies": 87,
+        "routes": 1158,
+        "PAGE": 162,
+        "DATA": 349,
+        "ACTION": 647
+      },
+      "peopleProjection": {
+        "capabilities": 65,
+        "accessPolicies": 5,
+        "entitlementExpressions": 3,
+        "predicatePolicies": 23,
+        "routes": 136,
+        "bindings": 163,
+        "PAGE": 47,
+        "DATA": 35,
+        "ACTION": 54
+      }
+    },
+    "successor": {
+      "bundle": "product-surfaces-v1.bundle-v63.json",
+      "version": 63,
+      "bundleStatus": "DRAFT",
+      "reservationState": "RESERVED_NOT_ACTIVE",
+      "expectedCounts": {
+        "capabilities": 281,
+        "accessPolicies": 24,
+        "entitlementExpressions": 17,
+        "predicatePolicies": 88,
+        "routes": 1160,
+        "PAGE": 162,
+        "DATA": 349,
+        "ACTION": 649
+      },
+      "expectedPeopleProjection": {
+        "capabilities": 66,
+        "accessPolicies": 5,
+        "entitlementExpressions": 3,
+        "predicatePolicies": 24,
+        "routes": 138,
+        "bindings": 165,
+        "PAGE": 47,
+        "DATA": 35,
+        "ACTION": 56
+      },
+      "unchangedServiceProjectionCounts": {
+        "time": {
+          "capabilities": 15,
+          "accessPolicies": 0,
+          "entitlementExpressions": 0,
+          "predicatePolicies": 9,
+          "routes": 29,
+          "bindings": 29,
+          "PAGE": 7,
+          "DATA": 6,
+          "ACTION": 16
+        },
+        "platform": {
+          "capabilities": 24,
+          "accessPolicies": 4,
+          "entitlementExpressions": 3,
+          "predicatePolicies": 11,
+          "routes": 89,
+          "bindings": 90,
+          "PAGE": 8,
+          "DATA": 24,
+          "ACTION": 57
+        },
+        "payroll": {
+          "capabilities": 17,
+          "accessPolicies": 0,
+          "entitlementExpressions": 0,
+          "predicatePolicies": 9,
+          "routes": 41,
+          "bindings": 41,
+          "PAGE": 5,
+          "DATA": 14,
+          "ACTION": 22
+        }
+      },
+      "deltaExactly": "one per.goal.self.write capability, one hcm-performance-goal-command predicate, two People ACTION route contracts, exact route-key appendage to the new self capability and existing hcm.team.performance.review capability, and no other semantic delta",
+      "preservationRule": "All v1 through v62 canonical and generated artifacts remain byte-identical. Existing descriptors may gain only deterministic reverse routeContractKeys where the generator derives them from the two new routes.",
+      "checksumRule": "Generate the v63 checksum from canonical content. Placeholder checksums, hand-edited generated files and mutations of v1 through v62 are forbidden.",
+      "implementationAuthorizedNow": false
+    }
+  },
+  "authMigrationReservation": {
+    "stream": "AUTH",
+    "observedHighWater": "V272",
+    "predecessor": {
+      "path": "dwp-auth-server/src/main/resources/db/migration/V272__hrm013_identity_task_dispatch_inbox.sql",
+      "sha256": "6e9d1e25b99e98b7008dc2e1a6757a4fde1f91a0bcd3293e784fc12e35c753cb",
+      "bytes": 65449
+    },
+    "candidateVersion": "V273",
+    "candidatePath": "dwp-auth-server/src/main/resources/db/migration/V273__declare_hris_per009_v63_authorization_seed.sql",
+    "reservationState": "RESERVED_NOT_ACTIVE",
+    "physicalCollisionAtAudit": false,
+    "leaseIssued": false,
+    "sqlAuthoringAuthorized": false,
+    "automaticImportEnabled": false,
+    "bundle": {
+      "bundleKey": "product-surfaces",
+      "version": 63,
+      "artifact": "product-surfaces-v1.bundle-v63.generated.json",
+      "intendedStatus": "DRAFT"
+    },
+    "feature": {
+      "featureKey": "HRIS_PER_GOAL_COMMANDS",
+      "policyVersion": 1,
+      "productKey": "hcm",
+      "appResourceKey": "APP.HCM",
+      "minimumBundleVersion": 63,
+      "baselineState": "OFF",
+      "ownerKey": "PER",
+      "routeOwnersAndBindings": [
+        "route.hcm.performance.goal-create.action",
+        "route.hcm.performance.goal-submit.action"
+      ],
+      "exactRouteBindingManifest": [
+        {
+          "routeContractKey": "route.hcm.performance.goal-create.action",
+          "featureKey": "HRIS_PER_GOAL_COMMANDS",
+          "policyVersion": 1,
+          "productKey": "hcm",
+          "appResourceKey": "APP.HCM",
+          "minimumBundleVersion": 63,
+          "routeKind": "ACTION",
+          "subjectType": "PRODUCT",
+          "surfaceKey": "hcm.operations"
+        },
+        {
+          "routeContractKey": "route.hcm.performance.goal-submit.action",
+          "featureKey": "HRIS_PER_GOAL_COMMANDS",
+          "policyVersion": 1,
+          "productKey": "hcm",
+          "appResourceKey": "APP.HCM",
+          "minimumBundleVersion": 63,
+          "routeKind": "ACTION",
+          "subjectType": "PRODUCT",
+          "surfaceKey": "hcm.operations"
+        }
+      ],
+      "globalActiveRows": 0,
+      "tenantEnrollmentRows": 0
+    },
+    "catalogDecision": {
+      "newResourceTemplates": [
+        {
+          "resourceKey": "DATA.HRIS_PERFORMANCE_GOAL",
+          "resourceType": "DATA",
+          "displayName": "HRIS performance goal data",
+          "requiredEntitlement": "core.people",
+          "lifecycleState": "ACTIVE"
+        }
+      ],
+      "reusedResourceTemplates": [
+        {
+          "resourceKey": "DATA.HRIS_PERFORMANCE_REVIEW",
+          "resourceType": "DATA",
+          "displayName": "HRIS performance assigned review",
+          "requiredEntitlement": "core.people",
+          "lifecycleState": "ACTIVE",
+          "mutationForbidden": true
+        }
+      ],
+      "catalogOnlyDuties": [
+        {
+          "dutyCode": "HRIS_DUTY_SELF_GOAL_AUTHOR",
+          "productKey": "hcm",
+          "legacyRoleCode": "WORKSPACE_MEMBER",
+          "productResourceKey": "APP.HCM",
+          "resourceKey": "DATA.HRIS_PERFORMANCE_GOAL",
+          "auditPolicyException": false,
+          "riskTier": "MEDIUM",
+          "lifecycleState": "ACTIVE",
+          "version": 0
+        },
+        {
+          "dutyCode": "HRIS_DUTY_MANAGER_PERFORMANCE_REVIEWER",
+          "productKey": "hcm",
+          "legacyRoleCode": "TALENT_ADMIN",
+          "productResourceKey": "APP.HCM",
+          "resourceKey": "DATA.HRIS_PERFORMANCE_REVIEW",
+          "auditPolicyException": false,
+          "riskTier": "HIGH",
+          "lifecycleState": "ACTIVE",
+          "version": 0
+        }
+      ],
+      "catalogOnlyDutyMappings": [
+        {
+          "dutyCode": "HRIS_DUTY_SELF_GOAL_AUTHOR",
+          "capabilityContractKey": "per.goal.self.write",
+          "permissionResourceKey": "DATA.HRIS_PERFORMANCE_GOAL",
+          "permissionCode": "UPDATE",
+          "resolvedCapabilityCode": "DATA.HRIS_PERFORMANCE_GOAL:UPDATE"
+        },
+        {
+          "dutyCode": "HRIS_DUTY_MANAGER_PERFORMANCE_REVIEWER",
+          "capabilityContractKey": "hcm.team.performance.review",
+          "permissionResourceKey": "DATA.HRIS_PERFORMANCE_REVIEW",
+          "permissionCode": "UPDATE",
+          "resolvedCapabilityCode": "DATA.HRIS_PERFORMANCE_REVIEW:UPDATE"
+        }
+      ],
+      "tenantResourceMaterialization": {
+        "resourceType": "DATA",
+        "resourceKey": "DATA.HRIS_PERFORMANCE_GOAL",
+        "name": "HRIS performance goal data",
+        "enabled": true,
+        "createdBy": 1,
+        "updatedBy": 1,
+        "cardinality": "exactly one row per tenant",
+        "authorityMeaning": "catalog materialization only; it creates no principal, role or duty grant"
+      },
+      "legacyRoleEvidence": "WORKSPACE_MEMBER is the existing v251 performance-review role grant used for employee self service; TALENT_ADMIN is the existing v251 performance-review grant and the v268 manager performance-workbench duty precedent. These values catalog compatibility only and create no role, membership, assignment or grant.",
+      "reusedReviewGrantRule": "V251's existing WORKSPACE_MEMBER, TALENT_ADMIN and HR_ADMIN UPDATE grants for DATA.HRIS_PERFORMANCE_REVIEW are immutable predecessors. V273 inserts, updates or deletes none of those templates or tenant role permissions.",
+      "mayCreateExactly": [
+        "one immutable product-authorization v63 DRAFT release declaration with generated checksum and automatic import false",
+        "one HRIS_PER_GOAL_COMMANDS policy-version-1 feature declaration with baseline OFF",
+        "exactly two feature route-owner rows and two feature route-binding rows equal to exactRouteBindingManifest",
+        "one DATA.HRIS_PERFORMANCE_GOAL resource template and tenant resource instances without any principal assignment",
+        "exactly two scoped-duty catalog rows and two duty-capability mappings equal to the sealed catalogOnlyDuties and catalogOnlyDutyMappings",
+        "an exact conflict proof that the reused DATA.HRIS_PERFORMANCE_REVIEW template is byte-semantic equivalent"
+      ],
+      "mustNotCreate": [
+        "feature activation or tenant enrollment",
+        "static role permission template or com_role_permissions row",
+        "builtin role, compatibility role, role membership or preset",
+        "duty, responsibility or population assignment",
+        "principal resource grant or admin resource-set membership",
+        "broad permission grant, compatibility alias or implied cross-capability grant",
+        "menu, shell mount, page component, owner API, Goal business row or module migration",
+        "automatic bundle import or DRAFT-to-ACTIVE transition"
+      ],
+      "zeroDerivedAuthorityPredicates": [
+        "auth_product_authorization_bundle contains zero imported product-surfaces v63 rows",
+        "auth_product_authorization_active contains no pointer to product-surfaces v63",
+        "auth_product_authorization_activation_event contains zero v63 activation events",
+        "auth_product_feature_activation_changes contains zero HRIS_PER_GOAL_COMMANDS rows",
+        "com_tenant_feature_enrollment_changes contains zero HRIS_PER_GOAL_COMMANDS rows",
+        "sys_tenant_role_permission_templates and com_role_permissions contain zero DATA.HRIS_PERFORMANCE_GOAL rows",
+        "com_admin_scoped_duty_assignments and sys_admin_app_preset_duties contain zero rows for the two new duties",
+        "com_admin_resource_set_members and com_principal_resource_grants contain zero DATA.HRIS_PERFORMANCE_GOAL rows",
+        "sys_builtin_role_catalog and com_roles contain zero rows for HRIS_EMPLOYEE, HRIS_LINE_MANAGER, HRIS_PERFORMANCE_OPERATOR, EMPLOYEE or MANAGER compatibility roles",
+        "V273 performs zero People Goal, business, owner-population or module-schema writes"
+      ]
+    },
+    "conflictRule": "Every ON CONFLICT path accepts only an exact immutable tuple, including resource template, duty, duty-capability, route key, feature, policy version, product, app resource, minimum bundle version, route kind, subject type and surface. Exact reapplication is a no-op; any semantic drift aborts the transaction.",
+    "rule": "V273 may declare only the generated v63 checksum, the exact catalogDecision, the default-OFF feature and the two exact route owner/binding tuples. It inserts no active bundle, tenant enrollment, role permission, principal grant, duty or population assignment, business row or automatic import.",
+    "implementationAuthorizedNow": false
+  },
+  "defaultOffBoundary": {
+    "featureKey": "HRIS_PER_GOAL_COMMANDS",
+    "baselineState": "OFF",
+    "globalActiveRows": 0,
+    "tenantEnrollmentRows": 0,
+    "routeMounts": 0,
+    "menuEntries": 0,
+    "providerActivations": 0,
+    "defaultOffNetworkCalls": 0,
+    "automaticImportEnabled": false,
+    "bundleApprovalAuthorized": false,
+    "bundleActivationAuthorized": false,
+    "featureActivationAuthorized": false,
+    "tenantEnrollmentAuthorized": false
+  },
+  "frontendMirrorLineage": {
+    "observedBaselineVersion": 61,
+    "observedBaselineChecksum": "f7cf92a97f2fabf86f257010064a3183acf58f86cc2c9d7692a1555cab55aa24",
+    "observedRegistryVersions": 61,
+    "backendCanonicalHighWaterVersion": 62,
+    "backendCanonicalHighWaterChecksum": "cb370fd02a896452a64187fca8afb8bb3e3d281e490fba02e76f7a3c0d7f9770",
+    "successorTargetVersion": 63,
+    "observedSnapshotBytes": 79834507,
+    "maximumSnapshotBytes": 104857600,
+    "catchUpRule": "The future central frontend mirror must import the already-reviewed immutable v62 predecessor and the generated v63 successor in one deterministic lineage update. It must not skip v62, synthesize a replacement v62 checksum, or change any v1 through v61 mirror bytes after canonical normalization.",
+    "pageCatalogRule": "Neither v62 nor v63 adds an HCM PAGE route for PER-009. Runtime page routes, catalog-only PAGE routes, legacy redirects, navigation and the HRIS browser-firewall PAGE counts remain unchanged.",
+    "storageRule": "If the deterministic v62 plus v63 snapshot would exceed 104857600 bytes, stop. Truncation, predecessor removal, history mutation or alternate serialization is forbidden; a separate storage-rollover successor is required.",
+    "implementationAuthorizedNow": false
+  },
+  "futureSourceAllowlist": {
+    "state": "ALLOWLIST_SEALED_IMPLEMENTATION_STILL_REQUIRES_SEPARATE_CLEAN_WORKTREES_AND_EXECUTABLE_TOKEN",
+    "scope": "CENTRAL_V63_V273_GENERATION_AND_UNMOUNTED_FRONTEND_MIRROR_ONLY",
+    "backendCanonical": [
+      "contracts/product-authorization/product-surfaces-v1.yaml",
+      "scripts/generate-product-authorization-contracts.py",
+      "scripts/generate-product-authorization-fixtures.py",
+      "scripts/tests/test_product_authorization_v62.py",
+      "scripts/tests/test_product_authorization_v63.py",
+      "dwp-auth-server/src/main/java/com/dwp/services/auth/service/ProductAuthorizationReleaseLineage.java",
+      "dwp-auth-server/src/main/java/com/dwp/services/auth/service/ProductAuthorizationGateTopologyValidator.java",
+      "dwp-gateway/src/main/java/com/dwp/gateway/filter/ProductSurfaceRoutePolicies.java",
+      "dwp-auth-server/src/main/resources/db/migration/V273__declare_hris_per009_v63_authorization_seed.sql"
+    ],
+    "backendGenerated": [
+      "contracts/product-authorization/product-surfaces-v1.bundle-v63.json",
+      "contracts/product-authorization/product-surfaces-v1.json",
+      "contracts/product-authorization/product-surfaces-v1.index.json",
+      "contracts/product-authorization/pilot-fixtures.v1.generated.json",
+      "dwp-auth-server/src/main/resources/product-authorization/product-surfaces-v1.bundle-v63.generated.json",
+      "dwp-auth-server/src/main/resources/product-authorization/product-surfaces-v1.generated.json",
+      "dwp-auth-server/src/main/resources/product-authorization/product-surfaces-v1.index.generated.json",
+      "dwp-people-server/src/main/resources/product-authorization/hcm-people-pep-v63.generated.json",
+      "dwp-time-server/src/main/resources/product-authorization/hcm-time-pep-v63.generated.json",
+      "dwp-platform-server/src/main/resources/product-authorization/hcm-platform-pep-v63.generated.json",
+      "dwp-payroll-server/src/main/resources/product-authorization/hcm-payroll-pep-v63.generated.json"
+    ],
+    "backendTargetedTests": [
+      "dwp-auth-server/src/test/java/com/dwp/services/auth/service/ProductAuthorizationV63ContractTest.java",
+      "dwp-auth-server/src/test/java/com/dwp/services/auth/service/ProductAuthorizationReleaseLineageTest.java",
+      "dwp-auth-server/src/test/java/com/dwp/services/auth/service/ProductAuthorizationContractReleaseLineageTest.java",
+      "dwp-auth-server/src/test/java/com/dwp/services/auth/config/ProductAuthorizationSeedLoaderTest.java",
+      "dwp-auth-server/src/test/java/com/dwp/services/auth/support/PilotAuthorizationFixtureAdapter.java",
+      "dwp-auth-server/src/test/java/com/dwp/services/auth/support/PilotAuthorizationFixtureAdapterTest.java",
+      "dwp-auth-server/src/test/java/com/dwp/services/auth/repository/TenantFeatureActivationV273MigrationContractTest.java",
+      "dwp-auth-server/src/test/java/com/dwp/services/auth/tenantfeatureactivation/TenantFeatureActivationV273PostgresTest.java",
+      "dwp-gateway/src/test/java/com/dwp/gateway/productsurface/GeneratedProductRouteCatalogTest.java",
+      "dwp-gateway/src/test/java/com/dwp/gateway/productsurface/GeneratedProductRouteTopologyTest.java",
+      "dwp-gateway/src/test/java/com/dwp/gateway/ProductSurfaceDecisionContextFilterTest.java",
+      "dwp-gateway/src/test/java/com/dwp/gateway/support/PilotAuthorizationFixtureAdapter.java",
+      "dwp-gateway/src/test/java/com/dwp/gateway/support/PilotAuthorizationFixtureAdapterTest.java"
+    ],
+    "frontendCentralMirror": [
+      "scripts/product-authorization-fixture-versions.mjs",
+      "architecture/product-surface-authorization.v1.json",
+      "architecture/pilot-fixtures.v1.generated.json",
+      "libs/shared-utils/src/test-utils/pilot-authorization-fixtures.generated.ts",
+      "apps/dwp/src/routes/product-surface-authorization.generated.ts"
+    ],
+    "frontendBytePreservedAndExecuted": [
+      "scripts/sync-product-surface-authorization.mjs",
+      "scripts/sync-product-authorization-fixtures.mjs",
+      "architecture/product-page-routes.v1.json",
+      "apps/dwp/src/routes/product-route-contracts.generated.test.ts"
+    ],
+    "explicitlyExcluded": [
+      "dwp-people-server/src/main/java/com/dwp/services/people/hris/performance/per009/**",
+      "dwp-people-server/src/test/java/com/dwp/services/people/hris/performance/per009/**",
+      "dwp-people-server/src/main/resources/db/performance-migration/V21__per_base_tfr_per_009.sql",
+      "apps/dwp/src/features/hris/performance/** PER-009 command implementation",
+      "apps/dwp/src/features/hcm/hcm-navigation.ts",
+      "apps/dwp/src/pages/hcm.tsx",
+      "dwp-people-server/src/main/java/com/dwp/services/people/security/HcmV3PepRegistry.java",
+      "dwp-people-server/src/main/java/com/dwp/services/people/security/HcmPeoplePepProjection.java",
+      "dwp-people-server/src/main/java/com/dwp/services/people/security/HcmScopeSelectionValidator.java",
+      "dwp-people-server/src/main/java/com/dwp/services/people/security/HcmProductSurfacePepFilter.java",
+      "apps/dwp/src/routes/hris-w1-browser-firewall-contract.test.ts",
+      "e2e/support/hris-w1-browser-firewall-contract.mjs",
+      "sidebar, menu, route mount or tenant feature enrollment source",
+      "approval-pilot-pep-v63.generated.json because v63 adds no Approval-owned route"
+    ],
+    "generatedFileRule": "Generated artifacts are checked-in derived outputs, never independent authority. Only the canonical YAML and deterministic generators may produce them; manual editing is forbidden."
+  },
+  "frozenRuntimeBindings": [
+    "People HcmV3PepRegistry and HcmPeoplePepProjection remain bound to hcm-people-pep-v60.generated.json; the generated v63 People PEP is an unmounted artifact in the central phase.",
+    "No PER-009 controller, handler, repository, receipt, outbox or Goal aggregate implementation is authorized by the central phase.",
+    "Gateway may add only the two Goal route keys to the code-owned default-OFF tenant-feature governed set; it may not forward PER-009 purpose, population, field or owner-predicate evidence in this phase.",
+    "People owner PEP and runtime v63 registry binding remain deferred to the separately tokenized module phase.",
+    "No route, page, menu, navigation, provider, feature or tenant enrollment is mounted or enabled."
+  ],
+  "deferredOwnerRuntimeRequirements": {
+    "state": "SEALED_REQUIREMENTS_NOT_CENTRAL_SOURCE_AUTHORITY",
+    "prerequisites": [
+      "the exact v63 and V273 central implementation is independently reviewed, admitted and committed",
+      "the feature remains OFF with zero global activation and tenant enrollment",
+      "the exact PERFORMANCE V21 manifest and lease are separately sealed",
+      "an exact PER-009 owner packet, clean module worktrees and one-shot executable token exist"
+    ],
+    "requiredPathsForLaterOwnerAuthority": [
+      "dwp-people-server/src/main/java/com/dwp/services/people/security/HcmV3PepRegistry.java",
+      "dwp-people-server/src/main/java/com/dwp/services/people/security/HcmPeoplePepProjection.java",
+      "dwp-people-server/src/main/java/com/dwp/services/people/security/HcmScopeSelectionValidator.java",
+      "dwp-people-server/src/main/java/com/dwp/services/people/security/HcmProductSurfacePepFilter.java",
+      "dwp-people-server/src/test/java/com/dwp/services/people/security/HcmV3PepRegistryTest.java",
+      "dwp-people-server/src/test/java/com/dwp/services/people/security/HcmScopeSelectionValidatorPer009Test.java",
+      "dwp-people-server/src/test/java/com/dwp/services/people/security/HcmProductSurfacePepFilterTest.java"
+    ],
+    "requiredProof": [
+      "the runtime registry binds only the admitted v63 People projection and its exact checksum",
+      "both Goal routes expose exactly the manager and self profiles, capabilities, predicate sets, target binding kinds and method/path pairs sealed here",
+      "the Goal predicate rejects mixed, incomplete, caller-supplied and cross-tenant evidence before effect",
+      "SELF and MANAGER are target-disjoint; ambiguous or mixed-branch evidence fails closed",
+      "default OFF and zero enrollment prevent every owner dispatch"
+    ],
+    "sourceAuthoringAuthorizedNow": false
+  },
+  "implementationGates": [
+    {
+      "id": "PER009-AUTH-GATE-01",
+      "criterion": "The semantic carrier and this successor pass independent review with zero P0, P1 and P2 findings."
+    },
+    {
+      "id": "PER009-AUTH-GATE-02",
+      "criterion": "The v63 delta is exactly one new self capability, one goal predicate and two People ACTION routes with no unrelated descriptor change."
+    },
+    {
+      "id": "PER009-AUTH-GATE-03",
+      "criterion": "All canonical and generated v1 through v62 artifacts remain byte-identical and the v62 internal checksum remains unchanged."
+    },
+    {
+      "id": "PER009-AUTH-GATE-04",
+      "criterion": "The four self and manager command branches equal the PEP register for source authorization alias, app, profile, duty, capability, resource, action, population, field, purpose and all seven ordered PEP layers."
+    },
+    {
+      "id": "PER009-AUTH-GATE-05",
+      "criterion": "Browser and owner method/path pairs are exact, binding keys match, and neither route has a UI route or page mount."
+    },
+    {
+      "id": "PER009-AUTH-GATE-06",
+      "criterion": "The generated v63 bundle and People projection equal the expected counts and Time, Platform and Payroll projections remain semantically unchanged."
+    },
+    {
+      "id": "PER009-AUTH-GATE-07",
+      "criterion": "Generator and fixture checks are deterministic; latest aliases and indexes point to v63 without hand-edited generated bytes."
+    },
+    {
+      "id": "PER009-AUTH-GATE-08",
+      "criterion": "V273 is collision-free, declares only DRAFT v63 and the default-OFF zero-enrollment feature, and leaves automatic import disabled."
+    },
+    {
+      "id": "PER009-AUTH-GATE-09",
+      "criterion": "Missing app, profile, duty, capability, population, field, purpose, tenant or owner evidence denies; cross-tenant and out-of-population objects are opaque 404."
+    },
+    {
+      "id": "PER009-AUTH-GATE-10",
+      "criterion": "Default OFF produces zero PER-009 calls and no route, menu, provider, feature or tenant activation."
+    },
+    {
+      "id": "PER009-AUTH-GATE-11",
+      "criterion": "IAQ-038 and BASE:team-performance remain PER-008-owned, action provenance grants no handler authority, and legacy goal read/progress receives no semantic mutation or recount."
+    },
+    {
+      "id": "PER009-AUTH-GATE-12",
+      "criterion": "Only after a separate central execution authority creates clean Backend and Frontend worktrees and one-shot tokens may allowlisted source be authored."
+    }
+  ],
+  "targetedVerificationForFutureImplementation": [
+    "python3 scripts/generate-product-authorization-contracts.py",
+    "python3 scripts/generate-product-authorization-contracts.py --check",
+    "python3 scripts/generate-product-authorization-fixtures.py --write",
+    "python3 scripts/generate-product-authorization-fixtures.py --check",
+    "python3 -m unittest scripts.tests.test_product_authorization_v62 scripts.tests.test_product_authorization_v63",
+    "./gradlew productAuthorizationRegistryCheck pilotFixturesCheck",
+    "targeted Auth v63 lineage, seed-loader, fixture-adapter and V273 static plus PostgreSQL tests",
+    "targeted Gateway exact two-route topology and decision-context tests",
+    "ProductAuthorizationGateTopologyValidator exact two-route ACTION, POST, binding, profile, capability, predicate and empty-step-up closure",
+    "yarn authorization:sync",
+    "yarn authorization:check ../dwp-backend/contracts/product-authorization",
+    "yarn fixtures:sync",
+    "yarn fixtures:check",
+    "frontend v61 to immutable v62 to v63 mirror catch-up, page-catalog byte preservation and 104857600-byte ceiling",
+    "negative matrix for missing app/profile/duty/capability/population/field/purpose, cross-tenant 404 and self-manager branch separation",
+    "default-OFF zero-call and zero-enrollment assertions"
+  ],
+  "sequencing": [
+    "independently review this exact transport and authorization successor",
+    "commit and push only the authority carrier on frontend dwp-dev",
+    "issue a separate clean central Backend and Frontend worktree authority plus one-shot tokens",
+    "implement and admit product authorization v63, Auth V273 and any changed unmounted frontend authorization mirror",
+    "issue a central integration receipt while feature remains OFF with zero enrollment",
+    "only then seal the exact PERFORMANCE V21 manifest and central allocator supersession",
+    "issue separate V21 lease, PER-009 owner packet, module worktrees and executable token",
+    "implement Goal commands and the twelve PER-009 acceptance conditions"
+  ],
+  "authority": {
+    "centralSuccessorDesignSealed": true,
+    "productAuthorizationV63Reserved": true,
+    "authV273Reserved": true,
+    "independentReviewRequiredBeforeImplementation": true,
+    "independentReviewComplete": false,
+    "authorityCarrierCommitAndPushAuthorized": false,
+    "boundedCentralImplementationAuthorized": false,
+    "centralBackendWorktreeAuthorized": false,
+    "centralFrontendWorktreeAuthorized": false,
+    "centralExecutableTokenAuthorized": false,
+    "backendSourceAuthoringAuthorized": false,
+    "frontendMirrorSourceAuthoringAuthorized": false,
+    "authV273SqlAuthoringAuthorized": false,
+    "moduleOwnerPacketAuthorized": false,
+    "moduleSourceAuthoringAuthorized": false,
+    "moduleWorktreeAuthorized": false,
+    "moduleStartTokenAuthorized": false,
+    "performanceV21LeaseAuthorized": false,
+    "routeOrMenuMountAuthorized": false,
+    "featureDefaultOff": true,
+    "globalActiveRows": 0,
+    "tenantEnrollmentRows": 0,
+    "featureEnablementAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "bundleApprovalAuthorized": false,
+    "bundleActivationAuthorized": false,
+    "productionReleaseAuthorized": false,
+    "businessCompletionCredit": 0
+  },
+  "nonClaims": [
+    "Product authorization v63 or Auth V273 source has been authored, generated, tested, committed, admitted, approved or activated.",
+    "A central Backend or Frontend worktree or executable token exists.",
+    "PEP-PER-010 or PEP-PER-011 has a runtime handler, owner PEP, persistence effect or command receipt connection.",
+    "The Goal aggregate, PerformanceGoalCommitted.v1 producer or PERFORMANCE V21 exists.",
+    "IAQ-038 or BASE:team-performance ownership moves from PER-008.",
+    "The legacy personal-goal read or progress adapter is replaced, dual-read, dual-written or recounted.",
+    "Any route, page, menu, provider, feature or tenant is mounted, enabled or enrolled.",
+    "The v63 bundle is approved or active, automatic import is enabled, or a production release is authorized.",
+    "PER-009, Batch 06, Wave 7 or HRIS is complete."
+  ],
+  "immutability": {
+    "sealed": true,
+    "sealedAt": "2026-10-28T18:33:52+09:00",
+    "amendmentPolicy": "APPEND_ONLY_SUCCESSOR_WITH_NEW_ID_AND_SHA256"
+  }
+}
