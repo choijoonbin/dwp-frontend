@@ -1,0 +1,138 @@
+{
+  "schema": "dwp.hris.wave7.per009-backend-central-start-token.v1",
+  "tokenId": "HRIS-WAVE7-R7-BATCH06-PER009-CENTRAL-BACKEND-V63-V273-20261028-R1",
+  "jti": "per009-central-backend-v63-v273-20261028-r1",
+  "laneId": "PER009_CENTRAL_BACKEND_V63_V273",
+  "state": "ISSUED_HASH_BOUND_ONE_SHOT_EXECUTABLE_AFTER_CARRIER_PUSH_AND_CLEAN_RECEIPT",
+  "authorityBinding": {
+    "authorityPath": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-per009-central-execution-authority-r1/per-009-central-execution-authority.v1.json",
+    "authoritySchema": "dwp.hris.wave7.per009-central-execution-authority.v1",
+    "reviewPath": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-per009-central-execution-authority-r1/independent-review.v1.json",
+    "validatorPath": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-per009-central-execution-authority-r1/validate_per009_central_execution_authority.py",
+    "consumerPath": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-per009-central-execution-authority-r1/consume_per009_central_token.py",
+    "consumerInvocation": "/usr/bin/python3 -I /Users/a10697/Work/DWP/.hris-worktrees/wave7-20261028/batch06/per009-central/carrier-validation-frontend/docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-per009-central-execution-authority-r1/consume_per009_central_token.py backend --executor HRIS_PER009_BACKEND_CENTRAL_EXECUTOR",
+    "bindingRule": "The independent review pins the authority, both tokens, consumer and validator. The external receipt pins the committed carrier artifacts and exact clean worktree; this token cannot self-pin or bypass either gate."
+  },
+  "execution": {
+    "repository": "dwp-backend",
+    "baseCommit": "699ef730f21a89200be6dfed6d2e34148014cd10",
+    "baseTree": "3ea7866294cfd3bcb2ee950ff8b882f56f6f1317",
+    "branch": "hris/per009-central-v63-v273-backend-20261028-r1",
+    "worktree": "/Users/a10697/Work/DWP/.hris-worktrees/wave7-20261028/batch06/per009-central/backend",
+    "cleanWorktreeReceiptPath": "/Users/a10697/Work/DWP/.hris-worktrees/wave7-20261028/batch06/per009-central/receipts/backend-clean-worktree-receipt.v1.json",
+    "completionEvidence": {
+      "targetedVerificationReceiptPath": "/Users/a10697/Work/DWP/.hris-worktrees/wave7-20261028/batch06/per009-central/receipts/backend-targeted-verification-receipt.v1.json",
+      "postImplementationReviewPath": "/Users/a10697/Work/DWP/.hris-worktrees/wave7-20261028/batch06/per009-central/receipts/backend-post-implementation-review.v1.json",
+      "requiredVerifier": "HRIS_PER009_BACKEND_TARGETED_VERIFIER",
+      "requiredReviewer": "HRIS_PER009_BACKEND_INDEPENDENT_POST_REVIEWER",
+      "requiredDecision": "GO_FOR_PER009_BACKEND_V63_V273_LANE_BRANCH_PUSH_ONLY"
+    },
+    "operation": "GENERATE_VALIDATE_COMMIT_AND_PUSH_PRODUCT_AUTHORIZATION_V63_AND_AUTH_V273_ONLY",
+    "orderedSteps": [
+      "consume this token only after the exact clean receipt validates",
+      "author canonical v63 semantics and deterministic generator/test compatibility within the exact allowlist",
+      "run the contracts generator exactly once and the fixture writer only when deterministic fixture closure changes",
+      "verify immutable v1 through v62 lineage and exact v63 counts, routes, predicate, People projection and default-OFF state",
+      "author V273 only after the generated v63 checksum is final",
+      "run only the bounded generator, Auth, Gateway and migration checks",
+      "commit one non-merge direct child of the exact base, independently review it, then push only this lane branch"
+    ],
+    "requiredOutcomes": [
+      "One immutable product-surfaces v63 DRAFT successor over byte-identical v62.",
+      "Exactly per.goal.self.write, predicate.hcm-performance-goal-command.v1 and the two sealed Goal ACTION routes are added.",
+      "V273 declares only the v63 checksum, catalog-only Goal resource and duties, default-OFF HRIS_PER_GOAL_COMMANDS feature and two route bindings.",
+      "There are zero automatic-import, activation, enrollment, role-assignment, principal-grant or business-data effects.",
+      "The generated People v63 projection remains unmounted and runtime remains bound to v60."
+    ]
+  },
+  "oneShot": {
+    "maximumConsumptions": 1,
+    "consumedAtIssue": false,
+    "replayAllowedWithinRetainedCurrentUidReceiptLedger": false,
+    "failedOrAbortedAfterAtomicConsumptionBurnsTokenWithinRetainedCurrentUidReceiptLedger": true,
+    "preConsumptionRevalidationRequired": true,
+    "preAdmissionValidationFailureConsumesToken": false,
+    "requiredExecutor": "HRIS_PER009_BACKEND_CENTRAL_EXECUTOR",
+    "consumeBy": "while carrier, token, clean receipt, exact base HEAD/tree/origin, worktree cleanliness, branch absence and allowlist digest remain unchanged",
+    "executionDeadlineHoursAfterConsumption": 4,
+    "consumptionReceiptPath": "/Users/a10697/Work/DWP/.hris-worktrees/wave7-20261028/batch06/per009-central/receipts/backend-token-consumption-receipt.v1.json",
+    "consumptionReceiptMustBeAbsentBeforeSourceWrite": true,
+    "consumptionReceiptMustBeCreatedAtomicallyBeforeFirstSourceWrite": true,
+    "atomicCreation": "current-UID 0700 directory; O_CREAT|O_EXCL|O_NOFOLLOW 0600 regular single-link file; fsync file and parent directory",
+    "oExclProtectionScope": "CONCURRENT_REPLAY_ONLY_WHILE_CURRENT_UID_0700_RECEIPT_LEDGER_AND_0600_RECEIPT_ARE_RETAINED",
+    "sameUidReceiptDeletionOrRollbackDurableTamperResistanceProvided": false,
+    "durableCompareAndSwapOrExternalAppendOnlyAnchorProvided": false,
+    "executionDeadlineSemantics": "PROCEDURAL_BOUNDED_WORK_WINDOW_ONLY",
+    "trustedClockAttestationProvided": false,
+    "cryptographicClockAttestationProvided": false,
+    "receiptMustPin": [
+      "jti and exact token SHA-256",
+      "exact authority SHA-256 and carrier commit/tree",
+      "repository, worktree realpath, branch, HEAD, tree and origin/dwp-dev",
+      "clean receipt SHA-256 and closed allowlist digest",
+      "consumedAt, executionDeadline and executor identity"
+    ],
+    "expiresOn": [
+      "base HEAD or tree drift",
+      "origin/dwp-dev drift from the bound base before lane commit",
+      "worktree dirty state before consumption",
+      "allowlist or governing-artifact drift",
+      "first committed lane result",
+      "any prior consumption receipt"
+    ]
+  },
+  "verification": {
+    "commands": [
+      "python3 scripts/generate-product-authorization-contracts.py",
+      "python3 scripts/generate-product-authorization-contracts.py --check",
+      "python3 scripts/generate-product-authorization-fixtures.py --write",
+      "python3 scripts/generate-product-authorization-fixtures.py --check",
+      "python3 -m unittest scripts.tests.test_product_authorization_v62 scripts.tests.test_product_authorization_v63",
+      "./gradlew productAuthorizationRegistryCheck pilotFixturesCheck",
+      "./gradlew :dwp-auth-server:test --tests com.dwp.services.auth.service.ProductAuthorizationV63ContractTest --tests com.dwp.services.auth.service.ProductAuthorizationReleaseLineageTest --tests com.dwp.services.auth.service.ProductAuthorizationContractReleaseLineageTest --tests com.dwp.services.auth.config.ProductAuthorizationSeedLoaderTest --tests com.dwp.services.auth.support.PilotAuthorizationFixtureAdapterTest --tests com.dwp.services.auth.repository.TenantFeatureActivationV273MigrationContractTest --tests com.dwp.services.auth.tenantfeatureactivation.TenantFeatureActivationV273PostgresTest --no-daemon --max-workers=1",
+      "./gradlew :dwp-gateway:test --tests com.dwp.gateway.productsurface.GeneratedProductRouteCatalogTest --tests com.dwp.gateway.productsurface.GeneratedProductRouteTopologyTest --tests com.dwp.gateway.ProductSurfaceDecisionContextFilterTest --tests com.dwp.gateway.support.PilotAuthorizationFixtureAdapterTest --no-daemon --max-workers=1"
+    ],
+    "requiredBeforeCommit": [
+      "actual changed paths are a nonempty subset of authority.sourceAllowlist.backendWritable",
+      "every generated output is generator-produced and byte-identical outputs are omitted",
+      "v1 through v62 artifacts and v62 embedded checksum remain byte-identical",
+      "v63 exact counts and four SELF/MANAGER command branches match the sealed successor",
+      "V273 collision proof and zero-derived-authority predicates pass",
+      "all bounded command exit codes are zero"
+    ],
+    "requiredBeforePush": [
+      "lane commit is one non-merge direct child of the exact base",
+      "targeted verification receipt pins the commit, tree, changed paths, artifacts and exit codes",
+      "independent post-implementation review reports zero unresolved P0, P1 and P2"
+    ],
+    "rerunPolicy": "After a failure rerun only the smallest affected target. Repository-wide execution is forbidden."
+  },
+  "forbidden": [
+    "any path outside authority.sourceAllowlist.backendWritable",
+    "People PER-009 handler, persistence, runtime PEP or Performance V21 implementation",
+    "frontend, sidebar, menu, route or page work",
+    "approval-pilot-pep-v63 generation",
+    "automatic bundle import, feature activation, tenant enrollment, assignment or principal grant",
+    "direct backend dwp-dev integration",
+    "merge, rebase, squash or cherry-pick",
+    "production binding or release",
+    "repository-wide tests"
+  ],
+  "authorization": {
+    "tokenIssued": true,
+    "executableAfterCarrierPushAndCleanReceipt": true,
+    "boundedBackendSourceAuthoringAuthorized": true,
+    "authV273SqlAuthoringAuthorized": true,
+    "laneCommitAndPushAuthorizedAfterVerificationAndReview": true,
+    "backendDwpDevIntegrationAuthorized": false,
+    "frontendSourceAuthoringAuthorized": false,
+    "moduleSourceAuthoringAuthorized": false,
+    "performanceV21LeaseAuthorized": false,
+    "routeOrMenuMountAuthorized": false,
+    "featureEnablementAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "bundleActivationAuthorized": false,
+    "productionReleaseAuthorized": false,
+    "businessCompletionCredit": 0
+  }
+}

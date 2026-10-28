@@ -1,0 +1,377 @@
+{
+  "schema": "dwp.hris.wave7.per009-central-execution-authority.v1",
+  "authorityId": "R7-B06-PER009-CENTRAL-V63-V273-MIRROR-EXECUTION-AUTHORITY-R1",
+  "sliceId": "BASE-TFR-PER-009",
+  "module": "PER",
+  "moduleSession": "HRIS-PER",
+  "recordedAt": "2026-10-28T19:30:00+09:00",
+  "recordedBy": "HRIS central integration",
+  "state": "INDEPENDENTLY_REVIEWED_HASH_BOUND_TWO_LANE_CENTRAL_EXECUTION_AUTHORITY_SOURCE_REQUIRES_CLEAN_RECEIPTS",
+  "purpose": "Authorize two separately hash-bound one-shot central lanes only: Backend product-authorization v63 plus Auth V273, followed by the unmounted Frontend v61-to-v62-to-v63 mirror catch-up. No PER owner runtime, module migration, route mount or activation is authorized.",
+  "carrierPredecessor": {
+    "repository": "dwp-frontend",
+    "branch": "dwp-dev",
+    "commit": "1c00ee79108af9094ee89afab90ec646d47f5759",
+    "tree": "74346aa1340f5208cf032f8e74648cf47ad57784",
+    "originMatchedAtAudit": true,
+    "exactCarrierChangedPaths": [
+      "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-per009-central-execution-authority-r1/independent-review.v1.json",
+      "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-per009-central-execution-authority-r1/per-009-central-execution-authority.v1.json",
+      "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-per009-central-execution-authority-r1/tokens/per-009-backend-central.start-token.v1.json",
+      "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-per009-central-execution-authority-r1/tokens/per-009-frontend-mirror.start-token.v1.json",
+      "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-per009-central-execution-authority-r1/consume_per009_central_token.py",
+      "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-per009-central-execution-authority-r1/validate_per009_central_execution_authority.py"
+    ],
+    "carrierRule": "The six authority-carrier paths are one non-merge direct child of this predecessor. No package, source, generated artifact or unrelated documentation path may enter the carrier commit."
+  },
+  "governingArtifacts": [
+    {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-per009-authorization-successor-r1/per-009-transport-and-central-authorization-successor.v1.json",
+      "bytes": 50965,
+      "sha256": "43db9ff57f5712e366321bb0962be689fa6e6d175023398576d9dd8a4bff3cd1"
+    },
+    {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-per009-authorization-successor-r1/independent-review.v1.json",
+      "bytes": 10554,
+      "sha256": "52d1499ca353bc89fdfb1cd79c41f9bb88c775a14dc2d8cee74cb07d6d33df96"
+    },
+    {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-per009-authorization-successor-r2/per-009-authorization-carrier-correction.v2.json",
+      "bytes": 10030,
+      "sha256": "9fe326084990120570c7c0ff6ae040c9d1c4600b1f54f47e3f9c48d0c025b8b1"
+    },
+    {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-per009-authorization-successor-r2/independent-review.v2.json",
+      "bytes": 6816,
+      "sha256": "1834372aa6fd4b59da0d4ae606abea6f1e690a41782e797ef0f6438c0d2651fc"
+    },
+    {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-per009-authorization-successor-r2/validate_per009_authorization_carrier_correction.py",
+      "bytes": 21890,
+      "sha256": "7efb095e8f68a730aaafd82f762f0099116961deb51abfd8039b8c88b1f0b9a8"
+    }
+  ],
+  "repositoryBases": {
+    "backend": {
+      "repository": "dwp-backend",
+      "branch": "dwp-dev",
+      "originUrl": "https://github.com/choijoonbin/dwp-backend.git",
+      "commit": "699ef730f21a89200be6dfed6d2e34148014cd10",
+      "tree": "3ea7866294cfd3bcb2ee950ff8b882f56f6f1317",
+      "originMatchedAtAudit": true,
+      "sharedCheckoutDirtyChangesExcluded": true,
+      "v63Absent": true,
+      "v273Absent": true,
+      "authMigrationHighWater": "V272"
+    },
+    "frontend": {
+      "repository": "dwp-frontend",
+      "branch": "dwp-dev",
+      "originUrl": "https://github.com/choijoonbin/dwp-frontend.git",
+      "carrierBaseCommit": "CARRIER_COMMIT_SELF",
+      "carrierBaseTree": "CARRIER_TREE_SELF",
+      "sharedCheckoutDirtyChangesExcluded": true,
+      "mirrorObservedVersion": 61,
+      "mirrorObservedBytes": 79834507,
+      "mirrorObservedSha256": "b94225a99141cb57deb589dca97c40a4d5026878e01c50751dfe635ee888365e"
+    },
+    "agent": {
+      "repository": "dwp_agent",
+      "branch": "dwp-dev",
+      "originUrl": "https://github.com/choijoonbin/aura_agent.git",
+      "commit": "9beb5439cad065e7d919a98c9f9becb44481508a",
+      "tree": "fe3880719360f4bdeff88bbbac1edc6f8affed88",
+      "originMatchedAtAudit": true,
+      "sourceChangeRequired": false
+    }
+  },
+  "lanes": {
+    "carrierValidation": {
+      "repository": "dwp-frontend",
+      "worktree": "/Users/a10697/Work/DWP/.hris-worktrees/wave7-20261028/batch06/per009-central/carrier-validation-frontend",
+      "checkoutMode": "DETACHED_EXACT_DWP_DEV_CARRIER",
+      "mustRemainCleanThroughBothLaneConsumptions": true,
+      "productLane": false
+    },
+    "backend": {
+      "laneId": "PER009_CENTRAL_BACKEND_V63_V273",
+      "repository": "dwp-backend",
+      "branch": "hris/per009-central-v63-v273-backend-20261028-r1",
+      "worktree": "/Users/a10697/Work/DWP/.hris-worktrees/wave7-20261028/batch06/per009-central/backend",
+      "cleanReceipt": "/Users/a10697/Work/DWP/.hris-worktrees/wave7-20261028/batch06/per009-central/receipts/backend-clean-worktree-receipt.v1.json",
+      "token": "tokens/per-009-backend-central.start-token.v1.json",
+      "operation": "GENERATE_VALIDATE_COMMIT_AND_PUSH_PRODUCT_AUTHORIZATION_V63_AND_AUTH_V273_ONLY",
+      "baseCommit": "699ef730f21a89200be6dfed6d2e34148014cd10",
+      "baseTree": "3ea7866294cfd3bcb2ee950ff8b882f56f6f1317",
+      "directChildCommitRequired": true,
+      "remoteBranchMustBeAbsentAtMaterialization": true
+    },
+    "frontend": {
+      "laneId": "PER009_CENTRAL_FRONTEND_V62_V63_MIRROR",
+      "repository": "dwp-frontend",
+      "branch": "hris/per009-central-mirror-frontend-20261028-r1",
+      "worktree": "/Users/a10697/Work/DWP/.hris-worktrees/wave7-20261028/batch06/per009-central/frontend",
+      "cleanReceipt": "/Users/a10697/Work/DWP/.hris-worktrees/wave7-20261028/batch06/per009-central/receipts/frontend-clean-worktree-receipt.v1.json",
+      "token": "tokens/per-009-frontend-mirror.start-token.v1.json",
+      "operation": "SYNC_VALIDATE_COMMIT_AND_PUSH_UNMOUNTED_FRONTEND_V62_V63_MIRROR_ONLY",
+      "baseCommit": "CARRIER_COMMIT_SELF",
+      "baseTree": "CARRIER_TREE_SELF",
+      "directChildCommitRequired": true,
+      "remoteBranchMustBeAbsentAtMaterialization": true,
+      "backendVerifiedGenerationReceiptRequiredBeforeSourceWrite": true
+    }
+  },
+  "sourceAllowlist": {
+    "backendWritable": [
+      "contracts/product-authorization/product-surfaces-v1.yaml",
+      "scripts/generate-product-authorization-contracts.py",
+      "scripts/generate-product-authorization-fixtures.py",
+      "scripts/tests/test_product_authorization_v62.py",
+      "scripts/tests/test_product_authorization_v63.py",
+      "dwp-auth-server/src/main/java/com/dwp/services/auth/service/ProductAuthorizationReleaseLineage.java",
+      "dwp-auth-server/src/main/java/com/dwp/services/auth/service/ProductAuthorizationGateTopologyValidator.java",
+      "dwp-gateway/src/main/java/com/dwp/gateway/filter/ProductSurfaceRoutePolicies.java",
+      "dwp-auth-server/src/main/resources/db/migration/V273__declare_hris_per009_v63_authorization_seed.sql",
+      "contracts/product-authorization/product-surfaces-v1.bundle-v63.json",
+      "contracts/product-authorization/product-surfaces-v1.json",
+      "contracts/product-authorization/product-surfaces-v1.index.json",
+      "contracts/product-authorization/pilot-fixtures.v1.generated.json",
+      "dwp-auth-server/src/main/resources/product-authorization/product-surfaces-v1.bundle-v63.generated.json",
+      "dwp-auth-server/src/main/resources/product-authorization/product-surfaces-v1.generated.json",
+      "dwp-auth-server/src/main/resources/product-authorization/product-surfaces-v1.index.generated.json",
+      "dwp-people-server/src/main/resources/product-authorization/hcm-people-pep-v63.generated.json",
+      "dwp-time-server/src/main/resources/product-authorization/hcm-time-pep-v63.generated.json",
+      "dwp-platform-server/src/main/resources/product-authorization/hcm-platform-pep-v63.generated.json",
+      "dwp-payroll-server/src/main/resources/product-authorization/hcm-payroll-pep-v63.generated.json",
+      "dwp-auth-server/src/test/java/com/dwp/services/auth/service/ProductAuthorizationV63ContractTest.java",
+      "dwp-auth-server/src/test/java/com/dwp/services/auth/service/ProductAuthorizationReleaseLineageTest.java",
+      "dwp-auth-server/src/test/java/com/dwp/services/auth/service/ProductAuthorizationContractReleaseLineageTest.java",
+      "dwp-auth-server/src/test/java/com/dwp/services/auth/config/ProductAuthorizationSeedLoaderTest.java",
+      "dwp-auth-server/src/test/java/com/dwp/services/auth/support/PilotAuthorizationFixtureAdapter.java",
+      "dwp-auth-server/src/test/java/com/dwp/services/auth/support/PilotAuthorizationFixtureAdapterTest.java",
+      "dwp-auth-server/src/test/java/com/dwp/services/auth/repository/TenantFeatureActivationV273MigrationContractTest.java",
+      "dwp-auth-server/src/test/java/com/dwp/services/auth/tenantfeatureactivation/TenantFeatureActivationV273PostgresTest.java",
+      "dwp-gateway/src/test/java/com/dwp/gateway/productsurface/GeneratedProductRouteCatalogTest.java",
+      "dwp-gateway/src/test/java/com/dwp/gateway/productsurface/GeneratedProductRouteTopologyTest.java",
+      "dwp-gateway/src/test/java/com/dwp/gateway/ProductSurfaceDecisionContextFilterTest.java",
+      "dwp-gateway/src/test/java/com/dwp/gateway/support/PilotAuthorizationFixtureAdapter.java",
+      "dwp-gateway/src/test/java/com/dwp/gateway/support/PilotAuthorizationFixtureAdapterTest.java"
+    ],
+    "frontendWritable": [
+      "scripts/product-authorization-fixture-versions.mjs",
+      "architecture/product-surface-authorization.v1.json",
+      "architecture/pilot-fixtures.v1.generated.json",
+      "libs/shared-utils/src/test-utils/pilot-authorization-fixtures.generated.ts",
+      "apps/dwp/src/routes/product-surface-authorization.generated.ts"
+    ],
+    "frontendReadExecuteBytePreserved": [
+      "scripts/sync-product-surface-authorization.mjs",
+      "scripts/sync-product-authorization-fixtures.mjs",
+      "architecture/product-page-routes.v1.json",
+      "apps/dwp/src/routes/product-route-contracts.generated.test.ts"
+    ],
+    "backendChangedPathsMustEqualSealedAllowlist": true,
+    "frontendChangedPathsMustEqualSealedAllowlist": true,
+    "allSealedPathsMustHaveMaterialReviewableDiffs": true,
+    "manualGeneratedFileEditingAllowed": false,
+    "generalPurposeGeneratorRuntimeAndTestSemanticProofProvided": false,
+    "independentPostImplementationSourceDiffReviewRequired": true,
+    "pathExpansionRequiresAppendOnlyAuthoritySuccessor": true
+  },
+  "semanticClosure": {
+    "backendExpectedCounts": {
+      "capabilities": 281,
+      "accessPolicies": 24,
+      "entitlementExpressions": 17,
+      "predicatePolicies": 88,
+      "routes": 1160,
+      "PAGE": 162,
+      "DATA": 349,
+      "ACTION": 649
+    },
+    "peopleProjectionExpectedCounts": {
+      "capabilities": 66,
+      "accessPolicies": 5,
+      "entitlementExpressions": 3,
+      "predicatePolicies": 24,
+      "routes": 138,
+      "bindings": 165,
+      "PAGE": 47,
+      "DATA": 35,
+      "ACTION": 56
+    },
+    "addedCapabilities": [
+      "per.goal.self.write"
+    ],
+    "addedPredicates": [
+      "predicate.hcm-performance-goal-command.v1"
+    ],
+    "addedRoutes": [
+      "route.hcm.performance.goal-create.action",
+      "route.hcm.performance.goal-submit.action"
+    ],
+    "bundleStatus": "DRAFT",
+    "automaticImport": false,
+    "featureKey": "HRIS_PER_GOAL_COMMANDS",
+    "featureBaseline": "OFF",
+    "globalActiveRows": 0,
+    "tenantEnrollmentRows": 0,
+    "frontendMirrorVersions": [
+      62,
+      63
+    ],
+    "frontendMaximumSnapshotBytes": 104857600,
+    "pageCatalogMustRemainByteIdentical": true,
+    "peopleRuntimeRemainsBoundToVersion": 60,
+    "generatedV63PeopleProjectionMounted": false
+  },
+  "verificationContract": {
+    "backendCommands": [
+      "python3 scripts/generate-product-authorization-contracts.py",
+      "python3 scripts/generate-product-authorization-contracts.py --check",
+      "python3 scripts/generate-product-authorization-fixtures.py --write",
+      "python3 scripts/generate-product-authorization-fixtures.py --check",
+      "python3 -m unittest scripts.tests.test_product_authorization_v62 scripts.tests.test_product_authorization_v63",
+      "./gradlew productAuthorizationRegistryCheck pilotFixturesCheck",
+      "./gradlew :dwp-auth-server:test --tests com.dwp.services.auth.service.ProductAuthorizationV63ContractTest --tests com.dwp.services.auth.service.ProductAuthorizationReleaseLineageTest --tests com.dwp.services.auth.service.ProductAuthorizationContractReleaseLineageTest --tests com.dwp.services.auth.config.ProductAuthorizationSeedLoaderTest --tests com.dwp.services.auth.support.PilotAuthorizationFixtureAdapterTest --tests com.dwp.services.auth.repository.TenantFeatureActivationV273MigrationContractTest --tests com.dwp.services.auth.tenantfeatureactivation.TenantFeatureActivationV273PostgresTest --no-daemon --max-workers=1",
+      "./gradlew :dwp-gateway:test --tests com.dwp.gateway.productsurface.GeneratedProductRouteCatalogTest --tests com.dwp.gateway.productsurface.GeneratedProductRouteTopologyTest --tests com.dwp.gateway.ProductSurfaceDecisionContextFilterTest --tests com.dwp.gateway.support.PilotAuthorizationFixtureAdapterTest --no-daemon --max-workers=1"
+    ],
+    "frontendCommands": [
+      "node scripts/sync-product-surface-authorization.mjs --sync /Users/a10697/Work/DWP/.hris-worktrees/wave7-20261028/batch06/per009-central/backend/contracts/product-authorization",
+      "node scripts/sync-product-surface-authorization.mjs --check /Users/a10697/Work/DWP/.hris-worktrees/wave7-20261028/batch06/per009-central/backend/contracts/product-authorization",
+      "node scripts/sync-product-authorization-fixtures.mjs --sync /Users/a10697/Work/DWP/.hris-worktrees/wave7-20261028/batch06/per009-central/backend/contracts/product-authorization/pilot-fixtures.v1.generated.json --authorization /Users/a10697/Work/DWP/.hris-worktrees/wave7-20261028/batch06/per009-central/backend/contracts/product-authorization",
+      "node scripts/sync-product-authorization-fixtures.mjs --check /Users/a10697/Work/DWP/.hris-worktrees/wave7-20261028/batch06/per009-central/backend/contracts/product-authorization/pilot-fixtures.v1.generated.json --authorization /Users/a10697/Work/DWP/.hris-worktrees/wave7-20261028/batch06/per009-central/backend/contracts/product-authorization",
+      "corepack yarn vitest run apps/dwp/src/routes/product-route-contracts.generated.test.ts",
+      "node -e \"const fs=require('node:fs');if(fs.statSync('architecture/product-surface-authorization.v1.json').size>=104857600)process.exit(1)\""
+    ],
+    "rerunPolicy": "Run each bounded group once. After a failure, change only the responsible allowlisted path and rerun only the smallest affected group. No repository-wide suite is authorized."
+  },
+  "worktreeReceiptContract": {
+    "externalOnly": true,
+    "requiredBeforeSourceAuthoring": true,
+    "fileMode": "0600",
+    "regularFile": true,
+    "singleLink": true,
+    "symlinkAllowed": false,
+    "maximumBytes": 65536,
+    "requiredEvidence": [
+      "carrier commit, tree, committedAt and origin push equality",
+      "authority, both token, consumer, validator and review artifact bytes and SHA-256",
+      "repository root, worktree root, branch, exact base commit and tree",
+      "HEAD and tree equal the exact base; local origin/dwp-dev and authoritative ls-remote dwp-dev equal the bound commit at the exact audited origin URL",
+      "porcelain status is empty and upstream plus remote lane are absent",
+      "replace refs, grafts, sparse checkout, fsmonitor, external diff, assume-unchanged and skip-worktree are absent",
+      "token consumption receipt is absent"
+    ]
+  },
+  "tokenLifecycle": {
+    "maximumConsumptionPerToken": 1,
+    "consumedAtIssue": false,
+    "replayAllowedWithinRetainedCurrentUidReceiptLedger": false,
+    "failedOrAbortedAfterAtomicConsumptionBurnsTokenWithinRetainedCurrentUidReceiptLedger": true,
+    "receiptDirectoryMode": "0700",
+    "receiptFileMode": "0600",
+    "atomicCreation": "O_CREAT|O_EXCL|O_NOFOLLOW then fsync file and parent directory",
+    "oExclProtectionScope": "CONCURRENT_REPLAY_ONLY_WHILE_CURRENT_UID_0700_RECEIPT_LEDGER_AND_0600_RECEIPT_ARE_RETAINED",
+    "sameUidReceiptDeletionOrRollbackDurableTamperResistanceProvided": false,
+    "durableCompareAndSwapOrExternalAppendOnlyAnchorProvided": false,
+    "preConsumptionRevalidationRequired": true,
+    "preAdmissionValidationFailureConsumesToken": false,
+    "consumeBy": "while carrier, token, clean receipt, exact base HEAD/tree/origin, worktree cleanliness, branch absence and allowlist digest remain unchanged",
+    "backendExecutionDeadlineHoursAfterConsumption": 4,
+    "frontendExecutionDeadlineHoursAfterConsumption": 2,
+    "executionDeadlineSemantics": "PROCEDURAL_BOUNDED_WORK_WINDOW_ONLY",
+    "trustedClockAttestationProvided": false,
+    "cryptographicClockAttestationProvided": false,
+    "expiredOrConsumedTokenReplacementRule": "Issue a fresh append-only authority successor or token successor and a new clean receipt; never refresh or reuse a consumed or state-invalidated token in place.",
+    "sourceWriteBeforeMatchingCleanReceiptAllowed": false,
+    "backendMustCompleteBeforeFrontendSourceWrite": true,
+    "laneCommitMustBeSingleDirectChild": true,
+    "laneCommitAndPushRequireTargetedVerificationAndIndependentPostImplementationReview": true,
+    "directDwpDevIntegrationAuthorized": false,
+    "consumptionReceiptPaths": {
+      "backend": "/Users/a10697/Work/DWP/.hris-worktrees/wave7-20261028/batch06/per009-central/receipts/backend-token-consumption-receipt.v1.json",
+      "frontend": "/Users/a10697/Work/DWP/.hris-worktrees/wave7-20261028/batch06/per009-central/receipts/frontend-token-consumption-receipt.v1.json"
+    }
+  },
+  "trustedExecutionIdentityContract": {
+    "backendExecutor": "HRIS_PER009_BACKEND_CENTRAL_EXECUTOR",
+    "backendTargetedVerifier": "HRIS_PER009_BACKEND_TARGETED_VERIFIER",
+    "backendPostImplementationReviewer": "HRIS_PER009_BACKEND_INDEPENDENT_POST_REVIEWER",
+    "frontendExecutor": "HRIS_PER009_FRONTEND_MIRROR_EXECUTOR",
+    "frontendTargetedVerifier": "HRIS_PER009_FRONTEND_TARGETED_VERIFIER",
+    "frontendPostImplementationReviewer": "HRIS_PER009_FRONTEND_INDEPENDENT_POST_REVIEWER",
+    "allSixIdentitiesMustBeDistinct": true,
+    "freeFormIdentityAccepted": false,
+    "identityAssurance": "PROCEDURAL_ROLE_LABELS_WITH_EXACT_EVIDENCE_NOT_CRYPTOGRAPHIC_PRINCIPAL_ATTESTATION",
+    "cryptographicPrincipalAuthenticationProvided": false
+  },
+  "laneEvidenceContract": {
+    "backend": {
+      "targetedVerificationReceiptPath": "/Users/a10697/Work/DWP/.hris-worktrees/wave7-20261028/batch06/per009-central/receipts/backend-targeted-verification-receipt.v1.json",
+      "targetedVerificationReceiptSchema": "dwp.hris.wave7.per009-backend-targeted-verification-receipt.v1",
+      "postImplementationReviewPath": "/Users/a10697/Work/DWP/.hris-worktrees/wave7-20261028/batch06/per009-central/receipts/backend-post-implementation-review.v1.json",
+      "postImplementationReviewSchema": "dwp.hris.wave7.per009-backend-post-implementation-review.v1",
+      "requiredDecision": "GO_FOR_PER009_BACKEND_V63_V273_LANE_BRANCH_PUSH_ONLY"
+    },
+    "frontend": {
+      "targetedVerificationReceiptPath": "/Users/a10697/Work/DWP/.hris-worktrees/wave7-20261028/batch06/per009-central/receipts/frontend-targeted-verification-receipt.v1.json",
+      "targetedVerificationReceiptSchema": "dwp.hris.wave7.per009-frontend-targeted-verification-receipt.v1",
+      "postImplementationReviewPath": "/Users/a10697/Work/DWP/.hris-worktrees/wave7-20261028/batch06/per009-central/receipts/frontend-post-implementation-review.v1.json",
+      "postImplementationReviewSchema": "dwp.hris.wave7.per009-frontend-post-implementation-review.v1",
+      "requiredDecision": "GO_FOR_PER009_FRONTEND_V62_V63_MIRROR_LANE_BRANCH_PUSH_ONLY"
+    }
+  },
+  "explicitlyForbidden": [
+    "PER-009 People handler, persistence, outbox, event producer or runtime PEP implementation",
+    "Performance V21 migration or lease",
+    "HcmV3PepRegistry, HcmPeoplePepProjection, HcmScopeSelectionValidator or HcmProductSurfacePepFilter modification",
+    "HRIS performance feature UI, sidebar, menu, page or route mount",
+    "approval-pilot-pep-v63 generation",
+    "bundle approval, activation or automatic import",
+    "feature enablement, tenant enrollment, role or duty assignment, principal grant or credential creation",
+    "backend or frontend dwp-dev integration without a later independent central integration authority",
+    "merge, rebase, squash or cherry-pick as a substitute for exact reviewed lane integration",
+    "production binding or release",
+    "repository-wide test execution"
+  ],
+  "sequencing": [
+    "independently review and push this six-file authority carrier on Frontend dwp-dev",
+    "materialize only the exact clean Backend lane worktree and issue its 0600 receipt",
+    "consume the Backend token once to generate v63 then author V273, run bounded verification, review and push the Backend lane",
+    "only after the reviewed Backend lane push, materialize the fresh Frontend worktree and receipt, bind the Frontend token to the exact Backend evidence, consume it once, perform deterministic unmounted mirror catch-up, review and push the Frontend lane",
+    "issue a separate central integration authority and receipts before either dwp-dev branch moves",
+    "only after central integration seal PERFORMANCE V21 and issue the PER-009 module owner authority"
+  ],
+  "authority": {
+    "independentReviewComplete": true,
+    "carrierCommitAndPushAuthorized": true,
+    "carrierValidationWorktreeMaterializationAuthorizedAfterCarrierPush": true,
+    "backendCleanWorktreeMaterializationAuthorizedAfterCarrierPush": true,
+    "frontendCleanWorktreeMaterializationAuthorizedAfterReviewedBackendLane": true,
+    "backendOneShotTokenIssued": true,
+    "frontendOneShotTokenIssued": true,
+    "backendSourceAuthoringAuthorizedAfterCleanReceipt": true,
+    "authV273SqlAuthoringAuthorizedAfterCleanReceipt": true,
+    "frontendMirrorSourceAuthoringAuthorizedAfterCleanReceiptAndReviewedBackendLane": true,
+    "laneCommitAndPushAuthorizedAfterTargetedVerificationAndPostReview": true,
+    "backendDwpDevIntegrationAuthorized": false,
+    "frontendDwpDevIntegrationAuthorized": false,
+    "moduleOwnerPacketAuthorized": false,
+    "moduleSourceAuthoringAuthorized": false,
+    "performanceV21LeaseAuthorized": false,
+    "routeOrMenuMountAuthorized": false,
+    "featureEnablementAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "bundleApprovalAuthorized": false,
+    "bundleActivationAuthorized": false,
+    "productionReleaseAuthorized": false,
+    "businessCompletionCredit": 0
+  },
+  "nextAction": "Commit and push this exact carrier, then materialize and validate only the clean Backend worktree and receipt. Stop with both tokens unconsumed; a subsequent explicitly requested step may consume only the Backend token. Frontend materialization and consumption remain dependency-gated until the reviewed Backend lane push exists.",
+  "immutability": {
+    "sealed": true,
+    "sealedAt": "2026-10-28T19:30:00+09:00",
+    "amendmentPolicy": "APPEND_ONLY_SUCCESSOR_WITH_NEW_ID_AND_SHA256"
+  }
+}

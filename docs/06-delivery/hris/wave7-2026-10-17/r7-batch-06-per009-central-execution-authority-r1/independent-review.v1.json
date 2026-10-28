@@ -1,0 +1,113 @@
+{
+  "schema": "dwp.hris.wave7.per009-central-execution-authority-independent-review.v1",
+  "reviewId": "R7-B06-PER009-CENTRAL-EXECUTION-AUTHORITY-INDEPENDENT-REVIEW-R1",
+  "sliceId": "BASE-TFR-PER-009",
+  "module": "PER",
+  "moduleSession": "HRIS-PER",
+  "reviewedAt": "2026-10-28T21:09:56+09:00",
+  "state": "PASS_ZERO_P0_ZERO_P1_ZERO_P2_CARRIER_AND_CLEAN_WORKTREE_MATERIALIZATION_AUTHORIZED",
+  "independentReviewers": [
+    {
+      "reviewer": "per009_auth_precedent",
+      "scope": "HRM-013 and PAY-005 two-repository authority, clean-receipt, lane-review and separate-integration precedents; append-only R1 and R2 preservation",
+      "disposition": "PASS_ZERO_P0_P1_P2"
+    },
+    {
+      "reviewer": "per009_auth_delta_review",
+      "scope": "Exact current repository heads, dirty shared-checkout exclusion, v62 and V272 high-water evidence, v63 and V273 absence, v61 Frontend mirror and worktree collision audit",
+      "disposition": "PASS_ZERO_P0_P1_P2"
+    },
+    {
+      "reviewer": "per009_auth_generation_audit",
+      "scope": "Exact 33-path Backend and 5-path Frontend write allowlists, phased operational one-shot lifecycle, atomic receipt creation, retained-ledger concurrent replay denial, procedural expiry and admission boundaries",
+      "disposition": "PASS_ZERO_P0_P1_P2"
+    }
+  ],
+  "artifactPins": [
+    {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-per009-central-execution-authority-r1/per-009-central-execution-authority.v1.json",
+      "bytes": 23827,
+      "sha256": "0dac6af7d492d37e1b9dbeac5c10b1f06bfa0cfb1bf203092ba14b27fae84911"
+    },
+    {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-per009-central-execution-authority-r1/tokens/per-009-backend-central.start-token.v1.json",
+      "bytes": 9967,
+      "sha256": "58a68ad7f97ad42ea85af2b505e329a511e91f4fcfd83527ba17a7c52868f671"
+    },
+    {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-per009-central-execution-authority-r1/tokens/per-009-frontend-mirror.start-token.v1.json",
+      "bytes": 10802,
+      "sha256": "af221f293fca50223e24e782bd126defa3e791d897f74ec92c7adf620164578e"
+    },
+    {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-per009-central-execution-authority-r1/consume_per009_central_token.py",
+      "bytes": 13518,
+      "sha256": "ca96149275b3921f26a672540d752bb2e02cfc9f887ec80e2ea0db0f14831f0e"
+    },
+    {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-per009-central-execution-authority-r1/validate_per009_central_execution_authority.py",
+      "bytes": 175132,
+      "sha256": "e79fdbdb3485d866a02fa8902d0662464ec02596affc7e8c32e2c5a1380919d4"
+    }
+  ],
+  "verifiedBoundaries": [
+    "The R1 authorization successor and append-only R2 lifecycle correction remain byte-exact and are not amended by this carrier.",
+    "Frontend 1c00ee79, Backend 699ef730 and Agent 9beb5439 local and origin pins are exact. Dirty shared Calendar and Mail work plus existing uncommitted v62 bytes on all five future PER-009 Frontend mirror paths are non-authoritative and untouched: no sync, clean, reset or overwrite runs there; the carrier changes only six paths and validates from the retained detached carrier-validation-frontend worktree, which is not the Frontend product lane.",
+    "Frontend, Backend and Agent exact audited HTTPS origin URLs are closed constants; every admission phase compares local refs and authoritative ls-remote dwp-dev heads to the bound commits instead of trusting stale remote-tracking refs.",
+    "Backend v63 and Auth V273 are absent; canonical high-water is v62 and Auth migration high-water is V272 without an Auth-stream V273 collision.",
+    "Frontend authorization mirror is v61 and must import immutable v62 before v63; direct v63-only synchronization is denied.",
+    "Backend and Frontend receive different repository-scoped tokens and worktrees plus six distinct exact procedural executor, verifier and reviewer labels; these labels enforce evidence-role separation but are explicitly not cryptographic principal attestation. Backend verification, independent zero-finding review and branch push precede Frontend materialization and token consumption.",
+    "Backend write authority is exactly the R1 union of 9 canonical, 11 generated and 13 targeted-test paths. Frontend write authority is exactly 5 mirror paths and the 4 sync or route paths are execute-only and byte-preserved; deletion, rename, gitlink, symlink and mode drift are rejected.",
+    "Each token permits one operational consumption only while the current-UID 0700 receipt ledger and 0600 receipt are retained. O_EXCL denies concurrent replay, but same-UID deletion or rollback resistance and an external durable CAS are not provided; 4-hour and 2-hour deadlines are procedural bounded-work windows without trusted-clock attestation.",
+    "Clean receipts bind the six committed carrier artifacts, exact origin URL, authoritative remote head and worktree provenance; consumption is followed by a full phase revalidation before source write is authorized.",
+    "Backend completion is verified from actual commit blobs: canonical checksum, exact v63 counts and semantic delta, service projections, fixture lineage, required V273 semantics, direct-child mode-safe tree, exact evidence and remote push must all close.",
+    "Automated checks prove exact artifacts and bounded source guardrails, not general-purpose semantic correctness of changed Python, Java or test bodies. The independent post-implementation reviewer must inspect all 33 material Backend diffs before lane push.",
+    "Frontend remains dependency-gated until the exact Backend lane commit, tree, checksum, verification receipt, independent zero-finding review and remote push are bound; its official sync checks use the exact reviewed Backend paths.",
+    "Frontend completion has a separate targeted receipt and independent review gate that revalidates the Backend source, direct-child mode-safe tree, five-path allowlist, four byte-preserved paths, v1-v61 preservation, exact Backend v62-v63 blobs, fixtures, size ceiling and remote push.",
+    "Neither token authorizes direct dwp-dev integration; a later independently reviewed central integration authority is mandatory.",
+    "People runtime remains v60 and generated v63 remains unmounted. No PER owner source, V21, menu, route, feature activation, enrollment, automatic import, approval, production release or business completion is authorized.",
+    "Only bounded target groups may run once; a failure permits only the smallest affected rerun and never a repository-wide suite."
+  ],
+  "postResolutionSeverityCounts": {
+    "P0": 0,
+    "P1": 0,
+    "P2": 0
+  },
+  "authority": {
+    "independentReviewComplete": true,
+    "carrierCommitAndPushAuthorized": true,
+    "carrierValidationWorktreeMaterializationAuthorizedAfterCarrierPush": true,
+    "backendCleanWorktreeMaterializationAuthorizedAfterCarrierPush": true,
+    "frontendCleanWorktreeMaterializationAuthorizedAfterReviewedBackendLane": true,
+    "backendOneShotExecutionAuthorizedAfterCleanReceipt": true,
+    "frontendOneShotExecutionAuthorizedAfterCleanReceiptAndReviewedBackendLane": true,
+    "laneCommitAndPushAuthorizedAfterTargetedVerificationAndPostReview": true,
+    "backendDwpDevIntegrationAuthorized": false,
+    "frontendDwpDevIntegrationAuthorized": false,
+    "moduleSourceAuthoringAuthorized": false,
+    "performanceV21LeaseAuthorized": false,
+    "routeOrMenuMountAuthorized": false,
+    "featureEnablementAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "bundleActivationAuthorized": false,
+    "productionReleaseAuthorized": false,
+    "businessCompletionCredit": 0
+  },
+  "nextAction": "Commit and push this exact six-file carrier, retain the detached clean carrier-validation-frontend worktree, then materialize and receipt only the clean Backend product lane worktree. Do not consume either token in this preparation step; Frontend product-lane materialization remains gated by the reviewed and pushed Backend lane.",
+  "nonClaims": [
+    "No Backend or Frontend central source has been authored, generated, tested, committed or pushed under these tokens.",
+    "No token has been consumed.",
+    "No lane result has been integrated into dwp-dev.",
+    "No People PER-009 owner runtime, Goal domain, Performance V21 migration, UI, menu or route exists under this authority.",
+    "No feature, tenant, bundle or production state is active.",
+    "No PER-009, Batch 06, Wave 7 or HRIS business completion is claimed.",
+    "No cryptographic, hardware-backed or separately authenticated principal attestation is claimed for executor, verifier or reviewer role labels.",
+    "No deletion-resistant same-UID burn ledger, durable external compare-and-swap anchor or trusted-clock deadline attestation is claimed.",
+    "No automated general-purpose proof of generator, Java runtime or test-body semantic correctness is claimed; that residual responsibility belongs to the mandatory independent post-implementation source diff review."
+  ],
+  "immutability": {
+    "sealed": true,
+    "sealedAt": "2026-10-28T21:09:56+09:00",
+    "amendmentPolicy": "APPEND_ONLY_SUCCESSOR_WITH_NEW_ID_AND_SHA256"
+  }
+}

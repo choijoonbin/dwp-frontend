@@ -1,0 +1,149 @@
+{
+  "schema": "dwp.hris.wave7.per009-frontend-mirror-start-token.v1",
+  "tokenId": "HRIS-WAVE7-R7-BATCH06-PER009-CENTRAL-FRONTEND-V62-V63-MIRROR-20261028-R1",
+  "jti": "per009-central-frontend-v62-v63-mirror-20261028-r1",
+  "laneId": "PER009_CENTRAL_FRONTEND_V62_V63_MIRROR",
+  "state": "ISSUED_HASH_BOUND_ONE_SHOT_DEPENDENCY_GATED_BY_REVIEWED_BACKEND_LANE",
+  "authorityBinding": {
+    "authorityPath": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-per009-central-execution-authority-r1/per-009-central-execution-authority.v1.json",
+    "authoritySchema": "dwp.hris.wave7.per009-central-execution-authority.v1",
+    "reviewPath": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-per009-central-execution-authority-r1/independent-review.v1.json",
+    "validatorPath": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-per009-central-execution-authority-r1/validate_per009_central_execution_authority.py",
+    "consumerPath": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-per009-central-execution-authority-r1/consume_per009_central_token.py",
+    "consumerInvocation": "/usr/bin/python3 -I /Users/a10697/Work/DWP/.hris-worktrees/wave7-20261028/batch06/per009-central/carrier-validation-frontend/docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-per009-central-execution-authority-r1/consume_per009_central_token.py frontend --executor HRIS_PER009_FRONTEND_MIRROR_EXECUTOR",
+    "bindingRule": "The independent review pins the authority, both tokens, consumer and validator. The external Frontend clean receipt and exact reviewed Backend lane receipts are both mandatory; this token cannot self-pin or bypass either gate."
+  },
+  "execution": {
+    "repository": "dwp-frontend",
+    "baseCommit": "CARRIER_COMMIT_SELF",
+    "baseTree": "CARRIER_TREE_SELF",
+    "branch": "hris/per009-central-mirror-frontend-20261028-r1",
+    "worktree": "/Users/a10697/Work/DWP/.hris-worktrees/wave7-20261028/batch06/per009-central/frontend",
+    "cleanWorktreeReceiptPath": "/Users/a10697/Work/DWP/.hris-worktrees/wave7-20261028/batch06/per009-central/receipts/frontend-clean-worktree-receipt.v1.json",
+    "completionEvidence": {
+      "targetedVerificationReceiptPath": "/Users/a10697/Work/DWP/.hris-worktrees/wave7-20261028/batch06/per009-central/receipts/frontend-targeted-verification-receipt.v1.json",
+      "postImplementationReviewPath": "/Users/a10697/Work/DWP/.hris-worktrees/wave7-20261028/batch06/per009-central/receipts/frontend-post-implementation-review.v1.json",
+      "requiredVerifier": "HRIS_PER009_FRONTEND_TARGETED_VERIFIER",
+      "requiredReviewer": "HRIS_PER009_FRONTEND_INDEPENDENT_POST_REVIEWER",
+      "requiredDecision": "GO_FOR_PER009_FRONTEND_V62_V63_MIRROR_LANE_BRANCH_PUSH_ONLY"
+    },
+    "operation": "SYNC_VALIDATE_COMMIT_AND_PUSH_UNMOUNTED_FRONTEND_V62_V63_MIRROR_ONLY",
+    "backendDependency": {
+      "laneBranch": "hris/per009-central-v63-v273-backend-20261028-r1",
+      "targetedVerificationReceiptPath": "/Users/a10697/Work/DWP/.hris-worktrees/wave7-20261028/batch06/per009-central/receipts/backend-targeted-verification-receipt.v1.json",
+      "postImplementationReviewPath": "/Users/a10697/Work/DWP/.hris-worktrees/wave7-20261028/batch06/per009-central/receipts/backend-post-implementation-review.v1.json",
+      "requiredDecision": "GO_FOR_PER009_BACKEND_V63_V273_LANE_BRANCH_PUSH_ONLY",
+      "requiredP0": 0,
+      "requiredP1": 0,
+      "requiredP2": 0,
+      "remoteLanePushRequired": true,
+      "exactCommitTreeChecksumAndReceiptHashesMustBeBoundAtConsumption": true
+    },
+    "orderedSteps": [
+      "validate the clean Frontend receipt and the exact reviewed and pushed Backend lane dependency",
+      "consume this token exactly once and bind the Backend lane commit, tree, v63 checksum and receipt hashes",
+      "update fixture-version expectations for immutable v62 then v63 without skipping v62",
+      "run the byte-preserved sync scripts against the exact Backend lane worktree and generated contracts",
+      "prove page catalog and browser route contracts remain byte-identical and snapshot stays below 104857600 bytes",
+      "run only bounded mirror, fixture and generated-route checks",
+      "commit one non-merge direct child of the carrier base, independently review it, then push only this lane branch"
+    ],
+    "requiredOutcomes": [
+      "The Frontend mirror contains immutable v1 through v61, the reviewed immutable Backend v62 predecessor, then v63 in order.",
+      "Latest alias and index select v63 and preserve the generated Backend checksums.",
+      "No PAGE route is added or changed for PER-009 and product-page-routes remains byte-identical.",
+      "Only the five authority-listed generated mirror paths may change and the four sync or route-contract paths remain byte-identical.",
+      "No UI, sidebar, menu, route, provider, feature enrollment or runtime binding is introduced."
+    ]
+  },
+  "oneShot": {
+    "maximumConsumptions": 1,
+    "consumedAtIssue": false,
+    "replayAllowedWithinRetainedCurrentUidReceiptLedger": false,
+    "failedOrAbortedAfterAtomicConsumptionBurnsTokenWithinRetainedCurrentUidReceiptLedger": true,
+    "preConsumptionRevalidationRequired": true,
+    "preAdmissionValidationFailureConsumesToken": false,
+    "requiredExecutor": "HRIS_PER009_FRONTEND_MIRROR_EXECUTOR",
+    "consumeBy": "while carrier, token, fresh Frontend clean receipt, exact carrier-base HEAD/tree/origin, worktree cleanliness, exact reviewed Backend dependency and allowlist digest remain unchanged",
+    "executionDeadlineHoursAfterConsumption": 2,
+    "consumptionReceiptPath": "/Users/a10697/Work/DWP/.hris-worktrees/wave7-20261028/batch06/per009-central/receipts/frontend-token-consumption-receipt.v1.json",
+    "consumptionReceiptMustBeAbsentBeforeSourceWrite": true,
+    "consumptionReceiptMustBeCreatedAtomicallyBeforeFirstSourceWrite": true,
+    "atomicCreation": "current-UID 0700 directory; O_CREAT|O_EXCL|O_NOFOLLOW 0600 regular single-link file; fsync file and parent directory",
+    "oExclProtectionScope": "CONCURRENT_REPLAY_ONLY_WHILE_CURRENT_UID_0700_RECEIPT_LEDGER_AND_0600_RECEIPT_ARE_RETAINED",
+    "sameUidReceiptDeletionOrRollbackDurableTamperResistanceProvided": false,
+    "durableCompareAndSwapOrExternalAppendOnlyAnchorProvided": false,
+    "executionDeadlineSemantics": "PROCEDURAL_BOUNDED_WORK_WINDOW_ONLY",
+    "trustedClockAttestationProvided": false,
+    "cryptographicClockAttestationProvided": false,
+    "receiptMustPin": [
+      "jti and exact token SHA-256",
+      "exact authority SHA-256 and carrier commit/tree",
+      "repository, worktree realpath, branch, HEAD, tree and origin/dwp-dev",
+      "clean receipt SHA-256 and closed allowlist digest",
+      "reviewed Backend lane commit, tree, v63 checksum and receipt SHA-256 values",
+      "consumedAt, executionDeadline and executor identity"
+    ],
+    "expiresOn": [
+      "carrier-base HEAD or tree drift",
+      "origin/dwp-dev drift from the bound base before lane commit",
+      "worktree dirty state before consumption",
+      "Backend dependency commit, tree, checksum, receipt or remote branch drift",
+      "allowlist or governing-artifact drift",
+      "first committed lane result",
+      "any prior consumption receipt"
+    ]
+  },
+  "verification": {
+    "commands": [
+      "node scripts/sync-product-surface-authorization.mjs --sync /Users/a10697/Work/DWP/.hris-worktrees/wave7-20261028/batch06/per009-central/backend/contracts/product-authorization",
+      "node scripts/sync-product-surface-authorization.mjs --check /Users/a10697/Work/DWP/.hris-worktrees/wave7-20261028/batch06/per009-central/backend/contracts/product-authorization",
+      "node scripts/sync-product-authorization-fixtures.mjs --sync /Users/a10697/Work/DWP/.hris-worktrees/wave7-20261028/batch06/per009-central/backend/contracts/product-authorization/pilot-fixtures.v1.generated.json --authorization /Users/a10697/Work/DWP/.hris-worktrees/wave7-20261028/batch06/per009-central/backend/contracts/product-authorization",
+      "node scripts/sync-product-authorization-fixtures.mjs --check /Users/a10697/Work/DWP/.hris-worktrees/wave7-20261028/batch06/per009-central/backend/contracts/product-authorization/pilot-fixtures.v1.generated.json --authorization /Users/a10697/Work/DWP/.hris-worktrees/wave7-20261028/batch06/per009-central/backend/contracts/product-authorization",
+      "corepack yarn vitest run apps/dwp/src/routes/product-route-contracts.generated.test.ts",
+      "node -e \"const fs=require('node:fs');if(fs.statSync('architecture/product-surface-authorization.v1.json').size>=104857600)process.exit(1)\""
+    ],
+    "requiredBeforeCommit": [
+      "actual changed paths are a nonempty subset of authority.sourceAllowlist.frontendWritable",
+      "all authority.sourceAllowlist.frontendReadExecuteBytePreserved paths remain byte-identical",
+      "v1 through v61 normalized bundle bytes are unchanged and v62 equals the exact Backend v62 bundle",
+      "v63 equals the reviewed Backend lane bundle and appears after v62",
+      "page catalog, legacy redirects and browser route counts are unchanged",
+      "snapshot size is strictly below 104857600 bytes",
+      "all bounded command exit codes are zero"
+    ],
+    "requiredBeforePush": [
+      "lane commit is one non-merge direct child of the exact carrier base",
+      "targeted verification receipt pins the Backend dependency and Frontend commit, tree, changed paths, artifacts and exit codes",
+      "independent post-implementation review reports zero unresolved P0, P1 and P2"
+    ],
+    "rerunPolicy": "After a failure rerun only the smallest affected target. Repository-wide execution is forbidden."
+  },
+  "forbidden": [
+    "any path outside authority.sourceAllowlist.frontendWritable",
+    "any change to authority.sourceAllowlist.frontendReadExecuteBytePreserved",
+    "Backend source or migration editing",
+    "PER-009 UI, sidebar, menu, navigation, page, provider or route mount",
+    "feature enablement or tenant enrollment",
+    "direct frontend dwp-dev integration",
+    "merge, rebase, squash or cherry-pick",
+    "production binding or release",
+    "repository-wide tests"
+  ],
+  "authorization": {
+    "tokenIssued": true,
+    "executableAfterCleanReceiptAndReviewedBackendLane": true,
+    "boundedFrontendMirrorSourceAuthoringAuthorized": true,
+    "laneCommitAndPushAuthorizedAfterVerificationAndReview": true,
+    "frontendDwpDevIntegrationAuthorized": false,
+    "backendSourceAuthoringAuthorized": false,
+    "moduleSourceAuthoringAuthorized": false,
+    "performanceV21LeaseAuthorized": false,
+    "routeOrMenuMountAuthorized": false,
+    "featureEnablementAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "bundleActivationAuthorized": false,
+    "productionReleaseAuthorized": false,
+    "businessCompletionCredit": 0
+  }
+}
