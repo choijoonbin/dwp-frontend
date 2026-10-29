@@ -15,6 +15,8 @@ import {
   CALENDAR_FOCUS_FIXTURE,
   CALENDAR_HOME_FIXTURE,
   CALENDAR_RESOURCES_FIXTURE,
+  CALENDAR_REMINDER_SET_FIXTURE,
+  CALENDAR_SCHEDULING_EVALUATION_V2_FIXTURE,
   CALENDAR_SHARES_FIXTURE,
   CALENDAR_SUMMARIES_FIXTURE,
   CALENDAR_TRASH_FIXTURE,
@@ -1917,6 +1919,42 @@ export async function mockShellSession(
           : CALENDAR_EVENT_FIXTURE
       );
     }
+    if (/^\/api\/platform\/v1\/calendar\/events\/[^/]+\/reminders$/u.test(path)) {
+      const eventId = path.split('/').at(-2)!;
+      const source =
+        eventId === CALENDAR_FOCUS_FIXTURE.eventId
+          ? CALENDAR_FOCUS_FIXTURE
+          : CALENDAR_EVENT_FIXTURE;
+      const reminderSet = {
+        ...CALENDAR_REMINDER_SET_FIXTURE,
+        eventId,
+        eventVersion: source.version,
+        reminders:
+          eventId === CALENDAR_REMINDER_SET_FIXTURE.eventId
+            ? CALENDAR_REMINDER_SET_FIXTURE.reminders
+            : [],
+        updatedAt:
+          eventId === CALENDAR_REMINDER_SET_FIXTURE.eventId
+            ? CALENDAR_REMINDER_SET_FIXTURE.updatedAt
+            : null,
+      };
+      if (request.method() === 'GET') return fulfillSuccess(route, reminderSet);
+      const body = request.postDataJSON() as {
+        version?: number;
+        reminders?: Array<{ offsetMinutes: number; channel: 'IN_APP' | 'EMAIL' }>;
+      } | null;
+      return fulfillSuccess(route, {
+        ...reminderSet,
+        version: Number(body?.version ?? reminderSet.version) + 1,
+        reminders: (body?.reminders ?? []).map((reminder, index) => ({
+          reminderId: `calendar-reminder-${index + 1}`,
+          ...reminder,
+          nextOccurrenceStartsAt: '2026-08-18T01:00:00Z',
+          nextDueAt: null,
+        })),
+        updatedAt: '2026-08-11T00:20:01Z',
+      });
+    }
     if (/^\/api\/platform\/v1\/calendar\/events\/[^/]+$/u.test(path)) {
       const body = request.postDataJSON() as Record<string, unknown> | null;
       const source = path.includes(CALENDAR_FOCUS_FIXTURE.eventId)
@@ -1972,6 +2010,35 @@ export async function mockShellSession(
     }
     if (path === '/api/platform/v1/calendar/availability') {
       return fulfillSuccess(route, CALENDAR_AVAILABILITY_FIXTURE);
+    }
+    if (
+      /^\/api\/platform\/v2\/calendar\/scheduling\/evaluations\/[0-9a-f-]+\/hard-recheck$/u.test(
+        path
+      )
+    ) {
+      const body = request.postDataJSON() as {
+        criteriaHash?: string;
+        selection?: { startsAt?: string; endsAt?: string };
+        roomId?: string | null;
+      } | null;
+      return fulfillSuccess(route, {
+        evaluationId: CALENDAR_SCHEDULING_EVALUATION_V2_FIXTURE.evaluationId,
+        criteriaHash: body?.criteriaHash ?? CALENDAR_SCHEDULING_EVALUATION_V2_FIXTURE.criteriaHash,
+        status: 'PASS',
+        hardRecheckToken: 'calendar-hard-recheck-token-2026-08-11',
+        selectionHash: 'calendar-selection-hash-2026-08-11',
+        conflicts: [],
+        room: body?.roomId
+          ? (CALENDAR_SCHEDULING_EVALUATION_V2_FIXTURE.rooms.find(
+              (recommendation) => recommendation.room.resourceId === body.roomId
+            ) ?? null)
+          : null,
+        checkedAt: '2026-08-11T00:20:01Z',
+        validUntil: '2026-08-11T00:20:25Z',
+      });
+    }
+    if (path === '/api/platform/v2/calendar/scheduling/evaluations') {
+      return fulfillSuccess(route, CALENDAR_SCHEDULING_EVALUATION_V2_FIXTURE);
     }
     if (path === '/api/platform/v1/calendar/scheduling/evaluations') {
       return fulfillSuccess(route, {
@@ -2103,10 +2170,11 @@ export async function mockShellSession(
       },
     };
     if (path === '/api/people/v1/people') {
+      const size = Number(url.searchParams.get('size') ?? 50);
       return fulfillSuccess(route, {
         items: url.searchParams.get('query') ? [sessionPerson] : [],
         nextCursor: null,
-        size: 100,
+        size,
         hasMore: false,
         asOf: '2026-08-11',
       });

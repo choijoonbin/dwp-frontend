@@ -19,6 +19,7 @@ import {
   SelectField,
 } from '@dwp-frontend/design-system';
 
+import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
 import Collapse from '@mui/material/Collapse';
@@ -46,6 +47,9 @@ export function MailSearchControls({
   const toast = useToast();
   const queryClient = useQueryClient();
   const [advancedOpen, setAdvancedOpen] = useState(() => hasAdvancedCriteria(criteria));
+  const [draftCriteria, setDraftCriteria] = useState<MailSearchCriteria>(() =>
+    advancedCriteriaDraft(criteria)
+  );
   const [saveOpen, setSaveOpen] = useState(false);
   const [viewName, setViewName] = useState('');
   const [editingView, setEditingView] = useState<MailSavedView | null>(null);
@@ -146,6 +150,16 @@ export function MailSearchControls({
     setViewName(editingView?.name ?? '');
   }, [editingView, saveOpen]);
 
+  const appliedAdvancedSignature = advancedCriteriaSignature(criteria);
+  useEffect(() => {
+    setDraftCriteria(JSON.parse(appliedAdvancedSignature) as MailSearchCriteria);
+  }, [appliedAdvancedSignature]);
+
+  const advancedDirty = !advancedCriteriaEqual(draftCriteria, criteria);
+  const invalidDateRange = mailSearchDateRangeInvalid(draftCriteria);
+  const updateDraft = (updates: Partial<MailSearchCriteria>) =>
+    setDraftCriteria((current) => ({ ...current, ...updates }));
+
   const applyView = (view: MailSavedView) => {
     const next = criteriaToParams(view.criteria);
     onUpdate({
@@ -164,6 +178,7 @@ export function MailSearchControls({
       lane: null,
       ...next,
     });
+    setDraftCriteria(advancedCriteriaDraft(view.criteria));
     setAdvancedOpen(hasAdvancedCriteria(view.criteria));
   };
 
@@ -273,7 +288,7 @@ export function MailSearchControls({
           <SelectField
             size="small"
             label={t('secondary.search.account')}
-            value={criteria.accountId ?? ''}
+            value={draftCriteria.accountId ?? ''}
             options={[
               { value: '', label: t('secondary.search.allAccounts') },
               ...(home.data?.accounts ?? []).map((account) => ({
@@ -281,81 +296,86 @@ export function MailSearchControls({
                 label: `${account.displayName} · ${account.emailAddress}`,
               })),
             ]}
-            onValueChange={(value) => onUpdate({ accountId: value || null })}
+            onValueChange={(value) => updateDraft({ accountId: value || undefined })}
           />
           <SelectField
             size="small"
             label={t('secondary.search.scopeLabel')}
-            value={criteria.scope ?? ''}
+            value={draftCriteria.scope ?? ''}
             options={[
               { value: '', label: t('secondary.search.scope.ALL') },
               { value: 'PERSONAL', label: t('secondary.search.scope.PERSONAL') },
               { value: 'SHARED', label: t('secondary.search.scope.SHARED') },
             ]}
-            onValueChange={(value) => onUpdate({ scope: value || null })}
+            onValueChange={(value) =>
+              updateDraft({
+                scope: (value || undefined) as MailSearchCriteria['scope'],
+              })
+            }
           />
           <FormField
             size="small"
             label={t('secondary.search.from')}
-            value={criteria.from ?? ''}
-            onChange={(event) => onUpdate({ from: event.target.value || null })}
+            value={draftCriteria.from ?? ''}
+            onChange={(event) => updateDraft({ from: event.target.value || undefined })}
           />
           <FormField
             size="small"
             label={t('secondary.search.to')}
-            value={criteria.to ?? ''}
-            onChange={(event) => onUpdate({ to: event.target.value || null })}
+            value={draftCriteria.to ?? ''}
+            onChange={(event) => updateDraft({ to: event.target.value || undefined })}
           />
           <FormField
             size="small"
             type="date"
             label={t('secondary.search.dateFrom')}
-            value={criteria.dateFrom ?? ''}
+            value={draftCriteria.dateFrom ?? ''}
             slotProps={{ inputLabel: { shrink: true } }}
-            onChange={(event) => onUpdate({ dateFrom: event.target.value || null })}
+            onChange={(event) => updateDraft({ dateFrom: event.target.value || undefined })}
           />
           <FormField
             size="small"
             type="date"
             label={t('secondary.search.dateTo')}
-            value={criteria.dateTo ?? ''}
+            value={draftCriteria.dateTo ?? ''}
+            errorMessage={invalidDateRange ? t('secondary.search.invalidDateRange') : undefined}
             slotProps={{ inputLabel: { shrink: true } }}
-            onChange={(event) => onUpdate({ dateTo: event.target.value || null })}
+            onChange={(event) => updateDraft({ dateTo: event.target.value || undefined })}
           />
           <SelectField
             size="small"
             label={t('secondary.search.readState')}
-            value={criteria.unread === true ? 'true' : ''}
+            value={draftCriteria.unread === true ? 'true' : ''}
             options={[
               { value: '', label: t('secondary.search.allReadStates') },
               { value: 'true', label: t('secondary.search.unreadOnly') },
             ]}
-            onValueChange={(value) => onUpdate({ unread: value || null })}
+            onValueChange={(value) => updateDraft({ unread: value === 'true' || undefined })}
           />
           <SelectField
             size="small"
             label={t('secondary.search.replyState')}
-            value={criteria.needsReply === true ? 'true' : ''}
+            value={draftCriteria.needsReply === true ? 'true' : ''}
             options={[
               { value: '', label: t('secondary.search.allReplyStates') },
               { value: 'true', label: t('secondary.search.needsReplyOnly') },
             ]}
-            onValueChange={(value) => onUpdate({ needsReply: value || null })}
+            onValueChange={(value) => updateDraft({ needsReply: value === 'true' || undefined })}
           />
           <SelectField
             size="small"
             label={t('secondary.search.attachment')}
-            value={criteria.hasAttachment === true ? 'true' : ''}
+            value={draftCriteria.hasAttachment === true ? 'true' : ''}
             options={[
               { value: '', label: t('secondary.search.allAttachments') },
               { value: 'true', label: t('secondary.search.attachmentOnly') },
             ]}
-            onValueChange={(value) => onUpdate({ hasAttachment: value || null })}
+            onValueChange={(value) => updateDraft({ hasAttachment: value === 'true' || undefined })}
           />
           <SelectField
             size="small"
             label={t('secondary.search.folder')}
-            value={criteria.folderId ?? ''}
+            value={draftCriteria.folderId ?? ''}
             options={[
               { value: '', label: t('secondary.search.allFolders') },
               ...(organization.data?.folders ?? []).map((folder) => ({
@@ -363,8 +383,43 @@ export function MailSearchControls({
                 label: folder.displayName,
               })),
             ]}
-            onValueChange={(value) => onUpdate({ folderId: value || null })}
+            onValueChange={(value) => updateDraft({ folderId: value || undefined })}
           />
+          <Stack
+            spacing={1}
+            direction={{ xs: 'column', sm: 'row' }}
+            alignItems={{ sm: 'center' }}
+            justifyContent="space-between"
+            sx={{ gridColumn: '1 / -1' }}
+          >
+            {invalidDateRange ? (
+              <Alert severity="error" sx={{ flex: 1 }}>
+                {t('secondary.search.invalidDateRange')}
+              </Alert>
+            ) : (
+              <Typography variant="body2" color="text.secondary">
+                {advancedDirty
+                  ? t('secondary.search.pendingFilters')
+                  : t('secondary.search.filtersApplied')}
+              </Typography>
+            )}
+            <Stack direction={{ xs: 'column-reverse', sm: 'row' }} spacing={1}>
+              <ActionButton
+                intent="secondary"
+                disabled={!advancedDirty}
+                onClick={() => setDraftCriteria(advancedCriteriaDraft(criteria))}
+              >
+                {t('actions.cancel')}
+              </ActionButton>
+              <ActionButton
+                intent="primary"
+                disabled={!advancedDirty || invalidDateRange}
+                onClick={() => onUpdate(criteriaToParams(draftCriteria))}
+              >
+                {t('secondary.search.applyFilters')}
+              </ActionButton>
+            </Stack>
+          </Stack>
         </Box>
       </Collapse>
 
@@ -440,6 +495,37 @@ export function criteriaToParams(criteria: MailSearchCriteria): Record<string, s
       value == null || value === false ? null : String(value),
     ])
   );
+}
+
+const ADVANCED_CRITERIA_KEYS = [
+  'accountId',
+  'scope',
+  'from',
+  'to',
+  'dateFrom',
+  'dateTo',
+  'unread',
+  'needsReply',
+  'hasAttachment',
+  'folderId',
+] as const;
+
+export function advancedCriteriaDraft(criteria: MailSearchCriteria): MailSearchCriteria {
+  return Object.fromEntries(
+    ADVANCED_CRITERIA_KEYS.map((key) => [key, criteria[key]])
+  ) as MailSearchCriteria;
+}
+
+function advancedCriteriaSignature(criteria: MailSearchCriteria) {
+  return JSON.stringify(advancedCriteriaDraft(criteria));
+}
+
+export function advancedCriteriaEqual(left: MailSearchCriteria, right: MailSearchCriteria) {
+  return advancedCriteriaSignature(left) === advancedCriteriaSignature(right);
+}
+
+export function mailSearchDateRangeInvalid(criteria: MailSearchCriteria) {
+  return Boolean(criteria.dateFrom && criteria.dateTo && criteria.dateFrom > criteria.dateTo);
 }
 
 function folderLabel(folders: Array<{ folderId: string; displayName: string }>, folderId: string) {

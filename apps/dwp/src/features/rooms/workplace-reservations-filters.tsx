@@ -35,7 +35,7 @@ export function WorkplaceReservationsFilters({
         searchValue={state.query}
         onSearchChange={(value) => onUpdate({ q: value, reservation: null })}
         searchPlaceholder={t('workplace.reservations.filters.searchPlaceholder')}
-        resetLabel={t('actions.onReset')}
+        resetLabel={t('actions.resetFilters')}
         onReset={onReset}
         resultLabel={t('workplace.reservations.resultCount', { count: resultCount })}
         filters={

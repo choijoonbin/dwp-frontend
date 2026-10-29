@@ -115,6 +115,53 @@ export default defineConfig(({ command, mode }) => {
                 priority: 30,
               },
               {
+                name: 'vendor-livekit',
+                test: (moduleId) =>
+                  packagePath(moduleId, '@livekit/components-react') ||
+                  packagePath(moduleId, '@livekit/components-core') ||
+                  packagePath(moduleId, 'livekit-client') ||
+                  packagePath(moduleId, '@livekit/protocol') ||
+                  packagePath(moduleId, '@bufbuild/protobuf'),
+                includeDependenciesRecursively: false,
+                minSize: 0,
+                priority: 30,
+              },
+              {
+                name: 'vendor-mediapipe',
+                test: (moduleId) => packagePath(moduleId, '@mediapipe/tasks-vision'),
+                includeDependenciesRecursively: false,
+                minSize: 0,
+                priority: 30,
+              },
+              {
+                name: 'vendor-temporal',
+                test: (moduleId) =>
+                  packagePath(moduleId, 'temporal-polyfill') ||
+                  packagePath(moduleId, 'temporal-utils') ||
+                  packagePath(moduleId, 'temporal-spec'),
+                includeDependenciesRecursively: false,
+                minSize: 0,
+                priority: 30,
+              },
+              {
+                name: 'vendor-dnd-kit',
+                test: (moduleId) =>
+                  packagePath(moduleId, '@dnd-kit/core') ||
+                  packagePath(moduleId, '@dnd-kit/sortable') ||
+                  packagePath(moduleId, '@dnd-kit/utilities') ||
+                  packagePath(moduleId, '@dnd-kit/accessibility'),
+                includeDependenciesRecursively: false,
+                minSize: 0,
+                priority: 30,
+              },
+              {
+                name: 'vendor-qrcode',
+                test: (moduleId) => packagePath(moduleId, 'qrcode.react'),
+                includeDependenciesRecursively: false,
+                minSize: 0,
+                priority: 30,
+              },
+              {
                 name: 'initial-vendor',
                 test: (moduleId) => moduleId.includes('/node_modules/'),
                 tags: ['$initial'],

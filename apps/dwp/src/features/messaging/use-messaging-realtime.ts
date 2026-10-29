@@ -1,8 +1,27 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { setMessagingTyping, subscribeMessagingRealtime } from '@dwp-frontend/shared-utils';
 
-import type { MessagingRealtimeStatus } from '@dwp-frontend/shared-utils';
+import {
+  MESSAGING_CROSS_TAB_LEASE_RENEW_MS,
+  MessagingCrossTabLease,
+  openMessagingBroadcastChannel,
+} from './messaging-cross-tab-coordination';
+import {
+  browserLocalStorage,
+  browserSessionStorage,
+  clearMessagingRealtimeCursor,
+  messagingRealtimeCursorStorageKey,
+  messagingRealtimeScopeKey,
+  newestMessagingRealtimeCursor,
+  normalizeMessagingRealtimeCursor,
+  readMessagingRealtimeCursor,
+  readMessagingRealtimeSharedCursor,
+  storeMessagingRealtimeCursor,
+  storeMessagingRealtimeSharedCursor,
+} from './messaging-realtime-cursor';
+
+import type { MessagingRealtimeSignal, MessagingRealtimeStatus } from '@dwp-frontend/shared-utils';
 
 const BASE_RETRY_DELAY_MS = 1_000;
 const MAX_RETRY_DELAY_MS = 30_000;
@@ -23,10 +42,14 @@ export function useMessagingRealtime({
   conversationId,
   realtime,
   enabled,
+  tenantId,
+  userId,
 }: {
   conversationId: string | null;
   realtime?: MessagingRealtimeStatus | null;
   enabled: boolean;
+  tenantId?: string | number | null;
+  userId?: string | number | null;
 }): {
   state: MessagingConnectionState;
   reconnectAttempt: number;
@@ -41,8 +64,17 @@ export function useMessagingRealtime({
     reconnectAttempt: number;
   }>({ state: 'idle', reconnectAttempt: 0 });
   const [typingUserIds, setTypingUserIds] = useState<number[]>([]);
+  const conversationIdRef = useRef(conversationId);
+  const previousCursorStorageKeyRef = useRef<string | null>(null);
+  conversationIdRef.current = conversationId;
   const endpoint = realtime?.endpoint ?? '';
   const transport = resolveMessagingTransport(realtime);
+  const identity =
+    tenantId !== null && tenantId !== undefined && userId !== null && userId !== undefined
+      ? { tenantId, userId }
+      : null;
+  const realtimeScope = identity ? messagingRealtimeScopeKey(identity) : null;
+  const cursorStorageKey = identity ? messagingRealtimeCursorStorageKey(identity) : null;
 
   useEffect(() => {
     const handleOnline = () => setOnline(true);
@@ -55,8 +87,19 @@ export function useMessagingRealtime({
     };
   }, []);
 
+  useEffect(() => setTypingUserIds([]), [conversationId]);
+
   useEffect(() => {
-    if (!enabled || !conversationId) {
+    const previousKey = previousCursorStorageKeyRef.current;
+    if (previousKey && previousKey !== cursorStorageKey) {
+      clearMessagingRealtimeCursor(browserSessionStorage(), previousKey);
+      clearMessagingRealtimeCursor(browserLocalStorage(), previousKey);
+    }
+    previousCursorStorageKeyRef.current = cursorStorageKey;
+  }, [cursorStorageKey]);
+
+  useEffect(() => {
+    if (!enabled || !conversationIdRef.current || !realtimeScope || !cursorStorageKey) {
       setConnection({ state: 'idle', reconnectAttempt: 0 });
       setTypingUserIds([]);
       return undefined;
@@ -72,8 +115,55 @@ export function useMessagingRealtime({
       return undefined;
     }
 
-    const controller = new AbortController();
     const typingTimers = new Map<number, number>();
+    const storage = browserSessionStorage();
+    const sharedStorage = browserLocalStorage();
+    const coordinationName = `realtime-stream:${realtimeScope}`;
+    const channel = openMessagingBroadcastChannel(coordinationName);
+    const lease = new MessagingCrossTabLease({ name: coordinationName });
+    let cursor = newestMessagingRealtimeCursor(
+      newestMessagingRealtimeCursor(
+        readMessagingRealtimeCursor(storage, cursorStorageKey),
+        readMessagingRealtimeSharedCursor(sharedStorage, cursorStorageKey)
+      ),
+      lease.cursor()
+    );
+    let disposed = false;
+    let leader = false;
+    let streamController: AbortController | null = null;
+    let electionId: number | undefined;
+    let currentConnection: {
+      state: MessagingConnectionState;
+      reconnectAttempt: number;
+    } = { state: 'connecting', reconnectAttempt: 0 };
+
+    const updateConnection = (
+      next: { state: MessagingConnectionState; reconnectAttempt: number },
+      broadcast = leader
+    ) => {
+      currentConnection = next;
+      setConnection(next);
+      if (broadcast) channel?.postMessage({ type: 'state', ...next, cursor });
+    };
+
+    const rememberCursor = (candidate: unknown, broadcast = leader) => {
+      const next = newestMessagingRealtimeCursor(cursor, candidate);
+      if (!next || next === cursor) return;
+      cursor = next;
+      storeMessagingRealtimeCursor(storage, cursorStorageKey, next);
+      storeMessagingRealtimeSharedCursor(sharedStorage, cursorStorageKey, next);
+      if (leader) lease.renew(Date.now(), next);
+      if (broadcast) channel?.postMessage({ type: 'cursor', cursor: next });
+    };
+
+    const resetCursor = (broadcast = leader) => {
+      if (cursor === null) return;
+      cursor = null;
+      clearMessagingRealtimeCursor(storage, cursorStorageKey);
+      clearMessagingRealtimeCursor(sharedStorage, cursorStorageKey);
+      if (leader) lease.clearCursor();
+      if (broadcast) channel?.postMessage({ type: 'cursor-reset' });
+    };
 
     const applyTypingSignal = (signal: {
       conversationId?: string;
@@ -81,7 +171,9 @@ export function useMessagingRealtime({
       started?: boolean;
       expiresAt?: string;
     }) => {
-      if (signal.conversationId !== conversationId || signal.userId === undefined) return;
+      if (signal.conversationId !== conversationIdRef.current || signal.userId === undefined) {
+        return;
+      }
       const userId = signal.userId;
       const previousTimer = typingTimers.get(userId);
       if (previousTimer !== undefined) window.clearTimeout(previousTimer);
@@ -109,49 +201,60 @@ export function useMessagingRealtime({
     const refresh = (signalConversationId?: string) => {
       void queryClient.invalidateQueries({ queryKey: ['messaging', 'conversations'] });
       void queryClient.invalidateQueries({ queryKey: ['messaging', 'home'] });
-      if (!signalConversationId || signalConversationId === conversationId) {
+      const activeConversationId = conversationIdRef.current;
+      if (!activeConversationId) return;
+      if (!signalConversationId || signalConversationId === activeConversationId) {
         void queryClient.invalidateQueries({
-          queryKey: ['messaging', 'conversation', conversationId],
+          queryKey: ['messaging', 'conversation', activeConversationId],
         });
         void queryClient.invalidateQueries({
-          queryKey: ['messaging', 'thread', conversationId],
+          queryKey: ['messaging', 'thread', activeConversationId],
         });
         void queryClient.invalidateQueries({
-          queryKey: ['messaging', 'read-receipts', conversationId],
+          queryKey: ['messaging', 'read-receipts', activeConversationId],
         });
       }
     };
 
-    const run = async () => {
+    const applySignal = (signal: MessagingRealtimeSignal) => {
+      updateConnection({ state: 'live', reconnectAttempt: 0 }, false);
+      if (signal.kind === 'TYPING_CHANGED') {
+        applyTypingSignal(signal);
+        return;
+      }
+      if (signal.kind === 'messaging.privacy-preferences.updated') {
+        void queryClient.invalidateQueries({
+          queryKey: ['messaging', 'privacy-preferences'],
+        });
+      }
+      if (!['connected', 'messaging.connected', 'heartbeat'].includes(signal.kind)) {
+        refresh(signal.conversationId);
+      }
+    };
+
+    const run = async (controller: AbortController) => {
       let attempt = 0;
       while (!controller.signal.aborted) {
-        setConnection({
+        updateConnection({
           state: attempt === 0 ? 'connecting' : 'reconnecting',
           reconnectAttempt: attempt,
         });
+        const attemptedCursor = cursor;
         try {
           await subscribeMessagingRealtime({
             endpoint,
             signal: controller.signal,
+            after: attemptedCursor,
             onSignal: (signal) => {
-              setConnection({ state: 'live', reconnectAttempt: 0 });
-              if (signal.kind === 'TYPING_CHANGED') {
-                applyTypingSignal(signal);
-                return;
-              }
-              if (signal.kind === 'messaging.privacy-preferences.updated') {
-                void queryClient.invalidateQueries({
-                  queryKey: ['messaging', 'privacy-preferences'],
-                });
-              }
-              if (!['connected', 'messaging.connected', 'heartbeat'].includes(signal.kind)) {
-                refresh(signal.conversationId);
-              }
+              applySignal(signal);
+              channel?.postMessage({ type: 'signal', signal });
             },
+            onCursor: (nextCursor) => rememberCursor(nextCursor),
           });
           attempt = 0;
-        } catch {
+        } catch (error) {
           if (controller.signal.aborted) return;
+          if (attemptedCursor && isRejectedRealtimeCursor(error)) resetCursor();
           attempt += 1;
         }
         if (controller.signal.aborted) return;
@@ -160,13 +263,98 @@ export function useMessagingRealtime({
       }
     };
 
-    void run();
+    const stopLeader = () => {
+      streamController?.abort();
+      streamController = null;
+      if (leader) lease.release();
+      leader = false;
+    };
+
+    const startLeader = () => {
+      if (streamController) return;
+      leader = true;
+      streamController = new AbortController();
+      void run(streamController);
+    };
+
+    const synchronize = () => {
+      if (disposed) return;
+      if (document.visibilityState !== 'visible') {
+        if (leader) {
+          stopLeader();
+          channel?.postMessage({ type: 'released', cursor });
+        }
+        return;
+      }
+      rememberCursor(lease.cursor(), false);
+      const ownsLease = leader ? lease.renew(Date.now(), cursor) : lease.claim(Date.now(), cursor);
+      if (ownsLease) {
+        startLeader();
+        channel?.postMessage({ type: 'state', ...currentConnection, cursor });
+        return;
+      }
+      if (leader) stopLeader();
+      if (currentConnection.state === 'idle' || currentConnection.state === 'connecting') {
+        updateConnection({ state: 'connecting', reconnectAttempt: 0 }, false);
+      }
+    };
+
+    const handleStorage = (event: StorageEvent) => {
+      if (event.key === lease.key) synchronize();
+    };
+
+    if (!channel) {
+      lease.claim(Date.now(), cursor);
+      leader = true;
+      streamController = new AbortController();
+      void run(streamController);
+    } else {
+      channel.onmessage = (event: MessageEvent<unknown>) => {
+        if (!isRealtimeChannelMessage(event.data)) return;
+        if (event.data.type === 'signal') {
+          applySignal(event.data.signal);
+          return;
+        }
+        if (event.data.type === 'cursor') {
+          rememberCursor(event.data.cursor, false);
+          return;
+        }
+        if (event.data.type === 'cursor-reset') {
+          resetCursor(false);
+          return;
+        }
+        if (event.data.type === 'state') {
+          if (event.data.cursor) rememberCursor(event.data.cursor, false);
+          updateConnection(
+            {
+              state: event.data.state,
+              reconnectAttempt: event.data.reconnectAttempt,
+            },
+            false
+          );
+          return;
+        }
+        if (event.data.cursor) rememberCursor(event.data.cursor, false);
+        synchronize();
+      };
+      synchronize();
+      electionId = window.setInterval(synchronize, MESSAGING_CROSS_TAB_LEASE_RENEW_MS);
+      window.addEventListener('storage', handleStorage);
+      document.addEventListener('visibilitychange', synchronize);
+    }
+
     return () => {
-      controller.abort();
+      disposed = true;
+      stopLeader();
+      if (electionId !== undefined) window.clearInterval(electionId);
+      channel?.postMessage({ type: 'released', cursor });
+      channel?.close();
+      window.removeEventListener('storage', handleStorage);
+      document.removeEventListener('visibilitychange', synchronize);
       typingTimers.forEach((timer) => window.clearTimeout(timer));
       setTypingUserIds([]);
     };
-  }, [conversationId, enabled, endpoint, online, queryClient, transport]);
+  }, [cursorStorageKey, enabled, endpoint, online, queryClient, realtimeScope, transport]);
 
   return { ...connection, typingUserIds };
 }
@@ -194,6 +382,53 @@ export function useMessagingTypingPublisher({
       void setMessagingTyping(conversationId, false).catch(() => undefined);
     };
   }, [conversationId, drafting, enabled]);
+}
+
+type MessagingRealtimeChannelMessage =
+  | { type: 'signal'; signal: MessagingRealtimeSignal }
+  | {
+      type: 'state';
+      state: MessagingConnectionState;
+      reconnectAttempt: number;
+      cursor?: string | null;
+    }
+  | { type: 'cursor'; cursor: string }
+  | { type: 'cursor-reset' }
+  | { type: 'released'; cursor?: string | null };
+
+function isRealtimeChannelMessage(value: unknown): value is MessagingRealtimeChannelMessage {
+  if (!value || typeof value !== 'object') return false;
+  const candidate = value as Partial<MessagingRealtimeChannelMessage> & {
+    signal?: Partial<MessagingRealtimeSignal>;
+    state?: unknown;
+    reconnectAttempt?: unknown;
+  };
+  if (candidate.type === 'released') {
+    return candidate.cursor == null || normalizeMessagingRealtimeCursor(candidate.cursor) !== null;
+  }
+  if (candidate.type === 'cursor-reset') return true;
+  if (candidate.type === 'cursor') {
+    return normalizeMessagingRealtimeCursor(candidate.cursor) !== null;
+  }
+  if (candidate.type === 'signal') {
+    return Boolean(candidate.signal && typeof candidate.signal.kind === 'string');
+  }
+  return (
+    candidate.type === 'state' &&
+    typeof candidate.state === 'string' &&
+    ['idle', 'connecting', 'live', 'reconnecting', 'polling', 'offline'].includes(
+      candidate.state
+    ) &&
+    typeof candidate.reconnectAttempt === 'number' &&
+    Number.isSafeInteger(candidate.reconnectAttempt) &&
+    candidate.reconnectAttempt >= 0 &&
+    (candidate.cursor == null || normalizeMessagingRealtimeCursor(candidate.cursor) !== null)
+  );
+}
+
+function isRejectedRealtimeCursor(error: unknown): boolean {
+  if (!error || typeof error !== 'object') return false;
+  return (error as { status?: unknown }).status === 400;
 }
 
 function withJitter(delay: number): number {

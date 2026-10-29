@@ -11,11 +11,13 @@ import {
   startWorkplaceExceptionRecovery,
 } from './workplace-exception-console-api';
 
+import type { WorkplaceExceptionItem } from './workplace-exception-console-api';
+
 const NOW = '2026-09-17T03:00:00Z';
 const PREVIEW_ID = '81000000-0000-4000-8000-000000000022';
 const COMMAND_ID = '82000000-0000-4000-8000-000000000022';
 
-function item() {
+function item(): WorkplaceExceptionItem {
   return {
     exceptionId: 'CONNECTOR:CALENDAR',
     source: 'CONNECTOR',
@@ -32,13 +34,32 @@ function item() {
     connectorKind: 'CALENDAR',
     configurationVersion: 4,
     runtimeVersion: 7,
+    resolved: false,
+    resolvedAt: null,
+    ageSeconds: 60,
   };
 }
 
-function consoleResponse() {
+const SOURCES = [
+  'SAFETY',
+  'BOOKING',
+  'CONNECTOR',
+  'DEVICE_COMMAND',
+  'SERVICE_ORDER',
+  'SERVICE_PROVIDER',
+  'SERVICE_REFUND',
+  'VISIT_PROVIDER',
+  'ACCESS_PASS',
+] as const;
+
+function consoleResponse(exceptions = [item()]) {
+  const sourceCoverage = SOURCES.map((source) => {
+    const returnedCount = exceptions.filter((value) => value.source === source).length;
+    return { source, unresolvedCount: returnedCount, returnedCount, truncated: false };
+  });
   return {
     summary: {
-      active: 1,
+      active: exceptions.length,
       critical: 0,
       warning: 0,
       error: 1,
@@ -46,8 +67,11 @@ function consoleResponse() {
       deadLetterQueueDepth: 3,
       automaticRecoveryPercent: null,
       slaCompliancePercent: null,
+      unresolvedCount: exceptions.length,
+      returnedCount: exceptions.length,
+      truncated: false,
     },
-    exceptions: [item()],
+    exceptions,
     guardrails: [
       {
         code: 'CONNECTOR_DLQ',
@@ -61,6 +85,7 @@ function consoleResponse() {
     ],
     generatedAt: NOW,
     externalTelemetryUrl: null,
+    sourceCoverage,
   };
 }
 
@@ -90,11 +115,79 @@ describe('Workplace exception console API', () => {
       })
     ).toThrow(/slaCompliancePercent/u);
     expect(() =>
-      parseWorkplaceExceptionConsole({
-        ...consoleResponse(),
-        exceptions: [{ ...item(), actionHref: 'https://untrusted.example.test' }],
-      })
+      parseWorkplaceExceptionConsole(
+        consoleResponse([{ ...item(), actionHref: 'https://untrusted.example.test' }])
+      )
     ).toThrow(/actionHref/u);
+  });
+
+  it('accepts every governed operational source and manual-review state', () => {
+    const operationalSources = [
+      ['DEVICE_COMMAND', 'REVIEW_DEVICE'],
+      ['SERVICE_ORDER', 'REVIEW_SERVICE_ORDER'],
+      ['SERVICE_PROVIDER', 'REVIEW_SERVICE_PROVIDER'],
+      ['SERVICE_REFUND', 'REVIEW_SERVICE_REFUND'],
+      ['VISIT_PROVIDER', 'REVIEW_VISIT'],
+      ['ACCESS_PASS', 'REVIEW_ACCESS_PASS'],
+    ] as const;
+
+    for (const [source, action] of operationalSources) {
+      const parsed = parseWorkplaceExceptionConsole(
+        consoleResponse([
+          {
+            ...item(),
+            exceptionId: `${source}:81000000-0000-4000-8000-000000000022`,
+            source,
+            status: 'MANUAL_REVIEW',
+            action,
+            actionHref: '/workplace/admin/operations?area=exceptions',
+            connectorKind: null,
+            configurationVersion: null,
+            runtimeVersion: null,
+          },
+        ])
+      );
+      expect(parsed.exceptions[0]).toMatchObject({ source, action, status: 'MANUAL_REVIEW' });
+    }
+  });
+
+  it('accepts the complete bounded backend projection and rejects overflow', () => {
+    const maximumProjection = Array.from({ length: 1_050 }, (_, index) => ({
+      ...item(),
+      exceptionId: `CONNECTOR:CALENDAR:${index}`,
+    }));
+    expect(
+      parseWorkplaceExceptionConsole(consoleResponse(maximumProjection)).exceptions
+    ).toHaveLength(1_050);
+    expect(() =>
+      parseWorkplaceExceptionConsole(consoleResponse([...maximumProjection, item()]))
+    ).toThrow(/console\.exceptions/u);
+  });
+
+  it('requires exact, internally consistent truncation evidence', () => {
+    const response = consoleResponse();
+    const sourceCoverage = response.sourceCoverage.map((coverage) =>
+      coverage.source === 'CONNECTOR'
+        ? { ...coverage, unresolvedCount: 2, truncated: true }
+        : coverage
+    );
+    const truncated = {
+      ...response,
+      summary: { ...response.summary, unresolvedCount: 2, truncated: true },
+      sourceCoverage,
+    };
+
+    expect(parseWorkplaceExceptionConsole(truncated).summary).toMatchObject({
+      unresolvedCount: 2,
+      returnedCount: 1,
+      truncated: true,
+    });
+    expect(() =>
+      parseWorkplaceExceptionConsole({
+        ...truncated,
+        summary: { ...truncated.summary, truncated: false },
+      })
+    ).toThrow(/summary\.coverage/u);
   });
 
   it('binds read, governed recovery and guarded export to exact endpoints', async () => {

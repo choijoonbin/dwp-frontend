@@ -5,6 +5,7 @@ import {
   cancelWorkplaceBooking,
   checkInWorkplaceBooking,
   createWorkplaceBooking,
+  forceCancelWorkplaceBooking,
   getWorkplaceExplore,
   getWorkplaceAdminBookings,
   relocateWorkplaceBooking,
@@ -245,7 +246,9 @@ describe('Workplace API boundary', () => {
       .mockResolvedValueOnce(jsonResponse({ bookingId: 'booking-1', legalHold: true }));
     vi.stubGlobal('fetch', fetchMock);
 
-    await updateWorkplaceBookingLegalHold('booking/1', 4, true, 'Approved investigation');
+    await updateWorkplaceBookingLegalHold('booking/1', 4, true, 'Approved investigation', {
+      activeAccessMode: 'ELEVATED',
+    });
 
     expect(fetchMock.mock.calls[1]?.[0]).toBe(
       '/api/platform/v1/admin/workplace/bookings/booking%2F1/legal-hold'
@@ -255,5 +258,24 @@ describe('Workplace API boundary', () => {
       legalHold: true,
       reason: 'Approved investigation',
     });
+    const headers = new Headers((fetchMock.mock.calls[1]?.[1] as RequestInit).headers);
+    expect(headers.get('Idempotency-Key')).toBe('workplace:booking-legal-hold:booking/1:v4');
+    expect(headers.get('X-DWP-Active-Access-Mode')).toBe('ELEVATED');
+  });
+
+  it('makes administrator cancellation retries idempotent for one booking version', async () => {
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValueOnce(jsonResponse({ token: 'csrf-token', headerName: 'X-XSRF-TOKEN' }))
+      .mockResolvedValueOnce(jsonResponse({ bookingId: 'booking-1', status: 'CANCELLED' }));
+    vi.stubGlobal('fetch', fetchMock);
+
+    await forceCancelWorkplaceBooking('booking-1', 7, 'Safety closure', {
+      activeAccessMode: 'ELEVATED',
+    });
+
+    const headers = new Headers((fetchMock.mock.calls[1]?.[1] as RequestInit).headers);
+    expect(headers.get('Idempotency-Key')).toBe('workplace:booking-force-cancel:booking-1:v7');
+    expect(headers.get('X-DWP-Active-Access-Mode')).toBe('ELEVATED');
   });
 });

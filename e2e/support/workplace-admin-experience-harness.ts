@@ -272,12 +272,15 @@ export async function setup(
   if (options.elevated) {
     await page.route('**/api/auth/product-surface-contexts', (route) =>
       fulfillSuccess(route, {
-        contractVersion: 'product-surfaces/v3',
+        contractVersion: '2',
         decisionRevision: 'workplace-facility-closure-elevated',
         sourceRevisions: {
           auth: 'auth-facility-closure',
           policy: 'policy-facility-closure',
           productRelationship: 'relationship-facility-closure',
+          targetPopulation: 'target-population-facility-closure',
+          support: null,
+          tenantControl: 'tenant-control-facility-closure',
         },
         activeAccessMode: 'ELEVATED',
         generatedAt: metadata.generatedAt,

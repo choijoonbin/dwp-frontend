@@ -10318,6 +10318,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/messaging/v1/activity": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["messaging_activity"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/messaging/v1/admin/overview": {
         parameters: {
             query?: never;
@@ -10457,6 +10473,22 @@ export interface paths {
         put: operations["messaging_updateConversationPreference"];
         post?: never;
         delete: operations["messaging_resetConversationPreference"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/messaging/v1/conversations/{conversationId}/draft": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["messaging_draft"];
+        put: operations["messaging_saveDraft"];
+        post?: never;
+        delete: operations["messaging_deleteDraft"];
         options?: never;
         head?: never;
         patch?: never;
@@ -10766,6 +10798,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/messaging/v1/conversations/{conversationId}/scheduled-messages": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["messaging_schedule"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/messaging/v1/conversations/{conversationId}/settings": {
         parameters: {
             query?: never;
@@ -10862,6 +10910,38 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/messaging/v1/later": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["messaging_items"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/messaging/v1/later/{messageId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put: operations["messaging_update_1"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/messaging/v1/people": {
         parameters: {
             query?: never;
@@ -10870,6 +10950,22 @@ export interface paths {
             cookie?: never;
         };
         get: operations["messaging_people"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/messaging/v1/people/page": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["messaging_peoplePage"];
         put?: never;
         post?: never;
         delete?: never;
@@ -10926,6 +11022,38 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/messaging/v1/scheduled-messages": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["messaging_scheduled"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/messaging/v1/scheduled-messages/{scheduledMessageId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["messaging_scheduled_1"];
+        put?: never;
+        post?: never;
+        delete: operations["messaging_cancel"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/messaging/v1/search": {
         parameters: {
             query?: never;
@@ -10950,6 +11078,22 @@ export interface paths {
             cookie?: never;
         };
         get: operations["messaging_stream"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/messaging/v1/threads": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["messaging_threads"];
         put?: never;
         post?: never;
         delete?: never;
@@ -14085,7 +14229,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get: operations["platform_events_5"];
+        get: operations["platform_events_4"];
         put?: never;
         post?: never;
         delete?: never;
@@ -14357,7 +14501,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get: operations["platform_events_4"];
+        get: operations["platform_getHcmAuditEvidencePage"];
         put?: never;
         post?: never;
         delete?: never;
@@ -14373,7 +14517,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get: operations["platform_event"];
+        get: operations["platform_getHcmAuditEvidence"];
         put?: never;
         post?: never;
         delete?: never;
@@ -20639,6 +20783,278 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/platform/v1/calendar/booking/appointments": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["platform_listMyCalendarBookingAppointments"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/calendar/booking/appointments/{appointmentId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["platform_getMyCalendarBookingAppointment"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/calendar/booking/appointments/{appointmentId}/cancel": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["platform_cancelAuthenticatedCalendarBooking"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/calendar/booking/appointments/{appointmentId}/management-token:revoke": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["platform_revokeCalendarBookingManagementToken"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/calendar/booking/appointments/{appointmentId}/management-token:rotate": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["platform_rotateCalendarBookingManagementToken"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/calendar/booking/appointments/{appointmentId}/reschedule": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["platform_rescheduleAuthenticatedCalendarBooking"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/calendar/booking/capabilities": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["platform_getCalendarBookingCapabilities"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/calendar/booking/pages": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["platform_listCalendarBookingPages"];
+        put?: never;
+        post: operations["platform_createCalendarBookingPage"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/calendar/booking/pages/{pageId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["platform_getCalendarBookingPage"];
+        put: operations["platform_updateCalendarBookingPage"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/calendar/booking/pages/{pageId}/appointments": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["platform_confirmAuthenticatedCalendarBooking"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/calendar/booking/pages/{pageId}/availability": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["platform_getAuthenticatedCalendarBookingAvailability"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/calendar/booking/pages/{pageId}/bookable": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["platform_getAuthenticatedCalendarBookablePage"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/calendar/booking/pages/{pageId}/holds": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["platform_createAuthenticatedCalendarBookingHold"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/calendar/booking/pages/{pageId}/holds/{holdId}/cancel": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["platform_cancelAuthenticatedCalendarBookingHold"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/calendar/booking/pages/{pageId}/public-token:revoke": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["platform_revokeCalendarBookingPagePublicToken"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/calendar/booking/pages/{pageId}/public-token:rotate": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["platform_rotateCalendarBookingPagePublicToken"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/calendar/booking/pages/{pageId}/state": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["platform_changeCalendarBookingPageState"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/platform/v1/calendar/calendars": {
         parameters: {
             query?: never;
@@ -20799,6 +21215,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/platform/v1/calendar/events/{eventId}/occurrences/cancel": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["platform_cancelCalendarEventOccurrence"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/platform/v1/calendar/events/{eventId}/preference": {
         parameters: {
             query?: never;
@@ -20808,6 +21240,22 @@ export interface paths {
         };
         get?: never;
         put: operations["platform_updateEventPreference"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/calendar/events/{eventId}/reminders": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["platform_getCalendarEventReminders"];
+        put: operations["platform_replaceCalendarEventReminders"];
         post?: never;
         delete?: never;
         options?: never;
@@ -20921,6 +21369,102 @@ export interface paths {
         get: operations["platform_resources"];
         put?: never;
         post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/calendar/scheduling-polls": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["platform_listCalendarSchedulingPolls"];
+        put?: never;
+        post: operations["platform_createCalendarSchedulingPoll"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/calendar/scheduling-polls/{pollId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["platform_getCalendarSchedulingPoll"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/calendar/scheduling-polls/{pollId}/cancel": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["platform_cancelCalendarSchedulingPoll"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/calendar/scheduling-polls/{pollId}/confirm": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["platform_confirmCalendarSchedulingPoll"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/calendar/scheduling-polls/{pollId}/open": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["platform_openCalendarSchedulingPoll"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/calendar/scheduling-polls/{pollId}/votes": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["platform_castCalendarSchedulingPollVotes"];
         delete?: never;
         options?: never;
         head?: never;
@@ -22121,6 +22665,38 @@ export interface paths {
         };
         get?: never;
         put: operations["platform_saveDraft"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/mail/events": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["platform_streamMailEvents"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/mail/events/catch-up": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["platform_catchUpMailEvents"];
+        put?: never;
         post?: never;
         delete?: never;
         options?: never;
@@ -25596,6 +26172,86 @@ export interface paths {
         patch: operations["platform_updateWorkStatus"];
         trace?: never;
     };
+    "/api/platform/v2/calendar/events": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["platform_listCalendarEventsV2"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v2/calendar/events/search": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["platform_searchCalendarEventsV2"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v2/calendar/external-events": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["platform_listExternalCalendarEventsV2"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v2/calendar/scheduling/evaluations": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["platform_evaluateCalendarSchedulingV2"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v2/calendar/scheduling/evaluations/{evaluationId}/hard-recheck": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["platform_hardRecheckCalendarSchedulingV2"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/platform/v2/home": {
         parameters: {
             query?: never;
@@ -28769,6 +29425,8 @@ export interface components {
             sourceRoute: string;
             /** State */
             state: string;
+            /** Statechangedat */
+            stateChangedAt?: string | null;
             /** Summary */
             summary: string;
             /** Title */
@@ -35371,6 +36029,16 @@ export interface components {
          */
         agent_RunMeasurementStatus: "MEASURING" | "MEASURED" | "PARTIAL" | "NOT_AVAILABLE";
         /**
+         * RunRecoveryHint
+         * @enum {string}
+         */
+        agent_RunRecoveryHint: "RETRY_LATER" | "REVIEW_CONFIGURATION" | "CHECK_SOURCE_CONNECTION" | "REVIEW_REQUEST" | "CONTACT_SUPPORT";
+        /**
+         * RunSafeErrorCode
+         * @enum {string}
+         */
+        agent_RunSafeErrorCode: "AGENT_EXECUTION_FAILED" | "AGENT_SAFETY_CONFIGURATION_REQUIRED" | "ASK_RUNTIME_FAILED" | "CONTEXT_SOURCE_NOT_CONFIGURED" | "CONTEXT_SOURCE_UNAVAILABLE" | "MODEL_CALL_FAILED" | "MODEL_GROUNDING_CONTRACT_INVALID" | "MODEL_OUTPUT_CONTRACT_INVALID" | "MODEL_OUTPUT_MISSING" | "MODEL_PROVIDER_UNAVAILABLE" | "MODEL_RESPONSE_INVALID_JSON" | "MODEL_ROUTE_CONFIGURATION_INVALID" | "MODEL_ROUTE_CONFIGURATION_REQUIRED" | "NO_SCOPED_EVIDENCE";
+        /**
          * RunSourceHealthStatus
          * @enum {string}
          */
@@ -36672,6 +37340,7 @@ export interface components {
             policyOutcome: components["schemas"]["agent_PolicyOutcome"];
             /** Progresspercent */
             progressPercent?: number | null;
+            recoveryHint?: components["schemas"]["agent_RunRecoveryHint"] | null;
             riskTier: components["schemas"]["agent_RiskTier"];
             /**
              * Runid
@@ -36679,12 +37348,15 @@ export interface components {
              */
             runId: string;
             runState: components["schemas"]["agent_AgentRunState"];
+            safeErrorCode?: components["schemas"]["agent_RunSafeErrorCode"] | null;
             /** Sourcecount */
             sourceCount: number;
             /** Sourcehealth */
             sourceHealth?: components["schemas"]["agent_UserAgentRunSourceHealth"][];
             /** Stages */
             stages?: components["schemas"]["agent_UserAgentRunStage"][];
+            /** Statechangedat */
+            stateChangedAt?: string | null;
             /** Statuscode */
             statusCode?: string | null;
         };
@@ -48833,6 +49505,29 @@ export interface components {
             /** Format: uuid */
             optionId: string;
         };
+        messaging_ActivityItem: {
+            actorName?: string;
+            /** Format: uuid */
+            conversationId?: string;
+            conversationName?: string;
+            conversationType?: string;
+            id?: string;
+            /** @enum {string} */
+            kind?: "MENTION" | "THREAD_REPLY" | "REACTION" | "SYSTEM" | "SCHEDULE_FAILED";
+            /** Format: uuid */
+            messageId?: string | null;
+            /** Format: date-time */
+            occurredAt?: string;
+            preview?: string | null;
+            protectedContent?: boolean;
+            /** Format: uuid */
+            rootMessageId?: string | null;
+        };
+        messaging_ActivityResponse: {
+            /** Format: date-time */
+            generatedAt?: string;
+            items?: components["schemas"]["messaging_ActivityItem"][];
+        };
         messaging_AddConversationMemberRequest: {
             /** Format: int64 */
             conversationVersion?: number;
@@ -48859,6 +49554,17 @@ export interface components {
             governedConversations?: components["schemas"]["messaging_ConversationSummary"][];
             metrics?: components["schemas"]["messaging_AdminMetrics"];
             policy?: components["schemas"]["messaging_TenantPolicy"];
+            runtimeReadiness?: components["schemas"]["messaging_RuntimeReadiness"];
+        };
+        messaging_ApiResponseActivityResponse: {
+            correlationId?: string;
+            data?: components["schemas"]["messaging_ActivityResponse"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
         };
         messaging_ApiResponseAdminOverview: {
             correlationId?: string;
@@ -48990,6 +49696,16 @@ export interface components {
             /** Format: date-time */
             timestamp?: string;
         };
+        messaging_ApiResponseDraftResponse: {
+            correlationId?: string;
+            data?: components["schemas"]["messaging_DraftResponse"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
         messaging_ApiResponseHistoryResponse: {
             correlationId?: string;
             data?: components["schemas"]["messaging_HistoryResponse"];
@@ -49013,6 +49729,26 @@ export interface components {
         messaging_ApiResponseJoinTokenResponse: {
             correlationId?: string;
             data?: components["schemas"]["messaging_JoinTokenResponse"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        messaging_ApiResponseLaterItem: {
+            correlationId?: string;
+            data?: components["schemas"]["messaging_LaterItem"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        messaging_ApiResponseLaterPage: {
+            correlationId?: string;
+            data?: components["schemas"]["messaging_LaterPage"];
             errorCode?: string;
             message?: string;
             status?: string;
@@ -49070,9 +49806,29 @@ export interface components {
             /** Format: date-time */
             timestamp?: string;
         };
+        messaging_ApiResponseMessagingAttentionThreadResponse: {
+            correlationId?: string;
+            data?: components["schemas"]["messaging_MessagingAttentionThreadResponse"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
         messaging_ApiResponseObservationResponse: {
             correlationId?: string;
             data?: components["schemas"]["messaging_ObservationResponse"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        messaging_ApiResponsePersonPage: {
+            correlationId?: string;
+            data?: components["schemas"]["messaging_PersonPage"];
             errorCode?: string;
             message?: string;
             status?: string;
@@ -49123,6 +49879,26 @@ export interface components {
         messaging_ApiResponseSavedItemSummary: {
             correlationId?: string;
             data?: components["schemas"]["messaging_SavedItemSummary"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        messaging_ApiResponseScheduledMessagePage: {
+            correlationId?: string;
+            data?: components["schemas"]["messaging_ScheduledMessagePage"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        messaging_ApiResponseScheduledMessageResponse: {
+            correlationId?: string;
+            data?: components["schemas"]["messaging_ScheduledMessageResponse"];
             errorCode?: string;
             message?: string;
             status?: string;
@@ -49232,8 +50008,30 @@ export interface components {
             unavailableReason?: string;
             video?: boolean;
         };
+        messaging_CollaborationConversationSummary: {
+            /** Format: uuid */
+            conversationId?: string;
+            /** Format: date-time */
+            createdAt?: string;
+            lifecycleState?: string;
+            members?: components["schemas"]["messaging_CollaborationMemberSummary"][];
+            name?: string;
+            topic?: string;
+            /** @enum {string} */
+            type?: "GROUP" | "CHANNEL";
+            visibility?: string;
+        };
+        messaging_CollaborationMemberSummary: {
+            displayName?: string;
+            emailAddress?: string;
+            /** Format: uuid */
+            personPublicId?: string;
+            role?: string;
+            /** Format: int64 */
+            userId?: number;
+        };
         messaging_ConversationCreationResponse: {
-            conversation?: components["schemas"]["messaging_ConversationSummary"];
+            conversation?: components["schemas"]["messaging_CollaborationConversationSummary"];
             idempotentReplay?: boolean;
         };
         messaging_ConversationDetail: {
@@ -49268,7 +50066,11 @@ export interface components {
             members?: components["schemas"]["messaging_ManagedMemberSummary"][];
         };
         messaging_ConversationPage: {
+            hasMore?: boolean;
             items?: components["schemas"]["messaging_ConversationSummary"][];
+            nextCursor?: string;
+            /** Format: int32 */
+            nextPage?: number;
             /** Format: int32 */
             page?: number;
             /** Format: int32 */
@@ -49369,6 +50171,18 @@ export interface components {
             /** Format: int64 */
             sizeBytes?: number;
         };
+        messaging_DraftResponse: {
+            body?: string;
+            /** Format: uuid */
+            conversationId?: string;
+            mentionedPersonPublicIds?: string[];
+            /** Format: uuid */
+            threadRootMessageId?: string;
+            /** Format: date-time */
+            updatedAt?: string;
+            /** Format: int64 */
+            version?: number;
+        };
         messaging_HistoryItemResponse: {
             /** Format: uuid */
             conversationId?: string;
@@ -49424,6 +50238,41 @@ export interface components {
             /** Format: uuid */
             sessionId?: string;
         };
+        messaging_LaterItem: {
+            /** Format: date-time */
+            completedAt?: string;
+            /** Format: uuid */
+            conversationId?: string;
+            conversationName?: string;
+            conversationType?: string;
+            messageDeleted?: boolean;
+            /** Format: uuid */
+            messageId?: string;
+            preview?: string;
+            protectedContent?: boolean;
+            /** Format: date-time */
+            reminderAt?: string;
+            /** Format: date-time */
+            savedAt?: string;
+            senderName?: string;
+            /** Format: date-time */
+            snoozedUntil?: string;
+            /** @enum {string} */
+            state?: "SAVED" | "SNOOZED" | "DUE" | "COMPLETED";
+            /** Format: int64 */
+            version?: number;
+        };
+        messaging_LaterPage: {
+            /** Format: date-time */
+            generatedAt?: string;
+            items?: components["schemas"]["messaging_LaterItem"][];
+            /** Format: int32 */
+            page?: number;
+            /** Format: int32 */
+            pageSize?: number;
+            /** Format: int64 */
+            total?: number;
+        };
         messaging_LeaveConversationRequest: {
             /** Format: int64 */
             version?: number;
@@ -49449,9 +50298,23 @@ export interface components {
         messaging_MemberSummary: {
             displayName?: string;
             emailAddress?: string;
+            favorite?: boolean;
+            jobTitle?: string;
+            /** Format: date-time */
+            lastReadAt?: string;
+            /** Format: uuid */
+            lastReadMessageId?: string;
+            /** Format: int64 */
+            lastReadSequence?: number;
+            memberRole?: string;
+            membershipSource?: string;
+            notificationLevel?: string;
+            organizationName?: string;
             /** Format: uuid */
             personPublicId?: string;
-            role?: string;
+            pinned?: boolean;
+            presenceState?: string;
+            readReceiptVisibility?: string;
             /** Format: int64 */
             userId?: number;
         };
@@ -49515,11 +50378,26 @@ export interface components {
             /** Format: int64 */
             version?: number;
         };
+        messaging_MessagingAttentionThreadResponse: {
+            /** Format: date-time */
+            generatedAt?: string;
+            items?: components["schemas"]["messaging_ThreadItem"][];
+        };
         messaging_ObservationResponse: {
             observedMessageIds?: string[];
         };
         messaging_ObserveRequest: {
             messageIds: string[];
+        };
+        messaging_PersonPage: {
+            hasMore?: boolean;
+            items?: components["schemas"]["messaging_PersonSummary"][];
+            nextCursor?: string;
+            /** Format: int32 */
+            nextOffset?: number;
+            presence?: components["schemas"]["messaging_PresenceMetadata"];
+            /** Format: int64 */
+            total?: number;
         };
         messaging_PersonSearchResult: {
             displayName?: string;
@@ -49554,9 +50432,10 @@ export interface components {
             refreshAfterSeconds?: number;
         };
         messaging_PrivacyPreference: {
-            readReceiptsEnabled?: boolean;
+            presenceSharingEnabled: boolean;
+            readReceiptsEnabled: boolean;
             /** Format: int64 */
-            version?: number;
+            version: number;
         };
         messaging_ReactionRequest: {
             emoji: string;
@@ -49609,6 +50488,32 @@ export interface components {
             /** Format: int64 */
             userId?: number;
         };
+        messaging_RuntimeCapability: {
+            capability?: string;
+            configured?: boolean;
+            effective?: boolean;
+            freshness?: string;
+            /** Format: date-time */
+            lastVerifiedAt?: string;
+            /** Format: int64 */
+            pendingWorkCount?: number;
+            provider?: string;
+            reasonCode?: string;
+            required?: boolean;
+            state?: string;
+        };
+        messaging_RuntimeReadiness: {
+            capabilities?: components["schemas"]["messaging_RuntimeCapability"][];
+            /** Format: date-time */
+            evaluatedAt?: string;
+            overallState?: string;
+        };
+        messaging_SaveDraftRequest: {
+            body: string;
+            /** Format: int64 */
+            expectedVersion?: number;
+            mentionedPersonPublicIds?: string[];
+        };
         messaging_SavedItemPage: {
             items?: components["schemas"]["messaging_SavedItemSummary"][];
             /** Format: int32 */
@@ -49622,8 +50527,59 @@ export interface components {
             conversationName?: string;
             conversationType?: string;
             message?: components["schemas"]["messaging_MessageSummary"];
+            protectedContent?: boolean;
             /** Format: date-time */
             savedAt?: string;
+        };
+        messaging_ScheduleMessageRequest: {
+            attachmentIds?: string[];
+            body: string;
+            displayTimeZone: string;
+            /** Format: uuid */
+            idempotencyKey: string;
+            mentionedPersonPublicIds?: string[];
+            /** Format: uuid */
+            replyToMessageId?: string;
+            /** Format: date-time */
+            scheduledFor: string;
+        };
+        messaging_ScheduledMessagePage: {
+            hasMore?: boolean;
+            items?: components["schemas"]["messaging_ScheduledMessageResponse"][];
+            /** Format: int32 */
+            limit?: number;
+            nextCursor?: string;
+        };
+        messaging_ScheduledMessageResponse: {
+            /** Format: int32 */
+            attemptCount?: number;
+            body?: string;
+            /** Format: uuid */
+            conversationId?: string;
+            conversationName?: string;
+            /** Format: date-time */
+            createdAt?: string;
+            /** Format: date-time */
+            deliveredAt?: string;
+            /** Format: uuid */
+            deliveredMessageId?: string;
+            displayTimeZone?: string;
+            failureCode?: string;
+            failureDetail?: string;
+            mentionedPersonPublicIds?: string[];
+            /** Format: date-time */
+            payloadPurgedAt?: string;
+            /** Format: uuid */
+            replyToMessageId?: string;
+            /** Format: date-time */
+            scheduledFor?: string;
+            /** Format: uuid */
+            scheduledMessageId?: string;
+            status?: string;
+            /** Format: date-time */
+            updatedAt?: string;
+            /** Format: int64 */
+            version?: number;
         };
         messaging_SearchGroups: {
             conversations?: components["schemas"]["messaging_ConversationSearchResult"][];
@@ -49678,6 +50634,7 @@ export interface components {
             kind?: "FILE" | "LINK";
             /** Format: uuid */
             messageId?: string;
+            protectedContent?: boolean;
             senderName?: string;
             /** Format: date-time */
             sharedAt?: string;
@@ -49722,6 +50679,25 @@ export interface components {
             /** Format: int64 */
             version?: number;
         };
+        messaging_ThreadItem: {
+            /** Format: uuid */
+            conversationId?: string;
+            conversationName?: string;
+            conversationType?: string;
+            /** Format: date-time */
+            latestReplyAt?: string;
+            /** Format: uuid */
+            latestReplyMessageId?: string;
+            latestReplySenderName?: string;
+            protectedContent?: boolean;
+            /** Format: int64 */
+            replyCount?: number;
+            rootDeleted?: boolean;
+            /** Format: uuid */
+            rootMessageId?: string;
+            rootPreview?: string;
+            rootSenderName?: string;
+        };
         messaging_ThreadResponse: {
             replies?: components["schemas"]["messaging_MessageSummary"][];
             root?: components["schemas"]["messaging_MessageSummary"];
@@ -49764,13 +50740,25 @@ export interface components {
             /** Format: int64 */
             version?: number;
         };
+        messaging_UpdateLaterRequest: {
+            /** Format: date-time */
+            reminderAt?: string;
+            /** Format: date-time */
+            snoozedUntil?: string;
+            state: string;
+            /** Format: int64 */
+            version: number;
+        };
         messaging_UpdateMessageRequest: {
             body: string;
             /** Format: int64 */
             version?: number;
         };
         messaging_UpdatePrivacyPreferenceRequest: {
-            readReceiptsEnabled: boolean;
+            /** @description Optional ephemeral presence sharing choice; omitted values are preserved */
+            presenceSharingEnabled?: boolean | null;
+            /** @description Optional read-status sharing choice; omitted values are preserved */
+            readReceiptsEnabled?: boolean | null;
             /** Format: int64 */
             version: number;
         };
@@ -56072,6 +57060,26 @@ export interface components {
             /** Format: date-time */
             timestamp?: string;
         };
+        platform_ApiResponseAppointment: {
+            correlationId?: string;
+            data?: components["schemas"]["platform_Appointment"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        platform_ApiResponseAppointmentReceipt: {
+            correlationId?: string;
+            data?: components["schemas"]["platform_AppointmentReceipt"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
         platform_ApiResponseAssemblyCommandResult: {
             correlationId?: string;
             data?: components["schemas"]["platform_AssemblyCommandResult"];
@@ -56192,6 +57200,16 @@ export interface components {
             /** Format: date-time */
             timestamp?: string;
         };
+        platform_ApiResponseAuthenticatedBookablePage: {
+            correlationId?: string;
+            data?: components["schemas"]["platform_AuthenticatedBookablePage"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
         platform_ApiResponseAuthorizationStart: {
             correlationId?: string;
             data?: components["schemas"]["platform_AuthorizationStart"];
@@ -56222,9 +57240,49 @@ export interface components {
             /** Format: date-time */
             timestamp?: string;
         };
+        platform_ApiResponseBookingHold: {
+            correlationId?: string;
+            data?: components["schemas"]["platform_BookingHold"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
         platform_ApiResponseBookingImpactCommandResult: {
             correlationId?: string;
             data?: components["schemas"]["platform_BookingImpactCommandResult"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        platform_ApiResponseBookingPage: {
+            correlationId?: string;
+            data?: components["schemas"]["platform_BookingPage"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        platform_ApiResponseBookingPagePublishReceipt: {
+            correlationId?: string;
+            data?: components["schemas"]["platform_BookingPagePublishReceipt"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        platform_ApiResponseBookingSecurityCapabilities: {
+            correlationId?: string;
+            data?: components["schemas"]["platform_BookingSecurityCapabilities"];
             errorCode?: string;
             message?: string;
             status?: string;
@@ -56375,6 +57433,16 @@ export interface components {
         platform_ApiResponseCatalogResponse: {
             correlationId?: string;
             data?: components["schemas"]["platform_CatalogResponse"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        platform_ApiResponseCatchUp: {
+            correlationId?: string;
+            data?: components["schemas"]["platform_CatchUp"];
             errorCode?: string;
             message?: string;
             status?: string;
@@ -56892,6 +57960,16 @@ export interface components {
             /** Format: date-time */
             timestamp?: string;
         };
+        platform_ApiResponseEvaluationResponse: {
+            correlationId?: string;
+            data?: components["schemas"]["platform_EvaluationResponse"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
         platform_ApiResponseEvent: {
             correlationId?: string;
             data?: components["schemas"]["platform_Event"];
@@ -57205,6 +58283,16 @@ export interface components {
         platform_ApiResponseGroupSendResult: {
             correlationId?: string;
             data?: components["schemas"]["platform_GroupSendResult"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        platform_ApiResponseHardRecheckResponse: {
+            correlationId?: string;
+            data?: components["schemas"]["platform_HardRecheckResponse"];
             errorCode?: string;
             message?: string;
             status?: string;
@@ -57602,6 +58690,16 @@ export interface components {
             /** Format: date-time */
             timestamp?: string;
         };
+        platform_ApiResponseListAppointment: {
+            correlationId?: string;
+            data?: components["schemas"]["platform_Appointment"][];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
         platform_ApiResponseListAssignedResource: {
             correlationId?: string;
             data?: components["schemas"]["platform_AssignedResource"][];
@@ -57615,6 +58713,16 @@ export interface components {
         platform_ApiResponseListAuditCase: {
             correlationId?: string;
             data?: components["schemas"]["platform_AuditCase"][];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        platform_ApiResponseListBookingPage: {
+            correlationId?: string;
+            data?: components["schemas"]["platform_BookingPage"][];
             errorCode?: string;
             message?: string;
             status?: string;
@@ -58532,6 +59640,26 @@ export interface components {
             /** Format: date-time */
             timestamp?: string;
         };
+        platform_ApiResponsePollDetails: {
+            correlationId?: string;
+            data?: components["schemas"]["platform_PollDetails"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        platform_ApiResponsePollPage: {
+            correlationId?: string;
+            data?: components["schemas"]["platform_PollPage"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
         platform_ApiResponsePostIncidentReport: {
             correlationId?: string;
             data?: components["schemas"]["platform_PostIncidentReport"];
@@ -58585,6 +59713,16 @@ export interface components {
         platform_ApiResponsePrivacyRequestPage: {
             correlationId?: string;
             data?: components["schemas"]["platform_PrivacyRequestPage"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        platform_ApiResponseProjection: {
+            correlationId?: string;
+            data?: components["schemas"]["platform_Projection"];
             errorCode?: string;
             message?: string;
             status?: string;
@@ -58785,6 +59923,16 @@ export interface components {
         platform_ApiResponseReleaseWindow: {
             correlationId?: string;
             data?: components["schemas"]["platform_ReleaseWindow"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        platform_ApiResponseReminderSet: {
+            correlationId?: string;
+            data?: components["schemas"]["platform_ReminderSet"];
             errorCode?: string;
             message?: string;
             status?: string;
@@ -59145,6 +60293,16 @@ export interface components {
         platform_ApiResponseScopeRevisionPreview: {
             correlationId?: string;
             data?: components["schemas"]["platform_ScopeRevisionPreview"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        platform_ApiResponseSearchPage: {
+            correlationId?: string;
+            data?: components["schemas"]["platform_SearchPage"];
             errorCode?: string;
             message?: string;
             status?: string;
@@ -60197,6 +61355,32 @@ export interface components {
             /** Format: uuid */
             scopeRevisionId: string;
         };
+        platform_Appointment: {
+            /** Format: uuid */
+            appointmentId?: string;
+            /** Format: uuid */
+            bookerPersonPublicId?: string;
+            /** Format: date-time */
+            endsAt?: string;
+            /** Format: uuid */
+            eventId?: string;
+            /** Format: uuid */
+            pageId?: string;
+            /** Format: date-time */
+            startsAt?: string;
+            /** @enum {string} */
+            state?: "CONFIRMED" | "RESCHEDULED" | "CANCELLED";
+            /** Format: uuid */
+            supersedesAppointmentId?: string;
+            /** Format: date-time */
+            updatedAt?: string;
+            /** Format: int64 */
+            version?: number;
+        };
+        platform_AppointmentReceipt: {
+            appointment?: components["schemas"]["platform_Appointment"];
+            managementToken?: string;
+        };
         platform_ApprovalCommand: {
             approved?: boolean;
             /** Format: int64 */
@@ -60556,6 +61740,23 @@ export interface components {
             selectedKind?: string;
             sources?: string[];
         };
+        platform_AuthenticatedBookablePage: {
+            conferenceUrl?: string;
+            description?: string;
+            dialInInstructions?: string;
+            /** Format: int32 */
+            durationMinutes?: number;
+            location?: string;
+            /** @enum {string} */
+            meetingMode?: "IN_PERSON" | "VIDEO" | "PHONE";
+            /** Format: uuid */
+            pageId?: string;
+            /** Format: int64 */
+            pageVersion?: number;
+            questions?: components["schemas"]["platform_BookingQuestion"][];
+            timeZone?: string;
+            title?: string;
+        };
         platform_AuthorityValidationSnapshot: {
             allSelectedItemsValid?: boolean;
             /** Format: uuid */
@@ -60588,6 +61789,15 @@ export interface components {
             /** Format: uuid */
             transactionId?: string;
         };
+        platform_AvailabilityInterval: {
+            /** Format: date-time */
+            endsAt?: string;
+            sourceType?: string;
+            /** Format: date-time */
+            startsAt?: string;
+            /** @enum {string} */
+            state?: "BUSY" | "TENTATIVE" | "OUT_OF_OFFICE" | "UNKNOWN";
+        };
         platform_AvailabilityParticipant: {
             /** Format: int32 */
             availableSlotCount?: number;
@@ -60601,6 +61811,12 @@ export interface components {
             generatedAt?: string;
             participants?: components["schemas"]["platform_AvailabilityParticipant"][];
             suggestions?: components["schemas"]["platform_AvailabilitySlot"][];
+        };
+        platform_AvailabilityRule: {
+            /** @enum {string} */
+            dayOfWeek: "MONDAY" | "TUESDAY" | "WEDNESDAY" | "THURSDAY" | "FRIDAY" | "SATURDAY" | "SUNDAY";
+            endsAt: string;
+            startsAt: string;
         };
         platform_AvailabilitySlot: {
             /** Format: date-time */
@@ -60636,6 +61852,10 @@ export interface components {
             /** Format: uuid */
             siteId: string;
         };
+        platform_BookingAnswer: {
+            key: string;
+            value: string;
+        };
         platform_BookingAvailability: {
             available?: boolean;
             closures?: components["schemas"]["platform_PublicClosure"][];
@@ -60658,6 +61878,26 @@ export interface components {
             note?: string;
             /** Format: int64 */
             version: number;
+        };
+        platform_BookingHold: {
+            /** Format: uuid */
+            bookerPersonPublicId?: string;
+            /** Format: date-time */
+            endsAt?: string;
+            /** Format: date-time */
+            expiresAt?: string;
+            /** Format: int64 */
+            fencingToken?: number;
+            /** Format: uuid */
+            holdId?: string;
+            /** Format: uuid */
+            pageId?: string;
+            /** Format: date-time */
+            startsAt?: string;
+            /** @enum {string} */
+            state?: "HELD" | "CONSUMED" | "EXPIRED" | "CANCELLED";
+            /** Format: int64 */
+            version?: number;
         };
         platform_BookingImpactCommandResult: {
             preview?: components["schemas"]["platform_BookingImpactPreview"];
@@ -60701,20 +61941,64 @@ export interface components {
             reason: string;
         };
         platform_BookingPage: {
-            content?: components["schemas"]["platform_WorkplaceExperienceBookingDetail"][];
+            availabilityRules?: components["schemas"]["platform_AvailabilityRule"][];
             /** Format: int32 */
-            page?: number;
+            bufferAfterMinutes?: number;
             /** Format: int32 */
-            size?: number;
+            bufferBeforeMinutes?: number;
+            /** Format: uuid */
+            calendarId?: string;
+            conferenceUrl?: string;
+            /** Format: int32 */
+            dailyLimit?: number;
+            description?: string;
+            dialInInstructions?: string;
+            /** Format: int32 */
+            durationMinutes?: number;
+            location?: string;
+            /** Format: int32 */
+            maximumAdvanceDays?: number;
+            /** @enum {string} */
+            meetingMode?: "IN_PERSON" | "VIDEO" | "PHONE";
+            /** Format: int32 */
+            minimumNoticeMinutes?: number;
+            /** Format: uuid */
+            ownerGroupRef?: string;
+            /** Format: uuid */
+            ownerPersonPublicId?: string;
+            /** @enum {string} */
+            ownerType?: "PERSONAL" | "TEAM";
+            /** Format: uuid */
+            pageId?: string;
+            publicLinkConfigured?: boolean;
             /** Format: int64 */
-            totalElements?: number;
-            /** Format: int32 */
-            totalPages?: number;
+            publicTokenVersion?: number;
+            questions?: components["schemas"]["platform_BookingQuestion"][];
+            /** @enum {string} */
+            state?: "DRAFT" | "PUBLISHED" | "PAUSED" | "ARCHIVED";
+            timeZone?: string;
+            title?: string;
+            /** Format: date-time */
+            updatedAt?: string;
+            /** Format: int64 */
+            version?: number;
+        };
+        platform_BookingPagePublishReceipt: {
+            page?: components["schemas"]["platform_BookingPage"];
+            publicToken?: string;
         };
         platform_BookingPolicyChangeRequest: {
             confirmed?: boolean;
             proposed: components["schemas"]["platform_PolicyRequest"];
             reason?: string;
+        };
+        platform_BookingQuestion: {
+            key: string;
+            label: string;
+            options?: string[];
+            required?: boolean;
+            /** @enum {string} */
+            type: "SHORT_TEXT" | "LONG_TEXT" | "SINGLE_SELECT" | "CHECKBOX";
         };
         platform_BookingRequest: {
             /** Format: date-time */
@@ -60725,6 +62009,13 @@ export interface components {
             /** Format: date-time */
             startsAt: string;
             visibleToColleagues?: boolean;
+        };
+        platform_BookingSecurityCapabilities: {
+            authenticatedBookingEnabled?: boolean;
+            externalPublicBookingEnabled?: boolean;
+            externalPublicBookingReason?: string;
+            /** Format: int32 */
+            holdTtlSeconds?: number;
         };
         platform_BookingSummary: {
             /** Format: uuid */
@@ -60937,11 +62228,34 @@ export interface components {
             /** Format: int64 */
             version?: number;
         };
+        platform_CancelAppointmentRequest: {
+            reason?: string;
+            /** Format: int64 */
+            version: number;
+        };
+        platform_CancelBookingHoldRequest: {
+            /** Format: int64 */
+            fencingToken: number;
+        };
         platform_CancelClosure: {
             confirmed?: boolean;
             reason: string;
             /** Format: int64 */
             version: number;
+        };
+        platform_CancelOccurrenceRequest: {
+            /** Format: uuid */
+            idempotencyKey: string;
+            /** Format: date-time */
+            originalStartsAt: string;
+            /** Format: int64 */
+            version: number;
+        };
+        platform_CandidateSlot: {
+            /** Format: date-time */
+            endsAt: string;
+            /** Format: date-time */
+            startsAt: string;
         };
         platform_CapabilityExpressionAuthorization: {
             capabilityKeys: string[];
@@ -61135,6 +62449,12 @@ export interface components {
             summary?: components["schemas"]["platform_InvestigationSummary"];
             tasks?: components["schemas"]["platform_CaseTask"][];
         };
+        platform_CastVotesRequest: {
+            comment?: string;
+            /** Format: uuid */
+            idempotencyKey: string;
+            votes: components["schemas"]["platform_VoteInput"][];
+        };
         platform_CatalogCapabilities: {
             brokerRead?: boolean;
             instanceV6Write?: boolean;
@@ -61236,6 +62556,12 @@ export interface components {
             generatedAt?: string;
             items?: components["schemas"]["platform_CatalogItem"][];
         };
+        platform_CatchUp: {
+            events?: components["schemas"]["platform_EventEnvelope"][];
+            hasMore?: boolean;
+            /** Format: int64 */
+            nextAfter?: number;
+        };
         platform_Category: {
             categoryKey?: string;
             description?: string;
@@ -61244,6 +62570,18 @@ export interface components {
             /** Format: int32 */
             sortOrder?: number;
             tone?: string;
+        };
+        platform_ChangeBookingPageStateRequest: {
+            /** @enum {string} */
+            state: "DRAFT" | "PUBLISHED" | "PAUSED" | "ARCHIVED";
+            /** Format: int64 */
+            version: number;
+        };
+        platform_ChangePollStateRequest: {
+            /** @enum {string} */
+            state: "DRAFT" | "OPEN" | "AGREEMENT_REACHED" | "CONFIRMED" | "CANCELLED" | "EXPIRED";
+            /** Format: int64 */
+            version: number;
         };
         platform_ChangeRequestStatus: {
             assignedTo?: string;
@@ -61580,7 +62918,10 @@ export interface components {
             /** Format: date-time */
             purgeAfter?: string;
             /** @enum {string} */
-            recurrence?: "NONE" | "DAILY" | "WEEKLY" | "MONTHLY";
+            recurrence?: "NONE" | "DAILY" | "WEEKLY" | "MONTHLY" | "YEARLY";
+            /** Format: int32 */
+            recurrenceCount?: number;
+            recurrenceDays?: ("MONDAY" | "TUESDAY" | "WEDNESDAY" | "THURSDAY" | "FRIDAY" | "SATURDAY" | "SUNDAY")[];
             /** Format: int32 */
             recurrenceInterval?: number;
             /** Format: date */
@@ -61732,6 +63073,15 @@ export interface components {
             previewId: string;
             reason: string;
         };
+        platform_ConfirmBookingRequest: {
+            answers: components["schemas"]["platform_BookingAnswer"][];
+            /** Format: int64 */
+            fencingToken: number;
+            /** Format: uuid */
+            holdId: string;
+            /** Format: uuid */
+            idempotencyKey: string;
+        };
         platform_ConfirmEmergencyHandoffRequest: {
             /** Format: int64 */
             expectedContactVersion?: number;
@@ -61741,6 +63091,16 @@ export interface components {
             /** Format: uuid */
             previewId: string;
             reason: string;
+        };
+        platform_ConfirmPollRequest: {
+            /** Format: uuid */
+            calendarId: string;
+            /** Format: uuid */
+            candidateId: string;
+            /** Format: uuid */
+            idempotencyKey: string;
+            /** Format: int64 */
+            version: number;
         };
         platform_Connection: {
             actionRequiredCode?: string;
@@ -62191,6 +63551,16 @@ export interface components {
             /** Format: date-time */
             requestedUntil?: string;
         };
+        platform_CreateBookingHoldRequest: {
+            /** Format: date-time */
+            endsAt: string;
+            /** Format: uuid */
+            idempotencyKey: string;
+            /** Format: int64 */
+            pageVersion: number;
+            /** Format: date-time */
+            startsAt: string;
+        };
         platform_CreateBundleRequest: {
             bundleKey: string;
             changeSummary: string;
@@ -62257,7 +63627,10 @@ export interface components {
             importance?: "LOW" | "NORMAL" | "HIGH";
             location?: string;
             /** @enum {string} */
-            recurrence: "NONE" | "DAILY" | "WEEKLY" | "MONTHLY";
+            recurrence: "NONE" | "DAILY" | "WEEKLY" | "MONTHLY" | "YEARLY";
+            /** Format: int32 */
+            recurrenceCount?: number;
+            recurrenceDays?: ("MONDAY" | "TUESDAY" | "WEDNESDAY" | "THURSDAY" | "FRIDAY" | "SATURDAY" | "SUNDAY")[];
             /** Format: int32 */
             recurrenceInterval?: number;
             /** Format: date */
@@ -62331,6 +63704,17 @@ export interface components {
             validFrom?: string;
             /** Format: date-time */
             validTo?: string;
+        };
+        platform_CreatePollRequest: {
+            candidates: components["schemas"]["platform_PollCandidateInput"][];
+            description?: string;
+            /** Format: date-time */
+            expiresAt: string;
+            /** Format: uuid */
+            idempotencyKey: string;
+            participants: components["schemas"]["platform_PollParticipantInput"][];
+            timeZone: string;
+            title: string;
         };
         platform_CreatePrivacyRequest: {
             accountDeletionAcknowledged?: boolean;
@@ -62944,6 +64328,10 @@ export interface components {
             dispatchBatchId?: string;
             /** Format: int32 */
             failedCount?: number;
+            /** Format: int32 */
+            manualReviewCount?: number;
+            /** @enum {string} */
+            reviewState?: "NONE" | "MANUAL_REVIEW_REQUIRED";
             /** @enum {string} */
             state?: "ACCEPTED" | "DISPATCHING" | "PARTIAL" | "SUCCEEDED" | "FAILED" | "RESULT_UNKNOWN";
             /** Format: int32 */
@@ -63252,6 +64640,31 @@ export interface components {
             tenantId?: number;
             traceId?: string;
         };
+        platform_EvaluationRequest: {
+            candidateSlot: components["schemas"]["platform_CandidateSlot"];
+            /** Format: int32 */
+            durationMinutes: number;
+            participants: components["schemas"]["platform_ParticipantRequest"][];
+            roomCriteria?: components["schemas"]["platform_RoomCriteria"];
+            searchTimeZone: string;
+            searchWindow: components["schemas"]["platform_SearchWindow"];
+        };
+        platform_EvaluationResponse: {
+            challengeToken?: string;
+            /** @enum {string} */
+            completeness?: "COMPLETE" | "PARTIAL" | "UNKNOWN";
+            criteriaHash?: string;
+            /** Format: uuid */
+            evaluationId?: string;
+            /** Format: date-time */
+            generatedAt?: string;
+            participants?: components["schemas"]["platform_ParticipantAvailability"][];
+            rooms?: components["schemas"]["platform_RoomRecommendation"][];
+            sources?: components["schemas"]["platform_SourceEvidence"][];
+            suggestions?: components["schemas"]["platform_SchedulingCandidate"][];
+            /** Format: date-time */
+            validUntil?: string;
+        };
         platform_Event: {
             action?: string;
             actorDisplayName?: string;
@@ -63307,16 +64720,22 @@ export interface components {
             canStar?: boolean;
             canViewDetails?: boolean;
         };
-        platform_EventPage: {
-            content?: components["schemas"]["platform_Event"][];
-            /** Format: int32 */
-            page?: number;
-            /** Format: int32 */
-            size?: number;
+        platform_EventEnvelope: {
+            /** Format: date-time */
+            occurredAt?: string;
             /** Format: int64 */
-            totalElements?: number;
-            /** Format: int32 */
-            totalPages?: number;
+            sequence?: number;
+            /** Format: uuid */
+            threadId?: string;
+            type?: string;
+        };
+        platform_EventPage: {
+            /** Format: date-time */
+            generatedAt?: string;
+            hasMore?: boolean;
+            items?: components["schemas"]["platform_EventSummary"][];
+            nextCursor?: string;
+            range?: components["schemas"]["platform_Range"];
         };
         platform_EventPreferenceRequest: {
             hidden?: boolean;
@@ -63405,7 +64824,10 @@ export interface components {
             /** Format: int64 */
             preferenceVersion?: number;
             /** @enum {string} */
-            recurrence?: "NONE" | "DAILY" | "WEEKLY" | "MONTHLY";
+            recurrence?: "NONE" | "DAILY" | "WEEKLY" | "MONTHLY" | "YEARLY";
+            /** Format: int32 */
+            recurrenceCount?: number;
+            recurrenceDays?: ("MONDAY" | "TUESDAY" | "WEDNESDAY" | "THURSDAY" | "FRIDAY" | "SATURDAY" | "SUNDAY")[];
             /** Format: date-time */
             recurrenceId?: string;
             /** Format: int32 */
@@ -63497,12 +64919,15 @@ export interface components {
             /** Format: date-time */
             generatedAt?: string;
             guardrails?: components["schemas"]["platform_Guardrail"][];
+            sourceCoverage?: components["schemas"]["platform_ExceptionSourceCoverage"][];
             summary?: components["schemas"]["platform_ExceptionSummary"];
         };
         platform_ExceptionItem: {
             /** @enum {string} */
-            action?: "OPEN_SAFETY" | "REVIEW_BOOKING" | "REPLAY_CONNECTOR";
+            action?: "OPEN_SAFETY" | "REVIEW_BOOKING" | "REPLAY_CONNECTOR" | "REVIEW_DEVICE" | "REVIEW_SERVICE_ORDER" | "REVIEW_SERVICE_PROVIDER" | "REVIEW_SERVICE_REFUND" | "REVIEW_VISIT" | "REVIEW_ACCESS_PASS";
             actionHref?: string;
+            /** Format: int64 */
+            ageSeconds?: number;
             code?: string;
             /** Format: int64 */
             configurationVersion?: number;
@@ -63513,17 +64938,29 @@ export interface components {
             evidence?: string[];
             exceptionId?: string;
             impact?: string;
+            resolved?: boolean;
+            /** Format: date-time */
+            resolvedAt?: string;
             /** Format: int64 */
             runtimeVersion?: number;
             /** @enum {string} */
             severity?: "CRITICAL" | "ERROR" | "WARNING";
             /** @enum {string} */
-            source?: "SAFETY" | "BOOKING" | "CONNECTOR";
+            source?: "SAFETY" | "BOOKING" | "CONNECTOR" | "DEVICE_COMMAND" | "SERVICE_ORDER" | "SERVICE_PROVIDER" | "SERVICE_REFUND" | "VISIT_PROVIDER" | "ACCESS_PASS";
             /** @enum {string} */
-            status?: "ACTIVE" | "RECOVERING";
+            status?: "ACTIVE" | "RECOVERING" | "MANUAL_REVIEW" | "RESOLVED";
             title?: string;
             /** Format: int64 */
             version?: number;
+        };
+        platform_ExceptionSourceCoverage: {
+            /** Format: int32 */
+            returnedCount?: number;
+            /** @enum {string} */
+            source?: "SAFETY" | "BOOKING" | "CONNECTOR" | "DEVICE_COMMAND" | "SERVICE_ORDER" | "SERVICE_PROVIDER" | "SERVICE_REFUND" | "VISIT_PROVIDER" | "ACCESS_PASS";
+            truncated?: boolean;
+            /** Format: int64 */
+            unresolvedCount?: number;
         };
         platform_ExceptionSummary: {
             /** Format: int32 */
@@ -63537,7 +64974,12 @@ export interface components {
             deadLetterQueueDepth?: number;
             /** Format: int32 */
             error?: number;
+            /** Format: int32 */
+            returnedCount?: number;
             slaCompliancePercent?: number;
+            truncated?: boolean;
+            /** Format: int64 */
+            unresolvedCount?: number;
             /** Format: int32 */
             warning?: number;
         };
@@ -64315,6 +65757,38 @@ export interface components {
             maskedLabel?: string;
             opaqueRef?: string;
             purpose?: string;
+        };
+        platform_HardConflict: {
+            blocking?: boolean;
+            clientRef?: string;
+            /** Format: date-time */
+            endsAt?: string;
+            /** Format: date-time */
+            startsAt?: string;
+            /** @enum {string} */
+            state?: "BUSY" | "TENTATIVE" | "OUT_OF_OFFICE" | "UNKNOWN";
+        };
+        platform_HardRecheckRequest: {
+            challengeToken: string;
+            criteriaHash: string;
+            /** Format: uuid */
+            roomId?: string;
+            selection: components["schemas"]["platform_CandidateSlot"];
+        };
+        platform_HardRecheckResponse: {
+            /** Format: date-time */
+            checkedAt?: string;
+            conflicts?: components["schemas"]["platform_HardConflict"][];
+            criteriaHash?: string;
+            /** Format: uuid */
+            evaluationId?: string;
+            hardRecheckToken?: string;
+            room?: components["schemas"]["platform_RoomRecommendation"];
+            selectionHash?: string;
+            /** @enum {string} */
+            status?: "PASS" | "BLOCKED" | "INCOMPLETE";
+            /** Format: date-time */
+            validUntil?: string;
         };
         platform_HcmAuditEvidencePageV1: {
             items: components["schemas"]["platform_HcmAuditEvidenceV1"][];
@@ -65364,6 +66838,10 @@ export interface components {
             /** @enum {string} */
             action: "MOVE" | "ARCHIVE" | "TRASH" | "SPAM" | "RESTORE" | "DELETE_FOREVER";
             /** Format: uuid */
+            bulkIntentId?: string;
+            /** Format: uuid */
+            itemIdempotencyKey?: string;
+            /** Format: uuid */
             targetFolderId?: string;
             /** Format: int64 */
             version: number;
@@ -65493,7 +66971,7 @@ export interface components {
             body?: string;
             bodyFormat?: string;
             /** @enum {string} */
-            deliveryState?: "RECEIVED" | "DRAFT" | "QUEUED" | "SENDING" | "RETRYING" | "SENT" | "FAILED";
+            deliveryState?: "RECEIVED" | "DRAFT" | "QUEUED" | "SENDING" | "RETRYING" | "PROVIDER_ACCEPTED" | "RESULT_UNKNOWN" | "DELIVERED" | "SENT" | "FAILED";
             direction?: string;
             lastDeliveryError?: string;
             /** Format: uuid */
@@ -65891,6 +67369,24 @@ export interface components {
         platform_Participant: {
             email?: string;
             name?: string;
+        };
+        platform_ParticipantAvailability: {
+            clientRef?: string;
+            /** @enum {string} */
+            coverage?: "COMPLETE" | "PARTIAL" | "UNKNOWN";
+            intervals?: components["schemas"]["platform_AvailabilityInterval"][];
+            /** Format: uuid */
+            personPublicId?: string;
+            /** @enum {string} */
+            role?: "ORGANIZER" | "REQUIRED" | "OPTIONAL";
+            workingSchedule?: components["schemas"]["platform_WorkingSchedule"];
+        };
+        platform_ParticipantRequest: {
+            clientRef: string;
+            /** Format: uuid */
+            personPublicId?: string;
+            /** @enum {string} */
+            role: "ORGANIZER" | "REQUIRED" | "OPTIONAL";
         };
         platform_PatchPersonalPreferenceRequest: {
             patch: components["schemas"]["platform_JsonNode"];
@@ -66501,6 +67997,103 @@ export interface components {
             incidentCaseId?: string;
             reason?: string;
         };
+        platform_PollCandidate: {
+            agreementEligible?: boolean;
+            /** Format: uuid */
+            candidateId?: string;
+            /** Format: date-time */
+            endsAt?: string;
+            /** Format: int32 */
+            ifNeededCount?: number;
+            /** Format: int32 */
+            noCount?: number;
+            /** Format: uuid */
+            resourceId?: string;
+            /** Format: date-time */
+            startsAt?: string;
+            /** Format: int32 */
+            yesCount?: number;
+        };
+        platform_PollCandidateEvidence: {
+            availabilityState?: string;
+            /** Format: uuid */
+            candidateId?: string;
+            roomHoldActive?: boolean;
+            safeReasonCode?: string;
+        };
+        platform_PollCandidateInput: {
+            /** Format: uuid */
+            candidateId: string;
+            /** Format: date-time */
+            endsAt: string;
+            /** Format: uuid */
+            resourceId?: string;
+            /** Format: date-time */
+            startsAt: string;
+        };
+        platform_PollDetails: {
+            availability?: components["schemas"]["platform_PollCandidateEvidence"][];
+            holds?: components["schemas"]["platform_PollHold"][];
+            poll?: components["schemas"]["platform_SchedulingPoll"];
+        };
+        platform_PollHold: {
+            /** Format: uuid */
+            candidateId?: string;
+            /** Format: date-time */
+            endsAt?: string;
+            /** Format: date-time */
+            expiresAt?: string;
+            /** Format: int64 */
+            fencingToken?: number;
+            /** Format: uuid */
+            holdId?: string;
+            /** @enum {string} */
+            kind?: "PEOPLE_SOFT" | "ROOM_HARD";
+            /** Format: uuid */
+            personPublicId?: string;
+            /** Format: uuid */
+            pollId?: string;
+            /** Format: uuid */
+            resourceId?: string;
+            /** Format: date-time */
+            startsAt?: string;
+            /** @enum {string} */
+            state?: "ACTIVE" | "CONSUMED" | "RELEASED" | "EXPIRED";
+        };
+        platform_PollPage: {
+            hasMore?: boolean;
+            items?: components["schemas"]["platform_PollDetails"][];
+            /** Format: uuid */
+            nextPollId?: string;
+            /** Format: date-time */
+            nextUpdatedAt?: string;
+        };
+        platform_PollParticipant: {
+            displayName?: string;
+            externalEmail?: string;
+            externalVotingEnabled?: boolean;
+            /** Format: uuid */
+            participantId?: string;
+            /** Format: uuid */
+            personPublicId?: string;
+            required?: boolean;
+        };
+        platform_PollParticipantInput: {
+            displayName: string;
+            /** Format: email */
+            externalEmail?: string;
+            /** Format: uuid */
+            personPublicId?: string;
+            required?: boolean;
+        };
+        platform_PollVote: {
+            /** Format: uuid */
+            candidateId?: string;
+            /** @enum {string} */
+            choice?: "YES" | "IF_NEEDED" | "NO";
+            /** Format: uuid */
+            participantId?: string;
+        };
         platform_PositiveRevision: number;
         platform_PostIncidentReport: {
             /** Format: date-time */
@@ -66754,6 +68347,14 @@ export interface components {
             resourceKind?: "MAIL" | "CALENDAR";
             sourceUrl?: string;
             title?: string;
+        };
+        platform_Projection: {
+            events?: components["schemas"]["platform_Event"][];
+            /** Format: date-time */
+            generatedAt?: string;
+            partial?: boolean;
+            sources?: components["schemas"]["platform_SourceEvidence"][];
+            truncated?: boolean;
         };
         platform_ProposalDecisionRequest: {
             /** @enum {string} */
@@ -67034,6 +68635,13 @@ export interface components {
             scope: {
                 [key: string]: unknown;
             };
+        };
+        platform_Range: {
+            /** Format: date-time */
+            from?: string;
+            timeZone?: string;
+            /** Format: date-time */
+            to?: string;
         };
         platform_ReactionRequest: {
             /** @enum {string} */
@@ -67326,6 +68934,37 @@ export interface components {
             /** Format: int64 */
             version?: number;
         };
+        platform_ReminderDefinition: {
+            /** @enum {string} */
+            channel?: "IN_APP" | "EMAIL";
+            /** Format: date-time */
+            nextDueAt?: string;
+            /** Format: date-time */
+            nextOccurrenceStartsAt?: string;
+            /** Format: int32 */
+            offsetMinutes?: number;
+            /** Format: uuid */
+            reminderId?: string;
+        };
+        platform_ReminderInput: {
+            /** @enum {string} */
+            channel: "IN_APP" | "EMAIL";
+            /** Format: int32 */
+            offsetMinutes: number;
+        };
+        platform_ReminderSet: {
+            /** Format: uuid */
+            eventId?: string;
+            /** Format: int64 */
+            eventVersion?: number;
+            reminders?: components["schemas"]["platform_ReminderDefinition"][];
+            /** @enum {string} */
+            state?: "ACTIVE" | "INVALIDATED";
+            /** Format: date-time */
+            updatedAt?: string;
+            /** Format: int64 */
+            version?: number;
+        };
         platform_ReorderItem: {
             /** Format: int64 */
             navigationItemId: number;
@@ -67338,6 +68977,11 @@ export interface components {
         };
         platform_ReorderRequest: {
             items: components["schemas"]["platform_ReorderItem"][];
+        };
+        platform_ReplaceRemindersRequest: {
+            reminders: components["schemas"]["platform_ReminderInput"][];
+            /** Format: int64 */
+            version: number;
         };
         platform_ReplacementCandidate: {
             /** Format: uuid */
@@ -67552,6 +69196,16 @@ export interface components {
             visitType?: string;
             zoneIds?: string[];
         };
+        platform_RescheduleAppointmentRequest: {
+            /** Format: int64 */
+            fencingToken: number;
+            /** Format: uuid */
+            idempotencyKey: string;
+            /** Format: uuid */
+            replacementHoldId: string;
+            /** Format: int64 */
+            version: number;
+        };
         platform_RescheduleRequest: {
             /** Format: date-time */
             scheduledAt: string;
@@ -67565,7 +69219,7 @@ export interface components {
             expectedIncidentVersion?: number;
             explicitConfirmation?: boolean;
             reason: string;
-            retryStates: ("QUEUED" | "DISPATCHING" | "DELIVERED" | "DELIVERY_FAILED" | "OFFLINE_QUEUED" | "RESULT_UNKNOWN")[];
+            retryStates: ("QUEUED" | "DISPATCHING" | "DELIVERED" | "DELIVERY_FAILED" | "OFFLINE_QUEUED" | "MANUAL_REVIEW_REQUIRED" | "RESULT_UNKNOWN")[];
         };
         platform_ReservationReference: {
             /** @enum {string} */
@@ -67941,6 +69595,16 @@ export interface components {
             /** Format: int32 */
             totalPages?: number;
         };
+        platform_RoomCriteria: {
+            /** @enum {string} */
+            approvalPreference?: "ANY" | "PREFER_NO_APPROVAL" | "REQUIRE_NO_APPROVAL" | "REQUIRE_APPROVAL";
+            floor?: string;
+            /** Format: int32 */
+            minimumCapacity?: number;
+            preferredFeatures?: string[];
+            requiredFeatures?: string[];
+            site?: string;
+        };
         platform_RoomPanelProjection: {
             /** Format: date-time */
             asOf?: string;
@@ -67953,6 +69617,26 @@ export interface components {
             next?: components["schemas"]["platform_ScheduleItem"];
             safetyFrame?: components["schemas"]["platform_SafetyFrame"];
             walkUpBookingAllowed?: boolean;
+        };
+        platform_RoomRecommendation: {
+            /** @enum {string} */
+            eligibilityReason?: "ELIGIBLE" | "NO_CLEAR_CANDIDATE" | "RESOURCE_UNAVAILABLE" | "RESOURCE_CONFLICT" | "SITE_MISMATCH" | "FLOOR_MISMATCH" | "CAPACITY_TOO_SMALL" | "REQUIRED_FEATURE_MISSING" | "APPROVAL_PREFERENCE_MISMATCH" | "RESOURCE_VERSION_CHANGED" | "POLICY_VERSION_CHANGED" | "ROOM_NOT_VISIBLE";
+            eligible?: boolean;
+            hardRecheckRequired?: boolean;
+            /** Format: int64 */
+            policyVersion?: number;
+            /** Format: int32 */
+            rank?: number;
+            reasonCodes?: string[];
+            /** Format: int64 */
+            resourceVersion?: number;
+            room?: components["schemas"]["platform_ResourceSummary"];
+            /** Format: int32 */
+            score?: number;
+        };
+        platform_RotateBookingTokenRequest: {
+            /** Format: int64 */
+            version: number;
         };
         platform_RouteProjection: {
             /** Format: date-time */
@@ -68290,6 +69974,38 @@ export interface components {
             /** Format: uuid */
             replacementVersionId?: string;
         };
+        platform_SaveBookingPageRequest: {
+            availabilityRules: components["schemas"]["platform_AvailabilityRule"][];
+            /** Format: int32 */
+            bufferAfterMinutes?: number;
+            /** Format: int32 */
+            bufferBeforeMinutes?: number;
+            /** Format: uuid */
+            calendarId: string;
+            conferenceUrl?: string;
+            /** Format: int32 */
+            dailyLimit?: number;
+            description?: string;
+            dialInInstructions?: string;
+            /** Format: int32 */
+            durationMinutes?: number;
+            location?: string;
+            /** Format: int32 */
+            maximumAdvanceDays?: number;
+            /** @enum {string} */
+            meetingMode: "IN_PERSON" | "VIDEO" | "PHONE";
+            /** Format: int32 */
+            minimumNoticeMinutes?: number;
+            /** Format: uuid */
+            ownerGroupRef?: string;
+            /** @enum {string} */
+            ownerType: "PERSONAL" | "TEAM";
+            questions: components["schemas"]["platform_BookingQuestion"][];
+            timeZone: string;
+            title: string;
+            /** Format: int64 */
+            version: number;
+        };
         platform_SaveConnectorRequest: {
             /** @enum {string} */
             authMode: "DELEGATED";
@@ -68476,6 +70192,22 @@ export interface components {
             startsAt?: string;
             title?: string;
         };
+        platform_SchedulingCandidate: {
+            /** Format: uuid */
+            candidateId?: string;
+            /** @enum {string} */
+            completeness?: "COMPLETE" | "PARTIAL" | "UNKNOWN";
+            /** Format: date-time */
+            endsAt?: string;
+            hardRecheckRequired?: boolean;
+            optionalConflictRefs?: string[];
+            reasonCodes?: string[];
+            requiredConflictRefs?: string[];
+            /** Format: int32 */
+            score?: number;
+            /** Format: date-time */
+            startsAt?: string;
+        };
         platform_SchedulingEvaluationRequest: {
             /** Format: int32 */
             durationMinutes?: number;
@@ -68508,6 +70240,30 @@ export interface components {
             lastSuccessfulSyncAt?: string;
             sourceType?: string;
             status?: string;
+        };
+        platform_SchedulingPoll: {
+            candidates?: components["schemas"]["platform_PollCandidate"][];
+            /** Format: uuid */
+            confirmedCandidateId?: string;
+            /** Format: uuid */
+            confirmedEventId?: string;
+            description?: string;
+            /** Format: date-time */
+            expiresAt?: string;
+            myVotes?: components["schemas"]["platform_PollVote"][];
+            /** Format: uuid */
+            organizerPersonPublicId?: string;
+            participants?: components["schemas"]["platform_PollParticipant"][];
+            /** Format: uuid */
+            pollId?: string;
+            /** @enum {string} */
+            state?: "DRAFT" | "OPEN" | "AGREEMENT_REACHED" | "CONFIRMED" | "CANCELLED" | "EXPIRED";
+            timeZone?: string;
+            title?: string;
+            /** Format: date-time */
+            updatedAt?: string;
+            /** Format: int64 */
+            version?: number;
         };
         platform_ScopePreviewCommandResult: {
             preview?: components["schemas"]["platform_ScopeRevisionPreview"];
@@ -68563,6 +70319,21 @@ export interface components {
             state?: string;
             to?: string;
             unread?: boolean;
+        };
+        platform_SearchPage: {
+            /** Format: date-time */
+            generatedAt?: string;
+            hasMore?: boolean;
+            items?: components["schemas"]["platform_EventSummary"][];
+            nextCursor?: string;
+            normalizedQuery?: string;
+            range?: components["schemas"]["platform_Range"];
+        };
+        platform_SearchWindow: {
+            /** Format: date-time */
+            from: string;
+            /** Format: date-time */
+            to: string;
         };
         platform_SectionActivityFeed: {
             data?: components["schemas"]["platform_ActivityFeed"];
@@ -69121,6 +70892,21 @@ export interface components {
             /** Format: int64 */
             version: number;
         };
+        platform_SourceEvidence: {
+            affectedParticipantRefs?: string[];
+            /** Format: date-time */
+            coverageFrom?: string;
+            /** Format: date-time */
+            coverageTo?: string;
+            /** Format: date-time */
+            lastSuccessfulSyncAt?: string;
+            /** Format: date-time */
+            observedAt?: string;
+            reasonCode?: string;
+            sourceType?: string;
+            /** @enum {string} */
+            status?: "HEALTHY" | "PARTIAL" | "STALE" | "UNKNOWN" | "UNAVAILABLE";
+        };
         platform_SourceState: {
             /** Format: date-time */
             expiresAt?: string;
@@ -69175,6 +70961,10 @@ export interface components {
             /** Format: int32 */
             proposedRoomCapacity?: number;
             proposedUtilizationPercent?: number;
+        };
+        platform_SseEmitter: {
+            /** Format: int64 */
+            timeout?: number | null;
         };
         platform_StatusBoardProjection: {
             /** Format: date-time */
@@ -69465,6 +71255,10 @@ export interface components {
         platform_ThreadActionRequest: {
             /** @enum {string} */
             action: "MARK_READ" | "MARK_UNREAD" | "STAR" | "UNSTAR" | "ARCHIVE" | "RESTORE" | "COMPLETE" | "REOPEN";
+            /** Format: uuid */
+            bulkIntentId?: string;
+            /** Format: uuid */
+            itemIdempotencyKey?: string;
             /** Format: int64 */
             version: number;
         };
@@ -69620,7 +71414,7 @@ export interface components {
             conferenceUrl?: string;
             description?: string;
             /** @enum {string} */
-            editScope?: "SERIES" | "THIS_OCCURRENCE";
+            editScope?: "SERIES" | "THIS_OCCURRENCE" | "THIS_AND_FOLLOWING";
             /** Format: date-time */
             endsAt: string;
             /** Format: uuid */
@@ -69631,7 +71425,10 @@ export interface components {
             /** Format: date-time */
             originalStartsAt?: string;
             /** @enum {string} */
-            recurrence: "NONE" | "DAILY" | "WEEKLY" | "MONTHLY";
+            recurrence: "NONE" | "DAILY" | "WEEKLY" | "MONTHLY" | "YEARLY";
+            /** Format: int32 */
+            recurrenceCount?: number;
+            recurrenceDays?: ("MONDAY" | "TUESDAY" | "WEDNESDAY" | "THURSDAY" | "FRIDAY" | "SATURDAY" | "SUNDAY")[];
             /** Format: int32 */
             recurrenceInterval?: number;
             /** Format: date */
@@ -70028,6 +71825,12 @@ export interface components {
             visitType: string;
             zoneIds: string[];
         };
+        platform_VoteInput: {
+            /** Format: uuid */
+            candidateId: string;
+            /** @enum {string} */
+            choice: "YES" | "IF_NEEDED" | "NO";
+        };
         platform_WebVitalRequest: {
             /** Format: double */
             delta: number;
@@ -70352,6 +72155,24 @@ export interface components {
             total?: number;
             /** Format: int64 */
             waiting?: number;
+        };
+        platform_WorkingDay: {
+            /** @enum {string} */
+            dayOfWeek?: "MONDAY" | "TUESDAY" | "WEDNESDAY" | "THURSDAY" | "FRIDAY" | "SATURDAY" | "SUNDAY";
+            windows?: components["schemas"]["platform_WorkingWindow"][];
+        };
+        platform_WorkingSchedule: {
+            days?: components["schemas"]["platform_WorkingDay"][];
+            /** Format: date-time */
+            observedAt?: string;
+            source?: string;
+            timeZone?: string;
+            /** Format: int64 */
+            version?: number;
+        };
+        platform_WorkingWindow: {
+            endsAt?: string;
+            startsAt?: string;
         };
         platform_WorkplaceAdminBooking: {
             /** Format: date-time */
@@ -99130,6 +100951,28 @@ export interface operations {
             };
         };
     };
+    messaging_activity: {
+        parameters: {
+            query?: {
+                limit?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["messaging_ApiResponseActivityResponse"];
+                };
+            };
+        };
+    };
     messaging_adminOverview: {
         parameters: {
             query?: never;
@@ -99183,6 +101026,7 @@ export interface operations {
                 q?: string;
                 page?: number;
                 pageSize?: number;
+                cursor?: string;
             };
             header?: never;
             path?: never;
@@ -99474,6 +101318,83 @@ export interface operations {
                 };
                 content: {
                     "*/*": components["schemas"]["messaging_ApiResponseConversationDisplayPreference"];
+                };
+            };
+        };
+    };
+    messaging_draft: {
+        parameters: {
+            query?: {
+                threadRootMessageId?: string;
+            };
+            header?: never;
+            path: {
+                conversationId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["messaging_ApiResponseDraftResponse"];
+                };
+            };
+        };
+    };
+    messaging_saveDraft: {
+        parameters: {
+            query?: {
+                threadRootMessageId?: string;
+            };
+            header?: never;
+            path: {
+                conversationId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["messaging_SaveDraftRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["messaging_ApiResponseDraftResponse"];
+                };
+            };
+        };
+    };
+    messaging_deleteDraft: {
+        parameters: {
+            query: {
+                threadRootMessageId?: string;
+                version: number;
+            };
+            header?: never;
+            path: {
+                conversationId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["messaging_ApiResponseVoid"];
                 };
             };
         };
@@ -100112,6 +102033,34 @@ export interface operations {
             };
         };
     };
+    messaging_schedule: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                conversationId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["messaging_ScheduleMessageRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["messaging_ApiResponseScheduledMessageResponse"];
+                };
+            };
+        };
+    };
     messaging_conversationSettings: {
         parameters: {
             query?: never;
@@ -100299,6 +102248,59 @@ export interface operations {
             };
         };
     };
+    messaging_items: {
+        parameters: {
+            query?: {
+                state?: string;
+                q?: string;
+                page?: number;
+                pageSize?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["messaging_ApiResponseLaterPage"];
+                };
+            };
+        };
+    };
+    messaging_update_1: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                messageId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["messaging_UpdateLaterRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["messaging_ApiResponseLaterItem"];
+                };
+            };
+        };
+    };
     messaging_people: {
         parameters: {
             query?: {
@@ -100322,6 +102324,34 @@ export interface operations {
             };
         };
     };
+    messaging_peoplePage: {
+        parameters: {
+            query?: {
+                q?: string;
+                organization?: string;
+                jobTitle?: string;
+                presence?: string;
+                cursor?: string;
+                offset?: number;
+                limit?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["messaging_ApiResponsePersonPage"];
+                };
+            };
+        };
+    };
     messaging_heartbeat: {
         parameters: {
             query?: never;
@@ -100331,10 +102361,10 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description Presence lease renewed */
+            /** @description Heartbeat accepted; a lease is renewed only when the user permits presence sharing */
             204: {
                 headers: {
-                    /** @description Authoritative renewed lease lifetime in whole seconds */
+                    /** @description Configured lease lifetime when sharing is enabled; an opted-out heartbeat publishes no lease */
                     "X-DWP-Presence-Lease-TTL-Seconds"?: number;
                     /** @description Server-recommended delay before the next heartbeat in whole seconds */
                     "X-DWP-Presence-Refresh-After-Seconds"?: number;
@@ -100418,6 +102448,78 @@ export interface operations {
             };
         };
     };
+    messaging_scheduled: {
+        parameters: {
+            query?: {
+                status?: string;
+                cursor?: string;
+                limit?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["messaging_ApiResponseScheduledMessagePage"];
+                };
+            };
+        };
+    };
+    messaging_scheduled_1: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                scheduledMessageId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["messaging_ApiResponseScheduledMessageResponse"];
+                };
+            };
+        };
+    };
+    messaging_cancel: {
+        parameters: {
+            query: {
+                version: number;
+            };
+            header?: {
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                scheduledMessageId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["messaging_ApiResponseScheduledMessageResponse"];
+                };
+            };
+        };
+    };
     messaging_search: {
         parameters: {
             query: {
@@ -100462,6 +102564,28 @@ export interface operations {
                 };
                 content: {
                     "text/event-stream": components["schemas"]["messaging_SseEmitter"];
+                };
+            };
+        };
+    };
+    messaging_threads: {
+        parameters: {
+            query?: {
+                limit?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["messaging_ApiResponseMessagingAttentionThreadResponse"];
                 };
             };
         };
@@ -107211,7 +109335,7 @@ export interface operations {
             };
         };
     };
-    platform_events_5: {
+    platform_events_4: {
         parameters: {
             query?: {
                 window?: "H1" | "H6" | "H24" | "D7" | "D30";
@@ -107690,19 +109814,20 @@ export interface operations {
             };
         };
     };
-    platform_events_4: {
+    platform_getHcmAuditEvidencePage: {
         parameters: {
             query?: {
+                product?: "HCM";
                 window?: "H24" | "D7" | "D30" | "D90";
                 category?: string;
                 severity?: string;
                 outcome?: string;
                 sourceService?: string;
-                actor?: string;
                 query?: string;
-                page?: number;
                 size?: number;
-                product?: "HCM";
+                cursor?: string;
+                actor?: string;
+                page?: number;
                 /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
                 contextScopeKey?: string;
             };
@@ -107723,7 +109848,7 @@ export interface operations {
             };
         };
     };
-    platform_event: {
+    platform_getHcmAuditEvidence: {
         parameters: {
             query?: {
                 product?: "HCM";
@@ -109782,12 +111907,12 @@ export interface operations {
                 contextScopeKey?: string;
             };
             header: {
-                "Idempotency-Key": string;
-                "X-DWP-Step-Up-Challenge": string;
-                "X-DWP-Expected-Decision-Revision": string;
                 Authorization: string;
                 "X-Correlation-Id": components["schemas"]["platform_Uuid"];
                 "X-Purpose-Code": "HRIS_INTEGRATION_ADMIN";
+                "Idempotency-Key": string;
+                "X-DWP-Step-Up-Challenge": string;
+                "X-DWP-Expected-Decision-Revision": string;
             };
             path?: never;
             cookie?: never;
@@ -110648,7 +112773,7 @@ export interface operations {
     platform_updateConnection: {
         parameters: {
             query?: {
-                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                /** @description Opaque Mail authority scope. Clients trim it and reject only blank, control-character, or oversized values; they do not interpret provider-owned scope syntax. */
                 contextScopeKey?: string;
             };
             header: {
@@ -110682,7 +112807,7 @@ export interface operations {
     platform_diagnose: {
         parameters: {
             query?: {
-                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                /** @description Opaque Mail authority scope. Clients trim it and reject only blank, control-character, or oversized values; they do not interpret provider-owned scope syntax. */
                 contextScopeKey?: string;
             };
             header?: {
@@ -110715,7 +112840,7 @@ export interface operations {
     platform_synchronize: {
         parameters: {
             query?: {
-                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                /** @description Opaque Mail authority scope. Clients trim it and reject only blank, control-character, or oversized values; they do not interpret provider-owned scope syntax. */
                 contextScopeKey?: string;
             };
             header?: {
@@ -110748,7 +112873,7 @@ export interface operations {
     platform_testSend: {
         parameters: {
             query?: {
-                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                /** @description Opaque Mail authority scope. Clients trim it and reject only blank, control-character, or oversized values; they do not interpret provider-owned scope syntax. */
                 contextScopeKey?: string;
             };
             header?: {
@@ -110790,7 +112915,7 @@ export interface operations {
                 dateTo?: string;
                 page?: number;
                 pageSize?: number;
-                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                /** @description Opaque Mail authority scope. Clients trim it and reject only blank, control-character, or oversized values; they do not interpret provider-owned scope syntax. */
                 contextScopeKey?: string;
             };
             header?: never;
@@ -110813,7 +112938,7 @@ export interface operations {
     platform_createDeliveryExport: {
         parameters: {
             query?: {
-                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                /** @description Opaque Mail authority scope. Clients trim it and reject only blank, control-character, or oversized values; they do not interpret provider-owned scope syntax. */
                 contextScopeKey?: string;
             };
             header?: {
@@ -110843,7 +112968,7 @@ export interface operations {
     platform_deliveryExport: {
         parameters: {
             query?: {
-                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                /** @description Opaque Mail authority scope. Clients trim it and reject only blank, control-character, or oversized values; they do not interpret provider-owned scope syntax. */
                 contextScopeKey?: string;
             };
             header?: never;
@@ -110868,7 +112993,7 @@ export interface operations {
     platform_approveDeliveryExport: {
         parameters: {
             query?: {
-                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                /** @description Opaque Mail authority scope. Clients trim it and reject only blank, control-character, or oversized values; they do not interpret provider-owned scope syntax. */
                 contextScopeKey?: string;
             };
             header?: {
@@ -110900,7 +113025,7 @@ export interface operations {
     platform_downloadDeliveryExport: {
         parameters: {
             query?: {
-                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                /** @description Opaque Mail authority scope. Clients trim it and reject only blank, control-character, or oversized values; they do not interpret provider-owned scope syntax. */
                 contextScopeKey?: string;
             };
             header?: never;
@@ -110925,7 +113050,7 @@ export interface operations {
     platform_cancelDelivery: {
         parameters: {
             query?: {
-                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                /** @description Opaque Mail authority scope. Clients trim it and reject only blank, control-character, or oversized values; they do not interpret provider-owned scope syntax. */
                 contextScopeKey?: string;
             };
             header?: {
@@ -110958,7 +113083,7 @@ export interface operations {
     platform_reconcileDelivery: {
         parameters: {
             query?: {
-                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                /** @description Opaque Mail authority scope. Clients trim it and reject only blank, control-character, or oversized values; they do not interpret provider-owned scope syntax. */
                 contextScopeKey?: string;
             };
             header?: {
@@ -110991,7 +113116,7 @@ export interface operations {
     platform_retryDelivery_1: {
         parameters: {
             query?: {
-                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                /** @description Opaque Mail authority scope. Clients trim it and reject only blank, control-character, or oversized values; they do not interpret provider-owned scope syntax. */
                 contextScopeKey?: string;
             };
             header?: {
@@ -111023,7 +113148,10 @@ export interface operations {
     };
     platform_listAdminMailOperations: {
         parameters: {
-            query?: never;
+            query?: {
+                /** @description Opaque Mail authority scope. Clients trim it and reject only blank, control-character, or oversized values; they do not interpret provider-owned scope syntax. */
+                contextScopeKey?: string;
+            };
             header?: never;
             path?: never;
             cookie?: never;
@@ -111043,7 +113171,10 @@ export interface operations {
     };
     platform_getAdminMailOverview: {
         parameters: {
-            query?: never;
+            query?: {
+                /** @description Opaque Mail authority scope. Clients trim it and reject only blank, control-character, or oversized values; they do not interpret provider-owned scope syntax. */
+                contextScopeKey?: string;
+            };
             header?: never;
             path?: never;
             cookie?: never;
@@ -111064,7 +113195,7 @@ export interface operations {
     platform_updateAdminMailPolicy: {
         parameters: {
             query?: {
-                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                /** @description Opaque Mail authority scope. Clients trim it and reject only blank, control-character, or oversized values; they do not interpret provider-owned scope syntax. */
                 contextScopeKey?: string;
             };
             header: {
@@ -111095,7 +113226,10 @@ export interface operations {
     };
     platform_policyGovernance: {
         parameters: {
-            query?: never;
+            query?: {
+                /** @description Opaque Mail authority scope. Clients trim it and reject only blank, control-character, or oversized values; they do not interpret provider-owned scope syntax. */
+                contextScopeKey?: string;
+            };
             header?: never;
             path?: never;
             cookie?: never;
@@ -111115,7 +113249,10 @@ export interface operations {
     };
     platform_retention: {
         parameters: {
-            query?: never;
+            query?: {
+                /** @description Opaque Mail authority scope. Clients trim it and reject only blank, control-character, or oversized values; they do not interpret provider-owned scope syntax. */
+                contextScopeKey?: string;
+            };
             header?: never;
             path?: never;
             cookie?: never;
@@ -111136,7 +113273,7 @@ export interface operations {
     platform_createRetentionEvidenceExport: {
         parameters: {
             query?: {
-                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                /** @description Opaque Mail authority scope. Clients trim it and reject only blank, control-character, or oversized values; they do not interpret provider-owned scope syntax. */
                 contextScopeKey?: string;
             };
             header?: {
@@ -111166,7 +113303,7 @@ export interface operations {
     platform_retentionEvidenceExport: {
         parameters: {
             query?: {
-                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                /** @description Opaque Mail authority scope. Clients trim it and reject only blank, control-character, or oversized values; they do not interpret provider-owned scope syntax. */
                 contextScopeKey?: string;
             };
             header?: never;
@@ -111191,7 +113328,7 @@ export interface operations {
     platform_approveRetentionEvidenceExport: {
         parameters: {
             query?: {
-                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                /** @description Opaque Mail authority scope. Clients trim it and reject only blank, control-character, or oversized values; they do not interpret provider-owned scope syntax. */
                 contextScopeKey?: string;
             };
             header?: {
@@ -111223,7 +113360,7 @@ export interface operations {
     platform_downloadRetentionEvidenceExport: {
         parameters: {
             query?: {
-                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                /** @description Opaque Mail authority scope. Clients trim it and reject only blank, control-character, or oversized values; they do not interpret provider-owned scope syntax. */
                 contextScopeKey?: string;
             };
             header?: never;
@@ -111248,7 +113385,7 @@ export interface operations {
     platform_legalHoldReleasePreview: {
         parameters: {
             query?: {
-                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                /** @description Opaque Mail authority scope. Clients trim it and reject only blank, control-character, or oversized values; they do not interpret provider-owned scope syntax. */
                 contextScopeKey?: string;
             };
             header?: never;
@@ -111273,7 +113410,7 @@ export interface operations {
     platform_approveLegalHoldRelease: {
         parameters: {
             query?: {
-                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                /** @description Opaque Mail authority scope. Clients trim it and reject only blank, control-character, or oversized values; they do not interpret provider-owned scope syntax. */
                 contextScopeKey?: string;
             };
             header?: {
@@ -111306,7 +113443,7 @@ export interface operations {
     platform_executeLegalHoldRelease: {
         parameters: {
             query?: {
-                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                /** @description Opaque Mail authority scope. Clients trim it and reject only blank, control-character, or oversized values; they do not interpret provider-owned scope syntax. */
                 contextScopeKey?: string;
             };
             header?: {
@@ -111339,7 +113476,7 @@ export interface operations {
     platform_createLegalHold: {
         parameters: {
             query?: {
-                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                /** @description Opaque Mail authority scope. Clients trim it and reject only blank, control-character, or oversized values; they do not interpret provider-owned scope syntax. */
                 contextScopeKey?: string;
             };
             header?: {
@@ -111370,7 +113507,7 @@ export interface operations {
     platform_updateLegalHold: {
         parameters: {
             query?: {
-                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                /** @description Opaque Mail authority scope. Clients trim it and reject only blank, control-character, or oversized values; they do not interpret provider-owned scope syntax. */
                 contextScopeKey?: string;
             };
             header?: {
@@ -111403,7 +113540,7 @@ export interface operations {
     platform_previewLegalHoldRelease: {
         parameters: {
             query?: {
-                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                /** @description Opaque Mail authority scope. Clients trim it and reject only blank, control-character, or oversized values; they do not interpret provider-owned scope syntax. */
                 contextScopeKey?: string;
             };
             header?: {
@@ -111436,7 +113573,7 @@ export interface operations {
     platform_purgeJob: {
         parameters: {
             query?: {
-                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                /** @description Opaque Mail authority scope. Clients trim it and reject only blank, control-character, or oversized values; they do not interpret provider-owned scope syntax. */
                 contextScopeKey?: string;
             };
             header?: never;
@@ -111461,7 +113598,7 @@ export interface operations {
     platform_activePurgePreviews: {
         parameters: {
             query?: {
-                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                /** @description Opaque Mail authority scope. Clients trim it and reject only blank, control-character, or oversized values; they do not interpret provider-owned scope syntax. */
                 contextScopeKey?: string;
             };
             header?: never;
@@ -111484,7 +113621,7 @@ export interface operations {
     platform_previewPurge: {
         parameters: {
             query?: {
-                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                /** @description Opaque Mail authority scope. Clients trim it and reject only blank, control-character, or oversized values; they do not interpret provider-owned scope syntax. */
                 contextScopeKey?: string;
             };
             header?: {
@@ -111514,7 +113651,7 @@ export interface operations {
     platform_purgePreview: {
         parameters: {
             query?: {
-                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                /** @description Opaque Mail authority scope. Clients trim it and reject only blank, control-character, or oversized values; they do not interpret provider-owned scope syntax. */
                 contextScopeKey?: string;
             };
             header?: never;
@@ -111539,7 +113676,7 @@ export interface operations {
     platform_approvePurge: {
         parameters: {
             query?: {
-                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                /** @description Opaque Mail authority scope. Clients trim it and reject only blank, control-character, or oversized values; they do not interpret provider-owned scope syntax. */
                 contextScopeKey?: string;
             };
             header?: {
@@ -111571,7 +113708,7 @@ export interface operations {
     platform_executePurge: {
         parameters: {
             query?: {
-                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                /** @description Opaque Mail authority scope. Clients trim it and reject only blank, control-character, or oversized values; they do not interpret provider-owned scope syntax. */
                 contextScopeKey?: string;
             };
             header?: {
@@ -111606,7 +113743,7 @@ export interface operations {
             query?: {
                 query?: string;
                 limit?: number;
-                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                /** @description Opaque Mail authority scope. Clients trim it and reject only blank, control-character, or oversized values; they do not interpret provider-owned scope syntax. */
                 contextScopeKey?: string;
             };
             header?: never;
@@ -111628,7 +113765,10 @@ export interface operations {
     };
     platform_sharedInboxAccess: {
         parameters: {
-            query?: never;
+            query?: {
+                /** @description Opaque Mail authority scope. Clients trim it and reject only blank, control-character, or oversized values; they do not interpret provider-owned scope syntax. */
+                contextScopeKey?: string;
+            };
             header?: never;
             path: {
                 inboxId: string;
@@ -111651,7 +113791,7 @@ export interface operations {
     platform_addSharedInboxMember: {
         parameters: {
             query?: {
-                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                /** @description Opaque Mail authority scope. Clients trim it and reject only blank, control-character, or oversized values; they do not interpret provider-owned scope syntax. */
                 contextScopeKey?: string;
             };
             header?: {
@@ -111684,7 +113824,7 @@ export interface operations {
     platform_updateSharedInboxMember: {
         parameters: {
             query?: {
-                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                /** @description Opaque Mail authority scope. Clients trim it and reject only blank, control-character, or oversized values; they do not interpret provider-owned scope syntax. */
                 contextScopeKey?: string;
             };
             header?: {
@@ -111718,7 +113858,7 @@ export interface operations {
     platform_revokeSharedInboxMember: {
         parameters: {
             query?: {
-                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                /** @description Opaque Mail authority scope. Clients trim it and reject only blank, control-character, or oversized values; they do not interpret provider-owned scope syntax. */
                 contextScopeKey?: string;
             };
             header?: {
@@ -111752,7 +113892,7 @@ export interface operations {
     platform_previewSharedInboxMemberRevoke: {
         parameters: {
             query?: {
-                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                /** @description Opaque Mail authority scope. Clients trim it and reject only blank, control-character, or oversized values; they do not interpret provider-owned scope syntax. */
                 contextScopeKey?: string;
             };
             header?: {
@@ -111785,7 +113925,7 @@ export interface operations {
     platform_updateSharedInbox: {
         parameters: {
             query?: {
-                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                /** @description Opaque Mail authority scope. Clients trim it and reject only blank, control-character, or oversized values; they do not interpret provider-owned scope syntax. */
                 contextScopeKey?: string;
             };
             header: {
@@ -111821,6 +113961,8 @@ export interface operations {
             query?: {
                 kind?: "TEMPLATE" | "SIGNATURE";
                 state?: string;
+                /** @description Opaque Mail authority scope. Clients trim it and reject only blank, control-character, or oversized values; they do not interpret provider-owned scope syntax. */
+                contextScopeKey?: string;
             };
             header?: never;
             path?: never;
@@ -111842,7 +113984,7 @@ export interface operations {
     platform_createAdminMailWritingAssetDraft: {
         parameters: {
             query?: {
-                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                /** @description Opaque Mail authority scope. Clients trim it and reject only blank, control-character, or oversized values; they do not interpret provider-owned scope syntax. */
                 contextScopeKey?: string;
             };
             header: {
@@ -111876,7 +114018,7 @@ export interface operations {
     platform_updateAdminMailWritingAssetDraft: {
         parameters: {
             query?: {
-                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                /** @description Opaque Mail authority scope. Clients trim it and reject only blank, control-character, or oversized values; they do not interpret provider-owned scope syntax. */
                 contextScopeKey?: string;
             };
             header: {
@@ -111911,7 +114053,7 @@ export interface operations {
     platform_approveAdminMailWritingAsset: {
         parameters: {
             query?: {
-                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                /** @description Opaque Mail authority scope. Clients trim it and reject only blank, control-character, or oversized values; they do not interpret provider-owned scope syntax. */
                 contextScopeKey?: string;
             };
             header: {
@@ -111946,7 +114088,7 @@ export interface operations {
     platform_publishAdminMailWritingAsset: {
         parameters: {
             query?: {
-                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                /** @description Opaque Mail authority scope. Clients trim it and reject only blank, control-character, or oversized values; they do not interpret provider-owned scope syntax. */
                 contextScopeKey?: string;
             };
             header: {
@@ -111981,7 +114123,7 @@ export interface operations {
     platform_retireAdminMailWritingAsset: {
         parameters: {
             query?: {
-                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                /** @description Opaque Mail authority scope. Clients trim it and reject only blank, control-character, or oversized values; they do not interpret provider-owned scope syntax. */
                 contextScopeKey?: string;
             };
             header: {
@@ -112016,7 +114158,7 @@ export interface operations {
     platform_submitAdminMailWritingAsset: {
         parameters: {
             query?: {
-                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                /** @description Opaque Mail authority scope. Clients trim it and reject only blank, control-character, or oversized values; they do not interpret provider-owned scope syntax. */
                 contextScopeKey?: string;
             };
             header: {
@@ -114242,9 +116384,10 @@ export interface operations {
                 /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
                 contextScopeKey?: string;
             };
-            header?: {
+            header: {
                 "Accept-Language"?: string;
                 "X-Correlation-ID"?: string;
+                "Idempotency-Key": string;
                 /** @description Required and fail-closed for product-authorization rollout states 110/111; optional for backward-compatible baseline/shadow states 000/100. */
                 "X-DWP-Expected-Decision-Revision"?: string;
             };
@@ -114276,9 +116419,10 @@ export interface operations {
                 /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
                 contextScopeKey?: string;
             };
-            header?: {
+            header: {
                 "Accept-Language"?: string;
                 "X-Correlation-ID"?: string;
+                "Idempotency-Key": string;
                 /** @description Required and fail-closed for product-authorization rollout states 110/111; optional for backward-compatible baseline/shadow states 000/100. */
                 "X-DWP-Expected-Decision-Revision"?: string;
             };
@@ -120646,6 +122790,468 @@ export interface operations {
             };
         };
     };
+    platform_listMyCalendarBookingAppointments: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseListAppointment"];
+                };
+            };
+        };
+    };
+    platform_getMyCalendarBookingAppointment: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                appointmentId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseAppointment"];
+                };
+            };
+        };
+    };
+    platform_cancelAuthenticatedCalendarBooking: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                appointmentId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_CancelAppointmentRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseAppointment"];
+                };
+            };
+        };
+    };
+    platform_revokeCalendarBookingManagementToken: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                appointmentId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_RotateBookingTokenRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseAppointment"];
+                };
+            };
+        };
+    };
+    platform_rotateCalendarBookingManagementToken: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                appointmentId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_RotateBookingTokenRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseAppointmentReceipt"];
+                };
+            };
+        };
+    };
+    platform_rescheduleAuthenticatedCalendarBooking: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                appointmentId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_RescheduleAppointmentRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseAppointment"];
+                };
+            };
+        };
+    };
+    platform_getCalendarBookingCapabilities: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseBookingSecurityCapabilities"];
+                };
+            };
+        };
+    };
+    platform_listCalendarBookingPages: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseListBookingPage"];
+                };
+            };
+        };
+    };
+    platform_createCalendarBookingPage: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_SaveBookingPageRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseBookingPage"];
+                };
+            };
+        };
+    };
+    platform_getCalendarBookingPage: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                pageId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseBookingPage"];
+                };
+            };
+        };
+    };
+    platform_updateCalendarBookingPage: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                pageId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_SaveBookingPageRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseBookingPage"];
+                };
+            };
+        };
+    };
+    platform_confirmAuthenticatedCalendarBooking: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                pageId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_ConfirmBookingRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseAppointmentReceipt"];
+                };
+            };
+        };
+    };
+    platform_getAuthenticatedCalendarBookingAvailability: {
+        parameters: {
+            query: {
+                from: string;
+                to: string;
+            };
+            header?: never;
+            path: {
+                pageId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseBookingAvailability"];
+                };
+            };
+        };
+    };
+    platform_getAuthenticatedCalendarBookablePage: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                pageId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseAuthenticatedBookablePage"];
+                };
+            };
+        };
+    };
+    platform_createAuthenticatedCalendarBookingHold: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                pageId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_CreateBookingHoldRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseBookingHold"];
+                };
+            };
+        };
+    };
+    platform_cancelAuthenticatedCalendarBookingHold: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                pageId: string;
+                holdId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_CancelBookingHoldRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseBookingHold"];
+                };
+            };
+        };
+    };
+    platform_revokeCalendarBookingPagePublicToken: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                pageId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_RotateBookingTokenRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseBookingPage"];
+                };
+            };
+        };
+    };
+    platform_rotateCalendarBookingPagePublicToken: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                pageId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_RotateBookingTokenRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseBookingPagePublishReceipt"];
+                };
+            };
+        };
+    };
+    platform_changeCalendarBookingPageState: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                pageId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_ChangeBookingPageStateRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseBookingPagePublishReceipt"];
+                };
+            };
+        };
+    };
     platform_calendars_1: {
         parameters: {
             query?: never;
@@ -120935,6 +123541,35 @@ export interface operations {
             };
         };
     };
+    platform_cancelCalendarEventOccurrence: {
+        parameters: {
+            query?: never;
+            header?: {
+                "Accept-Language"?: string;
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                eventId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_CancelOccurrenceRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseVoid"];
+                };
+            };
+        };
+    };
     platform_updateEventPreference: {
         parameters: {
             query?: never;
@@ -120959,6 +123594,54 @@ export interface operations {
                 };
                 content: {
                     "*/*": components["schemas"]["platform_ApiResponseEventPreferenceResponse"];
+                };
+            };
+        };
+    };
+    platform_getCalendarEventReminders: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                eventId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseReminderSet"];
+                };
+            };
+        };
+    };
+    platform_replaceCalendarEventReminders: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                eventId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_ReplaceRemindersRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseReminderSet"];
                 };
             };
         };
@@ -121144,6 +123827,180 @@ export interface operations {
                 };
                 content: {
                     "*/*": components["schemas"]["platform_ApiResponseListResourceSummary"];
+                };
+            };
+        };
+    };
+    platform_listCalendarSchedulingPolls: {
+        parameters: {
+            query?: {
+                afterUpdatedAt?: string;
+                afterPollId?: string;
+                limit?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponsePollPage"];
+                };
+            };
+        };
+    };
+    platform_createCalendarSchedulingPoll: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_CreatePollRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponsePollDetails"];
+                };
+            };
+        };
+    };
+    platform_getCalendarSchedulingPoll: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                pollId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponsePollDetails"];
+                };
+            };
+        };
+    };
+    platform_cancelCalendarSchedulingPoll: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                pollId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_ChangePollStateRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponsePollDetails"];
+                };
+            };
+        };
+    };
+    platform_confirmCalendarSchedulingPoll: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                pollId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_ConfirmPollRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponsePollDetails"];
+                };
+            };
+        };
+    };
+    platform_openCalendarSchedulingPoll: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                pollId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_ChangePollStateRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponsePollDetails"];
+                };
+            };
+        };
+    };
+    platform_castCalendarSchedulingPollVotes: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                pollId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_CastVotesRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponsePollDetails"];
                 };
             };
         };
@@ -123916,6 +126773,8 @@ export interface operations {
                 query?: string;
                 page?: number;
                 pageSize?: number;
+                /** @description Opaque Mail authority scope. Clients trim it and reject only blank, control-character, or oversized values; they do not interpret provider-owned scope syntax. */
+                contextScopeKey?: string;
             };
             header?: never;
             path?: never;
@@ -123937,7 +126796,7 @@ export interface operations {
     platform_uploadAttachment: {
         parameters: {
             query?: {
-                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                /** @description Opaque Mail authority scope. Clients trim it and reject only blank, control-character, or oversized values; they do not interpret provider-owned scope syntax. */
                 contextScopeKey?: string;
             };
             header?: {
@@ -123970,7 +126829,7 @@ export interface operations {
     platform_deleteAttachment: {
         parameters: {
             query?: {
-                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                /** @description Opaque Mail authority scope. Clients trim it and reject only blank, control-character, or oversized values; they do not interpret provider-owned scope syntax. */
                 contextScopeKey?: string;
             };
             header?: {
@@ -123998,7 +126857,7 @@ export interface operations {
     platform_composeContext: {
         parameters: {
             query?: {
-                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                /** @description Opaque Mail authority scope. Clients trim it and reject only blank, control-character, or oversized values; they do not interpret provider-owned scope syntax. */
                 contextScopeKey?: string;
             };
             header?: never;
@@ -124021,7 +126880,7 @@ export interface operations {
     platform_createGroup: {
         parameters: {
             query?: {
-                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                /** @description Opaque Mail authority scope. Clients trim it and reject only blank, control-character, or oversized values; they do not interpret provider-owned scope syntax. */
                 contextScopeKey?: string;
             };
             header?: {
@@ -124052,7 +126911,7 @@ export interface operations {
     platform_updateGroup: {
         parameters: {
             query?: {
-                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                /** @description Opaque Mail authority scope. Clients trim it and reject only blank, control-character, or oversized values; they do not interpret provider-owned scope syntax. */
                 contextScopeKey?: string;
             };
             header?: {
@@ -124086,7 +126945,7 @@ export interface operations {
         parameters: {
             query: {
                 version: number;
-                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                /** @description Opaque Mail authority scope. Clients trim it and reject only blank, control-character, or oversized values; they do not interpret provider-owned scope syntax. */
                 contextScopeKey?: string;
             };
             header?: {
@@ -124113,7 +126972,7 @@ export interface operations {
     platform_replaceGroupMembers: {
         parameters: {
             query?: {
-                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                /** @description Opaque Mail authority scope. Clients trim it and reject only blank, control-character, or oversized values; they do not interpret provider-owned scope syntax. */
                 contextScopeKey?: string;
             };
             header?: {
@@ -124146,7 +127005,7 @@ export interface operations {
     platform_sendGroupMessage: {
         parameters: {
             query?: {
-                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                /** @description Opaque Mail authority scope. Clients trim it and reject only blank, control-character, or oversized values; they do not interpret provider-owned scope syntax. */
                 contextScopeKey?: string;
             };
             header?: {
@@ -124178,7 +127037,10 @@ export interface operations {
     };
     platform_groupMessageHistory: {
         parameters: {
-            query?: never;
+            query?: {
+                /** @description Opaque Mail authority scope. Clients trim it and reject only blank, control-character, or oversized values; they do not interpret provider-owned scope syntax. */
+                contextScopeKey?: string;
+            };
             header?: never;
             path: {
                 groupId: string;
@@ -124201,7 +127063,7 @@ export interface operations {
     platform_createContact: {
         parameters: {
             query?: {
-                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                /** @description Opaque Mail authority scope. Clients trim it and reject only blank, control-character, or oversized values; they do not interpret provider-owned scope syntax. */
                 contextScopeKey?: string;
             };
             header?: {
@@ -124232,7 +127094,7 @@ export interface operations {
     platform_updateContact: {
         parameters: {
             query?: {
-                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                /** @description Opaque Mail authority scope. Clients trim it and reject only blank, control-character, or oversized values; they do not interpret provider-owned scope syntax. */
                 contextScopeKey?: string;
             };
             header?: {
@@ -124266,7 +127128,7 @@ export interface operations {
         parameters: {
             query: {
                 version: number;
-                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                /** @description Opaque Mail authority scope. Clients trim it and reject only blank, control-character, or oversized values; they do not interpret provider-owned scope syntax. */
                 contextScopeKey?: string;
             };
             header?: {
@@ -124296,6 +127158,8 @@ export interface operations {
                 bucket?: string;
                 page?: number;
                 pageSize?: number;
+                /** @description Opaque Mail authority scope. Clients trim it and reject only blank, control-character, or oversized values; they do not interpret provider-owned scope syntax. */
+                contextScopeKey?: string;
             };
             header?: never;
             path?: never;
@@ -124316,7 +127180,10 @@ export interface operations {
     };
     platform_delivery: {
         parameters: {
-            query?: never;
+            query?: {
+                /** @description Opaque Mail authority scope. Clients trim it and reject only blank, control-character, or oversized values; they do not interpret provider-owned scope syntax. */
+                contextScopeKey?: string;
+            };
             header?: never;
             path: {
                 deliveryId: string;
@@ -124339,7 +127206,7 @@ export interface operations {
     platform_cancelMailDelivery: {
         parameters: {
             query?: {
-                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                /** @description Opaque Mail authority scope. Clients trim it and reject only blank, control-character, or oversized values; they do not interpret provider-owned scope syntax. */
                 contextScopeKey?: string;
             };
             header?: {
@@ -124371,7 +127238,7 @@ export interface operations {
     platform_reconcileMailDelivery: {
         parameters: {
             query?: {
-                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                /** @description Opaque Mail authority scope. Clients trim it and reject only blank, control-character, or oversized values; they do not interpret provider-owned scope syntax. */
                 contextScopeKey?: string;
             };
             header?: {
@@ -124403,7 +127270,7 @@ export interface operations {
     platform_reschedule: {
         parameters: {
             query?: {
-                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                /** @description Opaque Mail authority scope. Clients trim it and reject only blank, control-character, or oversized values; they do not interpret provider-owned scope syntax. */
                 contextScopeKey?: string;
             };
             header?: {
@@ -124435,7 +127302,7 @@ export interface operations {
     platform_retry: {
         parameters: {
             query?: {
-                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                /** @description Opaque Mail authority scope. Clients trim it and reject only blank, control-character, or oversized values; they do not interpret provider-owned scope syntax. */
                 contextScopeKey?: string;
             };
             header?: {
@@ -124467,7 +127334,7 @@ export interface operations {
     platform_createDraft: {
         parameters: {
             query?: {
-                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                /** @description Opaque Mail authority scope. Clients trim it and reject only blank, control-character, or oversized values; they do not interpret provider-owned scope syntax. */
                 contextScopeKey?: string;
             };
             header?: {
@@ -124498,7 +127365,7 @@ export interface operations {
     platform_saveDraft: {
         parameters: {
             query?: {
-                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                /** @description Opaque Mail authority scope. Clients trim it and reject only blank, control-character, or oversized values; they do not interpret provider-owned scope syntax. */
                 contextScopeKey?: string;
             };
             header?: {
@@ -124528,10 +127395,62 @@ export interface operations {
             };
         };
     };
+    platform_streamMailEvents: {
+        parameters: {
+            query?: {
+                after?: number;
+                /** @description Opaque Mail authority scope. Clients trim it and reject only blank, control-character, or oversized values; they do not interpret provider-owned scope syntax. */
+                contextScopeKey?: string;
+            };
+            header?: {
+                "Last-Event-ID"?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/event-stream": components["schemas"]["platform_SseEmitter"];
+                };
+            };
+        };
+    };
+    platform_catchUpMailEvents: {
+        parameters: {
+            query?: {
+                after?: number;
+                /** @description Opaque Mail authority scope. Clients trim it and reject only blank, control-character, or oversized values; they do not interpret provider-owned scope syntax. */
+                contextScopeKey?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["platform_ApiResponseCatchUp"];
+                };
+            };
+        };
+    };
     platform_followUps: {
         parameters: {
             query?: {
                 status?: string;
+                /** @description Opaque Mail authority scope. Clients trim it and reject only blank, control-character, or oversized values; they do not interpret provider-owned scope syntax. */
+                contextScopeKey?: string;
             };
             header?: never;
             path?: never;
@@ -124553,7 +127472,7 @@ export interface operations {
     platform_updateFollowUp: {
         parameters: {
             query?: {
-                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                /** @description Opaque Mail authority scope. Clients trim it and reject only blank, control-character, or oversized values; they do not interpret provider-owned scope syntax. */
                 contextScopeKey?: string;
             };
             header?: {
@@ -124586,7 +127505,7 @@ export interface operations {
         parameters: {
             query: {
                 version: number;
-                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                /** @description Opaque Mail authority scope. Clients trim it and reject only blank, control-character, or oversized values; they do not interpret provider-owned scope syntax. */
                 contextScopeKey?: string;
             };
             header?: {
@@ -124615,7 +127534,7 @@ export interface operations {
         parameters: {
             query?: {
                 accountId?: string;
-                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                /** @description Opaque Mail authority scope. Clients trim it and reject only blank, control-character, or oversized values; they do not interpret provider-owned scope syntax. */
                 contextScopeKey?: string;
             };
             header?: never;
@@ -124638,7 +127557,7 @@ export interface operations {
     platform_compose: {
         parameters: {
             query?: {
-                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                /** @description Opaque Mail authority scope. Clients trim it and reject only blank, control-character, or oversized values; they do not interpret provider-owned scope syntax. */
                 contextScopeKey?: string;
             };
             header?: {
@@ -124669,7 +127588,7 @@ export interface operations {
     platform_compose_1: {
         parameters: {
             query?: {
-                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                /** @description Opaque Mail authority scope. Clients trim it and reject only blank, control-character, or oversized values; they do not interpret provider-owned scope syntax. */
                 contextScopeKey?: string;
             };
             header?: {
@@ -124699,7 +127618,10 @@ export interface operations {
     };
     platform_organization: {
         parameters: {
-            query?: never;
+            query?: {
+                /** @description Opaque Mail authority scope. Clients trim it and reject only blank, control-character, or oversized values; they do not interpret provider-owned scope syntax. */
+                contextScopeKey?: string;
+            };
             header?: never;
             path?: never;
             cookie?: never;
@@ -124720,7 +127642,7 @@ export interface operations {
     platform_backfill: {
         parameters: {
             query?: {
-                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                /** @description Opaque Mail authority scope. Clients trim it and reject only blank, control-character, or oversized values; they do not interpret provider-owned scope syntax. */
                 contextScopeKey?: string;
             };
             header?: {
@@ -124754,6 +127676,8 @@ export interface operations {
         parameters: {
             query?: {
                 continuationToken?: string;
+                /** @description Opaque Mail authority scope. Clients trim it and reject only blank, control-character, or oversized values; they do not interpret provider-owned scope syntax. */
+                contextScopeKey?: string;
             };
             header?: never;
             path: {
@@ -124777,7 +127701,7 @@ export interface operations {
     platform_createFolder: {
         parameters: {
             query?: {
-                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                /** @description Opaque Mail authority scope. Clients trim it and reject only blank, control-character, or oversized values; they do not interpret provider-owned scope syntax. */
                 contextScopeKey?: string;
             };
             header?: {
@@ -124808,7 +127732,7 @@ export interface operations {
     platform_updateFolder: {
         parameters: {
             query?: {
-                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                /** @description Opaque Mail authority scope. Clients trim it and reject only blank, control-character, or oversized values; they do not interpret provider-owned scope syntax. */
                 contextScopeKey?: string;
             };
             header?: {
@@ -124841,7 +127765,7 @@ export interface operations {
     platform_archiveFolder: {
         parameters: {
             query?: {
-                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                /** @description Opaque Mail authority scope. Clients trim it and reject only blank, control-character, or oversized values; they do not interpret provider-owned scope syntax. */
                 contextScopeKey?: string;
             };
             header?: {
@@ -124874,7 +127798,7 @@ export interface operations {
     platform_createRule: {
         parameters: {
             query?: {
-                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                /** @description Opaque Mail authority scope. Clients trim it and reject only blank, control-character, or oversized values; they do not interpret provider-owned scope syntax. */
                 contextScopeKey?: string;
             };
             header?: {
@@ -124905,7 +127829,7 @@ export interface operations {
     platform_reorderRules: {
         parameters: {
             query?: {
-                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                /** @description Opaque Mail authority scope. Clients trim it and reject only blank, control-character, or oversized values; they do not interpret provider-owned scope syntax. */
                 contextScopeKey?: string;
             };
             header?: {
@@ -124936,7 +127860,7 @@ export interface operations {
     platform_updateRule: {
         parameters: {
             query?: {
-                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                /** @description Opaque Mail authority scope. Clients trim it and reject only blank, control-character, or oversized values; they do not interpret provider-owned scope syntax. */
                 contextScopeKey?: string;
             };
             header?: {
@@ -124969,7 +127893,7 @@ export interface operations {
     platform_archiveRule: {
         parameters: {
             query?: {
-                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                /** @description Opaque Mail authority scope. Clients trim it and reject only blank, control-character, or oversized values; they do not interpret provider-owned scope syntax. */
                 contextScopeKey?: string;
             };
             header?: {
@@ -125002,7 +127926,7 @@ export interface operations {
     platform_runRule: {
         parameters: {
             query?: {
-                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                /** @description Opaque Mail authority scope. Clients trim it and reject only blank, control-character, or oversized values; they do not interpret provider-owned scope syntax. */
                 contextScopeKey?: string;
             };
             header?: {
@@ -125030,7 +127954,10 @@ export interface operations {
     };
     platform_preferences: {
         parameters: {
-            query?: never;
+            query?: {
+                /** @description Opaque Mail authority scope. Clients trim it and reject only blank, control-character, or oversized values; they do not interpret provider-owned scope syntax. */
+                contextScopeKey?: string;
+            };
             header?: never;
             path?: never;
             cookie?: never;
@@ -125051,7 +127978,7 @@ export interface operations {
     platform_updatePreferences: {
         parameters: {
             query?: {
-                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                /** @description Opaque Mail authority scope. Clients trim it and reject only blank, control-character, or oversized values; they do not interpret provider-owned scope syntax. */
                 contextScopeKey?: string;
             };
             header?: {
@@ -125088,6 +128015,8 @@ export interface operations {
                 dateTo?: string;
                 page?: number;
                 pageSize?: number;
+                /** @description Opaque Mail authority scope. Clients trim it and reject only blank, control-character, or oversized values; they do not interpret provider-owned scope syntax. */
+                contextScopeKey?: string;
             };
             header?: never;
             path?: never;
@@ -125109,7 +128038,7 @@ export interface operations {
     platform_updateProposal: {
         parameters: {
             query?: {
-                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                /** @description Opaque Mail authority scope. Clients trim it and reject only blank, control-character, or oversized values; they do not interpret provider-owned scope syntax. */
                 contextScopeKey?: string;
             };
             header?: {
@@ -125142,7 +128071,7 @@ export interface operations {
     platform_decideProposal: {
         parameters: {
             query?: {
-                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                /** @description Opaque Mail authority scope. Clients trim it and reject only blank, control-character, or oversized values; they do not interpret provider-owned scope syntax. */
                 contextScopeKey?: string;
             };
             header?: {
@@ -125174,7 +128103,10 @@ export interface operations {
     };
     platform_proposalHandoff: {
         parameters: {
-            query?: never;
+            query?: {
+                /** @description Opaque Mail authority scope. Clients trim it and reject only blank, control-character, or oversized values; they do not interpret provider-owned scope syntax. */
+                contextScopeKey?: string;
+            };
             header?: never;
             path: {
                 proposalId: string;
@@ -125197,7 +128129,7 @@ export interface operations {
     platform_cancelProposalHandoff: {
         parameters: {
             query?: {
-                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                /** @description Opaque Mail authority scope. Clients trim it and reject only blank, control-character, or oversized values; they do not interpret provider-owned scope syntax. */
                 contextScopeKey?: string;
             };
             header?: {
@@ -125229,7 +128161,10 @@ export interface operations {
     };
     platform_savedViews: {
         parameters: {
-            query?: never;
+            query?: {
+                /** @description Opaque Mail authority scope. Clients trim it and reject only blank, control-character, or oversized values; they do not interpret provider-owned scope syntax. */
+                contextScopeKey?: string;
+            };
             header?: never;
             path?: never;
             cookie?: never;
@@ -125250,7 +128185,7 @@ export interface operations {
     platform_createSavedView: {
         parameters: {
             query?: {
-                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                /** @description Opaque Mail authority scope. Clients trim it and reject only blank, control-character, or oversized values; they do not interpret provider-owned scope syntax. */
                 contextScopeKey?: string;
             };
             header?: {
@@ -125280,7 +128215,7 @@ export interface operations {
     platform_updateSavedView: {
         parameters: {
             query?: {
-                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                /** @description Opaque Mail authority scope. Clients trim it and reject only blank, control-character, or oversized values; they do not interpret provider-owned scope syntax. */
                 contextScopeKey?: string;
             };
             header?: {
@@ -125313,7 +128248,7 @@ export interface operations {
         parameters: {
             query: {
                 version: number;
-                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                /** @description Opaque Mail authority scope. Clients trim it and reject only blank, control-character, or oversized values; they do not interpret provider-owned scope syntax. */
                 contextScopeKey?: string;
             };
             header?: {
@@ -125341,7 +128276,7 @@ export interface operations {
     platform_createSignature: {
         parameters: {
             query?: {
-                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                /** @description Opaque Mail authority scope. Clients trim it and reject only blank, control-character, or oversized values; they do not interpret provider-owned scope syntax. */
                 contextScopeKey?: string;
             };
             header?: {
@@ -125371,7 +128306,7 @@ export interface operations {
     platform_updateSignature: {
         parameters: {
             query?: {
-                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                /** @description Opaque Mail authority scope. Clients trim it and reject only blank, control-character, or oversized values; they do not interpret provider-owned scope syntax. */
                 contextScopeKey?: string;
             };
             header?: {
@@ -125404,7 +128339,7 @@ export interface operations {
         parameters: {
             query: {
                 version: number;
-                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                /** @description Opaque Mail authority scope. Clients trim it and reject only blank, control-character, or oversized values; they do not interpret provider-owned scope syntax. */
                 contextScopeKey?: string;
             };
             header?: {
@@ -125432,7 +128367,7 @@ export interface operations {
     platform_createTemplate: {
         parameters: {
             query?: {
-                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                /** @description Opaque Mail authority scope. Clients trim it and reject only blank, control-character, or oversized values; they do not interpret provider-owned scope syntax. */
                 contextScopeKey?: string;
             };
             header?: {
@@ -125462,7 +128397,7 @@ export interface operations {
     platform_updateTemplate: {
         parameters: {
             query?: {
-                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                /** @description Opaque Mail authority scope. Clients trim it and reject only blank, control-character, or oversized values; they do not interpret provider-owned scope syntax. */
                 contextScopeKey?: string;
             };
             header?: {
@@ -125495,7 +128430,7 @@ export interface operations {
         parameters: {
             query: {
                 version: number;
-                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                /** @description Opaque Mail authority scope. Clients trim it and reject only blank, control-character, or oversized values; they do not interpret provider-owned scope syntax. */
                 contextScopeKey?: string;
             };
             header?: {
@@ -125543,7 +128478,7 @@ export interface operations {
                 query?: string;
                 page?: number;
                 pageSize?: number;
-                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                /** @description Opaque Mail authority scope. Clients trim it and reject only blank, control-character, or oversized values; they do not interpret provider-owned scope syntax. */
                 contextScopeKey?: string;
             };
             header?: never;
@@ -125565,7 +128500,10 @@ export interface operations {
     };
     platform_thread: {
         parameters: {
-            query?: never;
+            query?: {
+                /** @description Opaque Mail authority scope. Clients trim it and reject only blank, control-character, or oversized values; they do not interpret provider-owned scope syntax. */
+                contextScopeKey?: string;
+            };
             header?: never;
             path: {
                 threadId: string;
@@ -125588,7 +128526,7 @@ export interface operations {
     platform_action: {
         parameters: {
             query?: {
-                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                /** @description Opaque Mail authority scope. Clients trim it and reject only blank, control-character, or oversized values; they do not interpret provider-owned scope syntax. */
                 contextScopeKey?: string;
             };
             header?: {
@@ -125621,7 +128559,7 @@ export interface operations {
     platform_assign: {
         parameters: {
             query?: {
-                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                /** @description Opaque Mail authority scope. Clients trim it and reject only blank, control-character, or oversized values; they do not interpret provider-owned scope syntax. */
                 contextScopeKey?: string;
             };
             header?: {
@@ -125654,7 +128592,7 @@ export interface operations {
     platform_comment: {
         parameters: {
             query?: {
-                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                /** @description Opaque Mail authority scope. Clients trim it and reject only blank, control-character, or oversized values; they do not interpret provider-owned scope syntax. */
                 contextScopeKey?: string;
             };
             header?: {
@@ -125687,7 +128625,7 @@ export interface operations {
     platform_updateMailDraft: {
         parameters: {
             query?: {
-                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                /** @description Opaque Mail authority scope. Clients trim it and reject only blank, control-character, or oversized values; they do not interpret provider-owned scope syntax. */
                 contextScopeKey?: string;
             };
             header?: {
@@ -125720,7 +128658,7 @@ export interface operations {
     platform_createFollowUp: {
         parameters: {
             query?: {
-                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                /** @description Opaque Mail authority scope. Clients trim it and reject only blank, control-character, or oversized values; they do not interpret provider-owned scope syntax. */
                 contextScopeKey?: string;
             };
             header?: {
@@ -125752,7 +128690,7 @@ export interface operations {
     platform_lifecycle: {
         parameters: {
             query?: {
-                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                /** @description Opaque Mail authority scope. Clients trim it and reject only blank, control-character, or oversized values; they do not interpret provider-owned scope syntax. */
                 contextScopeKey?: string;
             };
             header?: {
@@ -125785,7 +128723,7 @@ export interface operations {
     platform_previewMailThreadLifecycle: {
         parameters: {
             query?: {
-                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                /** @description Opaque Mail authority scope. Clients trim it and reject only blank, control-character, or oversized values; they do not interpret provider-owned scope syntax. */
                 contextScopeKey?: string;
             };
             header?: {
@@ -125816,7 +128754,10 @@ export interface operations {
     };
     platform_downloadAttachment: {
         parameters: {
-            query?: never;
+            query?: {
+                /** @description Opaque Mail authority scope. Clients trim it and reject only blank, control-character, or oversized values; they do not interpret provider-owned scope syntax. */
+                contextScopeKey?: string;
+            };
             header?: never;
             path: {
                 threadId: string;
@@ -125841,7 +128782,7 @@ export interface operations {
     platform_retryDelivery: {
         parameters: {
             query?: {
-                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                /** @description Opaque Mail authority scope. Clients trim it and reject only blank, control-character, or oversized values; they do not interpret provider-owned scope syntax. */
                 contextScopeKey?: string;
             };
             header?: {
@@ -125871,7 +128812,7 @@ export interface operations {
     platform_reply: {
         parameters: {
             query?: {
-                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                /** @description Opaque Mail authority scope. Clients trim it and reject only blank, control-character, or oversized values; they do not interpret provider-owned scope syntax. */
                 contextScopeKey?: string;
             };
             header?: {
@@ -125904,7 +128845,7 @@ export interface operations {
     platform_snooze: {
         parameters: {
             query?: {
-                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                /** @description Opaque Mail authority scope. Clients trim it and reject only blank, control-character, or oversized values; they do not interpret provider-owned scope syntax. */
                 contextScopeKey?: string;
             };
             header?: {
@@ -125938,6 +128879,8 @@ export interface operations {
         parameters: {
             query?: {
                 includeArchived?: boolean;
+                /** @description Opaque Mail authority scope. Clients trim it and reject only blank, control-character, or oversized values; they do not interpret provider-owned scope syntax. */
+                contextScopeKey?: string;
             };
             header?: never;
             path?: never;
@@ -131466,6 +134409,139 @@ export interface operations {
                 };
                 content: {
                     "*/*": components["schemas"]["platform_ApiResponseWorkItem"];
+                };
+            };
+        };
+    };
+    platform_listCalendarEventsV2: {
+        parameters: {
+            query: {
+                from: string;
+                to: string;
+                timeZone?: string;
+                limit?: number;
+                cursor?: string;
+            };
+            header?: {
+                "Accept-Language"?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseEventPage"];
+                };
+            };
+        };
+    };
+    platform_searchCalendarEventsV2: {
+        parameters: {
+            query: {
+                q: string;
+                from: string;
+                to: string;
+                timeZone?: string;
+                limit?: number;
+                cursor?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseSearchPage"];
+                };
+            };
+        };
+    };
+    platform_listExternalCalendarEventsV2: {
+        parameters: {
+            query: {
+                from: string;
+                to: string;
+                limit?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseProjection"];
+                };
+            };
+        };
+    };
+    platform_evaluateCalendarSchedulingV2: {
+        parameters: {
+            query?: never;
+            header?: {
+                "Accept-Language"?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_EvaluationRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseEvaluationResponse"];
+                };
+            };
+        };
+    };
+    platform_hardRecheckCalendarSchedulingV2: {
+        parameters: {
+            query?: never;
+            header?: {
+                "Accept-Language"?: string;
+            };
+            path: {
+                evaluationId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_HardRecheckRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["platform_ApiResponseHardRecheckResponse"];
                 };
             };
         };

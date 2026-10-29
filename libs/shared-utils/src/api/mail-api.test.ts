@@ -1,6 +1,7 @@
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { resetCsrfToken } from '../axios-instance';
+import { registerMailGovernedRequestAuthority } from './mail-governed-transport';
 import {
   approveMailPurge,
   createMailDeliveryAuditExport,
@@ -16,6 +17,7 @@ import {
 } from './mail-admin-completion-api';
 import {
   applyMailLifecycle,
+  applyMailThreadAction,
   cancelMailProposalHandoff,
   createMailFolder,
   createMailRule,
@@ -42,6 +44,20 @@ function jsonResponse(data: unknown): Response {
     text: async () => JSON.stringify({ data }),
   } as Response;
 }
+
+let releaseMailAuthority: (() => void) | undefined;
+
+beforeEach(() => {
+  releaseMailAuthority = registerMailGovernedRequestAuthority({
+    mode: 'LEGACY_COMPATIBILITY',
+    rolloutState: '000',
+  });
+});
+
+afterEach(() => {
+  releaseMailAuthority?.();
+  releaseMailAuthority = undefined;
+});
 
 describe('mail organization API boundary', () => {
   afterEach(() => {
@@ -167,6 +183,33 @@ describe('mail organization API boundary', () => {
       action: 'MOVE',
       version: 7,
       targetFolderId: 'folder-2',
+    });
+  });
+
+  it('carries replay-safe bulk identity on thread action and lifecycle commands', async () => {
+    const bulkIdentity = {
+      bulkIntentId: 'b4ec3ccf-4d46-48c9-aa19-29947cf0e381',
+      itemIdempotencyKey: '5a92d84f-7ae9-4682-a8f1-a434275f6802',
+    };
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValueOnce(jsonResponse({ token: 'csrf-token', headerName: 'X-XSRF-TOKEN' }))
+      .mockResolvedValueOnce(jsonResponse({ thread: { threadId: 'thread-1' } }))
+      .mockResolvedValueOnce(jsonResponse({ thread: null, deleted: false }));
+    vi.stubGlobal('fetch', fetchMock);
+
+    await applyMailThreadAction('thread-1', 'MARK_READ', 7, bulkIdentity);
+    await applyMailLifecycle('thread-1', 'ARCHIVE', 8, undefined, bulkIdentity);
+
+    expect(JSON.parse(String((fetchMock.mock.calls[1]?.[1] as RequestInit).body))).toEqual({
+      action: 'MARK_READ',
+      version: 7,
+      ...bulkIdentity,
+    });
+    expect(JSON.parse(String((fetchMock.mock.calls[2]?.[1] as RequestInit).body))).toEqual({
+      action: 'ARCHIVE',
+      version: 8,
+      ...bulkIdentity,
     });
   });
 

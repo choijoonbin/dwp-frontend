@@ -90,6 +90,19 @@ describe('calendar source model', () => {
     expect(calendarCanChangeSelection(mine, true)).toBe(true);
   });
 
+  it('keeps read-only provider calendars in their own selectable source group', () => {
+    const external = calendar({
+      calendarId: 'microsoft-365',
+      sourceKind: 'OWNED',
+      externalProvider: 'MICROSOFT_365',
+    });
+
+    expect(groupCalendarSources([external])).toEqual([
+      expect.objectContaining({ key: 'external', calendars: [external] }),
+    ]);
+    expect(calendarCanChangeSelection(external, false)).toBe(true);
+  });
+
   it('uses server capabilities as the authority for sharing and event actions', () => {
     expect(
       calendarCanManageSharing(

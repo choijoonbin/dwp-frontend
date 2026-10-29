@@ -57,6 +57,7 @@ export type WorkspaceActivityState =
 export type WorkspaceActivityEvent = {
   id: string;
   occurredAt: string;
+  stateChangedAt?: string | null;
   actor: WorkspaceActivityActor;
   actorName: string;
   state: WorkspaceActivityState;
@@ -297,6 +298,7 @@ const activityStateMap: Record<RawWorkspaceActivityEvent['state'], WorkspaceActi
 const ACTIVITY_EVENT_KEYS = new Set([
   'id',
   'occurredAt',
+  'stateChangedAt',
   'actor',
   'actorName',
   'state',
@@ -519,6 +521,7 @@ function isValidRawActivityEvent(value: unknown): value is RawWorkspaceActivityE
   if (
     !isPresentString(value.id) ||
     !isDate(value.occurredAt) ||
+    !isOptionalNullableDate(value.stateChangedAt) ||
     !Object.hasOwn(actorMap, String(value.actor)) ||
     !isPresentString(value.actorName) ||
     !Object.hasOwn(activityStateMap, String(value.state)) ||

@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test';
 
-import { draftDetail, fulfill, MEMBER_PERMISSIONS } from './support/mail-fixtures';
+import { defaultMailHome, draftDetail, fulfill, MEMBER_PERMISSIONS } from './support/mail-fixtures';
 import { mockShellSession } from './support/shell-session';
 
 type SessionUser = {
@@ -59,6 +59,7 @@ test('an in-place identity transition isolates an open composer from a late send
     meRequests += 1;
     return fulfill(route, currentUser);
   });
+  await page.route('**/api/platform/v1/mail/home**', (route) => fulfill(route, defaultMailHome()));
 
   const threadId = '40000000-0000-0000-0000-000000000101';
   const fields = {
@@ -102,6 +103,11 @@ test('an in-place identity transition isolates an open composer from a late send
   await expect(page.getByText('All changes saved')).toBeVisible();
 
   await page.getByRole('button', { name: 'Send', exact: true }).click();
+  const externalRecipientDialog = page.getByRole('dialog', {
+    name: 'Send to external recipients?',
+  });
+  await expect(externalRecipientDialog).toBeVisible();
+  await externalRecipientDialog.getByRole('button', { name: 'Confirm and send' }).click();
   await expect.poll(() => sendRequests).toBe(1);
   await expect
     .poll(() =>

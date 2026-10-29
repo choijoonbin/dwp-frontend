@@ -1,15 +1,6 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import {
-  BellDot,
-  CalendarClock,
-  Check,
-  CircleAlert,
-  LoaderCircle,
-  MoonStar,
-  Eye,
-  ShieldCheck,
-} from 'lucide-react';
+import { BellDot, CalendarClock, MoonStar, Eye, ShieldCheck } from 'lucide-react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
   createNotificationIdempotencyKey,
@@ -20,7 +11,6 @@ import {
   getNotificationEffectiveSettings,
   putNotificationSubscriptionRule,
   revokeNotificationDeliveryEndpoint,
-  updateNotificationDeliveryProfile,
   type NotificationAppSetting,
   type NotificationChannel,
   type NotificationDeliveryProfile,
@@ -31,13 +21,11 @@ import { useToast } from '@dwp-frontend/shared-utils';
 import {
   ActionButton,
   EmptyState,
-  ErrorState,
   FormField,
   LoadingState,
   TimePickerField,
   resolveProductTimeZone,
 } from '@dwp-frontend/design-system';
-import { formatDate } from '@dwp-frontend/shared-i18n';
 
 import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
@@ -47,7 +35,6 @@ import Stack from '@mui/material/Stack';
 import Switch from '@mui/material/Switch';
 import ToggleButton from '@mui/material/ToggleButton';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
-import Typography from '@mui/material/Typography';
 
 import { notificationQueryKeys } from './integration-contract';
 import { NotificationChannelGrid } from './notification-channel-grid';
@@ -56,217 +43,58 @@ import {
   NOTIFICATION_PREFERENCE_SECTION_IDS,
   NotificationPreferenceNavigation,
   NotificationPreferenceViewTabs,
-  type PreferenceSectionKey,
-  type PreferenceView,
 } from './notification-preference-navigation';
+import { NotificationPreferenceSaveIndicator } from './notification-preference-save-indicator';
+import type {
+  NotificationSettingsNavigationChangeOptions,
+  NotificationSettingsUrlState,
+} from './notification-settings-url-state';
 import {
   buildNotificationSubscriptionRuleInput,
   findNotificationTypeSetting,
   isNotificationPreferenceConflict,
-  rebaseNotificationDeliveryProfile,
   type NotificationRulePatch,
 } from './notification-preference-save-policy';
 import { TypeSettingRows } from './notification-type-setting-rows';
 import {
   notificationPreferenceControlSx,
   notificationPreferenceRadius,
-  notificationPreferenceSelectedBackground,
   notificationPreferenceSoftBackground,
 } from './notification-preference-styles';
+import { PreferenceRow, PreferenceSection } from './notification-preference-section';
 import { NotificationPageHeading } from './notification-ui';
 import { NotificationDeliveryStatusPanel } from './notification-delivery-status';
 import { NotificationPageFrame } from './notification-page-frame';
+import { NotificationErrorState } from './notification-error-support';
 import { useOnlineStatus } from './use-notification-runtime';
+import {
+  useNotificationProfileSaveController,
+  type NotificationProfileSaveState,
+} from './use-notification-profile-save-controller';
+import { useNotificationPreferenceNavigationState } from './use-notification-preference-navigation-state';
 import { usePersonalPreference } from '../../providers/personal-preference-provider';
 
-import type { LucideIcon } from 'lucide-react';
-import type { ReactNode } from 'react';
+type SaveFailureSource = 'PROFILE' | 'RULE' | 'RESET' | null;
 
-type SaveState = 'idle' | 'saving' | 'saved' | 'recovered' | 'error';
-
-function PreferenceSection({
-  id,
-  title,
-  description,
-  hidden,
-  children,
+export function NotificationPreferences({
+  navigationState,
+  onNavigationStateChange,
 }: {
-  id: string;
-  title: string;
-  description: string;
-  hidden?: boolean;
-  children: ReactNode;
-}) {
-  return (
-    <Box
-      component="section"
-      id={id}
-      hidden={hidden}
-      tabIndex={-1}
-      sx={{
-        mt: 1.5,
-        scrollMarginTop: {
-          xs: 'calc(var(--dwp-shell-mobile-sticky-offset, 64px) + 56px)',
-          lg: 112,
-        },
-        minWidth: 0,
-        bgcolor: 'background.paper',
-        borderRadius: notificationPreferenceRadius,
-        overflow: 'clip',
-      }}
-    >
-      <Box sx={{ p: { xs: 1.5, md: 2 } }}>
-        <Typography component="h2" variant="h6">
-          {title}
-        </Typography>
-        <Typography variant="body2" color="text.secondary" sx={{ mt: 0.35 }}>
-          {description}
-        </Typography>
-      </Box>
-      <Box
-        sx={{
-          borderTop: 1,
-          borderColor: 'divider',
-          px: id === NOTIFICATION_PREFERENCE_SECTION_IDS.global ? { xs: 1.5, md: 2 } : 0,
-          py: id === NOTIFICATION_PREFERENCE_SECTION_IDS.global ? 1.5 : 0,
-        }}
-      >
-        {children}
-      </Box>
-    </Box>
-  );
-}
-
-function PreferenceRow({
-  icon: Icon,
-  title,
-  description,
-  meta,
-  inlineControl = false,
-  children,
-}: {
-  icon: LucideIcon;
-  title: string;
-  description: string;
-  meta?: ReactNode;
-  inlineControl?: boolean;
-  children: ReactNode;
-}) {
-  return (
-    <Box
-      sx={{
-        display: 'grid',
-        gridTemplateColumns: inlineControl
-          ? '28px minmax(0, 1fr) minmax(0, auto)'
-          : '28px minmax(0, 1fr)',
-        gap: 1.25,
-        alignItems: 'center',
-        px: 1.5,
-        py: 1.25,
-        minHeight: 64,
-        '@container notification-preferences (min-width: 720px)': {
-          gridTemplateColumns: '28px minmax(0, 1fr) minmax(0, auto)',
-        },
-      }}
-    >
-      <Box
-        aria-hidden="true"
-        sx={{
-          width: 28,
-          height: 28,
-          display: 'grid',
-          placeItems: 'center',
-          borderRadius: notificationPreferenceRadius,
-          bgcolor: notificationPreferenceSelectedBackground,
-          color: 'primary.main',
-        }}
-      >
-        <Icon size={16} strokeWidth={1.8} />
-      </Box>
-      <Box minWidth={0}>
-        <Stack direction="row" gap={0.75} alignItems="center" flexWrap="wrap">
-          <Typography component="h3" variant="subtitle2">
-            {title}
-          </Typography>
-          {meta}
-        </Stack>
-        <Typography variant="body2" color="text.secondary" sx={{ mt: 0.25 }}>
-          {description}
-        </Typography>
-      </Box>
-      <Box
-        sx={{
-          gridColumn: inlineControl ? '3' : '1 / -1',
-          minWidth: 0,
-          maxWidth: '100%',
-          justifySelf: inlineControl ? 'end' : 'stretch',
-          '@container notification-preferences (min-width: 720px)': {
-            gridColumn: '3',
-            justifySelf: 'end',
-          },
-        }}
-      >
-        {children}
-      </Box>
-    </Box>
-  );
-}
-
-function AutoSaveIndicator({ state, savedAt }: { state: SaveState; savedAt?: string | null }) {
-  const { t } = useTranslation('notifications');
-  const Icon = state === 'saving' ? LoaderCircle : state === 'error' ? CircleAlert : Check;
-  const label =
-    state === 'saving'
-      ? t('preferences.save.saving')
-      : state === 'error'
-        ? t('preferences.save.error')
-        : state === 'recovered'
-          ? t('preferences.save.recovered')
-          : state === 'saved'
-            ? t('preferences.save.saved', {
-                time: savedAt
-                  ? formatDate(savedAt, { timeStyle: 'short' })
-                  : t('preferences.save.now'),
-              })
-            : t('preferences.save.auto');
-  return (
-    <Stack
-      role="status"
-      aria-live="polite"
-      aria-atomic="true"
-      direction="row"
-      gap={0.75}
-      alignItems="center"
-      color={
-        state === 'error'
-          ? 'error.main'
-          : state === 'saved' || state === 'recovered'
-            ? 'success.main'
-            : 'text.secondary'
-      }
-      minHeight={32}
-    >
-      <Icon size={16} className={state === 'saving' ? 'dwp-spin' : undefined} />
-      <Typography variant="caption" color="inherit" fontWeight="fontWeightBold">
-        {label}
-      </Typography>
-    </Stack>
-  );
-}
-
-export function NotificationPreferences() {
+  navigationState?: NotificationSettingsUrlState;
+  onNavigationStateChange?: (
+    state: NotificationSettingsUrlState,
+    options?: NotificationSettingsNavigationChangeOptions
+  ) => void;
+} = {}) {
   const { t } = useTranslation('notifications');
   const toast = useToast();
   const queryClient = useQueryClient();
   const online = useOnlineStatus();
   const personalPreference = usePersonalPreference();
   const [draft, setDraft] = useState<NotificationDeliveryProfile | null>(null);
-  const [saveState, setSaveState] = useState<SaveState>('idle');
-  const [selectedAppKey, setSelectedAppKey] = useState<string | null>(null);
-  const [mobileSection, setMobileSection] = useState<PreferenceSectionKey>('global');
-  const [view, setView] = useState<PreferenceView>('settings');
+  const [saveState, setSaveState] = useState<NotificationProfileSaveState>('idle');
+  const [saveFailureSource, setSaveFailureSource] = useState<SaveFailureSource>(null);
   const [busyType, setBusyType] = useState<string | null>(null);
-  const timeZoneSyncAttempt = useRef<string | null>(null);
 
   const profileQuery = useQuery({
     queryKey: notificationQueryKeys.preferences(),
@@ -300,6 +128,17 @@ export function NotificationPreferences() {
     () => [...enabledChannels].some((channel) => channel !== 'IN_APP'),
     [enabledChannels]
   );
+  const {
+    view,
+    section: mobileSection,
+    selectedApp,
+    selectedAppKey,
+    update: updateNavigationState,
+  } = useNotificationPreferenceNavigationState({
+    apps: effectiveQuery.data?.apps,
+    navigationState,
+    onNavigationStateChange,
+  });
   const effectivePolicyLocked =
     effectiveQuery.isLoading ||
     effectiveQuery.isError ||
@@ -309,61 +148,6 @@ export function NotificationPreferences() {
     personalPreference.preference?.preferences.regional.timeZone,
     draft?.quietHours.timeZone
   );
-
-  useEffect(() => {
-    if (profileQuery.data) setDraft(profileQuery.data);
-  }, [profileQuery.data]);
-  useEffect(() => {
-    if (!selectedAppKey && effectiveQuery.data?.apps[0]) {
-      setSelectedAppKey(effectiveQuery.data.apps[0].appKey);
-    }
-  }, [effectiveQuery.data?.apps, selectedAppKey]);
-
-  const profileMutation = useMutation({
-    mutationFn: async ({
-      base,
-      next,
-    }: {
-      base: NotificationDeliveryProfile;
-      next: NotificationDeliveryProfile;
-    }) => {
-      try {
-        return {
-          saved: await updateNotificationDeliveryProfile(
-            next,
-            createNotificationIdempotencyKey('delivery-profile')
-          ),
-          recovered: false,
-        };
-      } catch (error) {
-        if (!isNotificationPreferenceConflict(error)) throw error;
-        const latest = await getNotificationDeliveryProfile();
-        const rebased = rebaseNotificationDeliveryProfile(base, next, latest);
-        return {
-          saved: await updateNotificationDeliveryProfile(
-            rebased,
-            createNotificationIdempotencyKey('delivery-profile-retry')
-          ),
-          recovered: true,
-        };
-      }
-    },
-    onMutate: () => setSaveState('saving'),
-    onSuccess: async ({ saved, recovered }) => {
-      setDraft(saved);
-      setSaveState(recovered ? 'recovered' : 'saved');
-      queryClient.setQueryData(notificationQueryKeys.preferences(), saved);
-      await queryClient.invalidateQueries({ queryKey: notificationQueryKeys.effectiveSettings() });
-      if (recovered) toast.success(t('preferences.feedback.conflictRecovered'));
-    },
-    onError: async () => {
-      const latest = await profileQuery.refetch();
-      setDraft(latest.data ?? profileQuery.data ?? null);
-      await queryClient.invalidateQueries({ queryKey: notificationQueryKeys.effectiveSettings() });
-      setSaveState('error');
-      toast.error(t('preferences.feedback.profileError'));
-    },
-  });
 
   const endpointRevokeMutation = useMutation({
     mutationFn: (endpoint: NotificationDeliveryEndpoint) =>
@@ -388,37 +172,23 @@ export function NotificationPreferences() {
     },
   });
 
-  const saveProfile = (next: NotificationDeliveryProfile) => {
-    const synchronized = {
-      ...next,
-      quietHours: { ...next.quietHours, timeZone: scheduleTimeZone },
-    };
-    const base = draft ?? next;
-    setDraft(synchronized);
-    profileMutation.mutate({ base, next: synchronized });
-  };
-
-  useEffect(() => {
-    const persisted = profileQuery.data;
-    const syncKey = persisted ? `${persisted.version}:${scheduleTimeZone}` : null;
-    if (
-      !persisted ||
-      !online ||
-      profileMutation.isPending ||
-      persisted.quietHours.timeZone === scheduleTimeZone ||
-      timeZoneSyncAttempt.current === syncKey
-    ) {
-      return;
-    }
-    timeZoneSyncAttempt.current = syncKey;
-    profileMutation.mutate({
-      base: persisted,
-      next: {
-        ...persisted,
-        quietHours: { ...persisted.quietHours, timeZone: scheduleTimeZone },
-      },
-    });
-  }, [online, profileMutation, profileQuery.data, scheduleTimeZone]);
+  const {
+    pending: profileSavePending,
+    saveProfile,
+    lastError: profileSaveError,
+  } = useNotificationProfileSaveController({
+    profile: profileQuery.data,
+    scheduleTimeZone,
+    online,
+    onDraftChange: setDraft,
+    onSaveStateChange: (state) => {
+      setSaveState(state);
+      setSaveFailureSource(state === 'error' ? 'PROFILE' : null);
+    },
+    refetchProfile: () => {
+      void profileQuery.refetch();
+    },
+  });
 
   const ruleMutation = useMutation({
     mutationFn: async ({
@@ -447,14 +217,19 @@ export function NotificationPreferences() {
         return { saved: await save(current, true), recovered: true };
       }
     },
-    onMutate: () => setSaveState('saving'),
+    onMutate: () => {
+      setSaveState('saving');
+      setSaveFailureSource(null);
+    },
     onSuccess: async ({ recovered }) => {
       setSaveState(recovered ? 'recovered' : 'saved');
+      setSaveFailureSource(null);
       await queryClient.invalidateQueries({ queryKey: notificationQueryKeys.effectiveSettings() });
       if (recovered) toast.success(t('preferences.feedback.conflictRecovered'));
     },
     onError: () => {
       setSaveState('error');
+      setSaveFailureSource('RULE');
       toast.error(t('preferences.feedback.ruleError'));
     },
     onSettled: () => setBusyType(null),
@@ -488,21 +263,22 @@ export function NotificationPreferences() {
         );
       }
     },
+    onMutate: () => {
+      setSaveState('saving');
+      setSaveFailureSource(null);
+    },
     onSuccess: async () => {
       setSaveState('saved');
+      setSaveFailureSource(null);
       await queryClient.invalidateQueries({ queryKey: notificationQueryKeys.effectiveSettings() });
     },
     onError: () => {
       setSaveState('error');
+      setSaveFailureSource('RESET');
       toast.error(t('preferences.feedback.ruleError'));
     },
     onSettled: () => setBusyType(null),
   });
-
-  const selectedApp = useMemo(
-    () => effectiveQuery.data?.apps.find((app) => app.appKey === selectedAppKey) ?? null,
-    [effectiveQuery.data?.apps, selectedAppKey]
-  );
 
   if (profileQuery.isLoading) {
     return (
@@ -519,7 +295,8 @@ export function NotificationPreferences() {
   if (profileQuery.isError || !draft) {
     return (
       <NotificationPageFrame>
-        <ErrorState
+        <NotificationErrorState
+          error={profileQuery.error}
           title={t('states.preferencesErrorTitle')}
           description={t('states.preferencesErrorDescription')}
           retryLabel={t('actions.retry')}
@@ -536,7 +313,21 @@ export function NotificationPreferences() {
       <NotificationPageHeading
         title={t('preferences.title')}
         description={t('preferences.description')}
-        actions={<AutoSaveIndicator state={saveState} savedAt={draft.updatedAt} />}
+        actions={
+          <NotificationPreferenceSaveIndicator
+            state={saveState}
+            savedAt={draft.updatedAt}
+            error={
+              saveFailureSource === 'PROFILE'
+                ? profileSaveError
+                : saveFailureSource === 'RULE'
+                  ? ruleMutation.error
+                  : resetMutation.error
+            }
+            onRetry={saveFailureSource === 'PROFILE' ? () => saveProfile(draft) : undefined}
+            retryDisabled={!online || profileSavePending}
+          />
+        }
       />
       {!online && (
         <Alert severity="warning" sx={{ mt: 2 }}>
@@ -548,7 +339,10 @@ export function NotificationPreferences() {
           {t('preferences.apps.effectivePolicyUnavailable')}
         </Alert>
       )}
-      <NotificationPreferenceViewTabs view={view} onViewChange={setView} />
+      <NotificationPreferenceViewTabs
+        view={view}
+        onViewChange={(nextView) => updateNavigationState({ view: nextView })}
+      />
       <Box
         id="notification-preference-diagnostics-panel"
         role="tabpanel"
@@ -598,7 +392,7 @@ export function NotificationPreferences() {
       >
         <NotificationPreferenceNavigation
           activeSection={mobileSection}
-          onSectionChange={setMobileSection}
+          onSectionChange={(section) => updateNavigationState({ section })}
         />
         <Box minWidth={0}>
           <PreferenceSection
@@ -611,8 +405,8 @@ export function NotificationPreferences() {
               profile={draft}
               effectiveSettings={effectiveQuery.data}
               enabledChannels={enabledChannels}
-              disabled={!online || profileMutation.isPending || effectivePolicyLocked}
-              profileIsPending={profileMutation.isPending}
+              disabled={!online || effectivePolicyLocked}
+              profileIsPending={profileSavePending}
               onChange={(channel, enabled) =>
                 saveProfile({ ...draft, channels: { ...draft.channels, [channel]: enabled } })
               }
@@ -640,7 +434,8 @@ export function NotificationPreferences() {
                 skeletonRows={6}
               />
             ) : effectiveQuery.isError ? (
-              <ErrorState
+              <NotificationErrorState
+                error={effectiveQuery.error}
                 title={t('states.appSettingsErrorTitle')}
                 description={t('states.appSettingsErrorDescription')}
                 retryLabel={t('actions.retry')}
@@ -683,7 +478,7 @@ export function NotificationPreferences() {
                         key={app.appKey}
                         intent="quiet"
                         aria-current={app.appKey === selectedAppKey ? 'page' : undefined}
-                        onClick={() => setSelectedAppKey(app.appKey)}
+                        onClick={() => updateNavigationState({ appKey: app.appKey })}
                         sx={{
                           width: 'auto',
                           flexShrink: 0,
@@ -742,7 +537,7 @@ export function NotificationPreferences() {
               >
                 <Switch
                   checked={draft.quietHours.enabled}
-                  disabled={!online || profileMutation.isPending}
+                  disabled={!online}
                   onChange={(event) =>
                     saveProfile({
                       ...draft,
@@ -766,7 +561,7 @@ export function NotificationPreferences() {
                     sx={notificationPreferenceControlSx}
                     label={t('preferences.quiet.start')}
                     value={draft.quietHours.start}
-                    disabled={!draft.quietHours.enabled || !online || profileMutation.isPending}
+                    disabled={!draft.quietHours.enabled || !online}
                     onValueChange={(value) => {
                       if (!value) return;
                       saveProfile({
@@ -781,7 +576,7 @@ export function NotificationPreferences() {
                     sx={notificationPreferenceControlSx}
                     label={t('preferences.quiet.end')}
                     value={draft.quietHours.end}
-                    disabled={!draft.quietHours.enabled || !online || profileMutation.isPending}
+                    disabled={!draft.quietHours.enabled || !online}
                     onValueChange={(value) => {
                       if (!value) return;
                       saveProfile({
@@ -800,7 +595,7 @@ export function NotificationPreferences() {
                 <ToggleButtonGroup
                   size="small"
                   value={draft.quietHours.days}
-                  disabled={!online || profileMutation.isPending}
+                  disabled={!online}
                   onChange={(_event, days: number[]) =>
                     saveProfile({ ...draft, quietHours: { ...draft.quietHours, days } })
                   }
@@ -821,7 +616,7 @@ export function NotificationPreferences() {
               >
                 <Switch
                   checked={draft.quietHours.allowUrgentBypass}
-                  disabled={!online || profileMutation.isPending}
+                  disabled={!online}
                   onChange={(event) =>
                     saveProfile({
                       ...draft,
@@ -854,7 +649,7 @@ export function NotificationPreferences() {
                   size="small"
                   label={t('preferences.presentation.banner')}
                   value={draft.presentation.bannerMode}
-                  disabled={!online || profileMutation.isPending}
+                  disabled={!online}
                   onChange={(event) =>
                     saveProfile({
                       ...draft,
@@ -885,7 +680,7 @@ export function NotificationPreferences() {
                   size="small"
                   label={t('preferences.presentation.preview')}
                   value={draft.presentation.previewMode}
-                  disabled={!online || profileMutation.isPending}
+                  disabled={!online}
                   onChange={(event) =>
                     saveProfile({
                       ...draft,
@@ -927,7 +722,7 @@ export function NotificationPreferences() {
                   fullWidth={false}
                   label={t('preferences.digest.mode')}
                   value={draft.digest.mode}
-                  disabled={!externalDeliveryEnabled || !online || profileMutation.isPending}
+                  disabled={!externalDeliveryEnabled || !online}
                   onChange={(event) =>
                     saveProfile({
                       ...draft,
@@ -953,12 +748,7 @@ export function NotificationPreferences() {
                   sx={notificationPreferenceControlSx}
                   label={t('preferences.digest.time')}
                   value={draft.digest.deliveryTime}
-                  disabled={
-                    !externalDeliveryEnabled ||
-                    draft.digest.mode === 'OFF' ||
-                    !online ||
-                    profileMutation.isPending
-                  }
+                  disabled={!externalDeliveryEnabled || draft.digest.mode === 'OFF' || !online}
                   onValueChange={(value) => {
                     if (!value) return;
                     saveProfile({
@@ -974,7 +764,7 @@ export function NotificationPreferences() {
                     fullWidth={false}
                     label={t('preferences.digest.day')}
                     value={draft.digest.dayOfWeek ?? 1}
-                    disabled={!externalDeliveryEnabled || !online || profileMutation.isPending}
+                    disabled={!externalDeliveryEnabled || !online}
                     onChange={(event) =>
                       saveProfile({
                         ...draft,

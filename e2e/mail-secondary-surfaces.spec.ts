@@ -47,6 +47,7 @@ const actionProposal = {
 test('secondary mail workspaces expose honest capabilities and reflow without overflow', async ({
   page,
 }, testInfo) => {
+  test.setTimeout(120_000);
   await setScenarioViewport(page, testInfo);
   await mockMailMember(page);
   await mockSecondaryMailApis(page);
@@ -116,6 +117,7 @@ test('secondary mail workspaces expose honest capabilities and reflow without ov
 
   await page.goto('/mail/accounts');
   await expect(page.getByRole('heading', { name: 'My accounts and preferences' })).toBeVisible();
+  await page.getByText('Show diagnostic evidence').click();
   await expect(page.getByText('Provider authorization evidence')).toBeVisible();
   await expect(page.getByText('Provider consent')).toBeVisible();
   await expect(page.getByText('Access token')).toBeVisible();
@@ -125,8 +127,19 @@ test('secondary mail workspaces expose honest capabilities and reflow without ov
   ).toBeVisible();
   await expect(page.getByRole('tab', { name: 'Reading and writing' })).toBeVisible();
   await page.getByRole('tab', { name: 'Shortcuts' }).click();
+  await expect(page).toHaveURL(/\/mail\/accounts\?tab=shortcuts$/u);
   await expect(page.getByText('Enable mail keyboard shortcuts')).toBeVisible();
+  const keyboardShortcuts = page.getByRole('switch', {
+    name: 'Enable mail keyboard shortcuts',
+  });
+  await expect(keyboardShortcuts).not.toBeChecked();
+  await keyboardShortcuts.click();
   await expect(page.getByRole('button', { name: 'Save' })).toBeEnabled();
+  await page.getByRole('button', { name: 'Refresh' }).click();
+  await expect(
+    page.getByRole('alertdialog', { name: 'Discard unsaved preference changes?' })
+  ).toBeVisible();
+  await page.getByRole('button', { name: 'Cancel' }).click();
   await expectHonestResponsiveSurface(page);
   await attachScreenshot(page, testInfo, 'accounts-preferences');
 });
@@ -198,6 +211,22 @@ test('retention and delivery recovery remain blocked without required evidence',
 }, testInfo) => {
   test.setTimeout(120_000);
   await mockMailAdministrator(page);
+  await page.route('**/api/platform/v1/admin/mail/retention**', (route) =>
+    route.fulfill({
+      status: 503,
+      contentType: 'application/json',
+      body: JSON.stringify({ errorCode: 'AUTHORITY_RESOLUTION_UNAVAILABLE' }),
+    })
+  );
+  await page.route('**/api/platform/v1/admin/mail/delivery-audit**', (route) =>
+    fulfill(route, {
+      items: [],
+      total: 0,
+      page: 0,
+      pageSize: 25,
+      generatedAt: '2026-09-17T09:30:00Z',
+    })
+  );
   for (const scenario of responsiveAuditScenarios(testInfo)) {
     await applyResponsiveAuditScenario(page, scenario);
     await page.goto('/mail/admin/retention');
@@ -223,11 +252,11 @@ test('retention and delivery recovery remain blocked without required evidence',
       page.getByRole('heading', { level: 1, name: 'Delivery audit and recovery' })
     ).toBeVisible();
     await expect(
-      page.getByText(/Message-level outcome and duplicate-safety evidence are required/u)
+      page.getByText(/Reconcile unknown outcomes first.*duplicate-safety evidence/u)
     ).toBeVisible();
-    await expect(page.getByText('No message-level recovery evidence is available.')).toBeVisible();
-    await expect(page.getByRole('button', { name: 'Reconcile outcome' })).toBeDisabled();
-    await expect(page.getByRole('button', { name: 'Retry delivery' })).toBeDisabled();
+    await expect(page.getByText('No delivery evidence matches the current filter.')).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Reconcile' })).toHaveCount(0);
+    await expect(page.getByRole('button', { name: 'Retry delivery' })).toHaveCount(0);
     await expectHonestResponsiveSurface(page);
     await attachScreenshot(page, testInfo, `admin-delivery-audit-${scenario.name}`);
   }

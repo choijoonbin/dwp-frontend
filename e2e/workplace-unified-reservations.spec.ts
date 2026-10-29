@@ -263,12 +263,15 @@ async function useElevatedProductAuthority(page: Page) {
   await page.unroute('**/api/auth/product-surface-contexts');
   await page.route('**/api/auth/product-surface-contexts', (route) =>
     fulfillSuccess(route, {
-      contractVersion: 'product-surfaces/v3',
+      contractVersion: '2',
       decisionRevision: 'screen-16-elevated',
       sourceRevisions: {
         auth: 'screen-16',
         policy: 'screen-16',
         productRelationship: 'screen-16',
+        targetPopulation: 'screen-16',
+        support: null,
+        tenantControl: 'screen-16',
       },
       activeAccessMode: 'ELEVATED',
       generatedAt: NOW.toISOString(),

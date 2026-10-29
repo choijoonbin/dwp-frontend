@@ -50,6 +50,7 @@ type CalendarInteractiveGridProps = {
   view: CalendarScheduleView;
   navigateDate?: Date;
   weekStart: number;
+  workingDays: readonly number[];
   workingDayStart: string;
   workingDayEnd: string;
   canCreate: boolean;
@@ -125,6 +126,7 @@ export function CalendarInteractiveGrid({
   view,
   navigateDate,
   weekStart,
+  workingDays,
   workingDayStart,
   workingDayEnd,
   canCreate,
@@ -603,13 +605,13 @@ export function CalendarInteractiveGrid({
         nowIndicator
         navLinks
         businessHours={{
-          daysOfWeek: [1, 2, 3, 4, 5],
+          daysOfWeek: [...workingDays],
           startTime: workingDayStart,
           endTime: workingDayEnd,
         }}
-        slotMinTime="06:00:00"
-        slotMaxTime="22:00:00"
-        scrollTime="08:00:00"
+        slotMinTime={workingDayStart < '06:00' ? workingDayStart : '06:00:00'}
+        slotMaxTime={workingDayEnd > '22:00' ? workingDayEnd : '22:00:00'}
+        scrollTime={workingDayStart}
         slotDuration="00:30:00"
         snapDuration="00:15:00"
         slotMinHeight={32}

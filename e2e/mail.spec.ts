@@ -3,6 +3,7 @@ import { expect, test } from '@playwright/test';
 
 import {
   detail,
+  defaultMailPreferences,
   draftDetail,
   fulfill,
   mailAddressBook,
@@ -39,7 +40,7 @@ test('mail home exposes work signals without serious accessibility defects', asy
   );
   await page.route('**/api/platform/v1/mail/home', (route) =>
     fulfill(route, {
-      accounts: [],
+      accounts: mailOrganization().accounts,
       metrics: { unread: 6, urgent: 1, needsReply: 2, assigned: 1, snoozed: 0, activeProposals: 0 },
       focusQueue: [thread('40000000-0000-0000-0000-000000000001')],
       proposals: [],
@@ -107,6 +108,7 @@ test('mail home exposes work signals without serious accessibility defects', asy
 test('partial drafts autosave and preserve the send command across a response failure', async ({
   page,
 }) => {
+  test.setTimeout(120_000);
   await mockMailMember(page);
   const organization = mailOrganization();
   const draftId = '40000000-0000-0000-0000-000000000020';
@@ -176,6 +178,7 @@ test('partial drafts autosave and preserve the send command across a response fa
   await expect.poll(() => saves.length).toBeGreaterThan(0);
   await expect(dialog.getByRole('status')).toContainText('All changes saved');
   await dialog.getByRole('button', { name: 'Send', exact: true }).click();
+  await page.getByRole('button', { name: 'Confirm and send' }).click();
   await expect.poll(() => sends.length).toBe(1);
   await expect(dialog.getByText(/previous result is unknown/i)).toBeVisible();
   await expect(dialog.getByLabel('Recipient email')).toBeDisabled();
@@ -191,6 +194,7 @@ test('partial drafts autosave and preserve the send command across a response fa
   );
   await expect(dialog.getByRole('textbox', { name: 'Message', exact: true })).toBeDisabled();
   await dialog.getByRole('button', { name: 'Send', exact: true }).click();
+  await page.getByRole('button', { name: 'Confirm and send' }).click();
   await expect.poll(() => sends.length).toBe(2);
   expect(sends[0]).toMatchObject({
     toEmail: 'alex.park@example.com',
@@ -312,6 +316,10 @@ test('mail URL lanes, keyboard commands, and custom snooze keep one truthful wor
   page,
 }) => {
   await mockMailMember(page);
+  await page.unroute('**/api/platform/v1/mail/preferences');
+  await page.route('**/api/platform/v1/mail/preferences', (route) =>
+    fulfill(route, { ...defaultMailPreferences(), keyboardShortcuts: true })
+  );
   const organization = mailOrganization();
   let current = thread('40000000-0000-0000-0000-000000000010', {
     subject: 'Keyboard and snooze review',
@@ -375,6 +383,7 @@ test('mail URL lanes, keyboard commands, and custom snooze keep one truthful wor
   await snooze.focus();
   await page.keyboard.press('e');
   expect(lifecycleActions).toEqual([]);
+  await snooze.evaluate((element) => (element as HTMLElement).blur());
 
   await page.keyboard.press('Control+K');
   const commandInput = page.getByRole('combobox', { name: 'Search mail commands' });

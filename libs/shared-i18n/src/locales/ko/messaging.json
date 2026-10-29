@@ -6,10 +6,14 @@
     "shareDescription": "내가 확인한 메시지를 보낸 사람에게 읽음 상태를 공개합니다. 상대방의 공개 설정은 변경되지 않습니다.",
     "enabledDescription": "공개를 끄면 기존 메시지를 포함한 내 읽음 상태가 더 이상 제공되지 않습니다. 다시 켜면 이전 확인 내역도 공개됩니다.",
     "disabledDescription": "다른 사람에게는 ‘공개 안 함’으로 표시됩니다. 내 안 읽은 대화와 읽던 위치는 그대로 유지됩니다.",
+    "sharePresence": "내 메신저 접속 상태 공개",
+    "presenceDescription": "메신저가 화면에 보이고 연결된 동안 다른 구성원에게 일시적인 접속 신호를 공개합니다.",
+    "presenceEnabledDescription": "메신저가 화면에 보이고 연결된 동안에만 서버 시간 기반 Presence lease가 갱신됩니다. 실제 읽음이나 즉시 응답 가능 상태를 뜻하지 않습니다.",
+    "presenceDisabledDescription": "현재 Presence lease를 철회하고 다시 공개하기 전까지 이후 heartbeat의 접속 신호 발행을 차단합니다.",
     "loading": "개인정보 설정을 불러오는 중",
     "loadError": "개인정보 설정을 불러오지 못했습니다.",
     "saveError": "설정을 저장하지 못했습니다. 최신 설정을 확인한 후 다시 시도해 주세요.",
-    "saved": "읽음 상태 공개 설정을 저장했습니다.",
+    "saved": "개인정보 공개 설정을 저장했습니다.",
     "retry": "다시 시도"
   },
   "receipts": {
@@ -54,10 +58,14 @@
       "messaging": {
         "home": { "label": "홈" },
         "inbox": { "label": "받은 대화" },
+        "activity": { "label": "활동" },
+        "threads": { "label": "스레드" },
         "spaces": { "label": "Space 대화" },
         "direct": { "label": "DM" },
         "people": { "label": "구성원 찾기" },
+        "files": { "label": "파일 및 링크" },
         "later": { "label": "나중에 보기" },
+        "settings": { "label": "개인 설정" },
         "admin-overview": { "label": "운영 현황" },
         "admin-policy": { "label": "대화 정책" }
       }
@@ -73,6 +81,136 @@
     "saving": "저장 중",
     "cancel": "취소",
     "close": "닫기"
+  },
+  "readFailure": {
+    "offline": "오프라인 상태입니다. 네트워크에 다시 연결한 뒤 재시도해 주세요.",
+    "permission": "접근 권한이 더 이상 유효하지 않습니다. 권한을 새로고침하거나 관리자에게 문의해 주세요.",
+    "unavailable": "서비스를 일시적으로 사용할 수 없습니다. 다시 시도해 주세요."
+  },
+  "settingsPage": {
+    "eyebrow": "개인 환경",
+    "title": "메신저 설정",
+    "description": "모든 대화에 적용할 화면, 개인정보 및 사용 방식을 관리합니다.",
+    "appearance": {
+      "title": "화면과 읽기 환경",
+      "description": "메시지 표현과 정보 밀도를 내 업무 방식에 맞춥니다."
+    },
+    "accessibility": {
+      "title": "접근성",
+      "description": "내 계정의 접근성 환경을 메신저와 DWP 전체에 적용합니다.",
+      "loading": "접근성 설정을 불러오는 중입니다",
+      "loadError": "접근성 설정을 불러오지 못했습니다.",
+      "highContrast": "고대비",
+      "highContrastDescription": "메신저의 전경색과 포커스 표시 대비를 높입니다.",
+      "reduceMotion": "동작 줄이기",
+      "reduceMotionDescription": "필수적이지 않은 전환 효과를 제거하고 시스템 동작 설정을 따릅니다."
+    },
+    "notifications": {
+      "title": "알림",
+      "description": "전체 전달 채널을 관리하고 대화별 알림 수준을 선택합니다.",
+      "globalDescription": "전체 채널, 방해 금지 시간 및 전달 방식은 알림 설정에서 통합 관리합니다.",
+      "manageGlobal": "알림 설정 열기",
+      "perConversation": "각 대화의 설정 메뉴에서 전체, 멘션, 기본값 또는 음소거를 선택할 수 있습니다."
+    },
+    "privacy": {
+      "title": "개인정보와 읽음 확인",
+      "description": "다른 구성원에게 공개되는 읽음 상태를 관리합니다."
+    },
+    "presence": {
+      "title": "접속 상태",
+      "description": "현재 Presence가 의미하는 범위를 확인합니다.",
+      "currentContract": "메신저가 화면에 보이고 네트워크에 연결된 동안에만 ‘메신저 접속 중’으로 표시됩니다. 이 상태는 사용자가 실제로 메시지를 읽거나 즉시 응답할 수 있음을 보장하지 않습니다."
+    },
+    "shortcuts": {
+      "title": "키보드 단축키",
+      "description": "대화와 검색을 빠르게 이동합니다.",
+      "search": "메신저 전체 검색",
+      "filter": "대화 목록 검색으로 이동",
+      "send": "메시지 보내기",
+      "newLine": "줄바꿈"
+    }
+  },
+  "files": {
+    "eyebrow": "공유 자료",
+    "title": "파일 및 링크",
+    "description": "접근 가능한 최근 파일과 링크를 원래 대화 맥락과 함께 찾습니다.",
+    "search": "공유 자료 검색",
+    "searchPlaceholder": "제목, 대화, 보낸 사람 또는 파일 형식",
+    "kindFilter": "공유 자료 유형",
+    "kinds": {
+      "ALL": "전체",
+      "FILE": "파일",
+      "LINK": "링크"
+    },
+    "results": "최근 공유 자료",
+    "resultCount": "{{count}}개 결과",
+    "loading": "공유 파일과 링크를 불러오는 중",
+    "loadError": "공유 파일과 링크를 불러오지 못했습니다.",
+    "emptyTitle": "아직 공유된 파일이나 링크가 없습니다",
+    "emptyDescription": "접근 가능한 대화의 안전한 파일과 링크가 여기에 표시됩니다.",
+    "noMatchesTitle": "조건에 맞는 공유 자료가 없습니다",
+    "noMatchesDescription": "다른 검색어나 자료 유형을 선택해 보세요.",
+    "open": "{{conversation}}에서 {{title}} 열기",
+    "protectedTitle": "보호된 공유 자료",
+    "unnamedConversation": "대화",
+    "limitNotice": "접근 가능한 최근 공유 자료 {{count}}개를 표시합니다. 이전 자료는 원래 대화에서 계속 확인할 수 있습니다."
+  },
+  "activity": {
+    "eyebrow": "확인할 항목",
+    "title": "활동",
+    "description": "현재 접근 가능한 대화의 멘션, 답글, 반응 및 시스템 변경을 확인합니다.",
+    "search": "활동 검색",
+    "searchPlaceholder": "구성원, 대화 또는 메시지 미리보기",
+    "filterLabel": "활동 유형",
+    "kinds": {
+      "ALL": "전체",
+      "MENTION": "멘션",
+      "THREAD_REPLY": "스레드 답글",
+      "REACTION": "반응",
+      "SYSTEM": "시스템",
+      "SCHEDULE_FAILED": "예약 전송 실패"
+    },
+    "itemTitle": {
+      "MENTION": "{{actor}}님이 나를 멘션했습니다",
+      "THREAD_REPLY": "{{actor}}님이 스레드에 답글을 남겼습니다",
+      "REACTION": "{{actor}}님이 내 메시지에 반응했습니다",
+      "SYSTEM": "대화 변경 사항",
+      "SCHEDULE_FAILED": "예약 메시지가 전송되지 않았습니다"
+    },
+    "results": "최근 활동",
+    "resultCount": "{{count}}개 결과",
+    "loading": "활동을 불러오는 중",
+    "loadError": "활동을 불러오지 못했습니다.",
+    "emptyTitle": "최근 활동이 없습니다",
+    "emptyDescription": "새 멘션, 참여 중인 스레드 답글, 반응 및 시스템 변경이 여기에 표시됩니다.",
+    "noMatchesTitle": "조건에 맞는 활동이 없습니다",
+    "noMatchesDescription": "다른 검색어나 활동 유형을 선택해 보세요.",
+    "protectedPreview": "보호된 대화 내용은 활동 화면에서 숨겨집니다.",
+    "noPreview": "자세한 내용은 대화에서 확인하세요.",
+    "open": "{{conversation}}에서 {{kind}} 열기",
+    "unnamedConversation": "대화"
+  },
+  "threadsPage": {
+    "eyebrow": "대화 업무",
+    "title": "스레드",
+    "description": "내가 시작하거나 참여한 스레드를 최근 답글 순서로 이어서 처리합니다.",
+    "search": "스레드 검색",
+    "searchPlaceholder": "대화, 참여자 또는 메시지 미리보기",
+    "results": "참여 중인 스레드",
+    "resultCount": "스레드 {{count}}개",
+    "replyCount": "답글 {{count}}개",
+    "latestReply": "{{actor}}님의 최근 답글 · {{time}}",
+    "loading": "스레드를 불러오는 중",
+    "loadError": "스레드를 불러오지 못했습니다.",
+    "emptyTitle": "참여 중인 스레드가 없습니다",
+    "emptyDescription": "내가 시작하거나 답글을 남긴 스레드에 새 답글이 추가되면 여기에 표시됩니다.",
+    "noMatchesTitle": "조건에 맞는 스레드가 없습니다",
+    "noMatchesDescription": "다른 대화 또는 참여자 이름으로 검색해 보세요.",
+    "protectedPreview": "보호된 대화 내용은 이 목록에서 숨겨집니다.",
+    "deletedRoot": "원본 메시지가 삭제되었습니다.",
+    "noPreview": "자세한 내용은 스레드에서 확인하세요.",
+    "open": "{{conversation}}에서 답글 {{count}}개의 스레드 열기",
+    "unnamedConversation": "대화"
   },
   "formatting": {
     "toolbar": "메시지 서식",
@@ -133,6 +271,7 @@
       "emptyTitle": "아직 공유된 파일이나 링크가 없습니다",
       "emptyDescription": "대화에서 자료를 공유하면 이곳에서 다시 찾을 수 있습니다.",
       "openConversation": "{{conversation}}에서 {{title}} 열기",
+      "protectedTitle": "보호된 공유 자료",
       "FILE": "파일",
       "LINK": "링크"
     },
@@ -232,28 +371,29 @@
       "open": "저장한 항목 모두 열기",
       "loading": "저장한 항목을 불러오는 중",
       "loadError": "저장한 항목을 불러오지 못했습니다.",
+      "protectedPreview": "보호된 메시지 내용은 홈에서 숨겨집니다.",
       "emptyTitle": "저장한 메시지가 없습니다",
       "emptyDescription": "다시 확인할 메시지를 저장하면 이곳에서 이어볼 수 있습니다.",
       "startDirect": "구성원을 찾아 새 DM 시작"
     },
     "people": {
-      "availableSnapshot": "현재 연결 가능한 구성원 {{count}}명 표시",
-      "unavailableSnapshot": "실시간 연결 상태를 확인하지 못했습니다",
-      "unavailableTitle": "연결 상태를 일시적으로 확인할 수 없습니다",
-      "unavailableDescription": "현재 연결 가능한 구성원을 확인하지 못했습니다. 마지막 확인 {{time}}.",
-      "emptyTitle": "현재 연결 가능한 구성원이 없습니다",
+      "availableSnapshot": "메신저 접속 중인 구성원 {{count}}명 표시",
+      "unavailableSnapshot": "메신저 접속 상태를 확인하지 못했습니다",
+      "unavailableTitle": "메신저 접속 상태를 일시적으로 확인할 수 없습니다",
+      "unavailableDescription": "현재 메신저에 접속 중인 구성원을 확인하지 못했습니다. 마지막 확인 {{time}}.",
+      "emptyTitle": "현재 메신저에 접속 중인 구성원이 없습니다",
       "emptyDescription": "구성원이 메신저를 열면 이곳에 표시됩니다.",
       "messagePerson": "{{name}}님에게 메시지 보내기, {{presence}}",
       "presence": {
-        "AVAILABLE": "연결 가능",
+        "AVAILABLE": "메신저 접속 중",
         "BUSY": "다른 업무 중",
         "AWAY": "자리 비움",
         "FOCUS": "집중 모드",
         "OFFLINE": "오프라인",
         "UNKNOWN": "상태 정보 없음"
       },
-      "title": "지금 연결 가능한 구성원",
-      "description": "현재 활동 중인 구성원 {{count}}명",
+      "title": "메신저 접속 중인 구성원",
+      "description": "최근 접속 신호가 확인된 구성원 {{count}}명",
       "open": "구성원 디렉터리 열기"
     }
   },
@@ -276,6 +416,7 @@
     "timeline": "메시지",
     "unread": "여기부터 읽지 않음",
     "newMessages": "새 메시지 {{count}}개",
+    "protectedPreview": "보호된 대화 내용은 대화 목록에서 숨겨집니다.",
     "history": {
       "loadOlder": "이전 메시지 불러오기",
       "loading": "이전 메시지 불러오는 중",
@@ -492,6 +633,49 @@
     "previous": "이전",
     "next": "다음"
   },
+  "laterPage": {
+    "eyebrow": "후속 작업",
+    "title": "나중에 보기",
+    "description": "저장한 메시지를 알림과 완료 상태가 있는 명확한 후속 작업 목록으로 관리합니다.",
+    "search": "나중에 보기 검색",
+    "searchPlaceholder": "대화, 보낸 사람 또는 표시 가능한 메시지 내용",
+    "stateFilter": "후속 작업 상태",
+    "states": {
+      "ALL": "전체",
+      "SAVED": "저장됨",
+      "SNOOZED": "미뤄짐",
+      "DUE": "확인할 때",
+      "COMPLETED": "완료"
+    },
+    "results": "후속 작업 항목",
+    "resultCount": "{{count}}개 항목",
+    "loading": "나중에 보기 항목을 불러오는 중",
+    "loadError": "나중에 보기 항목을 불러오지 못했습니다.",
+    "noMatchesTitle": "조건에 맞는 항목이 없습니다",
+    "noMatchesDescription": "다른 검색어나 후속 작업 상태를 선택해 보세요.",
+    "protectedPreview": "보호된 메시지 내용은 이 목록에서 숨겨집니다.",
+    "noPreview": "자세한 내용은 대화에서 확인하세요.",
+    "unnamedConversation": "대화",
+    "savedAt": "{{time}} 저장",
+    "snoozedUntil": "{{time}}에 다시 알림",
+    "snooze": "나중에 알림",
+    "reschedule": "알림 시간 변경",
+    "restore": "저장됨으로 되돌리기",
+    "complete": "완료 처리",
+    "reopen": "다시 열기",
+    "updateSuccess": "후속 작업 상태를 변경했습니다.",
+    "updateError": "항목이 변경되었거나 상태를 저장하지 못했습니다. 최신 상태를 다시 불러왔습니다.",
+    "snoozeDialog": {
+      "title": "알림 설정",
+      "description": "선택한 현지 시각까지 항목을 숨긴 뒤 확인할 때 상태로 이동합니다.",
+      "timeLabel": "다시 알림 받을 시각",
+      "futureRequired": "현재보다 이후의 시각을 선택하세요.",
+      "nonexistentTime": "일광 절약 시간제로 시계가 앞으로 이동해 존재하지 않는 현지 시각입니다. 다른 시각을 선택하세요.",
+      "ambiguousTime": "일광 절약 시간제 종료로 두 번 반복되는 현지 시각입니다. 다른 시각을 선택하세요.",
+      "timeZone": "{{timeZone}} 기준으로 표시하며 정확한 UTC 시각으로 저장합니다.",
+      "confirm": "알림 설정"
+    }
+  },
   "create": {
     "action": "새 대화",
     "title": "새 그룹 또는 채널",
@@ -507,6 +691,7 @@
     "members": "구성원",
     "membersDescription": "본인은 자동으로 소유자에 포함됩니다.",
     "membersPlaceholder": "이름 또는 회사 이메일로 검색",
+    "membersLoadError": "추가 가능한 구성원을 불러오지 못했습니다.",
     "submit": "대화 만들기",
     "creating": "만드는 중",
     "error": "대화를 만들지 못했습니다. 구성원과 이름을 확인한 뒤 다시 시도해 주세요."
@@ -516,6 +701,7 @@
     "title": "대화 구성원",
     "description": "{{name}}의 참여자와 대화 권한을 관리합니다.",
     "loadError": "대화 구성원을 불러오지 못했습니다.",
+    "candidatesLoadError": "추가 가능한 구성원을 불러오지 못했습니다.",
     "addTitle": "구성원 추가",
     "searchLabel": "이름 또는 회사 이메일",
     "roleLabel": "초기 역할",
@@ -650,21 +836,131 @@
   "people": {
     "eyebrow": "조직 디렉터리",
     "title": "구성원을 찾아 바로 대화하세요",
-    "description": "SKAX 인사 디렉터리와 실시간 연결 상태를 기반으로 안전한 DM을 시작합니다.",
+    "description": "SKAX 인사 디렉터리와 현재 메신저 접속 상태를 기준으로 안전한 DM을 시작합니다.",
     "search": "이름, 이메일, 직책 검색",
+    "filters": {
+      "search": "구성원 검색",
+      "organization": "조직",
+      "jobTitle": "직무 또는 직책",
+      "presence": "메신저 접속 상태",
+      "clear": "필터 초기화",
+      "presenceOptions": {
+        "ALL": "전체 상태",
+        "AVAILABLE": "메신저 접속 중",
+        "OFFLINE": "오프라인",
+        "UNKNOWN": "상태 확인 불가"
+      }
+    },
+    "results": {
+      "loading": "구성원 수를 확인하는 중",
+      "all": "전체 {{total}}명 중 {{loaded}}명 표시",
+      "filtered": "현재 불러온 일치 {{loaded}}명 · 디렉터리 후보 {{total}}명"
+    },
     "openError": "DM을 열지 못했습니다.",
     "loadError": "구성원 목록을 불러오지 못했습니다.",
+    "refreshError": "최신 목록으로 갱신하지 못해 마지막으로 불러온 결과를 표시합니다.",
+    "loadMoreError": "다음 구성원 범위를 불러오지 못했습니다.",
+    "retry": "다시 시도",
+    "loading": "구성원 목록을 불러오는 중",
+    "loadMore": "구성원 더 보기",
+    "loadingMore": "구성원을 더 불러오는 중",
+    "presenceUnavailable": "메신저 접속 상태를 확인할 수 없습니다. 접속 중·오프라인 필터는 확인 가능한 결과만 표시합니다.",
     "message": "대화",
+    "messagePerson": "{{name}}님에게 메시지 보내기",
+    "openingPerson": "{{name}}님과 대화를 여는 중",
     "emptyTitle": "구성원이 없습니다",
     "emptyDescription": "검색어를 줄이거나 다른 이름으로 찾아보세요.",
-    "directoryNote": "구성원 정보는 인사 디렉터리에서, 연결 상태는 자동 갱신됩니다."
+    "pageEmptyDescription": "현재 범위에는 조건과 일치하는 구성원이 없습니다. 다음 범위를 확인해 보세요.",
+    "directoryNote": "구성원 정보는 인사 디렉터리에서 가져오며, 접속 상태는 메신저 연결 신호로 자동 갱신됩니다."
+  },
+  "draft": {
+    "loading": "서버 초안을 불러오는 중",
+    "saving": "초안을 안전하게 저장하는 중",
+    "saved": "서버에 초안 저장됨",
+    "error": "초안을 서버에 저장하지 못했습니다",
+    "conflict": "다른 창에서 초안이 변경되었습니다",
+    "conflictDescription": "서버의 최신 초안과 현재 입력이 다릅니다. 사용할 내용을 선택하세요.",
+    "useServer": "서버 초안 사용",
+    "keepMine": "내 초안 저장"
+  },
+  "schedule": {
+    "action": "예약 전송",
+    "title": "메시지 예약 전송",
+    "description": "선택한 시각에 권한과 대화 정책을 다시 확인한 뒤 전송합니다.",
+    "timeLabel": "전송 시각",
+    "timeZone": "표시 시간대: {{timeZone}}",
+    "futureRequired": "현재보다 이후의 시각을 선택하세요.",
+    "nonexistentTime": "일광 절약 시간제로 시계가 앞으로 이동해 존재하지 않는 현지 시각입니다. 다른 시각을 선택하세요.",
+    "ambiguousTime": "일광 절약 시간제 종료로 두 번 반복되는 현지 시각입니다. 다른 시각을 선택하세요.",
+    "bodyRequired": "예약할 메시지를 먼저 작성하세요. 아래에서 기존 예약은 계속 확인하고 취소할 수 있습니다.",
+    "attachmentBlocked": "첨부 파일은 안전한 예약 보관 계약이 아직 없어 예약 전송할 수 없습니다. 첨부를 제거하거나 지금 전송하세요.",
+    "confirm": "전송 예약",
+    "scheduling": "예약하는 중",
+    "success": "메시지 전송을 예약했습니다.",
+    "error": "메시지 전송을 예약하지 못했습니다. 같은 내용으로 다시 시도하면 중복 예약되지 않습니다.",
+    "pendingTitle": "대기 중인 예약",
+    "pendingDescription": "예약 전송이 시작되기 전까지 취소할 수 있습니다.",
+    "pendingLoading": "예약 목록을 불러오는 중",
+    "pendingError": "예약 목록을 불러오지 못했습니다.",
+    "pendingLoadMore": "예약 메시지 더 보기",
+    "pendingLoadingMore": "예약 메시지를 더 불러오는 중",
+    "pendingMoreError": "다음 예약 메시지 범위를 불러오지 못했습니다. 다시 시도하세요.",
+    "pendingEmpty": "대기 중인 예약 전송이 없습니다.",
+    "conversationUnavailable": "현재 접근할 수 없는 대화",
+    "cancel": "예약 취소",
+    "cancelling": "취소하는 중",
+    "cancelError": "예약이 이미 시작되었거나 다른 창에서 변경되었습니다. 목록을 새로 고친 뒤 확인하세요."
   },
   "admin": {
     "eyebrow": "메신저 관리",
     "loadError": "관리 정보를 불러오지 못했습니다.",
     "overview": {
       "title": "대화 운영 현황",
-      "description": "테넌트 대화, 보관, 제한 등급, Space 연동 상태를 점검합니다."
+      "description": "테넌트 대화, 보관, 제한 등급, Space 연동 상태를 점검합니다.",
+      "governedConversations": "정책 적용 대화",
+      "governedConversationsDescription": "현재 대화 메타데이터만 표시하며 관리자는 메시지 내용을 조회할 수 없습니다.",
+      "emptyTitle": "정책 적용 대화가 없습니다",
+      "emptyDescription": "현재 테넌트 범위에서 활성 대화를 확인할 수 없습니다."
+    },
+    "readiness": {
+      "title": "런타임 준비 상태",
+      "description": "Provider와 정책 집행의 실제 상태, 증적 최신성 및 남은 작업을 확인합니다.",
+      "contractUnavailable": "런타임 준비 상태 증적을 받지 못했습니다. 어떤 Provider나 정책 집행 기능도 준비된 것으로 간주하지 않습니다.",
+      "overallState": "전체 런타임 상태: {{state}}",
+      "evaluated": "{{time}} 평가",
+      "required": "필수",
+      "optional": "선택",
+      "yes": "예",
+      "no": "아니요",
+      "neverVerified": "검증 이력 없음",
+      "evidence": "설정: {{configured}} · 실제 적용: {{effective}} · 검증: {{verified}} · {{freshness}}",
+      "pendingWork": "남은 정책 작업: {{count}}건",
+      "states": {
+        "READY": "준비됨",
+        "DEGRADED": "성능 저하",
+        "BLOCKED": "차단됨",
+        "UNAVAILABLE": "사용 불가",
+        "DISABLED": "비활성"
+      },
+      "freshness": {
+        "CURRENT": "최신 증적",
+        "STALE": "오래된 증적",
+        "NEVER": "검증 증적 없음"
+      },
+      "capabilities": {
+        "ATTACHMENT_STORAGE": "첨부 저장소",
+        "ATTACHMENT_SCANNER": "첨부 보안 검사",
+        "MEETING": "회의 Provider",
+        "SEARCH": "메시지 검색",
+        "PRESENCE": "메신저 접속 상태",
+        "REALTIME_FANOUT": "실시간 Fan-out",
+        "DURABLE_COMMIT": "메시지 영속 커밋",
+        "SSE_RESUME": "실시간 스트림 재개",
+        "NOTIFICATION_OUTBOX": "알림 Outbox",
+        "OBSERVABILITY": "텔레메트리 전송",
+        "RETENTION_ENFORCEMENT": "보존정책 집행",
+        "SCHEDULED_DELIVERY": "예약 전송"
+      }
     },
     "metrics": {
       "conversations": "활성 대화",

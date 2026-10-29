@@ -22,6 +22,7 @@ export type ContentDialogProps = {
   onClose: () => void;
   children: React.ReactNode;
   busy?: boolean;
+  disableRestoreFocus?: boolean;
   fullScreen?: boolean;
   hideHeader?: boolean;
   maxWidth?: DialogProps['maxWidth'];
@@ -46,6 +47,7 @@ export function ContentDialog({
   onClose,
   children,
   busy = false,
+  disableRestoreFocus = false,
   fullScreen = false,
   hideHeader = false,
   maxWidth = 'sm',
@@ -73,6 +75,7 @@ export function ContentDialog({
       aria-labelledby={titleId}
       aria-describedby={!hideHeader && description ? descriptionId : undefined}
       onClose={busy ? undefined : onClose}
+      disableRestoreFocus={disableRestoreFocus}
       slotProps={slotProps}
       data-testid={testId}
     >

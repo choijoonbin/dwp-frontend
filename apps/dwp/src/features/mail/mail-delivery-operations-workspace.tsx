@@ -461,7 +461,7 @@ function DeliveryReceiptInspector({
           label={t(`secondary.delivery.state.${receipt.state}`)}
         />
       </Stack>
-      {receipt.state === 'UNKNOWN' && (
+      {(receipt.state === 'UNKNOWN' || receipt.state === 'RESULT_UNKNOWN') && (
         <Alert severity="warning" sx={{ mt: 2 }}>
           {t('secondary.delivery.unknownGuidance')}
         </Alert>
@@ -557,7 +557,7 @@ function DeliveryReceiptInspector({
             {t('secondary.delivery.reconcile')}
           </ActionButton>
         )}
-        {receipt.retryEligibility === 'ELIGIBLE' && (
+        {receipt.retryEligibility === 'ELIGIBLE' && receipt.state !== 'RESULT_UNKNOWN' && (
           <ActionButton
             intent="primary"
             startIcon={<RefreshCw size={16} />}
@@ -619,8 +619,14 @@ function DeliveryReceiptInspector({
 function deliveryColor(state: string): 'default' | 'info' | 'success' | 'warning' | 'error' {
   if (state === 'DELIVERED' || state === 'ACCEPTED') return 'success';
   if (state === 'BOUNCED' || state === 'FAILED') return 'error';
-  if (state === 'UNKNOWN') return 'warning';
-  if (state === 'SCHEDULED' || state === 'QUEUED' || state === 'SENDING') return 'info';
+  if (state === 'UNKNOWN' || state === 'RESULT_UNKNOWN') return 'warning';
+  if (
+    state === 'SCHEDULED' ||
+    state === 'QUEUED' ||
+    state === 'SENDING' ||
+    state === 'PROVIDER_ACCEPTED'
+  )
+    return 'info';
   return 'default';
 }
 

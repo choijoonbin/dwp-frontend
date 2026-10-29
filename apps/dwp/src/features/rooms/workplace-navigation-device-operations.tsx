@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useSearchParams } from 'react-router-dom';
 import {
   Activity,
   Cpu,
@@ -14,6 +15,7 @@ import {
 } from 'lucide-react';
 import {
   getWorkplaceDeviceAuditEvents,
+  getWorkplaceDeviceCommandReceipt,
   getWorkplaceDeviceCommands,
   getWorkplaceDeviceProviders,
   getWorkplaceDevices,
@@ -39,6 +41,7 @@ import {
 } from './workplace-navigation-device-workflows';
 import {
   workplaceDeviceAttentionTone,
+  workplaceDeviceCommandMatchesTarget,
   workplaceNavigationCopy,
   workplaceProviderDisplayState,
 } from './workplace-navigation-model';
@@ -140,6 +143,7 @@ function DeviceSummary({
 
 function DeviceInspector({
   device,
+  requestedCommandId,
   workflow,
   setWorkflow,
   canMutate,
@@ -147,6 +151,7 @@ function DeviceInspector({
   onCompleted,
 }: {
   device: WorkplaceDevice;
+  requestedCommandId: string | null;
   workflow: Workflow;
   setWorkflow: (value: Workflow) => void;
   canMutate: boolean;
@@ -164,6 +169,36 @@ function DeviceInspector({
     queryFn: () => getWorkplaceDeviceCommands(device.deviceId),
     retry: false,
   });
+  const requestedCommandQuery = useQuery({
+    queryKey: ['workplace', 'device-command', requestedCommandId],
+    queryFn: () => getWorkplaceDeviceCommandReceipt(requestedCommandId!),
+    enabled: Boolean(requestedCommandId),
+    retry: false,
+  });
+  const requestedCommand = workplaceDeviceCommandMatchesTarget(
+    requestedCommandQuery.data,
+    device.deviceId,
+    requestedCommandId ?? ''
+  )
+    ? requestedCommandQuery.data
+    : null;
+  const requestedCommandInvalid = Boolean(
+    requestedCommandId &&
+    (requestedCommandQuery.isError ||
+      (requestedCommandQuery.isSuccess && requestedCommand === null))
+  );
+  const displayedCommands = useMemo(() => {
+    const commands = commandsQuery.data ?? [];
+    if (requestedCommandId) {
+      return requestedCommand
+        ? [
+            requestedCommand,
+            ...commands.filter((command) => command.commandId !== requestedCommandId).slice(0, 4),
+          ]
+        : [];
+    }
+    return commands.slice(0, 5);
+  }, [commandsQuery.data, requestedCommand, requestedCommandId]);
   return (
     <Box
       component="aside"
@@ -274,24 +309,47 @@ function DeviceInspector({
           <Typography fontWeight={800} sx={{ mb: 1 }}>
             <Activity size={16} aria-hidden="true" /> {copy.commandReceipt}
           </Typography>
-          {commandsQuery.isLoading ? (
+          {requestedCommandInvalid ? (
+            <InlineFeedback severity="error">
+              {locale === 'ko'
+                ? '요청한 명령 영수증이 이 디바이스의 권위 기록과 일치하지 않습니다.'
+                : 'The requested command receipt does not match this device authority record.'}
+            </InlineFeedback>
+          ) : requestedCommandId && requestedCommandQuery.isLoading ? (
             <LoadingState embedded label={copy.loading} />
-          ) : commandsQuery.isError ? (
+          ) : commandsQuery.isLoading && !requestedCommand ? (
+            <LoadingState embedded label={copy.loading} />
+          ) : commandsQuery.isError && !requestedCommand ? (
             <InlineFeedback severity="error">
               {locale === 'ko'
                 ? '명령 이력을 불러오지 못했습니다.'
                 : 'Command history unavailable.'}
             </InlineFeedback>
-          ) : commandsQuery.data?.length ? (
+          ) : displayedCommands.length ? (
             <Stack spacing={0.75}>
-              {commandsQuery.data.slice(0, 5).map((command) => (
+              {displayedCommands.map((command) => (
                 <Stack
                   key={command.commandId}
+                  data-testid={`workplace-device-command-${command.commandId}`}
                   direction="row"
                   justifyContent="space-between"
                   gap={1}
+                  sx={
+                    command.commandId === requestedCommandId
+                      ? { bgcolor: 'action.selected', borderRadius: 1, p: 0.75 }
+                      : undefined
+                  }
                 >
-                  <Typography variant="body2">{command.commandType}</Typography>
+                  <Box sx={{ minWidth: 0 }}>
+                    <Typography variant="body2">{command.commandType}</Typography>
+                    <Typography
+                      variant="caption"
+                      color="text.secondary"
+                      sx={{ overflowWrap: 'anywhere' }}
+                    >
+                      {command.commandId}
+                    </Typography>
+                  </Box>
                   <Chip
                     size="small"
                     color={stateColor(command.state)}
@@ -349,7 +407,10 @@ export function WorkplaceDeviceOperations({
   const { t } = useTranslation('rooms');
   const copy = workplaceNavigationCopy(locale);
   const queryClient = useQueryClient();
-  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const requestedDeviceId = searchParams.get('device')?.trim() || null;
+  const requestedCommandId = searchParams.get('command')?.trim() || null;
+  const [selectedId, setSelectedId] = useState<string | null>(requestedDeviceId);
   const [workflow, setWorkflow] = useState<Workflow>(null);
   const devicesQuery = useQuery({
     queryKey: ['workplace', 'devices'],
@@ -364,11 +425,28 @@ export function WorkplaceDeviceOperations({
     refetchInterval: 30_000,
   });
   const devices = useMemo(() => devicesQuery.data ?? [], [devicesQuery.data]);
+  const requestedDeviceUnavailable = Boolean(
+    requestedDeviceId &&
+    devicesQuery.isSuccess &&
+    !devices.some((device) => device.deviceId === requestedDeviceId)
+  );
   useEffect(() => {
-    if (!selectedId && devices[0]) setSelectedId(devices[0].deviceId);
-    else if (selectedId && !devices.some((device) => device.deviceId === selectedId))
-      setSelectedId(devices[0]?.deviceId ?? null);
-  }, [devices, selectedId]);
+    if (requestedDeviceId) setSelectedId(requestedDeviceId);
+  }, [requestedDeviceId]);
+  useEffect(() => {
+    if (
+      requestedDeviceId ||
+      !devices.length ||
+      (selectedId && devices.some((device) => device.deviceId === selectedId))
+    )
+      return;
+    const fallbackId = devices[0].deviceId;
+    setSelectedId(fallbackId);
+    const next = new URLSearchParams(searchParams);
+    next.set('device', fallbackId);
+    next.delete('command');
+    setSearchParams(next, { replace: true });
+  }, [devices, requestedDeviceId, searchParams, selectedId, setSearchParams]);
   useEffect(() => setWorkflow(null), [selectedId]);
   const selected = devices.find((device) => device.deviceId === selectedId) ?? null;
   const canMutate = canManage && elevated;
@@ -479,6 +557,12 @@ export function WorkplaceDeviceOperations({
             ? '장치 Registry를 불러오지 못했습니다.'
             : 'The device registry is unavailable.'}
         </InlineFeedback>
+      ) : requestedDeviceUnavailable && devices.length === 0 ? (
+        <InlineFeedback severity="error" data-testid="workplace-device-target-error">
+          {locale === 'ko'
+            ? '요청한 디바이스가 권한 있는 장치 목록에 없습니다. 다른 장치로 대체하지 않았습니다.'
+            : 'The requested device is not in the authorized registry. No other device was substituted.'}
+        </InlineFeedback>
       ) : devices.length === 0 ? (
         <EmptyState
           icon={<Cpu />}
@@ -508,21 +592,36 @@ export function WorkplaceDeviceOperations({
                 key={device.deviceId}
                 device={device}
                 selected={device.deviceId === selectedId}
-                onSelect={() => setSelectedId(device.deviceId)}
+                onSelect={() => {
+                  setSelectedId(device.deviceId);
+                  const next = new URLSearchParams(searchParams);
+                  next.set('device', device.deviceId);
+                  next.delete('command');
+                  setSearchParams(next, { replace: true });
+                }}
                 locale={locale}
               />
             ))}
           </Box>
-          {selected && (
+          {requestedDeviceUnavailable ? (
+            <InlineFeedback severity="error" data-testid="workplace-device-target-error">
+              {locale === 'ko'
+                ? '요청한 디바이스가 권한 있는 장치 목록에 없습니다. 다른 장치로 대체하지 않았습니다.'
+                : 'The requested device is not in the authorized registry. No other device was substituted.'}
+            </InlineFeedback>
+          ) : selected ? (
             <DeviceInspector
               device={selected}
+              requestedCommandId={
+                selected.deviceId === requestedDeviceId ? requestedCommandId : null
+              }
               workflow={workflow}
               setWorkflow={setWorkflow}
               canMutate={canMutate}
               locale={locale}
               onCompleted={refresh}
             />
-          )}
+          ) : null}
         </Box>
       )}
     </PageCanvas>

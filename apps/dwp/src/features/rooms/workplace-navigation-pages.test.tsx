@@ -69,11 +69,11 @@ describe('Workplace wayfinding entry page', () => {
     host.remove();
   });
 
-  async function renderPage() {
+  async function renderPage(initialEntry = '/workplace/navigation') {
     await act(async () => {
       root.render(
         <QueryClientProvider client={queryClient}>
-          <MemoryRouter initialEntries={['/workplace/navigation']}>
+          <MemoryRouter initialEntries={[initialEntry]}>
             <WorkplaceWayfindingPage />
           </MemoryRouter>
         </QueryClientProvider>
@@ -114,6 +114,44 @@ describe('Workplace wayfinding entry page', () => {
     expect(host.textContent).toContain('site-seoul');
     expect(wayfindingRender).toHaveBeenCalledWith(
       expect.objectContaining({ siteId: 'site-seoul' })
+    );
+  });
+
+  it('restores the complete shared route criteria from strict boolean query values', async () => {
+    api.explore.mockResolvedValue({
+      sites: [{ siteId: 'site-seoul', name: 'Seoul HQ', state: 'ACTIVE' }],
+      selectedFloor: null,
+      resources: [],
+      occupancy: [],
+    });
+
+    await renderPage(
+      '/workplace/navigation?siteId=site-seoul&originPoiId=entry-1&destinationPoiId=room-1&accessible=true&avoidStairs=true&v=1'
+    );
+
+    expect(wayfindingRender).toHaveBeenLastCalledWith(
+      expect.objectContaining({
+        siteId: 'site-seoul',
+        initialOriginPoiId: 'entry-1',
+        initialDestinationPoiId: 'room-1',
+        initialAccessible: true,
+        initialAvoidStairs: true,
+      })
+    );
+  });
+
+  it('does not coerce non-canonical boolean query values to true', async () => {
+    api.explore.mockResolvedValue({
+      sites: [{ siteId: 'site-seoul', name: 'Seoul HQ', state: 'ACTIVE' }],
+      selectedFloor: null,
+      resources: [],
+      occupancy: [],
+    });
+
+    await renderPage('/workplace/navigation?accessible=1&avoidStairs=yes');
+
+    expect(wayfindingRender).toHaveBeenLastCalledWith(
+      expect.objectContaining({ initialAccessible: false, initialAvoidStairs: false })
     );
   });
 });

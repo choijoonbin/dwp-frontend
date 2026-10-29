@@ -19,6 +19,8 @@ import ListSubheader from '@mui/material/ListSubheader';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
+import { MessagingReadErrorState } from './messaging-read-error-state';
+
 import type { ReactNode } from 'react';
 
 export function MessagingSearchPalette({
@@ -28,7 +30,7 @@ export function MessagingSearchPalette({
 }: {
   open: boolean;
   onClose: () => void;
-  onOpenConversation: (conversationId: string) => void;
+  onOpenConversation: (conversationId: string, messageId?: string) => void;
 }) {
   const { t } = useTranslation('messaging');
   const toast = useToast();
@@ -79,20 +81,29 @@ export function MessagingSearchPalette({
         {query.trim().length < 2 ? (
           <PaletteStatus>{t('search.minimum')}</PaletteStatus>
         ) : search.isFetching && !results ? (
-          <Stack
-            direction="row"
-            spacing={1.2}
-            alignItems="center"
-            role="status"
-            sx={{ px: 2, py: 3 }}
-          >
-            <CircularProgress size={18} aria-hidden="true" />
-            <Typography variant="body2" color="text.secondary">
-              {t('search.loading')}
-            </Typography>
-          </Stack>
+          <Box component="li" sx={{ listStyle: 'none' }}>
+            <Stack
+              direction="row"
+              spacing={1.2}
+              alignItems="center"
+              role="status"
+              sx={{ px: 2, py: 3 }}
+            >
+              <CircularProgress size={18} aria-hidden="true" />
+              <Typography variant="body2" color="text.secondary">
+                {t('search.loading')}
+              </Typography>
+            </Stack>
+          </Box>
         ) : search.isError ? (
-          <PaletteStatus>{t('search.error')}</PaletteStatus>
+          <Box component="li" sx={{ listStyle: 'none' }}>
+            <MessagingReadErrorState
+              error={search.error}
+              title={t('search.error')}
+              retrying={search.isFetching}
+              onRetry={() => void search.refetch()}
+            />
+          </Box>
         ) : resultCount === 0 ? (
           <PaletteStatus>{t('search.empty')}</PaletteStatus>
         ) : (
@@ -122,7 +133,7 @@ export function MessagingSearchPalette({
                     primary={`${result.senderName} · ${result.conversationName ?? t('conversation.untitled')}`}
                     secondary={result.snippet}
                     onClick={() => {
-                      onOpenConversation(result.conversationId);
+                      onOpenConversation(result.conversationId, result.messageId);
                       onClose();
                     }}
                   />
@@ -198,8 +209,10 @@ function ResultRow({
 
 function PaletteStatus({ children }: { children: ReactNode }) {
   return (
-    <Typography color="text.secondary" variant="body2" sx={{ px: 2, py: 3 }}>
-      {children}
-    </Typography>
+    <Box component="li" sx={{ listStyle: 'none' }}>
+      <Typography color="text.secondary" variant="body2" sx={{ px: 2, py: 3 }}>
+        {children}
+      </Typography>
+    </Box>
   );
 }

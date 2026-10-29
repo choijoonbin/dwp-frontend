@@ -1,4 +1,4 @@
-import { useId, useMemo, useRef, useState } from 'react';
+import { memo, useId, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { AppWindow, Check, ChevronDown, ListTree, Rows3 } from 'lucide-react';
 import { ActionButton } from '@dwp-frontend/design-system';
@@ -308,6 +308,88 @@ function NotificationCenterPresentationGroupHeading({
   );
 }
 
+type NotificationPresentationRowHandlers = {
+  focus: (item: NotificationItem) => void;
+  toggleChecked: (item: NotificationItem, checked: boolean) => void;
+  openDetails: (item: NotificationItem) => void;
+  triage: (item: NotificationItem, action: NotificationTriageAction) => void;
+  openTarget?: (href: string) => void;
+  quickReply: (
+    item: NotificationItem,
+    target: { conversationId: string; replyToMessageId?: string },
+    body: string,
+    idempotencyKey: string
+  ) => Promise<void>;
+};
+
+const NotificationCenterPresentationRow = memo(function NotificationCenterPresentationRow({
+  item,
+  index,
+  profile,
+  protectedTitle,
+  now,
+  active,
+  checked,
+  busy,
+  concealContext,
+  tabIndex,
+  rowRefs,
+  showPrimaryActions,
+  density,
+  handlers,
+}: {
+  item: NotificationItem;
+  index: number;
+  profile?: NotificationDeliveryProfile;
+  protectedTitle: string;
+  now: number;
+  active: boolean;
+  checked: boolean;
+  busy: boolean;
+  concealContext: boolean;
+  tabIndex: number;
+  rowRefs: MutableRefObject<Array<HTMLButtonElement | null>>;
+  showPrimaryActions: boolean;
+  density: 'compact' | 'standard';
+  handlers: NotificationPresentationRowHandlers;
+}) {
+  const content = notificationArrivalContent(item, profile, protectedTitle);
+  const displayItem = { ...item, title: content.title, preview: content.preview };
+  return (
+    <Box
+      component="li"
+      data-notification-row-container
+      sx={{
+        contentVisibility: 'auto',
+        containIntrinsicSize: density === 'compact' ? 'auto 92px' : 'auto 136px',
+      }}
+    >
+      <NotificationActionCard
+        item={displayItem}
+        now={now}
+        active={active}
+        checked={checked}
+        busy={busy}
+        concealContext={concealContext}
+        tabIndex={tabIndex}
+        rowRef={(element) => {
+          rowRefs.current[index] = element;
+        }}
+        onFocus={() => handlers.focus(item)}
+        onToggleChecked={(nextChecked) => handlers.toggleChecked(item, nextChecked)}
+        onOpenDetails={() => handlers.openDetails(item)}
+        onTriage={(action) => handlers.triage(item, action)}
+        onOpenTarget={handlers.openTarget}
+        onQuickReply={(target, body, idempotencyKey) =>
+          handlers.quickReply(item, target, body, idempotencyKey)
+        }
+        showPrimaryActions={showPrimaryActions}
+        density={density}
+      />
+    </Box>
+  );
+});
+
 export function NotificationCenterPresentationList({
   items,
   presentation,
@@ -373,6 +455,37 @@ export function NotificationCenterPresentationList({
     [orderedItems]
   );
   const compact = presentation.density === 'DENSE';
+  const handlerRef = useRef<NotificationPresentationRowHandlers>({
+    focus: onFocusItem,
+    toggleChecked: onToggleChecked,
+    openDetails: onOpenDetails,
+    triage: onTriage,
+    openTarget: onOpenTarget,
+    quickReply: onQuickReply,
+  });
+  handlerRef.current = {
+    focus: onFocusItem,
+    toggleChecked: onToggleChecked,
+    openDetails: onOpenDetails,
+    triage: onTriage,
+    openTarget: onOpenTarget,
+    quickReply: onQuickReply,
+  };
+  const hasOpenTarget = Boolean(onOpenTarget);
+  const handlers = useMemo<NotificationPresentationRowHandlers>(
+    () => ({
+      focus: (item) => handlerRef.current.focus(item),
+      toggleChecked: (item, checked) => handlerRef.current.toggleChecked(item, checked),
+      openDetails: (item) => handlerRef.current.openDetails(item),
+      triage: (item, action) => handlerRef.current.triage(item, action),
+      ...(hasOpenTarget
+        ? { openTarget: (href: string) => handlerRef.current.openTarget?.(href) }
+        : {}),
+      quickReply: (item, target, body, idempotencyKey) =>
+        handlerRef.current.quickReply(item, target, body, idempotencyKey),
+    }),
+    [hasOpenTarget]
+  );
 
   return (
     <Box
@@ -403,39 +516,30 @@ export function NotificationCenterPresentationList({
             >
               {group.items.map((item) => {
                 const index = itemIndexById.get(item.notificationId) ?? 0;
-                const content = notificationArrivalContent(item, profile, protectedTitle);
-                const displayItem = { ...item, title: content.title, preview: content.preview };
                 const concealContext =
                   item.sensitive || !profile || profile.presentation.previewMode === 'HIDDEN';
                 return (
-                  <Box component="li" key={item.notificationId}>
-                    <NotificationActionCard
-                      item={displayItem}
-                      now={now}
-                      active={item.notificationId === selectedId}
-                      checked={selectedIds.has(item.notificationId)}
-                      busy={busy}
-                      concealContext={concealContext}
-                      tabIndex={
-                        item.notificationId === selectedId || (!selectedId && index === 0) ? 0 : -1
-                      }
-                      rowRef={(element) => {
-                        rowRefs.current[index] = element;
-                      }}
-                      onFocus={() => onFocusItem(item)}
-                      onToggleChecked={(checked) => onToggleChecked(item, checked)}
-                      onOpenDetails={() => onOpenDetails(item)}
-                      onTriage={(action) => onTriage(item, action)}
-                      onOpenTarget={onOpenTarget}
-                      onQuickReply={(target, body, idempotencyKey) =>
-                        onQuickReply(item, target, body, idempotencyKey)
-                      }
-                      showPrimaryActions={
-                        compactDetail || !detailOpen || item.notificationId !== detailItemId
-                      }
-                      density={compact ? 'compact' : 'standard'}
-                    />
-                  </Box>
+                  <NotificationCenterPresentationRow
+                    key={item.notificationId}
+                    item={item}
+                    index={index}
+                    profile={profile}
+                    protectedTitle={protectedTitle}
+                    now={now}
+                    active={item.notificationId === selectedId}
+                    checked={selectedIds.has(item.notificationId)}
+                    busy={busy}
+                    concealContext={concealContext}
+                    tabIndex={
+                      item.notificationId === selectedId || (!selectedId && index === 0) ? 0 : -1
+                    }
+                    rowRefs={rowRefs}
+                    showPrimaryActions={
+                      compactDetail || !detailOpen || item.notificationId !== detailItemId
+                    }
+                    density={compact ? 'compact' : 'standard'}
+                    handlers={handlers}
+                  />
                 );
               })}
             </Stack>

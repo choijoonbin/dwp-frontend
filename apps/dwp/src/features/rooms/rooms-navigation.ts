@@ -63,7 +63,7 @@ type RoomsNavigationGroup = {
 
 export const ROOMS_NAVIGATION: readonly RoomsNavigationGroup[] = [
   {
-    id: 'booking',
+    id: 'startAndBook',
     items: [
       {
         view: 'home',
@@ -80,16 +80,16 @@ export const ROOMS_NAVIGATION: readonly RoomsNavigationGroup[] = [
         requiredPermissionCode: 'VIEW',
       },
       {
-        view: 'wayfinding',
-        path: '/workplace/navigation',
-        icon: MapPinned,
+        view: 'planner',
+        path: '/workplace/planner',
+        icon: CalendarDays,
         requiredResourceKey: 'APP.WORKPLACE',
         requiredPermissionCode: 'VIEW',
       },
       {
-        view: 'planner',
-        path: '/workplace/planner',
-        icon: CalendarDays,
+        view: 'reservations',
+        path: '/workplace/reservations',
+        icon: CalendarRange,
         requiredResourceKey: 'APP.WORKPLACE',
         requiredPermissionCode: 'VIEW',
       },
@@ -100,10 +100,15 @@ export const ROOMS_NAVIGATION: readonly RoomsNavigationGroup[] = [
         requiredResourceKey: 'APP.WORKPLACE',
         requiredPermissionCode: 'VIEW',
       },
+    ],
+  },
+  {
+    id: 'onSite',
+    items: [
       {
-        view: 'reservations',
-        path: '/workplace/reservations',
-        icon: CalendarRange,
+        view: 'wayfinding',
+        path: '/workplace/navigation',
+        icon: MapPinned,
         requiredResourceKey: 'APP.WORKPLACE',
         requiredPermissionCode: 'VIEW',
       },
@@ -124,7 +129,7 @@ export const ROOMS_NAVIGATION: readonly RoomsNavigationGroup[] = [
     ],
   },
   {
-    id: 'workplaceAdministration',
+    id: 'operationsAndExceptions',
     items: [
       {
         view: 'admin-overview',
@@ -162,6 +167,32 @@ export const ROOMS_NAVIGATION: readonly RoomsNavigationGroup[] = [
         requiredPermissionCode: 'VIEW',
       },
       {
+        view: 'admin-service-fulfillment',
+        path: '/workplace/admin/service-fulfillment',
+        icon: ConciergeBell,
+        requiredResourceKey: 'ADMIN.WORKPLACE',
+        requiredPermissionCode: 'VIEW',
+      },
+      {
+        view: 'admin-visits',
+        path: '/workplace/admin/visits',
+        icon: UserRoundCheck,
+        requiredResourceKey: 'ADMIN.WORKPLACE',
+        requiredPermissionCode: 'VIEW',
+      },
+      {
+        view: 'admin-room-operations',
+        path: '/workplace/admin/meeting-operations',
+        icon: CalendarCheck2,
+        requiredResourceKey: 'ADMIN.ROOMS',
+        requiredPermissionCode: 'VIEW',
+      },
+    ],
+  },
+  {
+    id: 'spacesAndPolicy',
+    items: [
+      {
         view: 'admin-space-planning',
         path: '/workplace/admin/space-planning',
         icon: Building2,
@@ -197,12 +228,17 @@ export const ROOMS_NAVIGATION: readonly RoomsNavigationGroup[] = [
         requiredPermissionCode: 'VIEW',
       },
       {
-        view: 'admin-service-fulfillment',
-        path: '/workplace/admin/service-fulfillment',
-        icon: ConciergeBell,
-        requiredResourceKey: 'ADMIN.WORKPLACE',
+        view: 'admin-room-policy',
+        path: '/workplace/admin/meeting-policy',
+        icon: Settings2,
+        requiredResourceKey: 'ADMIN.ROOMS',
         requiredPermissionCode: 'VIEW',
       },
+    ],
+  },
+  {
+    id: 'serviceManagement',
+    items: [
       {
         view: 'admin-service-catalog',
         path: '/workplace/admin/service-catalog',
@@ -217,13 +253,11 @@ export const ROOMS_NAVIGATION: readonly RoomsNavigationGroup[] = [
         requiredResourceKey: 'ADMIN.WORKPLACE',
         requiredPermissionCode: 'VIEW',
       },
-      {
-        view: 'admin-visits',
-        path: '/workplace/admin/visits',
-        icon: UserRoundCheck,
-        requiredResourceKey: 'ADMIN.WORKPLACE',
-        requiredPermissionCode: 'VIEW',
-      },
+    ],
+  },
+  {
+    id: 'visitorsAndAccess',
+    items: [
       {
         view: 'admin-visit-policies',
         path: '/workplace/admin/visit-policies',
@@ -250,25 +284,6 @@ export const ROOMS_NAVIGATION: readonly RoomsNavigationGroup[] = [
         path: '/workplace/admin/kiosk-devices',
         icon: MonitorSmartphone,
         requiredResourceKey: 'ADMIN.WORKPLACE',
-        requiredPermissionCode: 'VIEW',
-      },
-    ],
-  },
-  {
-    id: 'meetingAdministration',
-    items: [
-      {
-        view: 'admin-room-operations',
-        path: '/workplace/admin/meeting-operations',
-        icon: CalendarCheck2,
-        requiredResourceKey: 'ADMIN.ROOMS',
-        requiredPermissionCode: 'VIEW',
-      },
-      {
-        view: 'admin-room-policy',
-        path: '/workplace/admin/meeting-policy',
-        icon: Settings2,
-        requiredResourceKey: 'ADMIN.ROOMS',
         requiredPermissionCode: 'VIEW',
       },
     ],

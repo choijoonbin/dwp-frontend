@@ -421,6 +421,13 @@ export function WorkplaceSafetyIncidentActions({
                   unknown: dispatch.unknownCount,
                 })}
               </Typography>
+              {dispatch.reviewState === 'MANUAL_REVIEW_REQUIRED' ? (
+                <InlineFeedback severity="error">
+                  {t('workplace.safety.dispatch.manualReviewRequired', {
+                    count: dispatch.manualReviewCount,
+                  })}
+                </InlineFeedback>
+              ) : null}
               <Typography variant="caption" color="text.secondary">
                 {formatDate(dispatch.updatedAt, { dateStyle: 'short', timeStyle: 'short' }, locale)}
               </Typography>

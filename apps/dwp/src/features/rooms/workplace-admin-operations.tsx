@@ -12,6 +12,7 @@ import {
   getWorkplaceAdminSites,
   getWorkplaceAdminFloors,
   getWorkplaceAuditEvents,
+  useProductSurfaceAuthority,
   useToast,
 } from '@dwp-frontend/shared-utils';
 import {
@@ -57,6 +58,10 @@ import { AuditResults } from './workplace-admin-audit-results';
 import { WorkplaceExperienceBookingInspector } from './workplace-experience-booking-inspector';
 import { useWorkplaceExperienceAuthority } from './workplace-experience-authority';
 import { WorkplaceExperienceQueryError } from './workplace-experience-ui';
+import {
+  canExecuteWorkplaceAdminBookingCommand,
+  WORKPLACE_ADMIN_BOOKING_COMMAND_OPTIONS,
+} from './workplace-admin-booking-command-authority';
 
 import type {
   WorkplaceAdminBooking,
@@ -141,6 +146,11 @@ export function WorkplaceAdminOperations() {
   const theme = useTheme();
   const mobile = useMediaQuery(theme.breakpoints.down('md'));
   const capabilities = useRoomsCapabilities();
+  const productAuthority = useProductSurfaceAuthority();
+  const canExecuteBookingCommand = canExecuteWorkplaceAdminBookingCommand(
+    capabilities.canManageWorkplaceAdmin,
+    productAuthority.snapshot?.envelope.activeAccessMode
+  );
   const authority = useWorkplaceExperienceAuthority();
   const [reviewTarget, setReviewTarget] = useState<WorkplaceAdminBooking | null>(null);
   useEffect(() => setReviewTarget(null), [authority]);
@@ -199,7 +209,7 @@ export function WorkplaceAdminOperations() {
   const [auditSize, setAuditSize] = useState(25);
   const [cancelTarget, setCancelTarget] = useState<WorkplaceAdminBooking | null>(null);
   const [reason, setReason] = useState('');
-  const legalHold = useWorkplaceLegalHoldControl(capabilities.canManageWorkplaceAdmin);
+  const legalHold = useWorkplaceLegalHoldControl(canExecuteBookingCommand);
   const range = operationsRangeToIso(appliedRange, timeZone);
   const draftIssue = operationsRangeIssue(draftRange);
   const bookingUserId = parseOperationUserId(bookingFilters.userId);
@@ -304,8 +314,14 @@ export function WorkplaceAdminOperations() {
       booking: WorkplaceAdminBooking;
       cancellationReason: string;
     }) => {
-      if (!capabilities.canManageWorkplaceAdmin) throw new Error('Manage permission required');
-      return forceCancelWorkplaceBooking(booking.bookingId, booking.version, cancellationReason);
+      if (!canExecuteBookingCommand)
+        throw new Error('Elevated Workplace management authority required');
+      return forceCancelWorkplaceBooking(
+        booking.bookingId,
+        booking.version,
+        cancellationReason,
+        WORKPLACE_ADMIN_BOOKING_COMMAND_OPTIONS
+      );
     },
     onSuccess: (saved) => {
       queryClient.setQueriesData<WorkplaceAdminBookingPage>(
@@ -386,6 +402,13 @@ export function WorkplaceAdminOperations() {
       {capabilities.isLoaded && !capabilities.canManageWorkplaceAdmin && (
         <RoomsPermissionNotice>{t('workplace.admin.operations.readOnly')}</RoomsPermissionNotice>
       )}
+      {capabilities.isLoaded &&
+        capabilities.canManageWorkplaceAdmin &&
+        !canExecuteBookingCommand && (
+          <RoomsPermissionNotice>
+            {t('workplace.admin.operations.elevationRequired')}
+          </RoomsPermissionNotice>
+        )}
 
       <Tabs
         value={tab}
@@ -654,7 +677,7 @@ export function WorkplaceAdminOperations() {
             data={scopeReady && !bookingsQuery.isError ? bookingsQuery.data : undefined}
             loading={bookingsQuery.isPending}
             mobile={mobile}
-            canManage={capabilities.canManageWorkplaceAdmin}
+            canManage={canExecuteBookingCommand}
             actionsEnabled={!bookingsQuery.isFetching && !bookingsQuery.isError}
             page={bookingPage}
             size={bookingSize}
@@ -728,7 +751,7 @@ export function WorkplaceAdminOperations() {
         submittingLabel={t('actions.cancelling')}
         submitIntent="danger"
         busy={cancelMutation.isPending}
-        submitDisabled={!capabilities.canManageWorkplaceAdmin || !reason.trim()}
+        submitDisabled={!canExecuteBookingCommand || !reason.trim()}
         onClose={() => {
           setCancelTarget(null);
           setReason('');
@@ -755,10 +778,7 @@ export function WorkplaceAdminOperations() {
         />
       </FormDialog>
 
-      <WorkplaceLegalHoldDialog
-        control={legalHold}
-        canManage={capabilities.canManageWorkplaceAdmin}
-      />
+      <WorkplaceLegalHoldDialog control={legalHold} canExecute={canExecuteBookingCommand} />
     </PageCanvas>
   );
 }

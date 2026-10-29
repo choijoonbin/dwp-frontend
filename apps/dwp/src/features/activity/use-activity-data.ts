@@ -12,14 +12,64 @@ import {
   useAuth,
   usePermissions,
 } from '@dwp-frontend/shared-utils';
-import type { WorkspaceActivityFilters } from '@dwp-frontend/shared-utils';
+import type {
+  DwaionUserRun,
+  WorkspaceActivityEvent,
+  WorkspaceActivityEvidence,
+  WorkspaceActivityFilters,
+} from '@dwp-frontend/shared-utils';
 
 import { activityQueryKeys, validActivityTimeRange } from './activity-model';
+import { isAuthoritativeActivityRootDenial, usableActivityQueryData } from './activity-query-state';
 
 function retryActivity(failureCount: number, error: Error) {
   return (
     !(error instanceof HttpError && [400, 401, 403, 404].includes(error.status)) && failureCount < 1
   );
+}
+
+export const ACTIVITY_FEED_REFRESH_INTERVAL_MS = 60_000;
+export const ACTIVITY_SOURCE_REFRESH_INTERVAL_MS = 5 * 60_000;
+export const ACTIVITY_RUNNING_REFRESH_INTERVAL_MS = 15_000;
+
+export function activityDetailRefreshInterval(
+  event: Pick<WorkspaceActivityEvent, 'state'> | undefined
+): number | false {
+  return event?.state === 'running' ? ACTIVITY_RUNNING_REFRESH_INTERVAL_MS : false;
+}
+
+export function activityRunRefreshInterval(
+  run: Pick<DwaionUserRun, 'runState'> | undefined
+): number | false {
+  return run?.runState === 'RUNNING' ? ACTIVITY_RUNNING_REFRESH_INTERVAL_MS : false;
+}
+
+export function activityEvidenceRefreshInterval(
+  _evidence: Pick<WorkspaceActivityEvidence, 'integrityStatus'> | undefined
+): number | false {
+  return false;
+}
+
+export function activityDetailStaleTime(
+  event: Pick<WorkspaceActivityEvent, 'state'> | undefined
+): number {
+  return event && activityDetailRefreshInterval(event) === false ? Infinity : 15_000;
+}
+
+export function activityDetailRefetchOnWindowFocus(
+  event: Pick<WorkspaceActivityEvent, 'state'> | undefined
+): boolean {
+  return activityDetailRefreshInterval(event) !== false;
+}
+
+export function activityRunStaleTime(run: Pick<DwaionUserRun, 'runState'> | undefined): number {
+  return run && activityRunRefreshInterval(run) === false ? Infinity : 15_000;
+}
+
+export function activityRunRefetchOnWindowFocus(
+  run: Pick<DwaionUserRun, 'runState'> | undefined
+): boolean {
+  return activityRunRefreshInterval(run) !== false;
 }
 
 export function useActivityData(filters: WorkspaceActivityFilters, eventId = '') {
@@ -44,7 +94,6 @@ export function useActivityData(filters: WorkspaceActivityFilters, eventId = '')
   const options = {
     enabled,
     staleTime: 15_000,
-    refetchInterval: 60_000,
     retry: retryActivity,
     meta: { accessSensitive: true },
   };
@@ -57,6 +106,7 @@ export function useActivityData(filters: WorkspaceActivityFilters, eventId = '')
       if (!validRange) throw new HttpError('Invalid activity time range.', 400);
       return getActivityPage(filters, signal);
     },
+    refetchInterval: ACTIVITY_FEED_REFRESH_INTERVAL_MS,
   });
   const summary = useQuery({
     ...options,
@@ -65,6 +115,7 @@ export function useActivityData(filters: WorkspaceActivityFilters, eventId = '')
       requireAccess();
       return getActivityExecutionSummary(signal);
     },
+    refetchInterval: ACTIVITY_FEED_REFRESH_INTERVAL_MS,
   });
   const detail = useQuery({
     ...options,
@@ -75,8 +126,11 @@ export function useActivityData(filters: WorkspaceActivityFilters, eventId = '')
       if (!eventId) throw new HttpError('Activity event is unavailable.', 404);
       return getActivityEvent(eventId, signal);
     },
+    staleTime: (query) => activityDetailStaleTime(query.state.data),
+    refetchInterval: (query) => activityDetailRefreshInterval(query.state.data),
+    refetchOnWindowFocus: (query) => activityDetailRefetchOnWindowFocus(query.state.data),
   });
-  const selectedEvent = detail.isError ? undefined : detail.data;
+  const selectedEvent = usableActivityQueryData(detail);
   const candidateExecutionId =
     selectedEvent?.source === 'DWAI_ON' ? (selectedEvent.executionId ?? '') : '';
   const agentExecutionId = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/iu.test(
@@ -93,6 +147,9 @@ export function useActivityData(filters: WorkspaceActivityFilters, eventId = '')
       if (!canLoadAgentEvidence) throw new HttpError('Agent evidence access is unavailable.', 403);
       return getDwaionUserRun(agentExecutionId, signal);
     },
+    staleTime: (query) => activityRunStaleTime(query.state.data),
+    refetchInterval: (query) => activityRunRefreshInterval(query.state.data),
+    refetchOnWindowFocus: (query) => activityRunRefetchOnWindowFocus(query.state.data),
   });
   const evidenceTarget = selectedEvent
     ? selectedEvent.source === 'DWAI_ON'
@@ -119,6 +176,10 @@ export function useActivityData(filters: WorkspaceActivityFilters, eventId = '')
         ? getWorkspaceActivityAuditEvidence(evidenceTarget, agentExecutionId, signal)
         : getWorkspaceActivityEventEvidence(evidenceTarget, signal);
     },
+    staleTime: Infinity,
+    retry: false,
+    refetchInterval: false,
+    refetchOnWindowFocus: false,
   });
   const sources = useQuery({
     ...options,
@@ -127,7 +188,11 @@ export function useActivityData(filters: WorkspaceActivityFilters, eventId = '')
       requireAccess();
       return getWorkspaceActivitySourceStatuses(signal);
     },
+    refetchInterval: ACTIVITY_SOURCE_REFRESH_INTERVAL_MS,
   });
+  const rootDenied = [feed, summary, sources].some(
+    (query) => query.isError && isAuthoritativeActivityRootDenial(query.error)
+  );
   // Repaint freshness when polling is paused/offline; an old success must not stay "live".
   const [now, setNow] = useState(Date.now);
   useEffect(() => {
@@ -145,5 +210,5 @@ export function useActivityData(filters: WorkspaceActivityFilters, eventId = '')
       ...(canLoadEvidence ? [evidence.refetch()] : []),
     ]);
   };
-  return { feed, summary, detail, executionRun, evidence, sources, now, refresh };
+  return { feed, summary, detail, executionRun, evidence, sources, rootDenied, now, refresh };
 }

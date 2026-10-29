@@ -361,11 +361,13 @@
       "degraded": "Recent run retrieval needs attention",
       "pending": "Waiting for the first retrieval"
     },
-    "lastRetrieved": "Last retrieved {{at}} · checked automatically every 60 seconds",
+    "lastRetrieved": "Last retrieved {{at}} · refresh cadence adapts to run state",
     "refresh": "Refresh AI run activity",
     "loading": "Loading AI run activity.",
     "errorTitle": "AI run activity could not be loaded",
     "errorDescription": "Unverified run state was not displayed. Check the connection and try again.",
+    "cachedTitle": "AI run activity refresh failed",
+    "cachedDescription": "The last verified run window remains visible while a fresh copy is unavailable.",
     "summaryLabel": "AI run status summary",
     "metrics": {
       "total": "Retrieved runs",
@@ -446,6 +448,8 @@
       "error": "The current list was preserved, but older runs could not be loaded."
     },
     "details": {
+      "cachedRunTitle": "Selected run refresh failed",
+      "cachedRunDescription": "The last verified run detail remains visible. Refresh to verify its current state.",
       "title": "Selected run details",
       "inspectorLabel": "Execution trace inspector",
       "copyRunId": "Copy run ID",
@@ -509,6 +513,79 @@
         "description": "This local-only sample verifies the contract. It is not counted as a production connection or success.",
         "listLabel": "Development contract verification runs",
         "summaryExcluded": "{{count}} runs are excluded from the operational metrics above and identified with badges in the list."
+      },
+      "failure": {
+        "codes": {
+          "AGENT_EXECUTION_FAILED": {
+            "title": "The AI execution could not finish",
+            "description": "The run ended before a verified result was produced. No internal error detail is exposed here."
+          },
+          "AGENT_SAFETY_CONFIGURATION_REQUIRED": {
+            "title": "Safety configuration is required",
+            "description": "The run stopped because its required safety configuration was not available."
+          },
+          "ASK_RUNTIME_FAILED": {
+            "title": "The AI runtime is temporarily unavailable",
+            "description": "The managed runtime could not complete this run."
+          },
+          "CONTEXT_SOURCE_NOT_CONFIGURED": {
+            "title": "A required source is not configured",
+            "description": "The run could not retrieve required evidence because its source connection is not configured."
+          },
+          "CONTEXT_SOURCE_UNAVAILABLE": {
+            "title": "A required source is unavailable",
+            "description": "The run could not retrieve required evidence from a configured source."
+          },
+          "MODEL_CALL_FAILED": {
+            "title": "The model request failed",
+            "description": "The approved model route did not return a usable result for this run."
+          },
+          "MODEL_GROUNDING_CONTRACT_INVALID": {
+            "title": "Source grounding could not be verified",
+            "description": "The response did not satisfy the required evidence-grounding contract."
+          },
+          "MODEL_OUTPUT_CONTRACT_INVALID": {
+            "title": "The response format could not be verified",
+            "description": "The model response did not satisfy the required output contract."
+          },
+          "MODEL_OUTPUT_MISSING": {
+            "title": "No usable response was returned",
+            "description": "The model route completed without a response that could be safely presented."
+          },
+          "MODEL_PROVIDER_UNAVAILABLE": {
+            "title": "The model service is unavailable",
+            "description": "The approved model provider could not serve this run."
+          },
+          "MODEL_RESPONSE_INVALID_JSON": {
+            "title": "The model response could not be read",
+            "description": "The structured response was invalid and was not presented as a result."
+          },
+          "MODEL_ROUTE_CONFIGURATION_INVALID": {
+            "title": "The model route configuration is invalid",
+            "description": "The configured model route did not pass runtime validation."
+          },
+          "MODEL_ROUTE_CONFIGURATION_REQUIRED": {
+            "title": "A model route must be configured",
+            "description": "No approved model route was available for this run."
+          },
+          "NO_SCOPED_EVIDENCE": {
+            "title": "No permitted evidence was available",
+            "description": "No evidence within your current access scope could support a verified result."
+          },
+          "GENERIC": {
+            "title": "This run could not be completed",
+            "description": "No additional user-safe error detail is available."
+          }
+        },
+        "recoveryLabel": "What you can do:",
+        "recovery": {
+          "RETRY_LATER": "Try again later.",
+          "REVIEW_CONFIGURATION": "Review the AI and connector configuration, then retry.",
+          "CHECK_SOURCE_CONNECTION": "Check the source connection, then retry.",
+          "REVIEW_REQUEST": "Review the request scope or wording, then retry.",
+          "CONTACT_SUPPORT": "Contact support with the run ID if the problem continues.",
+          "GENERIC": "Try again. If the problem continues, contact support with the run ID."
+        }
       },
       "measurement": {
         "MEASURING": "Measuring",
@@ -2014,6 +2091,11 @@
     "attention": {
       "title": "Signals to inspect now",
       "description": "Current executions that need a user decision or policy review.",
+      "listLabel": "Current signals requiring review",
+      "stateChangedAt": "State changed {{at}}",
+      "latestAt": "Latest signal {{at}}",
+      "openItem": "Open signal: {{title}}",
+      "legacyFallback": "Exact signals are not available from this ledger version. Open the filtered timeline to continue.",
       "input": "View {{count}} needing input",
       "blocked": "View {{count}} policy blocked",
       "clearTitle": "No signal needs immediate review",
@@ -3584,6 +3666,30 @@
     }
   },
   "activityFoundation": {
+    "cachedSummary": {
+      "title": "Current summary refresh failed",
+      "description": "Showing the last successfully retrieved execution summary while a fresh snapshot is retried."
+    },
+    "cachedFeed": {
+      "title": "Recent activity refresh failed",
+      "description": "Showing previously retrieved events. Their freshness is degraded until refresh succeeds."
+    },
+    "cachedDetail": {
+      "title": "Signal refresh failed",
+      "description": "Showing the last successfully retrieved signal while current access and freshness are retried."
+    },
+    "cachedRun": {
+      "title": "Run observability refresh failed",
+      "description": "Showing the last successfully retrieved run evidence. No new terminal state is inferred."
+    },
+    "cachedEvidence": {
+      "title": "Integrity evidence refresh failed",
+      "description": "Showing the last successfully retrieved evidence while a fresh verification is retried."
+    },
+    "summaryUnavailable": {
+      "title": "Current execution summary is unavailable",
+      "description": "The timeline can still be reviewed, but current totals are not shown until this summary succeeds."
+    },
     "sample": {
       "title": "Development verification data",
       "description": "This local contract sample is excluded from operational totals."
@@ -3593,7 +3699,8 @@
       "AVAILABLE": "Retrieved",
       "FORBIDDEN": "Outside your access scope",
       "UNAVAILABLE": "Unavailable",
-      "partial": "Some sources could not be retrieved. Only verified history is shown; missing history does not mean zero events."
+      "partial": "Some sources could not be retrieved. Only verified history is shown; missing history does not mean zero events.",
+      "retry": "Retry activity sources"
     },
     "connectorStatus": {
       "title": "Personal sync-ledger status",
@@ -3602,9 +3709,15 @@
       "empty": "No personal sync ledger is visible in the current access scope. This does not mean every connection is healthy.",
       "unavailableTitle": "Sync-ledger status is unavailable",
       "unavailableDescription": "Unverified connections were not represented as healthy.",
+      "cachedDescription": "The latest refresh failed. Showing the last successfully retrieved sync-ledger status while you retry.",
+      "lastAttempt": "Last sync attempt {{at}}",
+      "noAttempt": "No recorded sync attempt",
       "lastSuccess": "Last successful sync {{at}}",
       "noSuccess": "No successful sync recorded",
       "observedAt": "Ledger observed {{at}}",
+      "readySummary": "Healthy connections: {{count}}",
+      "resolveMail": "Resolve mail connection",
+      "resolveCalendar": "Resolve calendar connection",
       "localFixture": "Development verification data",
       "states": {
         "READY": "Ready",
@@ -3827,6 +3940,7 @@
     "nextPage": "Older events",
     "filters": {
       "advanced": "Advanced filters",
+      "queryMinimum": "Enter at least 3 characters to search. A full event or run UUID is also accepted.",
       "source": "Source",
       "objectType": "Object type",
       "objectId": "Object ID",

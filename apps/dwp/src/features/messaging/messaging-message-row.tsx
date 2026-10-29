@@ -1,4 +1,4 @@
-import { useId, useState } from 'react';
+import { useId, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   Bookmark,
@@ -76,6 +76,7 @@ export function MessagingMessageRow({
   const { t, i18n } = useTranslation('messaging');
   const [reactionAnchor, setReactionAnchor] = useState<HTMLElement | null>(null);
   const [actionAnchor, setActionAnchor] = useState<HTMLElement | null>(null);
+  const pendingActionMenuActionRef = useRef<(() => void) | null>(null);
   const titleId = useId();
   const bodyId = useId();
   const conversational = display.effectiveLayoutMode === 'CONVERSATIONAL';
@@ -251,6 +252,7 @@ export function MessagingMessageRow({
         ) : null}
         <Box
           id={bodyId}
+          data-msg-scroll-anchor={message.messageId}
           sx={(theme) => ({
             mt: groupedWithPrevious ? 0 : 0.35,
             px: conversational ? (dense ? 1.15 : 1.4) : 0,
@@ -415,6 +417,15 @@ export function MessagingMessageRow({
         anchorEl={actionAnchor}
         open={Boolean(actionAnchor)}
         onClose={() => setActionAnchor(null)}
+        slotProps={{
+          transition: {
+            onExited: () => {
+              const action = pendingActionMenuActionRef.current;
+              pendingActionMenuActionRef.current = null;
+              action?.();
+            },
+          },
+        }}
       >
         <MenuItem
           onClick={() => {
@@ -431,8 +442,8 @@ export function MessagingMessageRow({
         {onReply ? (
           <MenuItem
             onClick={() => {
+              pendingActionMenuActionRef.current = onReply;
               setActionAnchor(null);
-              onReply();
             }}
           >
             <ListItemIcon>

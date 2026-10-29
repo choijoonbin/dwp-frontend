@@ -636,6 +636,24 @@ export async function mockNotificationNoiseQuality(page: Page) {
       deduplicationRate: 0.31,
       actionConversionRate: 0.64,
       fatigueExposedUsers: 9,
+      trend: [
+        {
+          bucketStart: '2026-09-15T00:00:00Z',
+          cohortSize: 84,
+          volume: 92,
+          muteRate: 0.18,
+          deduplicationRate: 0.31,
+          actionConversionRate: 0.64,
+        },
+        {
+          bucketStart: '2026-09-16T00:00:00Z',
+          cohortSize: 84,
+          volume: 108,
+          muteRate: 0.28,
+          deduplicationRate: 0.35,
+          actionConversionRate: 0.59,
+        },
+      ],
       noisyTypes: [
         {
           appKey: 'messaging',

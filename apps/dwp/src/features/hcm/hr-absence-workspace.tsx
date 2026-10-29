@@ -37,6 +37,7 @@ import {
   MailProposalOwnerHandoffNotice,
   useMailProposalOwnerHandoff,
 } from '../../components/mail-proposal-owner-handoff';
+import { MailProposalOwnerAuthorityBoundary } from '../../components/mail-proposal-owner-authority-boundary';
 
 function minutesToDays(minutes: number): string {
   const days = minutes / 480;
@@ -44,6 +45,14 @@ function minutesToDays(minutes: number): string {
 }
 
 export function HrAbsenceWorkspace() {
+  return (
+    <MailProposalOwnerAuthorityBoundary>
+      <HrAbsenceWorkspaceContent />
+    </MailProposalOwnerAuthorityBoundary>
+  );
+}
+
+function HrAbsenceWorkspaceContent() {
   const { t } = useTranslation('hcm');
   const toast = useToast();
   const queryClient = useQueryClient();

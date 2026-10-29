@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { CheckCheck, Settings2, X } from 'lucide-react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
+  applyNotificationBulkAction,
   applyNotificationTriage,
   createNotificationIdempotencyKey,
   getNotificationInbox,
@@ -13,11 +14,11 @@ import {
   type NotificationLiveSignal,
   type NotificationView,
 } from '@dwp-frontend/shared-utils/api/notification-api';
+import { useToast } from '@dwp-frontend/shared-utils';
 import { ActionButton } from '@dwp-frontend/design-system/components/actions/action-button';
 import { ActionIconButton } from '@dwp-frontend/design-system/components/actions/action-icon-button';
 import {
   EmptyState,
-  ErrorState,
   LoadingState,
 } from '@dwp-frontend/design-system/components/states/state-panels';
 
@@ -31,8 +32,13 @@ import Typography from '@mui/material/Typography';
 import useMediaQuery from '@mui/material/useMediaQuery';
 
 import { notificationQueryKeys } from './integration-contract';
+import { NotificationErrorState } from './notification-error-support';
 import { scheduleNotificationCacheInvalidation } from './notification-cache-policy';
 import { reconcileGlanceItems } from './notification-model';
+import {
+  notificationGlanceBulkFeedback,
+  notificationGlanceSummaryState,
+} from './notification-header-glance-model';
 import { notificationArrivalContent } from '../../components/notification-arrival-policy';
 import {
   NotificationConnectionNotice,
@@ -78,6 +84,7 @@ export function NotificationHeaderGlance({
 }: NotificationHeaderGlanceProps) {
   const { t } = useTranslation(['notifications', 'common']);
   const queryClient = useQueryClient();
+  const toast = useToast();
   const online = useOnlineStatus();
   const compact = useMediaQuery((theme: Theme) => theme.breakpoints.down('sm'));
   const dialogTitleId = useId();
@@ -203,19 +210,26 @@ export function NotificationHeaderGlance({
     onSuccess: invalidate,
   });
   const readVisibleMutation = useMutation({
-    mutationFn: () =>
-      Promise.all(
-        glance.visible
-          .filter((item) => !item.readAt)
-          .map((item) =>
-            applyNotificationTriage(item.notificationId, {
-              action: 'READ',
-              expectedVersion: item.version,
-              idempotencyKey: createNotificationIdempotencyKey('glance-read-visible'),
-            })
-          )
-      ),
-    onSuccess: invalidate,
+    mutationFn: async () => {
+      const notificationIds = glance.visible
+        .filter((item) => !item.readAt)
+        .map((item) => item.notificationId);
+      const result = await applyNotificationBulkAction({
+        notificationIds,
+        action: 'READ',
+        idempotencyKey: createNotificationIdempotencyKey('glance-read-visible'),
+      });
+      return notificationGlanceBulkFeedback(result, notificationIds);
+    },
+    onSuccess: async (feedback) => {
+      await invalidate();
+      if (feedback.kind === 'PARTIAL') {
+        toast.warning(t('glance.readVisiblePartial', { count: feedback.count }));
+      } else {
+        toast.success(t('glance.readVisibleSuccess', { count: feedback.count }));
+      }
+    },
+    onError: () => toast.error(t('glance.readVisibleError')),
   });
 
   const cursorResetRequired =
@@ -257,26 +271,39 @@ export function NotificationHeaderGlance({
     });
   };
 
-  const actionableUnread = summaryQuery.data?.actionableUnread ?? 0;
-  const totalUnread = summaryQuery.data?.totalUnread ?? 0;
-  const accessibleLabel = t('glance.triggerLabel', {
-    actionable: actionableUnread,
-    total: totalUnread,
+  const summaryState = notificationGlanceSummaryState({
+    summary: summaryQuery.data,
+    pending: summaryQuery.isPending,
+    error: summaryQuery.isError || summaryQuery.isRefetchError,
   });
+  const summaryUnavailable = summaryState.kind === 'UNKNOWN' || summaryState.kind === 'STALE';
+  const summaryKnown = summaryState.kind === 'CURRENT' || summaryState.kind === 'STALE';
+  const actionableUnread = summaryKnown ? summaryState.summary.actionableUnread : 0;
+  const totalUnread = summaryKnown ? summaryState.summary.totalUnread : 0;
+  const accessibleLabel =
+    summaryState.kind === 'LOADING'
+      ? t('states.loadingSummary')
+      : summaryState.kind === 'UNKNOWN'
+        ? t('glance.triggerUnknown')
+        : t(summaryState.kind === 'STALE' ? 'glance.triggerStale' : 'glance.triggerLabel', {
+            actionable: actionableUnread,
+            total: totalUnread,
+          });
   useEffect(() => {
     onTriggerUpdate(accessibleLabel, totalUnread);
   }, [accessibleLabel, onTriggerUpdate, totalUnread]);
   const tabCounts = summaryQuery.data?.viewCounts;
   const hasUnreadVisible = glance.visible.some((item) => !item.readAt);
-  const partial = summaryQuery.data?.partial || inboxQuery.data?.partial;
+  const partial = summaryUnavailable || summaryQuery.data?.partial || inboxQuery.data?.partial;
   const unavailableSources = useMemo(
     () => [
       ...new Set([
         ...(summaryQuery.data?.unavailableSources ?? []),
+        ...(summaryUnavailable ? ['notification-summary'] : []),
         ...(inboxQuery.data?.unavailableSources ?? []),
       ]),
     ],
-    [inboxQuery.data?.unavailableSources, summaryQuery.data?.unavailableSources]
+    [inboxQuery.data?.unavailableSources, summaryQuery.data?.unavailableSources, summaryUnavailable]
   );
 
   return (
@@ -324,7 +351,14 @@ export function NotificationHeaderGlance({
             {t('glance.dialogLabel')}
           </Typography>
           <Typography variant="caption" color="text.secondary">
-            {t('glance.summary', { actionable: actionableUnread, total: totalUnread })}
+            {summaryState.kind === 'LOADING'
+              ? t('states.loadingSummary')
+              : summaryState.kind === 'UNKNOWN'
+                ? t('glance.summaryUnknown')
+                : t(summaryState.kind === 'STALE' ? 'glance.summaryStale' : 'glance.summary', {
+                    actionable: actionableUnread,
+                    total: totalUnread,
+                  })}
           </Typography>
         </Box>
         <Stack direction="row" gap={0.25}>
@@ -445,7 +479,8 @@ export function NotificationHeaderGlance({
         ) : inboxQuery.isError &&
           !isNotificationCursorResetError(inboxQuery.error) &&
           glance.visible.length === 0 ? (
-          <ErrorState
+          <NotificationErrorState
+            error={inboxQuery.error}
             title={t('states.loadErrorTitle')}
             description={t('states.loadErrorDescription')}
             retryLabel={t('actions.retry')}

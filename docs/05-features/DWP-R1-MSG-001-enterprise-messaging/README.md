@@ -34,6 +34,7 @@ Tenant 내부 업무 대화 플랫폼이다.
 | [06-AI Agent 계약.md](06-AI%20Agent%20계약.md)                   | 향후 AI Retrieval·Insight·Proposal 경계    |
 | [07-수용 테스트.md](07-수용%20테스트.md)                         | 기능·보안·성능·접근성 완료 기준            |
 | [08-인프라 운영 설계.md](08-인프라%20운영%20설계.md)             | 환경, 확장, 관측, DR, 단계별 구축          |
+| [13-messenger-hardening-and-product-completion-2026-10-28.md](13-messenger-hardening-and-product-completion-2026-10-28.md) | 고도화 구현 기준선과 완료 계약 |
 
 ## 변경 불가 원칙
 

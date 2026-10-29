@@ -1,6 +1,11 @@
 import { useTranslation } from 'react-i18next';
 import type { UseQueryResult } from '@tanstack/react-query';
-import { foundationTokens, InlineFeedback, LoadingState } from '@dwp-frontend/design-system';
+import {
+  ActionButton,
+  foundationTokens,
+  InlineFeedback,
+  LoadingState,
+} from '@dwp-frontend/design-system';
 import { formatDate } from '@dwp-frontend/shared-i18n';
 import { HttpError } from '@dwp-frontend/shared-utils';
 import Box from '@mui/material/Box';
@@ -9,6 +14,7 @@ import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
 import type { WorkspaceActivityEvidence } from '@dwp-frontend/shared-utils';
+import { usableActivityQueryData } from '../../features/activity/activity-query-state';
 
 const accessibleFeedbackSx = {
   color: 'text.primary',
@@ -26,10 +32,11 @@ export function ActivityIntegrityEvidence({
   density?: 'default' | 'compact';
 }) {
   const { t } = useTranslation('work');
-  if (query.isLoading) {
+  const evidence = usableActivityQueryData(query);
+  if (query.isLoading && !evidence) {
     return <LoadingState label={t('activityFoundation.detail.integrity.loading')} size="compact" />;
   }
-  if (query.isError || !query.data) {
+  if (!evidence) {
     const notFound = query.error instanceof HttpError && query.error.status === 404;
     const restricted = query.error instanceof HttpError && query.error.status === 403;
     const state = restricted ? 'RESTRICTED' : notFound ? 'NOT_COLLECTED' : 'UNAVAILABLE';
@@ -43,7 +50,6 @@ export function ActivityIntegrityEvidence({
       </InlineFeedback>
     );
   }
-  const evidence = query.data;
   // Keep rendering fail-closed even if a caller bypasses the API validator with contradictory data.
   const restricted = evidence.auditAccess === 'RESTRICTED';
   const integrityStatus = restricted ? 'UNAVAILABLE' : evidence.integrityStatus;
@@ -51,6 +57,25 @@ export function ActivityIntegrityEvidence({
     integrityStatus === 'VERIFIED' ? 'success' : integrityStatus === 'FAILED' ? 'error' : 'warning';
   return (
     <Stack gap={density === 'compact' ? 0.65 : 1.25} data-integrity-status={integrityStatus}>
+      {query.isError && (
+        <InlineFeedback
+          severity="warning"
+          title={t('activityFoundation.cachedEvidence.title')}
+          sx={accessibleFeedbackSx}
+        >
+          {t('activityFoundation.cachedEvidence.description')}
+          <Box sx={{ mt: 1 }}>
+            <ActionButton
+              intent="secondary"
+              size="small"
+              onClick={() => void query.refetch()}
+              disabled={query.isFetching}
+            >
+              {t('activityPage.retry')}
+            </ActionButton>
+          </Box>
+        </InlineFeedback>
+      )}
       <Stack direction="row" gap={0.75} flexWrap="wrap">
         <Chip
           size="small"

@@ -19,6 +19,7 @@ import {
   EmptyState,
   FilterBar,
   FormField,
+  InlineFeedback,
   LiveStatus,
   LocalErrorState,
   LoadingState,
@@ -51,12 +52,16 @@ import {
   ACTIVITY_OBJECT_TYPES,
   ACTIVITY_SOURCES,
   ACTIVITY_STATES as STATE_FILTERS,
+  activityCompositeRefreshState,
+  activityEmptyStateKind,
   activityRefreshState,
   activitySavedConfiguration,
   applyActivitySavedConfiguration,
   readActivityFilters,
   validActivityTimeRange,
 } from '../features/activity/activity-model';
+import { useActivitySearchDraft } from '../features/activity/use-activity-search-draft';
+import { usableActivityQueryData } from '../features/activity/activity-query-state';
 import type { ActorFilter, StateFilter } from '../features/activity/activity-model';
 import type { Theme } from '@mui/material/styles';
 
@@ -117,9 +122,22 @@ export default function ActivityPage() {
   const compactMobile = useMediaQuery((theme: Theme) => theme.breakpoints.down('sm'));
   const [filtersExpanded, setFiltersExpanded] = useState(false);
   const filters = readActivityFilters(searchParams);
+  const committedQuery = searchParams.get('q') ?? '';
   const actorFilter = filters.actor ?? 'all';
   const stateFilter = filters.state ?? 'all';
-  const query = filters.query ?? '';
+  const [query, setQuery, searchTooShort] = useActivitySearchDraft(committedQuery, (value) =>
+    setSearchParams(
+      mergeFilterSearchParams(searchParams, {
+        q: value || null,
+        event: null,
+        cursor: null,
+      }),
+      { replace: true }
+    )
+  );
+  // Only the debounced URL value may change the server query key. The draft remains local so
+  // typing another valid character cannot briefly switch the result set to an unfiltered feed.
+  const requestFilters = filters;
   const sourceOptions = [
     { value: '', label: t('activityFoundation.filters.allSources') },
     ...ACTIVITY_SOURCES.map((value) => ({
@@ -155,7 +173,7 @@ export default function ActivityPage() {
   const activeFilterCount = [
     filters.actor,
     filters.state,
-    filters.query,
+    query,
     filters.source,
     filters.objectType,
     filters.objectId,
@@ -164,6 +182,7 @@ export default function ActivityPage() {
     filters.to,
     filters.includeUsage,
   ].filter(Boolean).length;
+  const emptyStateKind = activityEmptyStateKind(activeFilterCount);
   const selectedId = searchParams.get('event') ?? '';
   const {
     feed: activityQuery,
@@ -171,20 +190,48 @@ export default function ActivityPage() {
     detail,
     executionRun,
     evidence,
+    sources,
+    rootDenied,
     now,
     refresh,
-  } = useActivityData(filters, selectedId);
+  } = useActivityData(requestFilters, selectedId);
+  const feedData = rootDenied ? undefined : usableActivityQueryData(activityQuery);
+  const summaryData = rootDenied ? undefined : usableActivityQueryData(summary);
+  const detailData = rootDenied ? undefined : usableActivityQueryData(detail);
+  const executionRunData = rootDenied ? undefined : usableActivityQueryData(executionRun);
   const events = useMemo<ActivityRow[]>(
     () =>
-      (activityQuery.data?.events ?? []).map((event) => ({
+      (feedData?.events ?? []).map((event) => ({
         ...event,
         time: formatDate(new Date(event.occurredAt), { hour: '2-digit', minute: '2-digit' }),
         date: formatDate(event.occurredAt, { year: 'numeric', month: 'short', day: 'numeric' }),
       })),
-    [activityQuery.data?.events]
+    [feedData?.events]
   );
   const visibleEvents = events;
-  const refreshState = activityRefreshState(activityQuery, now);
+  const sourceRefreshState = activityRefreshState(
+    {
+      isFetching: sources.isFetching,
+      isError: sources.isError,
+      dataUpdatedAt: sources.dataUpdatedAt,
+      data: sources.data ? { generatedAt: sources.data.observedAt } : undefined,
+    },
+    now,
+    6 * 60_000
+  );
+  const refreshState = activityCompositeRefreshState([
+    activityRefreshState(activityQuery, now),
+    activityRefreshState(summary, now),
+    sourceRefreshState,
+  ]);
+  const lastSuccessfulRefresh = [
+    activityQuery.dataUpdatedAt,
+    summary.dataUpdatedAt,
+    sources.dataUpdatedAt,
+  ].filter((value) => value > 0);
+  const lastSuccessfulRefreshAt = lastSuccessfulRefresh.length
+    ? Math.min(...lastSuccessfulRefresh)
+    : 0;
   const changeFilter = (key: string, value: string | null) =>
     setSearchParams(
       mergeFilterSearchParams(searchParams, { [key]: value, cursor: null, event: null }),
@@ -192,6 +239,10 @@ export default function ActivityPage() {
     );
   const closeDetail = () =>
     setSearchParams(mergeFilterSearchParams(searchParams, { event: null }), { replace: true });
+  const resetFilters = () => {
+    setQuery('');
+    setSearchParams(applyActivitySavedConfiguration(searchParams, {}), { replace: true });
+  };
 
   const selectActor = (value: ActorFilter) => {
     setSearchParams(
@@ -233,9 +284,9 @@ export default function ActivityPage() {
             state={refreshState}
             label={t(`activityFoundation.freshness.${refreshState}`)}
             detail={
-              activityQuery.dataUpdatedAt
+              lastSuccessfulRefreshAt
                 ? t('activityFoundation.lastRefresh', {
-                    at: formatDate(activityQuery.dataUpdatedAt, {
+                    at: formatDate(lastSuccessfulRefreshAt, {
                       hour: '2-digit',
                       minute: '2-digit',
                     }),
@@ -250,7 +301,7 @@ export default function ActivityPage() {
       />
     </Box>
   );
-  const current = summary.isError ? undefined : summary.data;
+  const current = summaryData;
   const summaryValues = {
     signals: current?.total ?? '—',
     agent: current?.running ?? '—',
@@ -313,9 +364,49 @@ export default function ActivityPage() {
         {t('activityFoundation.coverageNotice')}{' '}
         {t(`activityFoundation.freshness.${activityRefreshState(summary, now)}`)}
       </Typography>
+      {summary.isError && current && (
+        <InlineFeedback
+          severity="warning"
+          title={t('activityFoundation.cachedSummary.title')}
+          sx={{ mt: 1.5 }}
+        >
+          {t('activityFoundation.cachedSummary.description')}
+          <Box sx={{ mt: 1 }}>
+            <ActionButton
+              intent="secondary"
+              size="small"
+              onClick={() => void summary.refetch()}
+              disabled={summary.isFetching}
+            >
+              {t('activityPage.retry')}
+            </ActionButton>
+          </Box>
+        </InlineFeedback>
+      )}
+      {summary.isError && !current && !rootDenied && (
+        <InlineFeedback
+          severity="warning"
+          title={t('activityFoundation.summaryUnavailable.title')}
+          sx={{ mt: 1.5 }}
+        >
+          {t('activityFoundation.summaryUnavailable.description')}
+          <Box sx={{ mt: 1 }}>
+            <ActionButton
+              intent="secondary"
+              size="small"
+              onClick={() => void summary.refetch()}
+              disabled={summary.isFetching}
+            >
+              {t('activityPage.retry')}
+            </ActionButton>
+          </Box>
+        </InlineFeedback>
+      )}
       <ActivitySourceStatus
-        sources={activityQuery.isError ? undefined : activityQuery.data?.sourceStates}
-        partial={activityQuery.data?.partial}
+        sources={feedData?.sourceStates}
+        partial={feedData?.partial}
+        onRetry={() => void activityQuery.refetch()}
+        retrying={activityQuery.isFetching}
       />
     </>
   );
@@ -367,7 +458,10 @@ export default function ActivityPage() {
               size="small"
               fullWidth
               value={query}
-              onChange={(event) => changeFilter('q', event.target.value || null)}
+              onChange={(event) => setQuery(event.target.value)}
+              errorMessage={
+                searchTooShort ? t('activityFoundation.filters.queryMinimum') : undefined
+              }
             />
           )}
           <ActionButton
@@ -394,16 +488,7 @@ export default function ActivityPage() {
           searchLabel={t('activityPage.searchLabel')}
           searchPlaceholder={t('activityPage.searchPlaceholder')}
           searchValue={query}
-          onSearchChange={(value) =>
-            setSearchParams(
-              mergeFilterSearchParams(searchParams, {
-                q: value || null,
-                event: null,
-                cursor: null,
-              }),
-              { replace: true }
-            )
-          }
+          onSearchChange={setQuery}
           filters={
             <Box
               sx={{
@@ -631,11 +716,20 @@ export default function ActivityPage() {
               : []),
           ]}
           resetLabel={t('activityPage.resetFilters')}
-          onReset={() =>
-            setSearchParams(applyActivitySavedConfiguration(searchParams, {}), { replace: true })
-          }
+          onReset={resetFilters}
           resultLabel={t('activityPage.visibleCount', { count: visibleEvents.length })}
         />
+        {searchTooShort && (
+          <Typography
+            role="status"
+            color="error.main"
+            variant="caption"
+            component="p"
+            sx={{ mt: 0.75 }}
+          >
+            {t('activityFoundation.filters.queryMinimum')}
+          </Typography>
+        )}
       </Box>
 
       <Box
@@ -659,15 +753,34 @@ export default function ActivityPage() {
             />
           </Box>
           <Divider />
+          {activityQuery.isError && feedData && (
+            <InlineFeedback
+              severity="warning"
+              title={t('activityFoundation.cachedFeed.title')}
+              sx={{ mt: 1.25 }}
+            >
+              {t('activityFoundation.cachedFeed.description')}
+              <Box sx={{ mt: 1 }}>
+                <ActionButton
+                  intent="secondary"
+                  size="small"
+                  onClick={() => void activityQuery.refetch()}
+                  disabled={activityQuery.isFetching}
+                >
+                  {t('activityPage.retry')}
+                </ActionButton>
+              </Box>
+            </InlineFeedback>
+          )}
           {!validActivityTimeRange(filters) ? (
             <EmptyState title={t('activityFoundation.invalidTimeRange')} size="compact" />
-          ) : activityQuery.isLoading ? (
+          ) : activityQuery.isLoading && !feedData ? (
             <LoadingState label={t('activityPage.loading')} size="compact" />
-          ) : activityQuery.isError ? (
+          ) : (activityQuery.isError || rootDenied) && !feedData ? (
             <LocalErrorState
               title={t('activityPage.loadErrorTitle')}
               retryLabel={t('activityPage.retry')}
-              onRetry={() => void activityQuery.refetch()}
+              onRetry={() => void (rootDenied ? refresh() : activityQuery.refetch())}
               size="compact"
             />
           ) : visibleEvents.length > 0 ? (
@@ -692,12 +805,12 @@ export default function ActivityPage() {
                     }}
                   >
                     <ButtonBase
-                      onClick={() =>
+                      onClick={() => {
                         setSearchParams(
                           mergeFilterSearchParams(searchParams, { event: event.id }),
                           { replace: false }
-                        )
-                      }
+                        );
+                      }}
                       aria-pressed={active}
                       sx={{
                         width: 1,
@@ -817,12 +930,6 @@ export default function ActivityPage() {
                               })}
                             </Typography>
                           )}
-                          {event.executionId && (
-                            <Typography variant="caption" sx={{ overflowWrap: 'anywhere' }}>
-                              {t('activityFoundation.detail.fields.executionId')}:{' '}
-                              {event.executionId}
-                            </Typography>
-                          )}
                         </Box>
                         {event.progress != null && (
                           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.25, mt: 1.25 }}>
@@ -866,8 +973,20 @@ export default function ActivityPage() {
             </Box>
           ) : (
             <EmptyState
-              title={t('activityPage.filteredEmptyTitle')}
-              description={t('activityPage.filteredEmptyDescription')}
+              title={t(
+                emptyStateKind === 'filtered'
+                  ? 'activityPage.filteredEmptyTitle'
+                  : 'activityPage.emptyTitle'
+              )}
+              description={t(
+                emptyStateKind === 'filtered'
+                  ? 'activityPage.filteredEmptyDescription'
+                  : 'activityPage.emptyDescription'
+              )}
+              actionLabel={
+                emptyStateKind === 'filtered' ? t('activityPage.resetFilters') : undefined
+              }
+              onAction={emptyStateKind === 'filtered' ? resetFilters : undefined}
             />
           )}
         </Box>
@@ -875,9 +994,16 @@ export default function ActivityPage() {
         <ActivityEventDetail
           eventId={selectedId}
           query={detail}
-          executionRun={executionRun.isError ? undefined : executionRun.data}
+          accessDenied={rootDenied}
+          onAccessRetry={() => void refresh()}
+          executionRun={executionRunData}
+          executionRunRefreshFailed={
+            !rootDenied && executionRun.isError && Boolean(executionRunData)
+          }
           evidenceQuery={
-            detail.data && (detail.data.source !== 'DWAI_ON' || Boolean(detail.data.auditRecordId))
+            !rootDenied &&
+            detailData &&
+            (detailData.source !== 'DWAI_ON' || Boolean(detailData.auditRecordId))
               ? evidence
               : undefined
           }
@@ -894,15 +1020,15 @@ export default function ActivityPage() {
         <ActionButton
           intent="secondary"
           disabled={
-            !activityQuery.data?.hasMore ||
-            !activityQuery.data.nextCursor ||
+            !feedData?.hasMore ||
+            !feedData.nextCursor ||
             activityQuery.isFetching ||
             activityQuery.isError
           }
           onClick={() =>
             setSearchParams(
               mergeFilterSearchParams(searchParams, {
-                cursor: activityQuery.data?.nextCursor ?? null,
+                cursor: feedData?.nextCursor ?? null,
               })
             )
           }

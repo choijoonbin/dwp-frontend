@@ -1,7 +1,13 @@
-import { axiosInstance } from '../axios-instance';
 import { parseMailAccountReadinessEvidence } from './mail-readiness-contract';
+import { mailGovernedHttp as axiosInstance } from './mail-governed-transport';
 
 import type { ApiResponse } from '../types';
+import type {
+  MailBulkMutationIdentity,
+  MailCreateDraftContractRequest,
+  MailLifecycleContractRequest,
+  MailThreadActionContractRequest,
+} from './mail-contract-types';
 import type { MailAccountReadinessEvidence } from './mail-readiness-contract';
 
 export { parseMailAccountReadinessEvidence } from './mail-readiness-contract';
@@ -35,7 +41,16 @@ export type MailProposalType =
   | 'ESCALATE_NOTIFICATION';
 export type MailProposalStatus = 'PROPOSED' | 'ACCEPTED' | 'DISMISSED' | 'EXPIRED' | 'EXECUTED';
 export type MailDeliveryState =
-  'RECEIVED' | 'DRAFT' | 'QUEUED' | 'SENDING' | 'RETRYING' | 'SENT' | 'FAILED';
+  | 'RECEIVED'
+  | 'DRAFT'
+  | 'QUEUED'
+  | 'SENDING'
+  | 'RETRYING'
+  | 'PROVIDER_ACCEPTED'
+  | 'RESULT_UNKNOWN'
+  | 'DELIVERED'
+  | 'SENT'
+  | 'FAILED';
 export type MailSharedInboxAction = 'ASSIGN' | 'COMMENT' | 'REPLY' | 'SEND_AS';
 
 export type MailAccount = {
@@ -176,16 +191,7 @@ export type MailThreadDetail = {
   } | null;
 };
 
-export type MailDraftSaveInput = {
-  toEmail?: string;
-  toName?: string;
-  subject?: string;
-  body?: string;
-  classification: MailClassification;
-  externalRecipientConfirmed: boolean;
-  idempotencyKey: string;
-  version?: number;
-};
+export type MailDraftSaveInput = Omit<MailCreateDraftContractRequest, 'composeOptions'>;
 
 export type MailSharedInboxMember = {
   userId: number;
@@ -475,15 +481,18 @@ export async function getMailThread(threadId: string): Promise<MailThreadDetail>
 export async function applyMailThreadAction(
   threadId: string,
   action: MailThreadAction,
-  version: number
+  version: number,
+  bulkIdentity?: MailBulkMutationIdentity
 ): Promise<MailThreadDetail> {
-  const response = await axiosInstance.post<
-    ApiResponse<MailThreadDetail>,
-    { action: MailThreadAction; version: number }
-  >(`/api/platform/v1/mail/threads/${encodeURIComponent(threadId)}/actions`, {
+  const request: MailThreadActionContractRequest = {
     action,
     version,
-  });
+    ...bulkIdentity,
+  };
+  const response = await axiosInstance.post<ApiResponse<MailThreadDetail>, typeof request>(
+    `/api/platform/v1/mail/threads/${encodeURIComponent(threadId)}/actions`,
+    request
+  );
   return response.data.data;
 }
 
@@ -758,16 +767,19 @@ export async function applyMailLifecycle(
   threadId: string,
   action: MailLifecycleAction,
   version: number,
-  targetFolderId?: string | null
+  targetFolderId?: string | null,
+  bulkIdentity?: MailBulkMutationIdentity
 ): Promise<{ thread?: MailThread | null; deleted: boolean }> {
-  const response = await axiosInstance.post<
-    ApiResponse<{ thread?: MailThread | null; deleted: boolean }>,
-    { action: MailLifecycleAction; version: number; targetFolderId?: string | null }
-  >(`/api/platform/v1/mail/threads/${encodeURIComponent(threadId)}/lifecycle`, {
+  const request: MailLifecycleContractRequest = {
     action,
     version,
-    targetFolderId,
-  });
+    targetFolderId: targetFolderId ?? undefined,
+    ...bulkIdentity,
+  };
+  const response = await axiosInstance.post<
+    ApiResponse<{ thread?: MailThread | null; deleted: boolean }>,
+    typeof request
+  >(`/api/platform/v1/mail/threads/${encodeURIComponent(threadId)}/lifecycle`, request);
   return response.data.data;
 }
 

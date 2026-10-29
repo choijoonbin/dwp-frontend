@@ -14,7 +14,13 @@
       "rooms": {
         "booking": "Workplace",
         "workplaceAdministration": "Workplace administration",
-        "meetingAdministration": "Meeting room administration"
+        "meetingAdministration": "Meeting room administration",
+        "startAndBook": "Start and book",
+        "onSite": "On site",
+        "operationsAndExceptions": "Operations and exceptions",
+        "spacesAndPolicy": "Spaces and policy",
+        "serviceManagement": "Service management",
+        "visitorsAndAccess": "Visitors and access"
       }
     },
     "items": {
@@ -136,6 +142,7 @@
     "refreshed": "Last refreshed {{value}}",
     "loading": "Loading Workplace exceptions",
     "loadError": "Exception evidence is unavailable. No healthy state has been inferred.",
+    "truncated": "{{unresolved}} unresolved exceptions exist. This view shows the newest {{returned}}; use each owner system to review the remaining records.",
     "export": "Export governed CSV",
     "exportPurpose": "Export purpose",
     "refreshRulesEvidence": "Refresh rules & evidence",
@@ -158,15 +165,29 @@
       "ERROR": "Error",
       "SAFETY": "Safety",
       "BOOKING": "Reservations",
-      "CONNECTOR": "Connectors"
+      "CONNECTOR": "Connectors",
+      "DEVICE_COMMAND": "Device commands",
+      "SERVICE_ORDER": "Service orders",
+      "SERVICE_PROVIDER": "Service providers",
+      "SERVICE_REFUND": "Service refunds",
+      "VISIT_PROVIDER": "Visit providers",
+      "ACCESS_PASS": "Access passes"
     },
     "empty": "No active exceptions in this scope",
-    "emptyDescription": "Fresh authoritative evidence has not reported a safety, booking, or connector exception.",
+    "emptyDescription": "Fresh authoritative evidence has not reported an exception in safety, reservations, devices, services, visits, access, or connectors.",
     "inspector": "Investigation workbench",
+    "status": {
+      "ACTIVE": "Active",
+      "RECOVERING": "Recovering",
+      "MANUAL_REVIEW": "Manual review",
+      "RESOLVED": "Resolved"
+    },
+    "manualReviewRequired": "Automatic recovery has stopped at its governed retry limit. Review authoritative provider state before issuing another command.",
     "rootCause": "Sanitized evidence",
     "reason": "Recovery reason",
     "previewRecovery": "Preview governed replay",
     "openOwner": "Open owner workflow",
+    "ownerUnavailable": "No administrator-authorized owner view exists for this exception. The sanitized evidence remains visible here; do not open a member-scoped credential view or issue a replacement command.",
     "selectIncident": "Select an exception to inspect its impact and owner action.",
     "selectForBatch": "Select {{title}} for owner review",
     "reviewSelectedOwners": "Review selected owner workflows ({{count}})",
@@ -175,7 +196,13 @@
     "batchReason": {
       "SAFETY": "Safety response requires the current incident command state.",
       "BOOKING": "Reservation results must be reconciled before compensation or a new command.",
-      "CONNECTOR": "Connector replay requires a current version-bound preview and explicit confirmation."
+      "CONNECTOR": "Connector replay requires a current version-bound preview and explicit confirmation.",
+      "DEVICE_COMMAND": "Device state must be reconciled against the provider before another command.",
+      "SERVICE_ORDER": "Service fulfillment must be reviewed in its authoritative order workflow.",
+      "SERVICE_PROVIDER": "Provider health and configuration evidence must be reviewed before service resumes.",
+      "SERVICE_REFUND": "Cancellation and refund settlement require an individual reconciliation.",
+      "VISIT_PROVIDER": "Visit delivery must be reconciled with the visitor provider.",
+      "ACCESS_PASS": "Access credential state must be verified before issuing or pairing another pass."
     },
     "receipt": "Recovery command accepted. Receipt {{receipt}}",
     "exportReceipt": "Governed export created and downloaded. Receipt {{receipt}}",
@@ -189,6 +216,7 @@
     "metrics": {
       "active": "Active anomalies",
       "severity": "Critical {{critical}} · Warning {{warning}}",
+      "visibleSeverity": "Visible subset: Critical {{critical}} · Warning {{warning}}",
       "sla": "SLA compliance",
       "slaDetail": "Shown only when authoritative evidence is available",
       "conflicts": "24-hour concurrency conflicts",
@@ -272,6 +300,33 @@
     "subjectRequired": "Enter a meeting subject.",
     "start": "Start",
     "end": "End",
+    "recurrence": "Repeat",
+    "recurrencePolicyLocked": "Recurring room bookings are now disabled by Workplace policy. You can update the meeting details, but its schedule and recurrence remain locked; create a non-recurring replacement if the time must change.",
+    "recurrenceOptions": {
+      "NONE": "Does not repeat",
+      "DAILY": "Daily",
+      "WEEKLY": "Weekly",
+      "MONTHLY": "Monthly",
+      "YEARLY": "Yearly"
+    },
+    "recurrenceInterval": "Repeat interval",
+    "recurrenceIntervals": {
+      "DAILY": "Every {{count}} day(s)",
+      "WEEKLY": "Every {{count}} week(s)",
+      "MONTHLY": "Every {{count}} month(s)",
+      "YEARLY": "Every {{count}} year(s)"
+    },
+    "recurrenceUntil": "Repeat until",
+    "recurrenceErrors": {
+      "invalid": "Choose a valid recurrence end date.",
+      "beforeStart": "The recurrence end date cannot be before the first booking.",
+      "window": "The recurrence end date is outside the allowed booking window.",
+      "occurrences": "A recurring booking must contain at least two occurrences."
+    },
+    "recurrencePreviewTitle": "Recurring booking preview",
+    "recurrencePreviewSummary": "{{count}} occurrences from {{first}} through {{last}} · {{timeZone}}",
+    "recurrencePreviewMore": "+{{count}} more",
+    "recurrenceConflictNotice": "The room policy and conflicts for every occurrence are checked atomically when you book.",
     "rangeError": "The end must be later than the start.",
     "rangeErrors": {
       "invalid": "Enter a valid start and end time.",
@@ -601,6 +656,7 @@
         "title": "Delivery and recovery",
         "description": "Inspect delivery evidence. Retry only verified failed or offline-queued attempts.",
         "counts": "Delivered {{delivered}} · Failed {{failed}} · Unknown {{unknown}}",
+        "manualReviewRequired": "{{count}} delivery attempt(s) exhausted the automatic retry budget. Reconcile provider state first; the confirmed administrator resend below creates a new governed attempt.",
         "retryConfirmation": "I confirm retry of verified failed or offline-queued deliveries only."
       },
       "messages": {
@@ -1027,6 +1083,8 @@
       "catalogError": "The service catalog could not be loaded.",
       "ordersError": "Service orders could not be loaded.",
       "fulfillmentError": "The fulfillment queue could not be loaded.",
+      "fulfillmentTargetError": "The requested service order is unavailable or does not match the authoritative response. No fulfillment action is available.",
+      "fulfillmentQueueDegraded": "The fulfillment queue is unavailable. The exact order remains visible as read-only evidence; refresh the queue before taking action.",
       "quantity": "Quantity",
       "optionConfiguration": "Service options",
       "multiSelectHint": "Separate multiple values with commas.",
@@ -1146,6 +1204,8 @@
       },
       "lineRecovery": {
         "title": "Cancellation result recovery",
+        "targetLoading": "Loading the requested authoritative cancellation receipt.",
+        "targetError": "The requested cancellation receipt is unavailable or does not belong to this order. No reconciliation action is available.",
         "statusError": "The persisted cancellation receipt could not be loaded.",
         "refundSummary": "Authoritative refunded amount: {{amount}} {{currency}}",
         "refresh": "Refresh receipt",
@@ -1407,6 +1467,7 @@
         "newProvider": "New provider",
         "providersError": "Verified provider configuration could not be loaded.",
         "providersEmpty": "No service providers are configured.",
+        "providerTargetUnavailable": "Provider {{providerCode}} is not present in the authorized provider list. No provider action is available.",
         "providerCode": "Provider code",
         "providerNameKo": "Korean name",
         "providerNameEn": "English name",
@@ -2647,6 +2708,7 @@
         "readOnly": "Read-only authority is active. Exception details remain visible and every mutation is disabled.",
         "elevationRequired": "Active elevated access is required for visitor operations.",
         "loadError": "The exception queue is unavailable. No visit existence is inferred.",
+        "listDegraded": "The exception queue is unavailable. The exact visit remains visible as read-only evidence; no exception action is available.",
         "emptyTitle": "No visitor exceptions",
         "emptyDescription": "No approval, access, host response, overstay, or recovery action currently needs attention.",
         "tableLabel": "Visitor exception queue",
@@ -2778,6 +2840,7 @@
         "description": "Investigate tenant-wide reservations, intervene with a recorded reason, and trace every Workplace change.",
         "noView": "You do not have permission to view Workplace operations.",
         "readOnly": "You can investigate bookings and audit evidence. Workplace management permission is required to force-cancel a booking.",
+        "elevationRequired": "Current elevated access is required to force-cancel a booking or change its legal hold.",
         "tabs": {
           "label": "Workplace operations views",
           "bookings": "Bookings",

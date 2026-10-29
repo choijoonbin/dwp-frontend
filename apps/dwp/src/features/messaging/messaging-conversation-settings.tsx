@@ -22,6 +22,7 @@ import Typography from '@mui/material/Typography';
 
 import { MessagingDisplayPreferencePanel } from './messaging-display-preference-panel';
 import { MessagingPrivacyPanel } from './messaging-privacy-panel';
+import { MessagingReadErrorState } from './messaging-read-error-state';
 
 import type {
   MessagingConversation,
@@ -139,7 +140,12 @@ export function MessagingConversationSettings({
               {!preferencesAvailable ? (
                 <Alert severity="info">{t('conversation.settings.connectionRequired')}</Alert>
               ) : settingsQuery.isError ? (
-                <Alert severity="error">{t('conversation.settings.loadError')}</Alert>
+                <MessagingReadErrorState
+                  error={settingsQuery.error}
+                  title={t('conversation.settings.loadError')}
+                  retrying={settingsQuery.isFetching}
+                  onRetry={() => void settingsQuery.refetch()}
+                />
               ) : null}
               <Stack spacing={1.25} divider={<Divider flexItem />}>
                 <PreferenceToggle

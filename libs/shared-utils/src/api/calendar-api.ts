@@ -1,20 +1,27 @@
 import { axiosInstance } from '../axios-instance';
 import { dwaionProposalHandoffHeaders } from '../dwaion-contract';
+import { calendarSchedulingMutationHeaders } from './calendar-scheduling-v2-api';
 import { mailProposalMutationHeaders } from './mail-proposal-binding';
 
 import type { ApiResponse } from '../types';
 import type { DwaionProposalHandoffBinding } from '../dwaion-contract';
+import type { CalendarSchedulingMutationBindingV2 } from './calendar-scheduling-v2-api';
 import type { MailProposalMutationBinding } from './mail-proposal-binding';
+import type { CalendarExternalProvider } from './calendar-external-api';
+import type { CalendarDayOfWeek } from './calendar-settings-api';
 
 export * from './calendar-team-api';
 export * from './calendar-settings-api';
+export * from './calendar-scheduling-v2-api';
+export * from './calendar-reminders-api';
+export * from './calendar-external-api';
 
 export type CalendarType = 'PERSONAL' | 'TEAM' | 'RESOURCE' | 'SYSTEM';
 export type CalendarEventType = 'MEETING' | 'FOCUS' | 'TASK' | 'OUT_OF_OFFICE' | 'REMINDER';
 export type CalendarEventStatus = 'CONFIRMED' | 'TENTATIVE' | 'CANCELLED';
 export type CalendarVisibility = 'DEFAULT' | 'PUBLIC' | 'PRIVATE' | 'CONFIDENTIAL';
-export type CalendarRecurrence = 'NONE' | 'DAILY' | 'WEEKLY' | 'MONTHLY';
-export type CalendarRecurrenceEditScope = 'SERIES' | 'THIS_OCCURRENCE';
+export type CalendarRecurrence = 'NONE' | 'DAILY' | 'WEEKLY' | 'MONTHLY' | 'YEARLY';
+export type CalendarRecurrenceEditScope = 'SERIES' | 'THIS_OCCURRENCE' | 'THIS_AND_FOLLOWING';
 export type CalendarResponseStatus = 'NEEDS_ACTION' | 'ACCEPTED' | 'TENTATIVE' | 'DECLINED';
 export type CalendarAttendeeType = 'REQUIRED' | 'OPTIONAL' | 'RESOURCE';
 export type CalendarResourceType = 'ROOM' | 'DESK' | 'EQUIPMENT';
@@ -63,6 +70,7 @@ export type CalendarSummary = {
   version?: number;
   subscriptionVersion?: number;
   capabilities?: CalendarCapabilities;
+  externalProvider?: CalendarExternalProvider;
 };
 
 export type CalendarShare = {
@@ -153,6 +161,8 @@ export type CalendarEvent = {
   recurrence: CalendarRecurrence;
   recurrenceInterval: number;
   recurrenceUntil?: string | null;
+  recurrenceDays?: CalendarDayOfWeek[];
+  recurrenceCount?: number | null;
   responseRequired: boolean;
   myResponse?: CalendarResponseStatus | null;
   attendees: CalendarAttendee[];
@@ -166,7 +176,21 @@ export type CalendarEvent = {
   capabilities?: CalendarEventCapabilities;
   restrictionReason?: string | null;
   recurrenceId?: string | null;
+  externalProvider?: CalendarExternalProvider;
+  externalSourceUrl?: string | null;
   version: number;
+};
+
+export type CalendarEventsV2Page = {
+  items: CalendarEvent[];
+  nextCursor: string | null;
+  hasMore: boolean;
+  range: {
+    from: string;
+    to: string;
+    timeZone: string;
+  };
+  generatedAt: string;
 };
 
 export type CalendarEventPreferenceInput = {
@@ -295,6 +319,8 @@ export type CompanyCalendarEvent = {
   recurrence: CalendarRecurrence;
   recurrenceInterval: number;
   recurrenceUntil?: string | null;
+  recurrenceDays?: CalendarDayOfWeek[];
+  recurrenceCount?: number | null;
   responseRequired: boolean;
   attendees: CalendarAttendee[];
   importance: CalendarEventImportance;
@@ -494,6 +520,8 @@ export type CreateCalendarEventInput = {
   recurrence: CalendarRecurrence;
   recurrenceInterval: number;
   recurrenceUntil?: string | null;
+  recurrenceDays?: CalendarDayOfWeek[];
+  recurrenceCount?: number | null;
   responseRequired: boolean;
   attendees: CalendarAttendeeInput[];
   resourceId?: string | null;
@@ -606,11 +634,40 @@ export async function getCalendarEvents(
   return response.data.data;
 }
 
+export async function getCalendarEventsV2(
+  input: Readonly<{
+    from: string;
+    to: string;
+    timeZone: string;
+    limit?: number;
+    cursor?: string | null;
+  }>,
+  signal?: AbortSignal
+): Promise<CalendarEventsV2Page> {
+  const query = new URLSearchParams([
+    ['from', input.from],
+    ['to', input.to],
+    ['timeZone', input.timeZone],
+    ['limit', String(input.limit ?? 200)],
+  ]);
+  if (input.cursor) query.set('cursor', input.cursor);
+  const path = `/api/platform/v2/calendar/events?${query.toString()}`;
+  const response = signal
+    ? await axiosInstance.get<ApiResponse<CalendarEventsV2Page>>(path, { signal })
+    : await axiosInstance.get<ApiResponse<CalendarEventsV2Page>>(path);
+  const page = response.data.data;
+  if (page.hasMore && !page.nextCursor) {
+    throw new Error('Calendar event pagination returned an incomplete cursor contract.');
+  }
+  return page;
+}
+
 export async function createCalendarEvent(
   input: CreateCalendarEventInput,
   signal?: AbortSignal,
   proposalBinding?: MailProposalMutationBinding,
-  dwaionProposalBinding?: DwaionProposalHandoffBinding | null
+  dwaionProposalBinding?: DwaionProposalHandoffBinding | null,
+  schedulingBinding?: CalendarSchedulingMutationBindingV2
 ): Promise<CalendarEvent> {
   const path = '/api/platform/v1/calendar/events';
   const response = await axiosInstance.post<ApiResponse<CalendarEvent>, CreateCalendarEventInput>(
@@ -621,6 +678,7 @@ export async function createCalendarEvent(
       headers: {
         ...mailProposalMutationHeaders(proposalBinding),
         ...dwaionProposalHandoffHeaders(dwaionProposalBinding),
+        ...calendarSchedulingMutationHeaders(schedulingBinding),
       },
     }
   );
@@ -629,12 +687,15 @@ export async function createCalendarEvent(
 
 export async function updateCalendarEvent(
   eventId: string,
-  input: UpdateCalendarEventInput
+  input: UpdateCalendarEventInput,
+  schedulingBinding?: CalendarSchedulingMutationBindingV2
 ): Promise<CalendarEvent> {
-  const response = await axiosInstance.put<ApiResponse<CalendarEvent>, UpdateCalendarEventInput>(
-    `/api/platform/v1/calendar/events/${encodeURIComponent(eventId)}`,
-    input
-  );
+  const path = `/api/platform/v1/calendar/events/${encodeURIComponent(eventId)}`;
+  const response = schedulingBinding
+    ? await axiosInstance.put<ApiResponse<CalendarEvent>, UpdateCalendarEventInput>(path, input, {
+        headers: calendarSchedulingMutationHeaders(schedulingBinding),
+      })
+    : await axiosInstance.put<ApiResponse<CalendarEvent>, UpdateCalendarEventInput>(path, input);
   return response.data.data;
 }
 

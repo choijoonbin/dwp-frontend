@@ -26,6 +26,7 @@ import {
   MESSAGING_DISPLAY_QUERY_KEY,
   messagingConversationDisplayQueryKey,
 } from './messaging-display-model';
+import { MessagingReadErrorState } from './messaging-read-error-state';
 
 import type {
   MessagingConversation,
@@ -157,7 +158,14 @@ export function MessagingDisplayPreferencePanel({
       {loading ? (
         <LoadingState label={t('common:labels.loading')} size="standard" embedded />
       ) : failed || !global || !local ? (
-        <Alert severity="error">{t('conversation.display.loadError')}</Alert>
+        <MessagingReadErrorState
+          error={globalQuery.error ?? conversationQuery.error}
+          title={t('conversation.display.loadError')}
+          retrying={globalQuery.isFetching || conversationQuery.isFetching}
+          onRetry={() => {
+            void Promise.all([globalQuery.refetch(), conversationQuery.refetch()]);
+          }}
+        />
       ) : (
         <>
           {local.policyLocked && scope === 'CONVERSATION' ? (

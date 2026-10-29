@@ -16,6 +16,8 @@ const locale = query.get('locale') === 'en' ? 'en' : 'ko';
 const siteId = query.get('siteId') ?? '19000000-0000-4000-8000-000000000001';
 const originPoiId = query.get('originPoiId') ?? '19000000-0000-4000-8000-000000000003';
 const destinationPoiId = query.get('destinationPoiId') ?? '19000000-0000-4000-8000-000000000004';
+const accessible = query.get('accessible') === 'true';
+const avoidStairs = query.get('avoidStairs') === 'true';
 const deviceId = query.get('deviceId') ?? '19000000-0000-4000-8000-000000000005';
 const queryClient = new QueryClient({
   defaultOptions: { queries: { retry: false }, mutations: { retry: false } },
@@ -42,6 +44,8 @@ const content =
       siteId={siteId}
       initialOriginPoiId={originPoiId}
       initialDestinationPoiId={destinationPoiId}
+      initialAccessible={accessible}
+      initialAvoidStairs={avoidStairs}
       defaultDestinationResourceId="19000000-0000-4000-8000-000000000004"
       locale={locale}
       canUpdate

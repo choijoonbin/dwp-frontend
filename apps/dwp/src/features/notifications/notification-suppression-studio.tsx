@@ -21,7 +21,6 @@ import {
   ActionButton,
   DateTimePickerField,
   EmptyState,
-  ErrorState,
   FormDialog,
   FormField,
   LoadingState,
@@ -46,6 +45,7 @@ import Typography from '@mui/material/Typography';
 import { alpha } from '@mui/material/styles';
 
 import { notificationQueryKeys } from './integration-contract';
+import { NotificationErrorState } from './notification-error-support';
 import { notificationAdminFocus } from './notification-admin-focus';
 
 const CHANNELS: readonly NotificationSuppressionChannel[] = [
@@ -219,7 +219,8 @@ export function NotificationSuppressionStudio() {
   }
   if (suppressionQuery.isError || !suppressionQuery.data) {
     return (
-      <ErrorState
+      <NotificationErrorState
+        error={suppressionQuery.error}
         title={t('admin.suppressions.errorTitle')}
         description={t('admin.suppressions.errorDescription')}
         retryLabel={t('actions.retry')}

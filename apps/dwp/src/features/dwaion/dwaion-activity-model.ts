@@ -13,6 +13,14 @@ export const DWAION_ACTIVITY_PERIODS = ['DAY', 'WEEK', 'MONTH'] as const;
 export type DwaionActivityFilter = (typeof DWAION_ACTIVITY_FILTERS)[number];
 export type DwaionActivityPeriod = (typeof DWAION_ACTIVITY_PERIODS)[number];
 
+export function shouldRenderDwaionActivityLatency(
+  hasUsablePages: boolean,
+  query: { isPending: boolean; isError: boolean }
+): boolean {
+  // A transient refresh error must not remove analytics derived from the last verified window.
+  return hasUsablePages && !query.isPending;
+}
+
 export type DwaionActivityWindowSummary = {
   total: number;
   running: number;
@@ -45,7 +53,15 @@ export function filterDwaionActivityWindow(
   filter: DwaionActivityFilter
 ): DwaionUserRun[] {
   if (filter === 'ALL') return [...runs];
-  if (filter === 'ATTENTION') return runs.filter(needsAttention);
+  if (filter === 'ATTENTION') {
+    return runs
+      .filter(needsAttention)
+      .sort(
+        (left, right) =>
+          Date.parse(right.stateChangedAt ?? right.createdAt) -
+          Date.parse(left.stateChangedAt ?? left.createdAt)
+      );
+  }
   return runs.filter((run) => run.runState === filter);
 }
 
@@ -59,6 +75,19 @@ export function findExactDwaionRun(
 ): DwaionUserRun | undefined {
   const normalized = runId.toLowerCase();
   return runs.find((run) => run.runId.toLowerCase() === normalized);
+}
+
+export function resolveDwaionSelectedRun({
+  listRun,
+  detailRun,
+  detailDenied,
+}: {
+  listRun: DwaionUserRun | undefined;
+  detailRun: DwaionUserRun | undefined;
+  detailDenied: boolean;
+}): DwaionUserRun | undefined {
+  if (detailDenied) return undefined;
+  return detailRun ?? listRun;
 }
 
 export function summarizeDwaionActivityWindow(

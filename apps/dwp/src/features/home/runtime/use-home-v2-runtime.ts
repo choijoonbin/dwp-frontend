@@ -30,6 +30,11 @@ type ScopedSnapshot = Readonly<{
   snapshot: ConditionalHttpSnapshot<HomeV2ReadModel>;
 }>;
 
+type ResponsiveContinuitySnapshot = Readonly<{
+  continuityKey: string;
+  result: HomeV2ReadResult;
+}>;
+
 export type HomeV2ActivationState =
   | Readonly<{ kind: 'DISABLED' }>
   | Readonly<{ kind: 'PENDING' }>
@@ -105,10 +110,26 @@ export function useHomeV2Runtime({
     () => JSON.stringify([accessFingerprint, deviceClass, locale, mode ?? null, timeZone]),
     [accessFingerprint, deviceClass, locale, mode, timeZone]
   );
+  const continuityKey = useMemo(
+    () =>
+      JSON.stringify([
+        accessFingerprint,
+        locale,
+        mode ?? null,
+        tenantId ?? null,
+        timeZone,
+        userId ?? null,
+      ]),
+    [accessFingerprint, locale, mode, tenantId, timeZone, userId]
+  );
   const snapshotRef = useRef<ScopedSnapshot | null>(null);
+  const responsiveContinuityRef = useRef<ResponsiveContinuitySnapshot | null>(null);
   const activeScopeRef = useRef(scopeKey);
   activeScopeRef.current = scopeKey;
   if (snapshotRef.current?.scopeKey !== scopeKey) snapshotRef.current = null;
+  if (responsiveContinuityRef.current?.continuityKey !== continuityKey) {
+    responsiveContinuityRef.current = null;
+  }
 
   useEffect(() => {
     void queryClient.cancelQueries({
@@ -141,11 +162,19 @@ export function useHomeV2Runtime({
     enabled: identityReady,
     gcTime: 0,
     meta: { accessSensitive: true },
+    placeholderData: () =>
+      identityReady && responsiveContinuityRef.current?.continuityKey === continuityKey
+        ? responsiveContinuityRef.current.result
+        : undefined,
     staleTime: 0,
     refetchInterval: 30_000,
     refetchIntervalInBackground: false,
     retry: false,
   });
+  useEffect(() => {
+    if (!identityReady || !query.data || query.isPlaceholderData) return;
+    responsiveContinuityRef.current = { continuityKey, result: query.data };
+  }, [continuityKey, identityReady, query.data, query.isPlaceholderData]);
   const activation = resolveHomeV2ActivationState(identityReady, query);
   const readPath = resolveHomeV2ReadPath(activation);
 

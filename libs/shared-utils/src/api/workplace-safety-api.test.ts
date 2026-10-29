@@ -115,6 +115,8 @@ function incident(dispatchState = 'PARTIAL') {
         failedCount: dispatchState === 'SUCCEEDED' ? 0 : 3,
         unknownCount: dispatchState === 'RESULT_UNKNOWN' ? 1 : 0,
         channels: ['APP_PUSH', 'SMS'],
+        reviewState: 'NONE',
+        manualReviewCount: 0,
         updatedAt: NOW,
       },
     ],
@@ -228,6 +230,22 @@ describe('Workplace safety API contract', () => {
         version: 0,
       }).providerCode
     ).toBeNull();
+  });
+
+  it('preserves terminal manual-review dispatch evidence', () => {
+    const value = incident();
+    value.dispatches[0] = {
+      ...value.dispatches[0],
+      state: 'FAILED',
+      reviewState: 'MANUAL_REVIEW_REQUIRED',
+      manualReviewCount: 3,
+    };
+
+    expect(parseWorkplaceSafetyIncident(value).dispatches[0]).toMatchObject({
+      state: 'FAILED',
+      reviewState: 'MANUAL_REVIEW_REQUIRED',
+      manualReviewCount: 3,
+    });
   });
 
   it('loads user sheets and sends a versioned, confirmed response with command identity', async () => {

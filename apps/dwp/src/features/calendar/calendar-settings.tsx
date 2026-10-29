@@ -61,6 +61,7 @@ import { alpha } from '@mui/material/styles';
 import { usePersonalPreference } from '../../providers/personal-preference-provider';
 import { CalendarPageHeading } from './calendar-components';
 import { CalendarDelegationDialog } from './calendar-delegation-dialog';
+import { CALENDAR_SETTINGS_QUERY_KEY } from './calendar-effective-preferences';
 import { CalendarCanvas, CalendarSectionHeader } from './calendar-experience';
 import { calendarCanChangeSelection, calendarIsRequired } from './calendar-source-model';
 
@@ -163,7 +164,7 @@ export function CalendarSettings() {
   const [resetOpen, setResetOpen] = useState(false);
 
   const settingsQuery = useQuery({
-    queryKey: ['calendar', 'settings'],
+    queryKey: CALENDAR_SETTINGS_QUERY_KEY,
     queryFn: ({ signal }) => getCalendarSettings(signal),
     staleTime: 60_000,
     retry: 1,
@@ -219,27 +220,27 @@ export function CalendarSettings() {
   const saveMutation = useMutation({
     mutationFn: updateCalendarSettings,
     onSuccess: (saved) => {
-      queryClient.setQueryData(['calendar', 'settings'], saved);
+      queryClient.setQueryData(CALENDAR_SETTINGS_QUERY_KEY, saved);
       setDraft(settingsInput(saved));
       syncRegionalPreference(saved);
       toast.success(t('settings.saved'));
     },
     onError: async () => {
-      await queryClient.invalidateQueries({ queryKey: ['calendar', 'settings'] });
+      await queryClient.invalidateQueries({ queryKey: CALENDAR_SETTINGS_QUERY_KEY });
       toast.error(t('settings.saveError'));
     },
   });
   const resetMutation = useMutation({
     mutationFn: resetCalendarSettings,
     onSuccess: (saved) => {
-      queryClient.setQueryData(['calendar', 'settings'], saved);
+      queryClient.setQueryData(CALENDAR_SETTINGS_QUERY_KEY, saved);
       setDraft(settingsInput(saved));
       setResetOpen(false);
       syncRegionalPreference(saved);
       toast.success(t('settings.resetDone'));
     },
     onError: async () => {
-      await queryClient.invalidateQueries({ queryKey: ['calendar', 'settings'] });
+      await queryClient.invalidateQueries({ queryKey: CALENDAR_SETTINGS_QUERY_KEY });
       toast.error(t('settings.resetError'));
     },
   });

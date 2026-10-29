@@ -1,7 +1,7 @@
 import { resolveZonedClock } from '@dwp-frontend/shared-i18n';
 import { Temporal } from 'temporal-polyfill';
 
-import type { CalendarEvent } from '@dwp-frontend/shared-utils';
+import type { CalendarDayOfWeek, CalendarEvent } from '@dwp-frontend/shared-utils';
 
 type CalendarTodayEventPhase = 'ELAPSED' | 'CURRENT' | 'UPCOMING';
 
@@ -31,6 +31,7 @@ type CalendarTodayStreamOptions = Readonly<{
   minimumOpenMinutes?: number;
   date?: string;
   timeZone?: string;
+  workingDays?: readonly CalendarDayOfWeek[];
   workingDayStart?: string | null;
   workingDayEnd?: string | null;
 }>;
@@ -71,17 +72,39 @@ function zonedWorkingTime(date: string, timeZone: string, value?: string | null)
   }
 }
 
+const CALENDAR_DAYS: readonly CalendarDayOfWeek[] = [
+  'MONDAY',
+  'TUESDAY',
+  'WEDNESDAY',
+  'THURSDAY',
+  'FRIDAY',
+  'SATURDAY',
+  'SUNDAY',
+];
+
+function calendarDateIsWorkingDay(date: string, workingDays?: readonly CalendarDayOfWeek[]) {
+  if (!workingDays) return true;
+  try {
+    const day = CALENDAR_DAYS[Temporal.PlainDate.from(date).dayOfWeek - 1];
+    return Boolean(day && workingDays.includes(day));
+  } catch {
+    return false;
+  }
+}
+
 export function calendarWorkdayPhase(
   generatedAt: string,
   options: Readonly<{
     date?: string;
     timeZone?: string;
+    workingDays?: readonly CalendarDayOfWeek[];
     workingDayStart?: string | null;
     workingDayEnd?: string | null;
   }>
 ): CalendarWorkdayPhase {
   const now = timestamp(generatedAt);
   if (now === null || !options.date || !options.timeZone) return 'UNKNOWN';
+  if (!calendarDateIsWorkingDay(options.date, options.workingDays)) return 'UNKNOWN';
   const start = zonedWorkingTime(options.date, options.timeZone, options.workingDayStart);
   const end = zonedWorkingTime(options.date, options.timeZone, options.workingDayEnd);
   if (start === null || end === null || end <= start) return 'UNKNOWN';
@@ -143,6 +166,15 @@ export function calendarTodayStream(
     options.date && options.timeZone
       ? zonedWorkingTime(options.date, options.timeZone, options.workingDayEnd)
       : null;
+  const scheduleBounded = Boolean(options.date && options.timeZone);
+  const validWorkingSchedule = Boolean(
+    options.date &&
+    calendarDateIsWorkingDay(options.date, options.workingDays) &&
+    workingDayStart !== null &&
+    workingDayEnd !== null &&
+    workingDayEnd > workingDayStart
+  );
+  const canOfferOpenWindows = !scheduleBounded || validWorkingSchedule;
   let availableFrom = Math.max(now, workingDayStart ?? now);
 
   visibleTodayEvents(events).forEach((event) => {
@@ -150,7 +182,7 @@ export function calendarTodayStream(
     const endsAt = Date.parse(event.endsAt);
     const openUntil = Math.min(startsAt, workingDayEnd ?? startsAt);
 
-    if (endsAt > now && openUntil - availableFrom >= minimumGap) {
+    if (canOfferOpenWindows && endsAt > now && openUntil - availableFrom >= minimumGap) {
       items.push({
         kind: 'open-window',
         startsAt: new Date(availableFrom).toISOString(),
@@ -169,7 +201,11 @@ export function calendarTodayStream(
     availableFrom = Math.max(availableFrom, endsAt);
   });
 
-  if (workingDayEnd !== null && workingDayEnd - availableFrom >= minimumGap) {
+  if (
+    canOfferOpenWindows &&
+    workingDayEnd !== null &&
+    workingDayEnd - availableFrom >= minimumGap
+  ) {
     items.push({
       kind: 'open-window',
       startsAt: new Date(availableFrom).toISOString(),

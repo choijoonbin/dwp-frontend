@@ -1,9 +1,12 @@
 import { axiosInstance, getEventStream } from '../axios-instance';
 
 import type { ApiResponse } from '../types';
+import type { MessagingAttachment } from './messaging-attachment-api';
 
 export * from './messaging-privacy-api';
 export * from './messaging-home-api';
+export * from './messaging-continuity-api';
+export * from './messaging-attachment-api';
 
 export type MessagingConversationType =
   'DIRECT' | 'GROUP' | 'CHANNEL' | 'ANNOUNCEMENT' | 'INCIDENT' | 'MEETING';
@@ -22,6 +25,24 @@ export type MessagingPerson = {
   presenceState: 'AVAILABLE' | 'BUSY' | 'AWAY' | 'FOCUS' | 'OFFLINE' | 'UNKNOWN';
 };
 
+export type MessagingPeoplePresenceFilter = 'ALL' | 'AVAILABLE' | 'OFFLINE' | 'UNKNOWN';
+
+export type MessagingPeoplePage = {
+  items: MessagingPerson[];
+  /** Exact durable-directory matches before the ephemeral presence filter is applied. */
+  total: number;
+  hasMore: boolean;
+  nextCursor?: string | null;
+  /** Offset fallback for older clients; cursor-capable clients should use nextCursor. */
+  nextOffset?: number | null;
+  presence: {
+    authority: 'LIVE' | 'UNAVAILABLE';
+    evaluatedAt: string;
+    leaseTtlSeconds: number;
+    refreshAfterSeconds: number;
+  };
+};
+
 export type MessagingReaction = {
   emoji: string;
   count: number;
@@ -32,35 +53,6 @@ export type MessagingMention = {
   userId: number;
   displayName: string;
   mentionKind: 'USER' | 'ALL';
-};
-
-export type MessagingAttachmentStatus =
-  'QUARANTINED' | 'SCANNING' | 'CLEAN' | 'REJECTED' | 'EXPIRED';
-
-export type MessagingAttachment = {
-  attachmentId: string;
-  filename: string;
-  contentType: string;
-  sizeBytes: number;
-  status: MessagingAttachmentStatus;
-  rejectionReason?: string | null;
-  createdAt: string;
-  version: number;
-};
-
-export type MessagingAttachmentUploadSession = {
-  attachment: MessagingAttachment;
-  uploadUrl?: string | null;
-  expiresAt: string;
-};
-
-export type MessagingAttachmentDownload = {
-  attachmentId: string;
-  filename: string;
-  contentType: string;
-  sizeBytes: number;
-  downloadUrl: string;
-  expiresAt: string;
 };
 
 export type MessagingMessage = {
@@ -155,6 +147,8 @@ export const MESSAGING_API_CAPABILITIES = {
   remoteTyping: true,
   attachments: true,
   displayPreferences: true,
+  serverDrafts: true,
+  scheduledMessages: true,
 } as const;
 
 export type MessagingConversationDetail = {
@@ -189,6 +183,9 @@ export type MessagingConversationPage = {
   total: number;
   page: number;
   pageSize: number;
+  hasMore?: boolean;
+  nextCursor?: string | null;
+  nextPage?: number | null;
 };
 
 export type MessagingMessagePage = {
@@ -297,6 +294,8 @@ export type MessagingSavedItem = {
   conversationName?: string | null;
   conversationType: MessagingConversationType;
   savedAt: string;
+  /** Added by the protected-preview contract; absent only on a rolling-deploy legacy response. */
+  protectedContent?: boolean;
 };
 
 export type MessagingSavedItemPage = {
@@ -379,6 +378,22 @@ export type MessagingAdminOverview = {
   };
   policy: MessagingPolicy;
   governedConversations: MessagingConversation[];
+  runtimeReadiness?: {
+    evaluatedAt: string;
+    overallState: 'READY' | 'DEGRADED' | 'BLOCKED' | 'UNAVAILABLE' | 'DISABLED';
+    capabilities: Array<{
+      capability: string;
+      provider: string;
+      required: boolean;
+      configured: boolean;
+      effective: boolean;
+      state: 'READY' | 'DEGRADED' | 'BLOCKED' | 'UNAVAILABLE' | 'DISABLED';
+      reasonCode: string | null;
+      lastVerifiedAt: string | null;
+      freshness: 'CURRENT' | 'STALE' | 'NEVER';
+      pendingWorkCount: number | null;
+    }>;
+  };
 };
 
 export async function getMessagingHome(): Promise<MessagingHome> {
@@ -391,12 +406,14 @@ export async function getMessagingConversations(input: {
   query?: string;
   page?: number;
   pageSize?: number;
+  cursor?: string;
 }): Promise<MessagingConversationPage> {
   const search = new URLSearchParams();
   search.set('scope', input.scope ?? 'ALL');
   if (input.query) search.set('q', input.query);
   search.set('page', String(input.page ?? 0));
   search.set('pageSize', String(input.pageSize ?? 30));
+  if (input.cursor) search.set('cursor', input.cursor);
   const response = await axiosInstance.get<ApiResponse<MessagingConversationPage>>(
     `/api/messaging/v1/conversations?${search.toString()}`
   );
@@ -569,74 +586,6 @@ export async function sendMessagingMessage(input: {
     mentionedUserIds: input.mentionedUserIds ?? [],
   });
   return response.data.data;
-}
-
-export async function createMessagingAttachmentUpload(input: {
-  conversationId: string;
-  filename: string;
-  contentType: string;
-  sizeBytes: number;
-  idempotencyKey: string;
-}): Promise<MessagingAttachmentUploadSession> {
-  const response = await axiosInstance.post<
-    ApiResponse<MessagingAttachmentUploadSession>,
-    Omit<typeof input, 'conversationId'>
-  >(
-    `/api/messaging/v1/conversations/${encodeURIComponent(input.conversationId)}/attachments/uploads`,
-    {
-      filename: input.filename,
-      contentType: input.contentType,
-      sizeBytes: input.sizeBytes,
-      idempotencyKey: input.idempotencyKey,
-    }
-  );
-  return response.data.data;
-}
-
-export async function uploadMessagingAttachmentContent(
-  uploadUrl: string,
-  content: Blob
-): Promise<MessagingAttachment> {
-  if (!uploadUrl.startsWith('/api/messaging/')) {
-    throw new Error('Messaging attachment uploads must use the governed messaging API path.');
-  }
-  const response = await axiosInstance.put<ApiResponse<MessagingAttachment>, Blob>(
-    uploadUrl,
-    content,
-    { headers: { 'Content-Type': 'application/octet-stream' } }
-  );
-  return response.data.data;
-}
-
-export async function createMessagingAttachmentDownload(
-  conversationId: string,
-  attachmentId: string
-): Promise<MessagingAttachmentDownload> {
-  const response = await axiosInstance.post<
-    ApiResponse<MessagingAttachmentDownload>,
-    Record<string, never>
-  >(
-    `/api/messaging/v1/conversations/${encodeURIComponent(conversationId)}/attachments/${encodeURIComponent(attachmentId)}/download-grants`,
-    {}
-  );
-  return response.data.data;
-}
-
-export async function discardMessagingAttachment(
-  conversationId: string,
-  attachmentId: string
-): Promise<void> {
-  await axiosInstance.delete<ApiResponse<void>>(
-    `/api/messaging/v1/conversations/${encodeURIComponent(conversationId)}/attachments/${encodeURIComponent(attachmentId)}`
-  );
-}
-
-export async function downloadMessagingAttachmentContent(downloadUrl: string): Promise<Blob> {
-  if (!downloadUrl.startsWith('/api/messaging/')) {
-    throw new Error('Messaging attachment downloads must use the governed messaging API path.');
-  }
-  const response = await axiosInstance.get<Blob>(downloadUrl, { responseType: 'blob' });
-  return response.data;
 }
 
 export async function getMessagingThread(
@@ -943,18 +892,40 @@ export function parseMessagingRealtimeSignal(
 export async function subscribeMessagingRealtime(input: {
   endpoint: string;
   signal: AbortSignal;
+  after?: string | null;
   onSignal: (signal: MessagingRealtimeSignal) => void;
+  onCursor?: (cursor: string) => void;
 }): Promise<void> {
   if (!input.endpoint.startsWith('/api/messaging/')) {
     throw new Error('Messaging realtime endpoint must use the governed messaging API path.');
   }
-  await getEventStream(input.endpoint, {
+  await getEventStream(messagingRealtimeResumeEndpoint(input.endpoint, input.after), {
     signal: input.signal,
-    onMessage: ({ event, data }) => {
+    onMessage: ({ event, data, id }) => {
       const signal = parseMessagingRealtimeSignal(event, data);
-      if (signal) input.onSignal(signal);
+      if (!signal) return;
+      input.onSignal(signal);
+      const cursor = normalizeMessagingRealtimeCursor(id);
+      if (cursor) input.onCursor?.(cursor);
     },
   });
+}
+
+export function messagingRealtimeResumeEndpoint(endpoint: string, after?: string | null): string {
+  if (!endpoint.startsWith('/api/messaging/')) {
+    throw new Error('Messaging realtime endpoint must use the governed messaging API path.');
+  }
+  if (!after) return endpoint;
+  const cursor = normalizeMessagingRealtimeCursor(after);
+  if (!cursor) throw new Error('Messaging realtime cursor must be a non-negative 64-bit integer.');
+  const url = new URL(endpoint, 'https://messaging.invalid');
+  url.searchParams.set('after', cursor);
+  return `${url.pathname}${url.search}`;
+}
+
+function normalizeMessagingRealtimeCursor(value?: string): string | null {
+  if (!value || !/^(?:0|[1-9]\d{0,18})$/u.test(value)) return null;
+  return value.length < 19 || value <= '9223372036854775807' ? value : null;
 }
 
 export async function searchMessagingPeople(query: string): Promise<MessagingPerson[]> {
@@ -963,6 +934,34 @@ export async function searchMessagingPeople(query: string): Promise<MessagingPer
   search.set('limit', '20');
   const response = await axiosInstance.get<ApiResponse<MessagingPerson[]>>(
     `/api/messaging/v1/people?${search.toString()}`
+  );
+  return response.data.data;
+}
+
+export async function getMessagingPeoplePage(input: {
+  query?: string;
+  organization?: string;
+  jobTitle?: string;
+  presence?: MessagingPeoplePresenceFilter;
+  cursor?: string;
+  offset?: number;
+  limit?: number;
+  signal?: AbortSignal;
+}): Promise<MessagingPeoplePage> {
+  const search = new URLSearchParams();
+  if (input.query) search.set('q', input.query);
+  if (input.organization) search.set('organization', input.organization);
+  if (input.jobTitle) search.set('jobTitle', input.jobTitle);
+  if (input.presence && input.presence !== 'ALL') search.set('presence', input.presence);
+  if (input.cursor) {
+    search.set('cursor', input.cursor);
+  } else if (input.offset !== undefined) {
+    search.set('offset', String(Math.max(0, input.offset)));
+  }
+  search.set('limit', String(Math.min(50, Math.max(1, input.limit ?? 30))));
+  const response = await axiosInstance.get<ApiResponse<MessagingPeoplePage>>(
+    `/api/messaging/v1/people/page?${search.toString()}`,
+    { signal: input.signal }
   );
   return response.data.data;
 }

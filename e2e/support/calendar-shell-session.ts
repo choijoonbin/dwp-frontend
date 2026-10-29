@@ -1,7 +1,11 @@
 import type { Page, Route } from '@playwright/test';
 
 import { mockShellSession as mockBaseShellSession } from './shell-session';
-import { CALENDAR_SHARES_FIXTURE } from './product-area-fixtures';
+import {
+  CALENDAR_EVENT_FIXTURE,
+  CALENDAR_FOCUS_FIXTURE,
+  CALENDAR_SHARES_FIXTURE,
+} from './product-area-fixtures';
 
 import type {
   CalendarDelegation,
@@ -214,6 +218,34 @@ async function mockCalendarTeamAvailabilityContract(page: Page) {
   );
 }
 
+async function mockCalendarProjectionContracts(page: Page) {
+  await page.route('**/api/platform/v1/observability/web-vitals', (route) =>
+    route.fulfill({ status: 202, contentType: 'application/json', body: '{}' })
+  );
+  await page.route('**/api/platform/v2/calendar/events?*', (route) => {
+    const url = new URL(route.request().url());
+    const from = url.searchParams.get('from') ?? '2026-08-10T00:00:00Z';
+    const to = url.searchParams.get('to') ?? '2026-08-17T00:00:00Z';
+    const timeZone = url.searchParams.get('timeZone') ?? 'Asia/Seoul';
+    return fulfillSuccess(route, {
+      items: [CALENDAR_EVENT_FIXTURE, CALENDAR_FOCUS_FIXTURE],
+      nextCursor: null,
+      hasMore: false,
+      range: { from, to, timeZone },
+      generatedAt: '2026-08-11T00:20:00Z',
+    });
+  });
+  await page.route('**/api/platform/v2/calendar/external-events?*', (route) =>
+    fulfillSuccess(route, {
+      events: [],
+      sources: [],
+      partial: false,
+      truncated: false,
+      generatedAt: '2026-08-11T00:20:00Z',
+    })
+  );
+}
+
 async function mockCalendarSettingsContracts(page: Page) {
   let settings: CalendarSettings = structuredClone(CALENDAR_SETTINGS_FIXTURE);
   let delegations: CalendarDelegation[] = structuredClone(CALENDAR_DELEGATIONS_FIXTURE);
@@ -287,4 +319,5 @@ export async function mockCalendarShellSession(...args: Parameters<typeof mockBa
   await mockCalendarRecoveryContracts(args[0]);
   await mockCalendarSharingContracts(args[0]);
   await mockCalendarTeamAvailabilityContract(args[0]);
+  await mockCalendarProjectionContracts(args[0]);
 }

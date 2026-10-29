@@ -12,10 +12,33 @@ import {
 } from './workplace-connector-operations-api';
 
 const BASE = '/api/platform/v1/admin/workplace/exceptions';
-const SOURCES = new Set(['SAFETY', 'BOOKING', 'CONNECTOR']);
+// Mirrors the backend's independently bounded source projections:
+// safety 100 + bookings 250 + connectors 100 + six operational sources x 100.
+const MAX_EXCEPTION_ITEMS = 1_050;
+const SOURCES = new Set([
+  'SAFETY',
+  'BOOKING',
+  'CONNECTOR',
+  'DEVICE_COMMAND',
+  'SERVICE_ORDER',
+  'SERVICE_PROVIDER',
+  'SERVICE_REFUND',
+  'VISIT_PROVIDER',
+  'ACCESS_PASS',
+]);
 const SEVERITIES = new Set(['CRITICAL', 'ERROR', 'WARNING']);
-const STATUSES = new Set(['ACTIVE', 'RECOVERING']);
-const ACTIONS = new Set(['OPEN_SAFETY', 'REVIEW_BOOKING', 'REPLAY_CONNECTOR']);
+const STATUSES = new Set(['ACTIVE', 'RECOVERING', 'MANUAL_REVIEW', 'RESOLVED']);
+const ACTIONS = new Set([
+  'OPEN_SAFETY',
+  'REVIEW_BOOKING',
+  'REPLAY_CONNECTOR',
+  'REVIEW_DEVICE',
+  'REVIEW_SERVICE_ORDER',
+  'REVIEW_SERVICE_PROVIDER',
+  'REVIEW_SERVICE_REFUND',
+  'REVIEW_VISIT',
+  'REVIEW_ACCESS_PASS',
+]);
 const GUARDRAIL_STATUSES = new Set(['HEALTHY', 'WARNING', 'BREACHED', 'UNKNOWN']);
 const CONNECTOR_KINDS = new Set([
   'CALENDAR',
@@ -29,11 +52,36 @@ const CONNECTOR_KINDS = new Set([
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/iu;
 const IDEMPOTENCY = /^[\x21-\x7e]{1,160}$/u;
 
-export type WorkplaceExceptionSource = 'SAFETY' | 'BOOKING' | 'CONNECTOR';
+export type WorkplaceExceptionSource =
+  | 'SAFETY'
+  | 'BOOKING'
+  | 'CONNECTOR'
+  | 'DEVICE_COMMAND'
+  | 'SERVICE_ORDER'
+  | 'SERVICE_PROVIDER'
+  | 'SERVICE_REFUND'
+  | 'VISIT_PROVIDER'
+  | 'ACCESS_PASS';
 export type WorkplaceExceptionSeverity = 'CRITICAL' | 'ERROR' | 'WARNING';
-export type WorkplaceExceptionStatus = 'ACTIVE' | 'RECOVERING';
-export type WorkplaceExceptionAction = 'OPEN_SAFETY' | 'REVIEW_BOOKING' | 'REPLAY_CONNECTOR';
+export type WorkplaceExceptionStatus = 'ACTIVE' | 'RECOVERING' | 'MANUAL_REVIEW' | 'RESOLVED';
+export type WorkplaceExceptionAction =
+  | 'OPEN_SAFETY'
+  | 'REVIEW_BOOKING'
+  | 'REPLAY_CONNECTOR'
+  | 'REVIEW_DEVICE'
+  | 'REVIEW_SERVICE_ORDER'
+  | 'REVIEW_SERVICE_PROVIDER'
+  | 'REVIEW_SERVICE_REFUND'
+  | 'REVIEW_VISIT'
+  | 'REVIEW_ACCESS_PASS';
 export type WorkplaceGuardrailStatus = 'HEALTHY' | 'WARNING' | 'BREACHED' | 'UNKNOWN';
+
+export type WorkplaceExceptionSourceCoverage = Readonly<{
+  source: WorkplaceExceptionSource;
+  unresolvedCount: number;
+  returnedCount: number;
+  truncated: boolean;
+}>;
 
 export type WorkplaceExceptionItem = Readonly<{
   exceptionId: string;
@@ -51,6 +99,9 @@ export type WorkplaceExceptionItem = Readonly<{
   connectorKind: WorkplaceConnectorKind | null;
   configurationVersion: number | null;
   runtimeVersion: number | null;
+  resolved: boolean;
+  resolvedAt: string | null;
+  ageSeconds: number;
 }>;
 
 export type WorkplaceExceptionConsole = Readonly<{
@@ -63,6 +114,9 @@ export type WorkplaceExceptionConsole = Readonly<{
     deadLetterQueueDepth: number;
     automaticRecoveryPercent: number | null;
     slaCompliancePercent: number | null;
+    unresolvedCount: number;
+    returnedCount: number;
+    truncated: boolean;
   }>;
   exceptions: readonly WorkplaceExceptionItem[];
   guardrails: readonly Readonly<{
@@ -76,6 +130,7 @@ export type WorkplaceExceptionConsole = Readonly<{
   }>[];
   generatedAt: string;
   externalTelemetryUrl: string | null;
+  sourceCoverage: readonly WorkplaceExceptionSourceCoverage[];
 }>;
 
 export type WorkplaceExceptionRecoveryPreview = Readonly<{
@@ -146,6 +201,10 @@ function nullableInteger(value: unknown, path: string): number | null {
   return value === null ? null : integer(value, path);
 }
 
+function boolean(value: unknown, path: string): boolean {
+  return typeof value === 'boolean' ? value : invalid(path);
+}
+
 function nullableNumber(value: unknown, path: string): number | null {
   return value === null || (typeof value === 'number' && Number.isFinite(value) && value >= 0)
     ? (value as number | null)
@@ -160,6 +219,10 @@ function nullablePercent(value: unknown, path: string): number | null {
 function instant(value: unknown, path: string): string {
   const result = text(value, path, 64);
   return Number.isFinite(Date.parse(result)) ? result : invalid(path);
+}
+
+function nullableInstant(value: unknown, path: string): string | null {
+  return value === null ? null : instant(value, path);
 }
 
 function uuid(value: unknown, path: string): string {
@@ -211,16 +274,21 @@ export function parseWorkplaceExceptionItem(
       `${path}.configurationVersion`
     ),
     runtimeVersion: nullableInteger(data.runtimeVersion, `${path}.runtimeVersion`),
+    resolved: boolean(data.resolved, `${path}.resolved`),
+    resolvedAt: nullableInstant(data.resolvedAt, `${path}.resolvedAt`),
+    ageSeconds: integer(data.ageSeconds, `${path}.ageSeconds`),
   });
 }
 
 export function parseWorkplaceExceptionConsole(value: unknown): WorkplaceExceptionConsole {
   const data = record(value, 'console');
   const summary = record(data.summary, 'console.summary');
-  if (!Array.isArray(data.exceptions) || data.exceptions.length > 300)
+  if (!Array.isArray(data.exceptions) || data.exceptions.length > MAX_EXCEPTION_ITEMS)
     return invalid('console.exceptions');
   if (!Array.isArray(data.guardrails) || data.guardrails.length > 30)
     return invalid('console.guardrails');
+  if (!Array.isArray(data.sourceCoverage) || data.sourceCoverage.length !== SOURCES.size)
+    return invalid('console.sourceCoverage');
   const externalTelemetryUrl = nullableText(
     data.externalTelemetryUrl,
     'console.externalTelemetryUrl',
@@ -228,6 +296,45 @@ export function parseWorkplaceExceptionConsole(value: unknown): WorkplaceExcepti
   );
   if (externalTelemetryUrl !== null && !externalTelemetryUrl.startsWith('https://'))
     return invalid('console.externalTelemetryUrl');
+  const parsedExceptions = data.exceptions.map((item, index) =>
+    parseWorkplaceExceptionItem(item, `console.exceptions[${index}]`)
+  );
+  const sourceCoverage = data.sourceCoverage.map((value, index) => {
+    const item = record(value, `console.sourceCoverage[${index}]`);
+    const unresolvedCount = integer(
+      item.unresolvedCount,
+      `console.sourceCoverage[${index}].unresolvedCount`
+    );
+    const returnedCount = integer(
+      item.returnedCount,
+      `console.sourceCoverage[${index}].returnedCount`
+    );
+    const truncated = boolean(item.truncated, `console.sourceCoverage[${index}].truncated`);
+    if (returnedCount > unresolvedCount || truncated !== unresolvedCount > returnedCount)
+      return invalid(`console.sourceCoverage[${index}]`);
+    return Object.freeze({
+      source: enumeration<WorkplaceExceptionSource>(
+        item.source,
+        SOURCES,
+        `console.sourceCoverage[${index}].source`
+      ),
+      unresolvedCount,
+      returnedCount,
+      truncated,
+    });
+  });
+  if (new Set(sourceCoverage.map((coverage) => coverage.source)).size !== SOURCES.size)
+    return invalid('console.sourceCoverage');
+  const unresolvedCount = integer(summary.unresolvedCount, 'console.summary.unresolvedCount');
+  const returnedCount = integer(summary.returnedCount, 'console.summary.returnedCount');
+  const truncated = boolean(summary.truncated, 'console.summary.truncated');
+  if (
+    returnedCount !== parsedExceptions.length ||
+    unresolvedCount !== sourceCoverage.reduce((total, value) => total + value.unresolvedCount, 0) ||
+    returnedCount !== sourceCoverage.reduce((total, value) => total + value.returnedCount, 0) ||
+    truncated !== sourceCoverage.some((value) => value.truncated)
+  )
+    return invalid('console.summary.coverage');
   return Object.freeze({
     summary: Object.freeze({
       active: integer(summary.active, 'console.summary.active'),
@@ -250,10 +357,11 @@ export function parseWorkplaceExceptionConsole(value: unknown): WorkplaceExcepti
         summary.slaCompliancePercent,
         'console.summary.slaCompliancePercent'
       ),
+      unresolvedCount,
+      returnedCount,
+      truncated,
     }),
-    exceptions: data.exceptions.map((item, index) =>
-      parseWorkplaceExceptionItem(item, `console.exceptions[${index}]`)
-    ),
+    exceptions: parsedExceptions,
     guardrails: data.guardrails.map((value, index) => {
       const item = record(value, `console.guardrails[${index}]`);
       return Object.freeze({
@@ -272,6 +380,7 @@ export function parseWorkplaceExceptionConsole(value: unknown): WorkplaceExcepti
     }),
     generatedAt: instant(data.generatedAt, 'console.generatedAt'),
     externalTelemetryUrl,
+    sourceCoverage,
   });
 }
 

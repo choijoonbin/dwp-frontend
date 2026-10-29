@@ -143,6 +143,68 @@ describe('Workplace weekly planner route', () => {
 describe('Workplace Screens 17–23 production reachability', () => {
   const navigationItems = ROOMS_NAVIGATION.flatMap((group) => group.items);
 
+  it('groups the canonical entries by user task without changing route authority', () => {
+    expect(
+      Object.fromEntries(
+        ROOMS_NAVIGATION.map((group) => [group.id, group.items.map((item) => item.view)])
+      )
+    ).toEqual({
+      startAndBook: ['home', 'find', 'planner', 'reservations', 'assistant'],
+      onSite: ['wayfinding', 'service-orders', 'safety'],
+      operationsAndExceptions: [
+        'admin-overview',
+        'admin-safety',
+        'admin-operations',
+        'admin-exceptions',
+        'admin-devices',
+        'admin-service-fulfillment',
+        'admin-visits',
+        'admin-room-operations',
+      ],
+      spacesAndPolicy: [
+        'admin-space-planning',
+        'admin-assistant-governance',
+        'admin-governance',
+        'admin-locations',
+        'admin-policy',
+        'admin-room-policy',
+      ],
+      serviceManagement: ['admin-service-catalog', 'admin-service-providers'],
+      visitorsAndAccess: [
+        'admin-visit-policies',
+        'admin-access-zones',
+        'admin-visit-providers',
+        'admin-kiosk-devices',
+      ],
+    });
+
+    expect(
+      navigationItems.map(({ path, requiredResourceKey, requiredPermissionCode }) => ({
+        path,
+        requiredResourceKey,
+        requiredPermissionCode,
+      }))
+    ).toEqual(
+      expect.arrayContaining([
+        {
+          path: '/workplace/home',
+          requiredResourceKey: 'APP.WORKPLACE',
+          requiredPermissionCode: 'VIEW',
+        },
+        {
+          path: '/workplace/admin/meeting-operations',
+          requiredResourceKey: 'ADMIN.ROOMS',
+          requiredPermissionCode: 'VIEW',
+        },
+        {
+          path: '/workplace/admin/meeting-policy',
+          requiredResourceKey: 'ADMIN.ROOMS',
+          requiredPermissionCode: 'VIEW',
+        },
+      ])
+    );
+  });
+
   it('publishes the 28 canonical human menu entries exactly once', () => {
     expect(navigationItems).toHaveLength(28);
     expect(new Set(navigationItems.map((item) => item.path)).size).toBe(28);

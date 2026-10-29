@@ -27,6 +27,8 @@
         "focus": { "label": "Focus plan" },
         "invitations": { "label": "Invitations" },
         "availability": { "label": "Find time" },
+        "polls": { "label": "Scheduling polls" },
+        "bookings": { "label": "Appointments" },
         "settings": { "label": "Calendar settings" },
         "trash": { "label": "Trash" },
         "insights": { "label": "Time insights" },
@@ -44,10 +46,12 @@
     "details": "View details",
     "done": "Done",
     "edit": "Edit",
+    "loadMore": "Load more",
     "newEvent": "New event",
     "next": "Next",
     "openCalendar": "Open schedule",
     "previous": "Previous",
+    "remove": "Remove",
     "returnToWork": "Return to work",
     "retry": "Try again",
     "save": "Save",
@@ -72,6 +76,169 @@
       "open-insights": "Open time insights"
     }
   },
+  "eventSearch": {
+    "open": "Search events",
+    "title": "Search events",
+    "description": "Search only events in the visible calendar period.",
+    "queryLabel": "Search terms",
+    "queryPlaceholder": "Title, person, location, or description",
+    "submit": "Search",
+    "validation": {
+      "TOO_SHORT": "Enter at least 2 characters.",
+      "TOO_LONG": "Enter no more than 120 characters."
+    },
+    "loading": "Searching events…",
+    "loadError": "Events could not be searched.",
+    "emptyTitle": "No matching events",
+    "emptyDescription": "Try different terms or move the calendar to another period.",
+    "resultCount_one": "{{count}} result",
+    "resultCount_other": "{{count}} results",
+    "resultLabel": "{{title}}, {{date}} {{time}}, {{calendar}}",
+    "loadMore": "Load more",
+    "loadingMore": "Loading more…",
+    "idle": "Enter at least 2 characters to search this period."
+  },
+  "polls": {
+    "dateUnavailable": "Date unavailable",
+    "expired": "This poll has expired and is now read-only.",
+    "expiresAt": "Voting closes",
+    "candidateLabel": "Option {{count}}",
+    "candidateRange": "{{start}} – {{end}}",
+    "states": {
+      "DRAFT": "Draft",
+      "OPEN": "Open",
+      "AGREEMENT_REACHED": "Agreement reached",
+      "CONFIRMED": "Confirmed",
+      "CANCELLED": "Cancelled",
+      "EXPIRED": "Expired"
+    },
+    "availability": {
+      "AVAILABLE": "Available",
+      "ROOM_UNAVAILABLE": "Room unavailable",
+      "HOLD_EXPIRED": "Availability check expired",
+      "UNAVAILABLE": "Unavailable"
+    },
+    "votes": {
+      "YES": "Yes",
+      "IF_NEEDED": "If needed",
+      "NO": "No",
+      "YESCount": "Yes {{count}}",
+      "IF_NEEDEDCount": "If needed {{count}}",
+      "NOCount": "No {{count}}"
+    },
+    "creator": {
+      "title": "Create a scheduling poll",
+      "description": "Propose bounded time options to internal workspace members.",
+      "titleLabel": "Poll title",
+      "descriptionLabel": "Description",
+      "timeZoneLabel": "Time zone",
+      "expiresAtLabel": "Voting deadline",
+      "candidatesLabel": "Time options",
+      "candidateStart": "Option {{count}} start",
+      "candidateEnd": "Option {{count}} end",
+      "resourceId": "Option {{count}} room or resource ID",
+      "resourceIdHint": "Optional UUID. Availability is checked again before confirmation.",
+      "addCandidate": "Add time option",
+      "removeCandidate": "Remove option {{count}}",
+      "participantsLabel": "Participants",
+      "requiredParticipants": "Required participants",
+      "requiredParticipantsHint": "Every required participant must vote before agreement can be reached.",
+      "optionalParticipants": "Optional participants",
+      "optionalParticipantsHint": "Optional participants can vote without blocking agreement.",
+      "searchInternalPeople": "Search internal people",
+      "externalUnsupported": "External email participants are disabled. Only verified internal people can join a poll.",
+      "validationTitle": "Fix the following before creating this poll:",
+      "creating": "Creating poll…",
+      "submit": "Create poll",
+      "organizerFallback": "Organizer"
+    },
+    "organizer": {
+      "description": "Review voting evidence and confirm one eligible option.",
+      "notOrganizer": "Only the poll organizer can perform these actions.",
+      "confirmed": "This poll has been confirmed and added to the selected calendar.",
+      "candidates": "Time options and agreement evidence",
+      "calendarLabel": "Calendar for the confirmed event",
+      "agreementEligible": "Eligible to confirm",
+      "opening": "Opening poll…",
+      "open": "Open voting",
+      "reopen": "Reopen voting",
+      "confirming": "Confirming option…",
+      "confirm": "Confirm selected option",
+      "cancelling": "Cancelling poll…",
+      "cancel": "Cancel poll"
+    },
+    "participant": {
+      "description": "Vote once for every option. You can update your choices while voting remains open.",
+      "notParticipant": "You are not a participant in this poll.",
+      "saved": "Your choices were saved.",
+      "comment": "Comment",
+      "commentHint": "Optional context for the organizer, up to 1,000 characters.",
+      "submitting": "Saving votes…",
+      "submit": "Save votes",
+      "completeAll": "Choose an answer for every option before saving.",
+      "readOnly": {
+        "DRAFT": "Voting has not opened yet.",
+        "OPEN": "Voting is unavailable for this participant.",
+        "AGREEMENT_REACHED": "Agreement has been reached. The organizer can now confirm an option.",
+        "CONFIRMED": "The organizer confirmed this poll.",
+        "CANCELLED": "The organizer cancelled this poll.",
+        "EXPIRED": "This poll expired before confirmation."
+      }
+    },
+    "workspace": {
+      "loadingIdentity": "Checking your Calendar identity…",
+      "denied": "Your poll access changed. Previously loaded private poll data was cleared.",
+      "title": "Scheduling polls",
+      "description": "Collect internal availability, reach agreement, and create the final Calendar event.",
+      "createSection": "Create a scheduling poll",
+      "createTitle": "Propose several times",
+      "createReady": "The selected schedule is ready to become a poll.",
+      "createFromSchedule": "Add time options and internal participants to start a poll.",
+      "create": "Create poll",
+      "loading": "Loading scheduling polls…",
+      "unavailable": "Scheduling polls are temporarily unavailable.",
+      "stale": "The last known poll list is shown read-only until the connection recovers.",
+      "versionConflict": "This poll changed. Fresh details were loaded; review them before trying again.",
+      "commandError": "The poll could not be changed. Review the latest details and try again.",
+      "listLabel": "Scheduling poll list",
+      "listTitle": "Your polls",
+      "loadingMore": "Loading more polls…",
+      "loadMoreError": "More polls could not be loaded. Try again.",
+      "invalidCursor": "Pagination stopped because the service returned an invalid or repeated cursor.",
+      "empty": "No scheduling polls are available yet.",
+      "detailLabel": "Selected scheduling poll",
+      "selectPoll": "Select a poll to review its current state.",
+      "loadingDetail": "Loading poll details…",
+      "detailUnavailable": "This poll could not be loaded.",
+      "detailStale": "The last known poll details are read-only until the connection recovers.",
+      "calendarsUnavailable": "Calendars could not be loaded, so confirmation is temporarily disabled.",
+      "detailDenied": "You are neither the organizer nor a participant in this poll.",
+      "updatedAt": "Updated {{value}}"
+    },
+    "validation": {
+      "TITLE_REQUIRED": "Enter a poll title.",
+      "TITLE_TOO_LONG": "Keep the title to 240 characters or fewer.",
+      "DESCRIPTION_TOO_LONG": "Keep the description to 2,000 characters or fewer.",
+      "TIME_ZONE_INVALID": "Choose a supported IANA time zone.",
+      "CANDIDATE_COUNT": "Add between 1 and 20 time options.",
+      "CANDIDATE_ID_INVALID": "A time option has an invalid identifier.",
+      "CANDIDATE_DUPLICATE": "Each time option must have a unique identifier.",
+      "CANDIDATE_RANGE_INVALID": "Each option must have a valid start before its end.",
+      "CANDIDATE_RANGE_DUPLICATE": "Remove duplicate time ranges.",
+      "CANDIDATE_NOT_FUTURE": "Every option must start in the future.",
+      "CANDIDATE_TOO_FAR": "Time options cannot be more than one year away.",
+      "CANDIDATE_DURATION": "Each option must last between 5 minutes and 8 hours.",
+      "RESOURCE_ID_INVALID": "Enter a valid resource UUID or leave it blank.",
+      "PARTICIPANT_COUNT": "Add between 1 and 100 internal participants.",
+      "PARTICIPANT_ID_INVALID": "A participant has an invalid internal identifier.",
+      "PARTICIPANT_DUPLICATE": "Remove duplicate participants.",
+      "PARTICIPANT_NAME_REQUIRED": "Every participant needs a display name.",
+      "PARTICIPANT_NAME_TOO_LONG": "Keep participant names to 160 characters or fewer.",
+      "REQUIRED_PARTICIPANT_MISSING": "Add at least one required participant.",
+      "EXPIRES_AT_INVALID": "Enter a valid voting deadline.",
+      "EXPIRES_AT_RANGE": "The deadline must be in the future and no later than the earliest option."
+    }
+  },
   "error": {
     "description": "Check the calendar service connection and access permission, then try again."
   },
@@ -86,6 +253,111 @@
     "minute": "m",
     "minutes_one": "{{count}} minute",
     "minutes_other": "{{count}} minutes"
+  },
+  "booking": {
+    "eyebrow": "Scheduling · authenticated",
+    "title": "Appointments",
+    "description": "Choose a published booking page, reserve an available time, and manage your appointments without exposing private access tokens.",
+    "states": {
+      "loading": "Loading appointment availability…",
+      "empty": "There are no items to show yet.",
+      "unavailable": "Appointment information is temporarily unavailable. Try again when the connection recovers.",
+      "denied": "Your appointment access changed. Previously loaded private data was cleared.",
+      "disabled": "Authenticated appointment booking is not enabled for this workspace.",
+      "stale": "The last known appointment information is shown read-only. Refresh before making a change.",
+      "partial": "Only a bounded subset of results is shown. Narrow the search before making a change."
+    },
+    "capabilities": {
+      "externalDisabled": "Public and external booking is disabled. Only signed-in workspace members can book.",
+      "externalDisabledReason": "Bot protection, verified email, rate limiting, and security approval are required before external booking can be enabled.",
+      "externalEnabled": "External booking is enabled for this workspace."
+    },
+    "pages": {
+      "searchLabel": "Search booking pages",
+      "searchPlaceholder": "Search by title or description",
+      "listLabel": "Available booking pages",
+      "noSearchResults": "No booking pages match this search.",
+      "showMore": "Show more booking pages",
+      "select": "Choose {{title}}",
+      "selectPrompt": "Choose a booking page to review its current details and available times.",
+      "detailHeading": "Booking page details",
+      "timeZone": "Time zone: {{value}}",
+      "dailyLimit_one": "Daily booking limit: {{count}}",
+      "dailyLimit_other": "Daily booking limit: {{count}}",
+      "notice": "Minimum notice: {{minutes}} minutes",
+      "advanceWindow": "Booking window: {{days}} days ahead",
+      "buffers": "Calendar buffer: {{before}} minutes before and {{after}} minutes after",
+      "availabilityRuleCount_one": "{{count}} availability rule",
+      "availabilityRuleCount_other": "{{count}} availability rules",
+      "questionCount_one": "{{count}} booking question",
+      "questionCount_other": "{{count}} booking questions"
+    },
+    "pageStates": {
+      "DRAFT": "Draft",
+      "PUBLISHED": "Published",
+      "PAUSED": "Paused",
+      "ARCHIVED": "Archived"
+    },
+    "meetingModes": {
+      "IN_PERSON": "In person",
+      "VIDEO": "Video meeting",
+      "PHONE": "Phone"
+    },
+    "bookable": {
+      "heading": "Book an appointment",
+      "slotsLabel": "Available times",
+      "noSlots": "No times are available in the next 14 days.",
+      "showMoreSlots": "Show more available times",
+      "selectSlot": "Choose {{value}}",
+      "createHold": "Hold this time",
+      "releaseHold": "Release this time",
+      "holdExpired": "This temporary hold expired. Choose an available time again.",
+      "versionChanged": "This booking page changed after the time was selected. Refresh and choose again.",
+      "accessInfoMissing": "The required location, secure video link, or phone instructions are missing. Booking is blocked.",
+      "accessInformation": "How to attend",
+      "openVideo": "Open secure video link",
+      "confirm": "Confirm appointment",
+      "confirmReschedule": "Confirm new time"
+    },
+    "questions": {
+      "heading": "Booking questions",
+      "required": "Required",
+      "answerRequired": "Enter an answer before confirming.",
+      "invalidAnswer": "Choose a listed option or shorten this answer."
+    },
+    "appointments": {
+      "heading": "My appointments",
+      "listLabel": "My appointment list",
+      "select": "Open appointment at {{value}}",
+      "detail": "Appointment details",
+      "page": "Booking page",
+      "time": "Time",
+      "reschedule": "Choose a new time",
+      "cancelReason": "Cancellation reason (optional)",
+      "cancel": "Cancel appointment",
+      "actionsUnavailable": "This appointment cannot be changed, or live authority and version checks are not ready."
+    },
+    "appointmentStates": {
+      "CONFIRMED": "Confirmed",
+      "RESCHEDULED": "Rescheduled",
+      "CANCELLED": "Cancelled"
+    },
+    "token": {
+      "heading": "One-time access token",
+      "publicDescription": "This public-link token is displayed only now. It is never placed in the URL, browser storage, logs, or the query cache.",
+      "managementDescription": "This appointment-management token is displayed only now. It is never placed in the URL, browser storage, logs, or the query cache.",
+      "dismiss": "Dismiss token"
+    },
+    "toast": {
+      "holdCreated": "The time is held temporarily.",
+      "confirmed": "Appointment confirmed.",
+      "rescheduled": "Appointment rescheduled.",
+      "cancelled": "Appointment cancelled.",
+      "reschedulePageLocked": "A reschedule must use the original booking page.",
+      "denied": "Appointment access changed. Private data was cleared.",
+      "versionChanged": "The appointment changed. Fresh information is being loaded.",
+      "actionError": "The appointment action could not be completed."
+    }
   },
   "home": {
     "today": "Today",
@@ -281,7 +553,8 @@
     "restrictionFallback": "Some event details are hidden by the calendar owner's sharing policy.",
     "restrictions": {
       "FREE_BUSY_ONLY": "This calendar is shared as free/busy only. The title, organizer, attendees, and notes remain private.",
-      "RECURRING_EVENT_SERIES": "This event belongs to a recurring series. Some changes must be made to the series."
+      "RECURRING_EVENT_SERIES": "This event belongs to a recurring series. Some changes must be made to the series.",
+      "EXTERNAL_READ_ONLY": "This event comes from an external calendar and is read-only here."
     },
     "typeLabel": "Event type",
     "additionalOptions": "People, place, and more options",
@@ -311,6 +584,61 @@
     "requiredAttendeesPlaceholder": "Search for people whose availability is required",
     "optionalAttendeesLabel": "Optional attendees",
     "optionalAttendeesPlaceholder": "Add people who may join if available",
+    "attendeePicker": {
+      "searchPrompt": "Search the company directory",
+      "noResults": "No matching company member",
+      "loadError": "Company attendees could not be loaded. Selected attendees remain in the draft.",
+      "loadMore": "Load more people",
+      "loadingMore": "Loading more people",
+      "retryMore": "Retry loading more people",
+      "externalUnverified": "External · unverified for scheduling",
+      "externalChip": "{{email}} · External · Unverified",
+      "invalidExternalEmail": "Enter a valid external email address.",
+      "externalSaveBlocked": "External attendees cannot be saved until tenant policy is explicitly available and allows them.",
+      "externalPolicy": {
+        "ALLOWED": "External email is allowed, but remains unverified and blocks verified scheduling.",
+        "DENIED": "Tenant policy allows company directory attendees only.",
+        "LOADING": "Checking external attendee policy; external entry is disabled.",
+        "UNAVAILABLE": "External attendee policy is unavailable; external entry is disabled."
+      }
+    },
+    "reminders": {
+      "title": "Notifications",
+      "description": "Configure up to five in-app or email reminders for this saved event.",
+      "saveFirst": "Create this event first, then reopen it to configure notifications.",
+      "loading": "Loading notifications",
+      "loadError": "Notifications could not be loaded.",
+      "invalidated": "The event schedule or recurrence changed. Review the latest event and notification definitions before reapplying them.",
+      "reviewAndReapply": "Review and reapply",
+      "refreshing": "Refreshing event and notifications",
+      "recoveryReview": "The latest definitions are loaded. Review them, then choose Reapply notifications to activate them for the current event version.",
+      "cancelRecovery": "Cancel review",
+      "reapply": "Reapply notifications",
+      "saveError": "Notifications could not be saved. Your edits remain here.",
+      "versionConflict": "Notifications changed elsewhere. The latest version is loaded; choose whether to use it or keep your edits for another review.",
+      "useLatest": "Use latest",
+      "keepEdits": "Keep my edits",
+      "saved": "Notifications saved.",
+      "validationError": "Resolve duplicate or invalid notification settings before saving.",
+      "duplicateError": "Choose a unique timing and channel combination.",
+      "offsetRangeError": "Timing must be a whole number from 0 to 40,320 minutes.",
+      "emailChecking": "Checking email delivery capability. In-app notifications remain available.",
+      "emailUnavailable": "Email delivery is unavailable. Existing email values are preserved, but they cannot be newly selected or reactivated.",
+      "emailUnavailableRow": "Email delivery is unavailable. Choose In-app to save or reactivate this set.",
+      "empty": "No notifications are configured.",
+      "offsetLabel": "Notification {{count}} timing",
+      "channelLabel": "Notification {{count}} channel",
+      "atStart": "At event start",
+      "minutesBefore_one": "{{count}} minute before",
+      "minutesBefore_other": "{{count}} minutes before",
+      "channels": {
+        "IN_APP": "In-app",
+        "EMAIL": "Email"
+      },
+      "remove": "Remove notification {{count}}",
+      "add": "Add notification",
+      "save": "Save notifications"
+    },
     "locationLabel": "Location",
     "resourceLabel": "Room or resource",
     "noResource": "Do not book a resource",
@@ -321,7 +649,8 @@
       "NONE": "Does not repeat",
       "DAILY": "Daily",
       "WEEKLY": "Weekly",
-      "MONTHLY": "Monthly"
+      "MONTHLY": "Monthly",
+      "YEARLY": "Yearly"
     },
     "recurrenceIntervalLabel": "Repeat interval",
     "recurrenceIntervals": {
@@ -330,18 +659,34 @@
       "WEEKLY_one": "Every week",
       "WEEKLY_other": "Every {{count}} weeks",
       "MONTHLY_one": "Every month",
-      "MONTHLY_other": "Every {{count}} months"
+      "MONTHLY_other": "Every {{count}} months",
+      "YEARLY_one": "Every year",
+      "YEARLY_other": "Every {{count}} years"
+    },
+    "recurrenceDaysLabel": "Repeat on",
+    "recurrenceAnchorHint": "The start day ({{day}}) is always included.",
+    "recurrenceEndLabel": "Ends",
+    "recurrenceEnd": {
+      "NEVER": "Never",
+      "UNTIL": "On a date",
+      "COUNT": "After a number of occurrences"
     },
     "recurrenceUntilLabel": "Repeat until",
+    "recurrenceUntilRequired": "Choose the last recurrence date.",
+    "recurrenceUntilBeforeStart": "The last recurrence date cannot be before the first event.",
+    "recurrenceCountLabel": "Number of occurrences",
+    "recurrenceCountError": "Enter an occurrence count from 1 to 4,000.",
     "recurrenceEditScopeLabel": "Apply changes to",
     "recurrenceEditScopes": {
       "THIS_OCCURRENCE": "This occurrence",
+      "THIS_AND_FOLLOWING": "This and following",
       "SERIES": "Entire series"
     },
     "occurrenceFieldsHint": "For this occurrence, you can change its title, time, description, location, visibility, and importance. Attendees and recurrence stay owned by the series.",
+    "followingFieldsHint": "Create a new series from this occurrence. Attendees and the resource stay unchanged; you can adjust the future schedule and recurrence.",
     "seriesFieldsHint": "Apply changes to the entire recurring series, including its recurrence and attendees.",
-    "occurrenceResourceSeriesOnly": "A recurring event with a room, desk, or equipment booking must be changed as a series to preserve reservation integrity.",
-    "resourceRecurrenceUntilRequired": "Recurring resource bookings require an end date.",
+    "occurrenceResourceScopeHint": "A resource-backed occurrence cannot be changed alone. Change this and following occurrences, or the entire series, to preserve reservation integrity.",
+    "resourceRecurrenceBoundRequired": "Recurring resource bookings require either an end date or an occurrence count.",
     "visibilityLabel": "Visibility",
     "visibility": {
       "DEFAULT": "Company default",
@@ -381,25 +726,105 @@
     "uncheckedParticipants_other": "{{count}} external or unresolved attendees are not included in free/busy.",
     "participantOverflow_one": "{{count}} internal attendee exceeds the 20-person privacy-safe comparison limit and is not checked.",
     "participantOverflow_other": "{{count}} internal attendees exceed the 20-person privacy-safe comparison limit and are not checked.",
+    "uncheckedOrOverflow": "Verified apply is blocked: {{unchecked}} attendee(s) are unresolved and {{overflow}} exceed the comparison limit.",
     "invalidRange": "Choose a valid start and end time before checking availability.",
     "loadError": "Attendee availability could not be checked.",
     "staleResults": "The time or attendee list changed. Check again for current recommendations.",
     "incompleteResults": "No current calendar source can support a candidate. Refresh the affected connection and check again.",
     "partialResults": "{{sources}} could not be verified. Candidates from healthy sources remain visible for comparison, but cannot be applied until the missing schedule is checked.",
+    "partialBlocked": "Some availability evidence is incomplete. Review the source status and check again before applying a time.",
+    "unknownBlocked": "At least one attendee or source is unverified. This recommendation cannot be applied.",
     "timeApplied": "The recommended time was applied. Room availability has been refreshed.",
+    "assistedDraftVerified": "This draft has a recent scheduling check. It will be verified again immediately before saving.",
+    "assistedDraftNeedsFinalCheck": "The assisted draft changed. Saving will run a fresh availability and room check.",
     "suggestedTimes": "Best times",
     "freshness": "Checked {{time}}",
-    "reasons": {
-      "allRequiredAvailable": "All checked required attendees are available within working hours."
+    "resultsTitle": "Availability results",
+    "resultSummary_one": "{{count}} candidate is ready for review.",
+    "resultSummary_other": "{{count}} candidates are ready for review.",
+    "matrixTitle": "Attendee availability matrix",
+    "matrixDescription": "Each candidate is checked against the attendee's own working schedule and calendar evidence.",
+    "attendee": "Attendee",
+    "matrixCellLabel": "{{attendee}}: {{status}}",
+    "roles": {
+      "ORGANIZER": "Organizer",
+      "REQUIRED": "Required",
+      "OPTIONAL": "Optional"
     },
+    "intervals": {
+      "AVAILABLE": "Available",
+      "BUSY": "Busy",
+      "TENTATIVE": "Tentative",
+      "OUT_OF_OFFICE": "Out of office",
+      "UNKNOWN": "Unverified"
+    },
+    "reasons": {
+      "allRequiredAvailable": "All checked required attendees are available within working hours.",
+      "ALL_REQUIRED_AVAILABLE": "All required attendees are available within working hours.",
+      "WITHIN_WORKING_HOURS": "The candidate is within each required attendee's working hours.",
+      "LOWEST_CONFLICT_SCORE": "This candidate has the lowest verified conflict score."
+    },
+    "reasonFallback": "The scheduling service ranked this verified candidate.",
+    "optionalConflictWarning_one": "{{count}} optional attendee has a known conflict",
+    "optionalConflictWarning_other": "{{count}} optional attendees have known conflicts",
+    "requiredConflictBlocked": "Required attendee conflict",
+    "apply": "Apply",
     "applyTimeLabel": "Use {{label}}",
     "noTimes": "No shared working-hour slot was found in the next 14 days.",
     "recommendedRooms": "Rooms that fit this meeting",
     "roomsLoading": "Checking room availability",
     "roomsError": "Room availability could not be checked.",
     "noRooms": "No available room fits this time and attendee count.",
+    "evidenceTitle": "Scheduling evidence",
+    "sourcesTitle": "Calendar source status",
+    "noSourceEvidence": "No source evidence is available, so recommendations cannot be applied.",
+    "sourceStatus": {
+      "HEALTHY": "Current",
+      "PARTIAL": "Partial",
+      "UNKNOWN": "Unknown",
+      "STALE": "Stale",
+      "UNAVAILABLE": "Unavailable"
+    },
+    "sourceTypes": {
+      "DWP_NATIVE": "DWP Calendar",
+      "GOOGLE_CALENDAR": "Google Calendar",
+      "MICROSOFT_365": "Microsoft 365 Calendar"
+    },
+    "sourceReasons": {
+      "SYNC_DELAYED": "The latest synchronization is delayed.",
+      "AUTHORIZATION_REQUIRED": "The calendar connection needs authorization.",
+      "COVERAGE_GAP": "The source does not cover the full search window."
+    },
+    "sourceTypeFallback": "Connected calendar",
+    "sourceReasonFallback": "This source could not provide complete evidence.",
+    "roomReasons": {
+      "CAPACITY_MATCH": "Capacity fits this meeting.",
+      "FEATURE_MATCH": "Required room features are available.",
+      "NO_APPROVAL_REQUIRED": "No approval is required.",
+      "POLICY_ELIGIBLE": "The room meets the booking policy."
+    },
+    "roomReasonFallback": "The room recommendation reflects current capacity and policy evidence.",
+    "roomStatus": {
+      "ELIGIBLE": "Eligible",
+      "INELIGIBLE": "Not eligible"
+    },
+    "applyRoom": "Apply room",
+    "roomSelected": "Selected",
+    "applyRoomLabel": "Apply room {{room}}",
+    "roomSelectedLabel": "Room {{room}} is selected",
+    "hardRechecking": "Running the final availability and room check…",
+    "hardRecheckFailed": "The final check could not be completed. Check your connection and try again.",
+    "hardRecheckBlocked": "Availability or room policy changed. Check again before applying this recommendation.",
+    "finalCheckFailed": "The final scheduling check could not be completed. The event was not saved; try again.",
+    "finalCheckErrors": {
+      "INVALID_RANGE": "Choose a valid start and end time, then save again.",
+      "UNRESOLVED_PARTICIPANT": "A participant cannot be verified. Remove or resolve that participant before saving an assisted meeting.",
+      "PARTICIPANT_LIMIT": "The attendee count exceeds the verified scheduling limit. Reduce the list and try again.",
+      "UNVERIFIED_EVIDENCE": "Current availability evidence is partial, stale, unknown, or conflicting. Check availability again before saving.",
+      "HARD_RECHECK_BLOCKED": "Availability or room policy changed during the final check. Review the draft and try again."
+    },
     "recurringSeriesNotice": "Availability recommendations are paused for recurring meetings until occurrence-scope editing is available. Manual changes apply to the full series.",
-    "privacy": "Only busy intervals are compared. Event titles, descriptions, locations, and attendees are never retrieved. Applying a suggestion does not save the event until you confirm Create or Save."
+    "privacy": "Only busy intervals are compared. Event titles, descriptions, and locations are never retrieved. Assisted events are checked again immediately before Create or Save."
   },
   "schedule": {
     "eyebrow": "Calendar / My schedule",
@@ -691,7 +1116,8 @@
       "company": "Company",
       "mine": "My calendars",
       "shared": "Shared with me",
-      "team": "Teams and resources"
+      "team": "Teams and resources",
+      "external": "External calendars"
     },
     "kinds": {
       "OWNED": "My calendar",
@@ -708,6 +1134,16 @@
       "VIEW_FREE_BUSY": "Free/busy only",
       "EVENT_ATTENDEE": "Event attendee",
       "NONE": "No access"
+    }
+  },
+  "external": {
+    "openSource": "Open in Microsoft 365",
+    "readOnly": "External events are read-only in DWP Calendar.",
+    "status": {
+      "STALE": "Microsoft 365 events may be out of date. The last verified copy is shown read-only.",
+      "AUTH_REQUIRED": "Reconnect Microsoft 365 before external events can be refreshed.",
+      "UNAVAILABLE": "Microsoft 365 Calendar is not currently available. Your DWP schedule remains available.",
+      "PARTIAL": "Only part of the Microsoft 365 schedule could be loaded. Narrow the visible range or retry."
     }
   },
   "sharing": {

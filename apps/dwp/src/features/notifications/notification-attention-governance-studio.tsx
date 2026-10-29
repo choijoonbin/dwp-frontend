@@ -16,7 +16,6 @@ import { FormField } from '@dwp-frontend/design-system/components/forms/form-fie
 import { InlineFeedback } from '@dwp-frontend/design-system/components/inline-feedback/inline-feedback';
 import {
   EmptyState,
-  ErrorState,
   LoadingState,
 } from '@dwp-frontend/design-system/components/states/state-panels';
 import { foundationTokens } from '@dwp-frontend/design-system/foundation/tokens';
@@ -28,6 +27,8 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import Stack from '@mui/material/Stack';
 import Switch from '@mui/material/Switch';
 import Typography from '@mui/material/Typography';
+
+import { NotificationErrorState } from './notification-error-support';
 
 import type {
   NotificationAttentionGovernanceDraftInput,
@@ -93,6 +94,7 @@ export type NotificationAttentionGovernanceStudioProps = {
   baselineSettings?: NotificationAttentionGovernanceSettings | null;
   status: 'LOADING' | 'READY' | 'ERROR';
   errorMessage?: string;
+  error?: unknown;
   actorUserId: number;
   canManage: boolean;
   canApprove: boolean;
@@ -192,6 +194,7 @@ export function NotificationAttentionGovernanceStudio({
   baselineSettings,
   status,
   errorMessage,
+  error,
   actorUserId,
   canManage,
   canApprove,
@@ -237,7 +240,8 @@ export function NotificationAttentionGovernanceStudio({
   if (status === 'LOADING') return <LoadingState label={copy.loading} variant="skeleton" />;
   if (status === 'ERROR') {
     return (
-      <ErrorState
+      <NotificationErrorState
+        error={error}
         title={copy.loadErrorTitle}
         description={errorMessage}
         retryLabel={onRefresh ? copy.retry : undefined}

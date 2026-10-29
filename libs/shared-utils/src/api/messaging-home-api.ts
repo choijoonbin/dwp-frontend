@@ -10,7 +10,8 @@ export type MessagingSharedAsset = {
   messageId: string;
   sharedAt: string;
   senderName: string;
-  title: string;
+  title: string | null;
+  protectedContent: boolean;
   attachmentId: string | null;
   url: string | null;
   contentType: string | null;

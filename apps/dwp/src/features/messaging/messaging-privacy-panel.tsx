@@ -30,6 +30,9 @@ export function MessagingPrivacyPanel() {
     onSuccess: (preference) => {
       queryClient.setQueryData(queryKey, preference);
       void queryClient.invalidateQueries({ queryKey: ['messaging', 'read-receipts'] });
+      void queryClient.invalidateQueries({ queryKey: ['messaging', 'home'] });
+      void queryClient.invalidateQueries({ queryKey: ['messaging', 'people-page'] });
+      void queryClient.invalidateQueries({ queryKey: ['messaging', 'conversation'] });
       toast.success(t('privacy.saved'));
     },
     onError: () => {
@@ -67,8 +70,15 @@ export function MessagingPrivacyPanel() {
               size="small"
               checked={preference.readReceiptsEnabled}
               disabled={mutation.isPending || query.isFetching}
+              sx={{
+                // MUI expands the invisible switch input to 300% for drag gestures. At the
+                // mobile viewport edge that hit area can extend outside the screen even
+                // though the rendered control is fully visible. The surrounding label is
+                // already the large click target, so keep the input inside the control.
+                '& .MuiSwitch-input': { left: 0, width: '100%' },
+              }}
               onChange={(_, readReceiptsEnabled) =>
-                mutation.mutate({ ...preference, readReceiptsEnabled })
+                mutation.mutate({ readReceiptsEnabled, version: preference.version })
               }
             />
           }
@@ -87,6 +97,39 @@ export function MessagingPrivacyPanel() {
             preference.readReceiptsEnabled
               ? 'privacy.enabledDescription'
               : 'privacy.disabledDescription'
+          )}
+        </Typography>
+      </Stack>
+      <Box>
+        <FormControlLabel
+          label={t('privacy.sharePresence')}
+          labelPlacement="start"
+          control={
+            <Switch
+              size="small"
+              checked={preference.presenceSharingEnabled}
+              disabled={mutation.isPending || query.isFetching}
+              sx={{ '& .MuiSwitch-input': { left: 0, width: '100%' } }}
+              onChange={(_, presenceSharingEnabled) =>
+                mutation.mutate({ presenceSharingEnabled, version: preference.version })
+              }
+            />
+          }
+          sx={{ width: 1, m: 0, gap: 1.5, justifyContent: 'space-between' }}
+        />
+        <Typography variant="body2" color="text.secondary" sx={{ mt: 0.75 }}>
+          {t('privacy.presenceDescription')}
+        </Typography>
+      </Box>
+      <Stack direction="row" spacing={1} sx={{ bgcolor: 'action.hover', p: 1.5 }}>
+        <Box sx={{ color: 'info.main', flexShrink: 0 }}>
+          <ShieldCheck size={18} aria-hidden="true" />
+        </Box>
+        <Typography variant="body2" color="text.secondary">
+          {t(
+            preference.presenceSharingEnabled
+              ? 'privacy.presenceEnabledDescription'
+              : 'privacy.presenceDisabledDescription'
           )}
         </Typography>
       </Stack>

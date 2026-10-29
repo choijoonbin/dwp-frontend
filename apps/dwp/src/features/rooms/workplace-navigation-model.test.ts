@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 
 import {
   workplaceDeviceCommandMaySubmit,
+  workplaceDeviceCommandMatchesTarget,
   workplaceDeviceCommandNeedsGetRecovery,
   workplaceMaskedSchedule,
   workplaceNavigationCanRenderGuidedRoute,
@@ -53,6 +54,13 @@ describe('Screen 19 navigation and device model', () => {
     const receipt = { state: 'RESULT_UNKNOWN' } as never;
     expect(workplaceDeviceCommandNeedsGetRecovery(receipt)).toBe(true);
     expect(workplaceDeviceCommandMaySubmit(receipt)).toBe(false);
+  });
+
+  it('accepts an exception command only when both command and parent device match', () => {
+    const receipt = { commandId: 'command-1', deviceId: 'device-1' };
+    expect(workplaceDeviceCommandMatchesTarget(receipt, 'device-1', 'command-1')).toBe(true);
+    expect(workplaceDeviceCommandMatchesTarget(receipt, 'device-2', 'command-1')).toBe(false);
+    expect(workplaceDeviceCommandMatchesTarget(receipt, 'device-1', 'command-2')).toBe(false);
   });
 
   it('replaces masked schedule data even if a provider sends display text', () => {

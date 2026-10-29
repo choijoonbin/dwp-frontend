@@ -471,6 +471,9 @@ export async function login(
       tenantId: payload.tenantId || getTenantId(),
     }
   );
+  // Spring rotates the browser CSRF cookie when the new authenticated identity is verified.
+  // Do not carry the pre-authentication in-memory token into the first product mutation.
+  resetCsrfToken();
   return response.data;
 }
 
@@ -564,12 +567,12 @@ export async function getAuthSessions(): Promise<ApiResponse<AuthSessionData[]>>
 }
 
 export async function rotateBrowserSession(): Promise<ApiResponse<SessionRotationData>> {
-  return (
-    await axiosInstance.post<ApiResponse<SessionRotationData>, undefined>(
-      '/api/auth/session/refresh',
-      undefined
-    )
-  ).data;
+  const response = await axiosInstance.post<ApiResponse<SessionRotationData>, undefined>(
+    '/api/auth/session/refresh',
+    undefined
+  );
+  resetCsrfToken();
+  return response.data;
 }
 
 export async function revokeAuthSession(sessionId: string): Promise<void> {
@@ -631,6 +634,7 @@ export async function getOidcCallback(params: OidcCallbackParams): Promise<OidcC
   const callback = await sessionNeutralHttp.get<ApiResponse<LoginResponseData>>(
     '/api/auth/oidc/callback?' + search.toString()
   );
+  resetCsrfToken();
   const flowId = callback.headers?.get(OIDC_STEP_UP_FLOW_ID_HEADER) ?? null;
   const rawReturnTo = callback.headers?.get(OIDC_STEP_UP_RETURN_TO_HEADER) ?? null;
   if (flowId === null && rawReturnTo === null) {

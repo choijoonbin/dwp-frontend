@@ -88,6 +88,7 @@ export function NotificationAdminNoiseQualityRuntime() {
               }
             : view.state
       }
+      error={query.error}
       privacyPolicy={view?.privacyPolicy ?? null}
       fourEyesPolicy={
         view?.fourEyesPolicy ?? {

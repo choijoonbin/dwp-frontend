@@ -458,6 +458,13 @@ for (const width of [1440, 390, 320]) {
       quality.getByText('비공개', { exact: true }).filter({ visible: true }).first()
     ).toBeVisible();
     await expect(quality.getByText(/개인정보 보호 기준: 최소 집단 20명/).first()).toBeVisible();
+    await quality.getByText('정확한 추이 데이터 보기').click();
+    await expect(
+      quality.getByRole('region', { name: '스크롤 가능한 알림 품질 추이 데이터' })
+    ).toBeVisible();
+    await expect(
+      quality.getByRole('table', { name: '정확한 알림 품질 추이 데이터' })
+    ).toBeVisible();
     await expectNoHorizontalOverflow(page);
 
     if (width === 1440) {

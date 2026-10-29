@@ -1,4 +1,5 @@
 import { expect, test, type Page, type Route } from '@playwright/test';
+import AxeBuilder from '@axe-core/playwright';
 
 import { mockShellSession } from './support/shell-session';
 
@@ -101,6 +102,36 @@ async function mockMessagingAdmin(page: Page, canManage: boolean) {
         },
         policy: serverPolicy,
         governedConversations: [governedConversation()],
+        runtimeReadiness: {
+          evaluatedAt: '2026-08-27T08:04:30Z',
+          overallState: 'BLOCKED',
+          capabilities: [
+            {
+              capability: 'RETENTION_ENFORCEMENT',
+              provider: 'database-worker',
+              required: true,
+              configured: true,
+              effective: false,
+              state: 'BLOCKED',
+              reasonCode: 'LEGAL_HOLD_AUTHORITY_UNAVAILABLE',
+              lastVerifiedAt: '2026-08-27T08:04:00Z',
+              freshness: 'CURRENT',
+              pendingWorkCount: 3,
+            },
+            {
+              capability: 'PRESENCE',
+              provider: 'redis',
+              required: true,
+              configured: true,
+              effective: true,
+              state: 'READY',
+              reasonCode: null,
+              lastVerifiedAt: '2026-08-27T08:04:20Z',
+              freshness: 'CURRENT',
+              pendingWorkCount: null,
+            },
+          ],
+        },
       };
       return fulfill(route, overview);
     }
@@ -126,6 +157,16 @@ async function mockMessagingAdmin(page: Page, canManage: boolean) {
     }
     return route.fallback();
   });
+  await page.route('**/api/messaging/v1/privacy-preferences', (route) =>
+    fulfill(route, {
+      readReceiptsEnabled: true,
+      presenceSharingEnabled: true,
+      version: 0,
+    })
+  );
+  await page.route('**/api/messaging/v1/presence/heartbeat', (route) =>
+    route.fulfill({ status: 204 })
+  );
   return { updates };
 }
 
@@ -175,6 +216,19 @@ test('keeps policy viewers read-only and governance rows non-interactive', async
   await expect(page.getByRole('button', { name: 'Save' })).toBeDisabled();
 
   await page.goto('/messages/admin/overview');
+  await expect(page.getByRole('heading', { name: 'Runtime readiness' })).toBeVisible();
+  await expect(page.getByLabel('Overall runtime state: Blocked')).toBeVisible();
+  await expect(page.getByText('LEGAL_HOLD_AUTHORITY_UNAVAILABLE')).toBeVisible();
+  await expect(page.getByText('Pending governed work: 3')).toBeVisible();
   await expect(page.getByText('Operations governance')).toBeVisible();
   await expect(page.locator('button').filter({ hasText: 'Operations governance' })).toHaveCount(0);
+
+  const accessibility = await new AxeBuilder({ page }).include('#dwp-main-content').analyze();
+  expect(accessibility.violations).toEqual([]);
+
+  await page.setViewportSize({ width: 320, height: 800 });
+  const overflow = await page.evaluate(
+    () => document.documentElement.scrollWidth > window.innerWidth + 1
+  );
+  expect(overflow).toBe(false);
 });

@@ -459,9 +459,16 @@ export async function mockWorkplaceSpacePlanning(
     }
     if (path === '/api/auth/product-surface-contexts') {
       return success(route, {
-        contractVersion: 'product-surfaces/v3',
+        contractVersion: '2',
         decisionRevision: `psr-${'a'.repeat(64)}`,
-        sourceRevisions: { auth: '22', policy: '22', productRelationship: '22' },
+        sourceRevisions: {
+          auth: '22',
+          policy: '22',
+          productRelationship: '22',
+          targetPopulation: '22',
+          support: null,
+          tenantControl: '22',
+        },
         activeAccessMode: 'ELEVATED',
         generatedAt: new Date().toISOString(),
         contexts: [],

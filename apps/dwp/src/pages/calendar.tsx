@@ -32,6 +32,16 @@ const CalendarAvailability = lazy(() =>
     default: module.CalendarAvailability,
   }))
 );
+const CalendarSchedulingPollWorkspace = lazy(() =>
+  import('../features/calendar/calendar-scheduling-poll-workspace').then((module) => ({
+    default: module.CalendarSchedulingPollWorkspace,
+  }))
+);
+const CalendarBookingWorkspace = lazy(() =>
+  import('../features/calendar/booking/calendar-booking-workspace').then((module) => ({
+    default: module.CalendarBookingWorkspace,
+  }))
+);
 const CalendarTrash = lazy(() =>
   import('../features/calendar/calendar-trash').then((module) => ({
     default: module.CalendarTrash,
@@ -75,6 +85,8 @@ export default function CalendarPage() {
     focus: <CalendarFocusPlanner />,
     invitations: <CalendarInvitations />,
     availability: <CalendarAvailability />,
+    polls: <CalendarSchedulingPollWorkspace />,
+    bookings: <CalendarBookingWorkspace />,
     trash: <CalendarTrash />,
     insights: <CalendarInsights />,
     settings: <CalendarSettings />,

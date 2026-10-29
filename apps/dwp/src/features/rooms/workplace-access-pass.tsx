@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
   CheckCircle2,
@@ -52,6 +52,14 @@ type Props = Readonly<{
   elevated: boolean;
 }>;
 
+type AccessPassExecuteIntent = Readonly<{
+  commandStateIdentity: string;
+  previewId: string;
+  idempotencyKey: string;
+  correlationId: string;
+  reason: string | null;
+}>;
+
 const MAX_TTL_SECONDS = 20 * 60;
 
 function copyFor(locale: WorkplaceNavigationLocale) {
@@ -89,10 +97,14 @@ function copyFor(locale: WorkplaceNavigationLocale) {
         stepUp: '이 작업은 최근 재인증이 필요합니다.',
         providerUnavailable:
           'NFC/키오스크 Provider가 검증되지 않아 해당 채널을 사용할 수 없습니다.',
+        copy: '페어링 코드 복사',
         copied: '페어링 코드를 복사했습니다.',
+        copyFailed: '페어링 코드를 복사하지 못했습니다. 코드를 선택해 직접 복사하세요.',
         qrTitle: '키오스크에서 스캔',
         qrDescription:
           '이 QR은 현재 패스 만료 시각까지만 유효하며 화면을 닫으면 다시 표시되지 않습니다.',
+        commandFailed:
+          '명령 결과를 확인하지 못했습니다. 이 창에서 다시 실행하면 같은 명령 영수증을 재조회합니다.',
       }
     : {
         title: 'DWP mobile one-time pass',
@@ -127,10 +139,14 @@ function copyFor(locale: WorkplaceNavigationLocale) {
         recover: 'Refresh command status',
         stepUp: 'Fresh reauthentication is required for this operation.',
         providerUnavailable: 'An unverified NFC or kiosk provider cannot serve that channel.',
+        copy: 'Copy pairing code',
         copied: 'Pairing code copied.',
+        copyFailed: 'The pairing code could not be copied. Select and copy it manually.',
         qrTitle: 'Scan at the kiosk',
         qrDescription:
           'This QR expires with the current pass and cannot be shown again after closing.',
+        commandFailed:
+          'The command outcome was not confirmed. Retry in this dialog to replay the same command receipt.',
       };
 }
 
@@ -223,9 +239,15 @@ export function WorkplaceAccessPassPanel({ destination, locale, canUpdate, eleva
   const [pairingCode, setPairingCode] = useState<string | null>(null);
   const [qrOpen, setQrOpen] = useState(false);
   const [nfcReady, setNfcReady] = useState(false);
-  const [copied, setCopied] = useState(false);
+  const [copyStatus, setCopyStatus] = useState<'idle' | 'copied' | 'failed'>('idle');
   const [lastResult, setLastResult] = useState<WorkplaceAccessPassCommandResult | null>(null);
-
+  const executeIntent = useRef<AccessPassExecuteIntent | null>(null);
+  const destinationIdentity = [
+    destination.siteId,
+    destination.floorId,
+    destination.resourceId ?? '',
+    destination.poiId,
+  ].join(':');
   const contextQuery = useQuery({
     queryKey,
     queryFn: () => getWorkplaceAccessPassContext(destination.siteId, destination.resourceId!),
@@ -234,6 +256,10 @@ export function WorkplaceAccessPassPanel({ destination, locale, canUpdate, eleva
     refetchInterval: 30_000,
   });
   const pass = contextQuery.data?.pass ?? null;
+  const passIdentity = pass ? `${pass.passId}:v${pass.version}` : '';
+  const commandStateIdentity = `${destinationIdentity}|${passIdentity}`;
+  const activeCommandStateIdentity = useRef(commandStateIdentity);
+  activeCommandStateIdentity.current = commandStateIdentity;
   const active = pass?.state === 'ACTIVE' && Date.parse(pass.expiresAt) > now;
   const seconds = remainingSeconds(pass?.expiresAt, now);
   const auditQuery = useQuery({
@@ -249,23 +275,21 @@ export function WorkplaceAccessPassPanel({ destination, locale, canUpdate, eleva
       setPairingCode(null);
       setQrOpen(false);
       setNfcReady(false);
+      setCopyStatus('idle');
       return undefined;
     }
     const timer = window.setInterval(() => setNow(Date.now()), 1_000);
     return () => window.clearInterval(timer);
   }, [active]);
 
-  useEffect(
-    () => () => {
-      setCredential(null);
-      setPairingCode(null);
-    },
-    []
-  );
-
   const previewMutation = useMutation({
-    mutationFn: (commandType: WorkplaceAccessPassCommandType) =>
-      previewWorkplaceAccessPass(
+    onMutate: () => {
+      executeIntent.current = null;
+      setPreview(null);
+    },
+    mutationFn: async (commandType: WorkplaceAccessPassCommandType) => ({
+      commandStateIdentity,
+      value: await previewWorkplaceAccessPass(
         {
           commandType,
           passId: commandType === 'ISSUE' ? null : (pass?.passId ?? null),
@@ -277,7 +301,19 @@ export function WorkplaceAccessPassPanel({ destination, locale, canUpdate, eleva
         },
         commandIdentity(destination.poiId, `access-pass-preview-${commandType.toLowerCase()}`)
       ),
-    onSuccess: (value) => {
+    }),
+    onSuccess: ({ commandStateIdentity: completedIdentity, value }) => {
+      if (activeCommandStateIdentity.current !== completedIdentity) return;
+      executeIntent.current = {
+        commandStateIdentity: completedIdentity,
+        previewId: value.previewId,
+        idempotencyKey: commandIdentity(
+          destination.poiId,
+          `access-pass-${value.commandType.toLowerCase()}`
+        ),
+        correlationId: commandIdentity(destination.poiId, 'access-pass-correlation'),
+        reason: null,
+      };
       setPreview(value);
       setReason('');
       setConfirmed(false);
@@ -286,29 +322,34 @@ export function WorkplaceAccessPassPanel({ destination, locale, canUpdate, eleva
 
   const executeMutation = useMutation({
     gcTime: 0,
-    mutationFn: async () => {
-      if (!preview) throw new Error('An access-pass preview is required.');
-      return executeWorkplaceAccessPass(
-        {
-          previewId: preview.previewId,
-          expectedPassVersion: preview.expectedPassVersion,
-          reason: reason.trim(),
-          explicitConfirmation: true,
-        },
-        {
-          idempotencyKey: commandIdentity(
-            destination.poiId,
-            `access-pass-${preview.commandType.toLowerCase()}`
-          ),
-          correlationId: commandIdentity(destination.poiId, 'access-pass-correlation'),
-          activeAccessMode: 'ELEVATED',
-        }
-      );
+    mutationFn: async (intent: AccessPassExecuteIntent) => {
+      if (!preview || intent.previewId !== preview.previewId || intent.reason === null) {
+        throw new Error('A current access-pass command intent is required.');
+      }
+      return {
+        commandStateIdentity: intent.commandStateIdentity,
+        value: await executeWorkplaceAccessPass(
+          {
+            previewId: intent.previewId,
+            expectedPassVersion: preview.expectedPassVersion,
+            reason: intent.reason,
+            explicitConfirmation: true,
+          },
+          {
+            idempotencyKey: intent.idempotencyKey,
+            correlationId: intent.correlationId,
+            activeAccessMode: 'ELEVATED',
+          }
+        ),
+      };
     },
-    onSuccess: async (value) => {
+    onSuccess: async ({ commandStateIdentity: completedIdentity, value }) => {
+      if (activeCommandStateIdentity.current !== completedIdentity) return;
       setLastResult(value);
+      executeIntent.current = null;
       setCredential(value.oneTimeCredential);
       setPairingCode(value.pairingCode);
+      setCopyStatus('idle');
       setPreview(null);
       setConfirmed(false);
       setReason('');
@@ -321,12 +362,64 @@ export function WorkplaceAccessPassPanel({ destination, locale, canUpdate, eleva
   });
 
   const recoverMutation = useMutation({
-    mutationFn: () => getWorkplaceAccessPassCommand(lastResult!.receipt.commandId),
-    onSuccess: async (value) => {
+    mutationFn: async () => ({
+      commandStateIdentity,
+      value: await getWorkplaceAccessPassCommand(lastResult!.receipt.commandId),
+    }),
+    onSuccess: async ({ commandStateIdentity: completedIdentity, value }) => {
+      if (activeCommandStateIdentity.current !== completedIdentity) return;
       setLastResult(value);
       await queryClient.invalidateQueries({ queryKey });
     },
   });
+
+  const stateIdentity = useRef({ destinationIdentity, passIdentity });
+  useLayoutEffect(() => {
+    const previous = stateIdentity.current;
+    stateIdentity.current = { destinationIdentity, passIdentity };
+    if (
+      previous.destinationIdentity === destinationIdentity &&
+      previous.passIdentity === passIdentity
+    )
+      return;
+    const resultMatchesCurrentPass = Boolean(
+      lastResult &&
+      lastResult.pass.siteId === destination.siteId &&
+      lastResult.pass.floorId === destination.floorId &&
+      lastResult.pass.resourceId === destination.resourceId &&
+      lastResult.pass.destinationPoiId === destination.poiId &&
+      `${lastResult.pass.passId}:v${lastResult.pass.version}` === passIdentity
+    );
+    previewMutation.reset();
+    executeMutation.reset();
+    recoverMutation.reset();
+    executeIntent.current = null;
+    setPreview(null);
+    setReason('');
+    setConfirmed(false);
+    setQrOpen(false);
+    setNfcReady(false);
+    setCopyStatus('idle');
+    if (!resultMatchesCurrentPass) {
+      setCredential(null);
+      setPairingCode(null);
+      setLastResult(null);
+    }
+  }, [destinationIdentity, passIdentity]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const closePreview = () => {
+    if (executeMutation.isPending) return;
+    executeIntent.current = null;
+    setPreview(null);
+  };
+
+  const executePreview = () => {
+    const intent = executeIntent.current;
+    if (!intent || !preview || intent.previewId !== preview.previewId || !reason.trim()) return;
+    const stableIntent = intent.reason === null ? { ...intent, reason: reason.trim() } : intent;
+    executeIntent.current = stableIntent;
+    executeMutation.mutate(stableIntent);
+  };
 
   const providerSummary = useMemo(
     () =>
@@ -477,7 +570,7 @@ export function WorkplaceAccessPassPanel({ destination, locale, canUpdate, eleva
             gap={1}
             sx={{ mt: 1.5, p: 1.25, bgcolor: 'rgba(255,255,255,.1)', borderRadius: 2 }}
           >
-            <Box>
+            <Box minWidth={0}>
               <Typography variant="caption" sx={{ color: 'rgba(255,255,255,.78)' }}>
                 {copy.pairing}
               </Typography>
@@ -489,17 +582,40 @@ export function WorkplaceAccessPassPanel({ destination, locale, canUpdate, eleva
               >
                 {pairingCode.match(/.{1,4}/gu)?.join(' ')}
               </Typography>
+              <Typography
+                component="span"
+                role="status"
+                aria-live="polite"
+                variant="caption"
+                sx={{
+                  display: 'block',
+                  color: copyStatus === 'failed' ? '#fde68a' : 'rgba(255,255,255,.82)',
+                }}
+              >
+                {copyStatus === 'copied'
+                  ? copy.copied
+                  : copyStatus === 'failed'
+                    ? copy.copyFailed
+                    : null}
+              </Typography>
             </Box>
-            <Tooltip title={copy.copied}>
+            <Tooltip title={copyStatus === 'copied' ? copy.copied : copy.copy}>
               <IconButton
-                aria-label={copy.copied}
+                aria-label={copyStatus === 'copied' ? copy.copied : copy.copy}
                 onClick={async () => {
-                  await navigator.clipboard.writeText(pairingCode);
-                  setCopied(true);
+                  try {
+                    if (!navigator.clipboard?.writeText) {
+                      throw new Error('Clipboard API unavailable.');
+                    }
+                    await navigator.clipboard.writeText(pairingCode);
+                    setCopyStatus('copied');
+                  } catch {
+                    setCopyStatus('failed');
+                  }
                 }}
                 sx={{ color: '#fff' }}
               >
-                {copied ? <CheckCircle2 /> : <Copy />}
+                {copyStatus === 'copied' ? <CheckCircle2 /> : <Copy />}
               </IconButton>
             </Tooltip>
           </Stack>
@@ -662,15 +778,10 @@ export function WorkplaceAccessPassPanel({ destination, locale, canUpdate, eleva
         </ActionButton>
       ) : null}
 
-      <Dialog
-        open={Boolean(preview)}
-        onClose={() => !executeMutation.isPending && setPreview(null)}
-        fullWidth
-        maxWidth="sm"
-      >
-        <DialogTitle>{copy.previewTitle}</DialogTitle>
-        <DialogContent>
-          {preview ? (
+      {preview ? (
+        <Dialog open onClose={closePreview} fullWidth maxWidth="sm">
+          <DialogTitle>{copy.previewTitle}</DialogTitle>
+          <DialogContent>
             <Stack spacing={2} sx={{ pt: 1 }}>
               <Stack component="ul" spacing={0.75} sx={{ pl: 2.5, m: 0 }}>
                 {preview.impact.map((item) => (
@@ -689,6 +800,7 @@ export function WorkplaceAccessPassPanel({ destination, locale, canUpdate, eleva
                 label={copy.reason}
                 value={reason}
                 onChange={(event) => setReason(event.target.value)}
+                disabled={executeIntent.current?.reason != null}
                 inputProps={{ maxLength: 500 }}
                 multiline
                 minRows={2}
@@ -699,70 +811,69 @@ export function WorkplaceAccessPassPanel({ destination, locale, canUpdate, eleva
                   <Checkbox
                     checked={confirmed}
                     onChange={(event) => setConfirmed(event.target.checked)}
+                    disabled={executeIntent.current?.reason != null}
                   />
                 }
                 label={copy.confirm}
               />
               {executeMutation.isError ? (
-                <InlineFeedback severity="error">
-                  {locale === 'ko'
-                    ? '명령 처리에 실패했습니다. 새 미리보기를 생성하세요.'
-                    : 'The command failed. Create a fresh preview.'}
-                </InlineFeedback>
+                <InlineFeedback severity="error">{copy.commandFailed}</InlineFeedback>
               ) : null}
             </Stack>
-          ) : null}
-        </DialogContent>
-        <DialogActions>
-          <ActionButton
-            intent="quiet"
-            disabled={executeMutation.isPending}
-            onClick={() => setPreview(null)}
-          >
-            {copy.cancel}
-          </ActionButton>
-          <ActionButton
-            intent="primary"
-            loading={executeMutation.isPending}
-            disabled={!preview?.eligible || !elevated || !reason.trim() || !confirmed}
-            onClick={() => executeMutation.mutate()}
-          >
-            {copy.execute}
-          </ActionButton>
-        </DialogActions>
-      </Dialog>
+          </DialogContent>
+          <DialogActions>
+            <ActionButton
+              intent="quiet"
+              disabled={executeMutation.isPending}
+              onClick={closePreview}
+            >
+              {copy.cancel}
+            </ActionButton>
+            <ActionButton
+              intent="primary"
+              loading={executeMutation.isPending}
+              disabled={!preview.eligible || !elevated || !reason.trim() || !confirmed}
+              onClick={executePreview}
+            >
+              {copy.execute}
+            </ActionButton>
+          </DialogActions>
+        </Dialog>
+      ) : null}
 
-      <Dialog open={qrOpen} onClose={() => setQrOpen(false)} maxWidth="xs" fullWidth>
-        <DialogTitle>{copy.qrTitle}</DialogTitle>
-        <DialogContent>
-          {pairingCode && pass ? (
-            <Stack alignItems="center" spacing={2} sx={{ pt: 1 }}>
-              <Box sx={{ p: 2, bgcolor: '#fff', borderRadius: 2 }}>
-                <QRCodeSVG
-                  value={`dwp://workplace/access-pass/pair?passId=${encodeURIComponent(pass.passId)}&code=${encodeURIComponent(pairingCode)}`}
-                  size={220}
-                  level="H"
-                  aria-label={copy.qrTitle}
-                />
-              </Box>
-              <Typography variant="body2" color="text.secondary">
-                {copy.qrDescription}
-              </Typography>
-              <Stack direction="row" gap={1} alignItems="center">
-                <Timer size={16} />
-                <Typography fontWeight={750}>{durationLabel(seconds)}</Typography>
+      {qrOpen ? (
+        <Dialog open onClose={() => setQrOpen(false)} maxWidth="xs" fullWidth>
+          <DialogTitle>{copy.qrTitle}</DialogTitle>
+          <DialogContent>
+            {pairingCode && pass ? (
+              <Stack alignItems="center" spacing={2} sx={{ pt: 1 }}>
+                <Box sx={{ p: 2, bgcolor: '#fff', borderRadius: 2 }}>
+                  <QRCodeSVG
+                    value={`dwp://workplace/access-pass/pair?passId=${encodeURIComponent(pass.passId)}&code=${encodeURIComponent(pairingCode)}`}
+                    size={220}
+                    level="H"
+                    aria-label={copy.qrTitle}
+                  />
+                </Box>
+                <Typography variant="body2" color="text.secondary">
+                  {copy.qrDescription}
+                </Typography>
+                <Stack direction="row" gap={1} alignItems="center">
+                  <Timer size={16} />
+                  <Typography fontWeight={750}>{durationLabel(seconds)}</Typography>
+                </Stack>
               </Stack>
-            </Stack>
-          ) : (
-            <InlineFeedback severity="warning">{copy.rawUnavailable}</InlineFeedback>
-          )}
-        </DialogContent>
-        <DialogActions>
-          <ActionButton intent="primary" onClick={() => setQrOpen(false)}>
-            {copy.close}
-          </ActionButton>
-        </DialogActions>
-      </Dialog>
+            ) : (
+              <InlineFeedback severity="warning">{copy.rawUnavailable}</InlineFeedback>
+            )}
+          </DialogContent>
+          <DialogActions>
+            <ActionButton intent="primary" onClick={() => setQrOpen(false)}>
+              {copy.close}
+            </ActionButton>
+          </DialogActions>
+        </Dialog>
+      ) : null}
     </Box>
   );
 }

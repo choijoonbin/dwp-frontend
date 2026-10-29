@@ -11,19 +11,13 @@ import {
 import Box from '@mui/material/Box';
 import { foundationTokens } from '@dwp-frontend/design-system/foundation/tokens';
 
-import {
-  NotificationAdminOverviewPage,
-  NotificationDeliveryOperationsPage,
-  NotificationTypeCatalogPage,
-} from './notification-admin';
-import { NotificationPreferences } from './notification-preferences';
-import { NotificationPolicyStudio } from './notification-policy-studio';
-import { NotificationTemplateStudio } from './notification-template-studio';
-import { NotificationSuppressionStudio } from './notification-suppression-studio';
 import { NotificationPageFrame } from './notification-page-frame';
 import { NotificationPageHeading } from './notification-ui';
-import { NotificationAdminNoiseQualityRuntime } from './notification-noise-quality-runtime';
-import { NotificationAttentionGovernanceRuntime } from './notification-attention-governance-runtime';
+
+import type { ReactNode } from 'react';
+
+export type NotificationAdminView =
+  'overview' | 'contracts' | 'policies' | 'templates' | 'operations' | 'suppressions';
 
 const ADMIN_VIEW_ICONS = {
   overview: ShieldCheck,
@@ -34,34 +28,14 @@ const ADMIN_VIEW_ICONS = {
   suppressions: CircleStop,
 } as const;
 
-export function NotificationSettingsPage() {
-  return <NotificationPreferences />;
-}
-
-function NotificationAdminSurface({
+export function NotificationAdminSurface({
   view,
+  children,
 }: {
-  view: 'overview' | 'contracts' | 'policies' | 'templates' | 'operations' | 'suppressions';
+  view: NotificationAdminView;
+  children: ReactNode;
 }) {
   const { t } = useTranslation('notifications');
-  const content = {
-    overview: (
-      <>
-        <NotificationAdminOverviewPage />
-        <NotificationAdminNoiseQualityRuntime />
-      </>
-    ),
-    contracts: <NotificationTypeCatalogPage />,
-    policies: (
-      <Box sx={{ display: 'grid', gap: 3, minWidth: 0 }}>
-        <NotificationPolicyStudio />
-        <NotificationAttentionGovernanceRuntime />
-      </Box>
-    ),
-    templates: <NotificationTemplateStudio />,
-    operations: <NotificationDeliveryOperationsPage />,
-    suppressions: <NotificationSuppressionStudio />,
-  }[view];
   const ViewIcon = ADMIN_VIEW_ICONS[view];
   return (
     <NotificationPageFrame>
@@ -92,32 +66,8 @@ function NotificationAdminSurface({
           '& .MuiButton-root': { overflowWrap: 'anywhere' },
         }}
       >
-        {content}
+        {children}
       </Box>
     </NotificationPageFrame>
   );
-}
-
-export function NotificationAdminOverview() {
-  return <NotificationAdminSurface view="overview" />;
-}
-
-export function NotificationAdminContracts() {
-  return <NotificationAdminSurface view="contracts" />;
-}
-
-export function NotificationAdminPolicies() {
-  return <NotificationAdminSurface view="policies" />;
-}
-
-export function NotificationAdminTemplates() {
-  return <NotificationAdminSurface view="templates" />;
-}
-
-export function NotificationAdminOperations() {
-  return <NotificationAdminSurface view="operations" />;
-}
-
-export function NotificationAdminSuppressions() {
-  return <NotificationAdminSurface view="suppressions" />;
 }

@@ -13,6 +13,7 @@ import { ClassificationChip, messagingInitials } from './messaging-components';
 import { MessagingConnectionIndicator } from './messaging-connection-indicator';
 import { MessagingConversationSettings } from './messaging-conversation-settings';
 import { messagingVisualTone, messagingVisualTokens } from './messaging-visual-model';
+import { messagingConversationHeaderResponsiveLayout } from './messaging-workspace-layout';
 
 import type { MessagingConversationDetail, MessagingMember } from '@dwp-frontend/shared-utils';
 import type { MessagingConnectionState } from './use-messaging-realtime';
@@ -53,7 +54,7 @@ export function MessagingConversationHeader({
       direction="row"
       spacing={{ xs: 0.5, sm: 1.25 }}
       alignItems="center"
-      flexWrap="nowrap"
+      flexWrap={messagingConversationHeaderResponsiveLayout.flexWrap}
       useFlexGap
       sx={(theme) => ({
         minHeight: { xs: 54, sm: 64 },
@@ -71,7 +72,12 @@ export function MessagingConversationHeader({
       >
         <ArrowLeft size={18} />
       </ActionIconButton>
-      <Box sx={{ minWidth: 0, flex: '1 1 auto' }}>
+      <Box
+        sx={{
+          minWidth: 0,
+          flex: messagingConversationHeaderResponsiveLayout.titleFlex,
+        }}
+      >
         <Stack direction="row" spacing={0.9} alignItems="center" sx={{ minWidth: 0 }}>
           <Box sx={{ display: { xs: 'none', sm: 'block' }, flexShrink: 0 }}>
             <GlyphSurface
@@ -112,7 +118,11 @@ export function MessagingConversationHeader({
         direction="row"
         spacing={{ xs: 0.1, sm: 0.5 }}
         alignItems="center"
-        sx={{ flexShrink: 0 }}
+        sx={{
+          flexShrink: 0,
+          width: messagingConversationHeaderResponsiveLayout.actionsWidth,
+          justifyContent: { xs: 'flex-end', sm: 'initial' },
+        }}
       >
         <AvatarGroup
           max={4}
@@ -138,9 +148,7 @@ export function MessagingConversationHeader({
             );
           })}
         </AvatarGroup>
-        <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
-          <MessagingConnectionIndicator state={connectionState} />
-        </Box>
+        <MessagingConnectionIndicator state={connectionState} />
         <MessagingConversationSettings conversation={conversation} currentMember={currentMember} />
         <ActionIconButton
           label={t('context.toggle')}

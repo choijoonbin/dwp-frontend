@@ -1,0 +1,44 @@
+{
+  "notification-settings-route.tsx": {
+    "rawBytes": 98304,
+    "gzipBytes": 24576,
+    "closureRawBytes": 294912,
+    "closureGzipBytes": 98304
+  },
+  "notification-admin-overview-route.tsx": {
+    "rawBytes": 43008,
+    "gzipBytes": 10752,
+    "closureRawBytes": 192512,
+    "closureGzipBytes": 67584
+  },
+  "notification-admin-contracts-route.tsx": {
+    "rawBytes": 14336,
+    "gzipBytes": 4352,
+    "closureRawBytes": 159744,
+    "closureGzipBytes": 59392
+  },
+  "notification-admin-policies-route.tsx": {
+    "rawBytes": 49152,
+    "gzipBytes": 12288,
+    "closureRawBytes": 234496,
+    "closureGzipBytes": 75776
+  },
+  "notification-admin-templates-route.tsx": {
+    "rawBytes": 28672,
+    "gzipBytes": 7680,
+    "closureRawBytes": 186368,
+    "closureGzipBytes": 67584
+  },
+  "notification-admin-operations-route.tsx": {
+    "rawBytes": 20480,
+    "gzipBytes": 5120,
+    "closureRawBytes": 104448,
+    "closureGzipBytes": 36864
+  },
+  "notification-admin-suppressions-route.tsx": {
+    "rawBytes": 18432,
+    "gzipBytes": 5632,
+    "closureRawBytes": 114688,
+    "closureGzipBytes": 40960
+  }
+}

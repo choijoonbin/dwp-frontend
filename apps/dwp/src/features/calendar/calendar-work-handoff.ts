@@ -156,6 +156,9 @@ export function isExactWorkHandoffEventReceipt(
     input.recurrence === 'NONE' &&
     input.recurrenceInterval === 1 &&
     (input.recurrenceUntil ?? null) === null &&
+    Array.isArray(input.recurrenceDays) &&
+    input.recurrenceDays.length === 0 &&
+    (input.recurrenceCount ?? null) === null &&
     input.responseRequired === false &&
     input.attendees.length === 0 &&
     (input.resourceId ?? null) === null &&
@@ -177,6 +180,9 @@ export function isExactWorkHandoffEventReceipt(
     event.recurrence === 'NONE' &&
     event.recurrenceInterval === 1 &&
     (event.recurrenceUntil ?? null) === null &&
+    Array.isArray(event.recurrenceDays) &&
+    event.recurrenceDays.length === 0 &&
+    (event.recurrenceCount ?? null) === null &&
     event.responseRequired === false &&
     event.attendees.length === 0 &&
     (event.resource ?? null) === null &&

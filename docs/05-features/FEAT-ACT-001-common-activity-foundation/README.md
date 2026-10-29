@@ -16,6 +16,8 @@
 - [Stitch 구현 추적표](<08-Stitch 구현 추적표.md>)
 - [실행 관측·증적 아키텍처](<09-실행 관측·증적 아키텍처.md>)
 - [Personal Work → Activity 로컬 완료 기록](/Users/a10697/Work/DWP/dwp-frontend/docs/05-features/FEAT-ACT-001-common-activity-foundation/10-personal-work-local-closeout-2026-09-08.md)
+- [Activity 고도화 설계·수용 기준](/Users/a10697/Work/DWP/dwp-frontend/docs/05-features/FEAT-ACT-001-common-activity-foundation/11-activity-advancement-design-2026-10-28.md)
+- [Activity 운영 준비 런북](/Users/a10697/Work/DWP/dwp-frontend/docs/05-features/FEAT-ACT-001-common-activity-foundation/12-activity-production-readiness-runbook-2026-10-28.md)
 
 구현 상세: [백엔드 계약](/Users/a10697/Work/DWP/dwp-backend/docs/workspace/activity-history-contract.md), [Agent 운영 게이트](/Users/a10697/Work/DWP/dwp_agent/docs/DWAI_ON_PRODUCTION_GATE.md).
 

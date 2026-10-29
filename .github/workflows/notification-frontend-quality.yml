@@ -1,0 +1,234 @@
+name: Notification frontend quality
+
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/notification-frontend-quality.yml'
+      - 'apps/dwp/src/components/notification-*.ts'
+      - 'apps/dwp/src/components/notification-*.tsx'
+      - 'apps/dwp/src/features/notifications/**'
+      - 'apps/dwp/src/routes/notification-routes.tsx'
+      - 'apps/dwp/src/pages/notifications.tsx'
+      - 'e2e/notification*.spec.ts'
+      - 'e2e/notification-stitch-visual-parity.spec.ts-snapshots/**'
+      - 'e2e/support/notification-*.ts'
+      - 'libs/shared-i18n/src/locales/*/notifications.json'
+      - 'libs/shared-utils/src/api/notification-*.ts'
+      - 'libs/shared-utils/src/axios-instance*.ts'
+      - 'libs/shared-utils/src/http-error.ts'
+      - 'scripts/check-notification-route-chunks.mjs'
+      - 'scripts/check-notification-route-chunks.test.mjs'
+      - 'scripts/check-notification-quality-workflow.test.mjs'
+      - 'scripts/check-notification-source-size*.mjs'
+      - 'scripts/notification-route-budget-model.mjs'
+      - 'scripts/notification-route-budgets.json'
+      - '.node-version'
+      - 'eslint.config.mjs'
+      - 'tsconfig.json'
+      - 'tsconfig.base.json'
+      - 'tsconfig.node.json'
+      - 'vitest.config.ts'
+      - 'vite.config.ts'
+      - 'playwright.config.ts'
+      - 'package.json'
+      - 'yarn.lock'
+  push:
+    branches:
+      - dwp-dev
+    paths:
+      - '.github/workflows/notification-frontend-quality.yml'
+      - 'apps/dwp/src/components/notification-*.ts'
+      - 'apps/dwp/src/components/notification-*.tsx'
+      - 'apps/dwp/src/features/notifications/**'
+      - 'apps/dwp/src/routes/notification-routes.tsx'
+      - 'apps/dwp/src/pages/notifications.tsx'
+      - 'e2e/notification*.spec.ts'
+      - 'e2e/notification-stitch-visual-parity.spec.ts-snapshots/**'
+      - 'e2e/support/notification-*.ts'
+      - 'libs/shared-i18n/src/locales/*/notifications.json'
+      - 'libs/shared-utils/src/api/notification-*.ts'
+      - 'libs/shared-utils/src/axios-instance*.ts'
+      - 'libs/shared-utils/src/http-error.ts'
+      - 'scripts/check-notification-route-chunks.mjs'
+      - 'scripts/check-notification-route-chunks.test.mjs'
+      - 'scripts/check-notification-quality-workflow.test.mjs'
+      - 'scripts/check-notification-source-size*.mjs'
+      - 'scripts/notification-route-budget-model.mjs'
+      - 'scripts/notification-route-budgets.json'
+      - '.node-version'
+      - 'eslint.config.mjs'
+      - 'tsconfig.json'
+      - 'tsconfig.base.json'
+      - 'tsconfig.node.json'
+      - 'vitest.config.ts'
+      - 'vite.config.ts'
+      - 'playwright.config.ts'
+      - 'package.json'
+      - 'yarn.lock'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: notification-frontend-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  behavior:
+    name: Unit, behavior, accessibility, and route chunks
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    env:
+      YARN_ENABLE_HARDENED_MODE: '1'
+      PLAYWRIGHT_HTML_OUTPUT_DIR: playwright-report-notification
+      PLAYWRIGHT_OUTPUT_DIR: test-results/notification
+
+    steps:
+      - name: Check out source
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+
+      - name: Set up Node.js runtime
+        uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version-file: .node-version
+          cache: yarn
+          cache-dependency-path: yarn.lock
+
+      - name: Enable Corepack and activate Yarn
+        run: |
+          corepack enable
+          corepack prepare yarn@4.17.1 --activate
+
+      - name: Install dependencies
+        run: corepack yarn install --immutable
+
+      - name: Verify Notification quality workflow contract
+        run: >-
+          node --test
+          scripts/check-notification-route-chunks.test.mjs
+          scripts/check-notification-quality-workflow.test.mjs
+          scripts/check-notification-source-size.test.mjs
+
+      - name: Enforce Notification production screen size
+        run: node scripts/check-notification-source-size.mjs
+
+      - name: Install Playwright browsers
+        run: corepack yarn playwright install --with-deps chromium webkit
+
+      - name: Run Notification unit and component tests
+        run: >-
+          corepack yarn vitest run
+          apps/dwp/src/features/notifications
+          apps/dwp/src/components/notification-live-bridge.test.ts
+          apps/dwp/src/components/notification-runtime-host.test.ts
+          libs/shared-utils/src/axios-instance.test.ts
+          libs/shared-utils/src/api/notification-api.test.ts
+          libs/shared-utils/src/api/notification-app-summary-api.test.ts
+          libs/shared-utils/src/api/notification-attention-api.test.ts
+          libs/shared-utils/src/api/notification-attention-governance-api.test.ts
+
+      - name: Check Notification types
+        run: corepack yarn typecheck
+
+      - name: Lint Notification sources and acceptance tests
+        run: >-
+          corepack yarn eslint
+          apps/dwp/src/components/notification-live-bridge.tsx
+          apps/dwp/src/components/notification-live-bridge.test.ts
+          apps/dwp/src/features/notifications
+          apps/dwp/src/routes/notification-routes.tsx
+          e2e/notification*.spec.ts
+          scripts/check-notification-route-chunks.mjs
+          scripts/check-notification-route-chunks.test.mjs
+          scripts/check-notification-quality-workflow.test.mjs
+          scripts/check-notification-source-size.mjs
+          scripts/check-notification-source-size.test.mjs
+          scripts/notification-route-budget-model.mjs
+
+      - name: Build production bundle and verify independent route entries
+        run: |
+          corepack yarn vite build
+          node scripts/check-notification-route-chunks.mjs
+
+      - name: Run production-preview Notification performance budgets
+        run: |
+          corepack yarn vite preview --host 127.0.0.1 --port 4300 --strictPort &
+          preview_pid=$!
+          trap 'kill "$preview_pid"' EXIT
+          for attempt in {1..30}; do
+            if curl --fail --silent http://127.0.0.1:4300/ >/dev/null; then
+              break
+            fi
+            sleep 1
+          done
+          curl --fail --silent http://127.0.0.1:4300/ >/dev/null
+          E2E_BASE_URL=http://127.0.0.1:4300 E2E_REUSE_EXISTING_SERVER=true \
+            corepack yarn playwright test e2e/notification-performance.spec.ts \
+            --project=chromium --workers=1 --grep @production-preview
+
+      - name: Run Notification behavior, responsive, and accessibility journeys
+        run: >-
+          corepack yarn playwright test
+          e2e/notification*.spec.ts
+          --project=chromium --project=mobile --workers=1 --ignore-snapshots
+          --grep-invert @production-preview
+
+      - name: Upload Notification acceptance report
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5
+        with:
+          name: notification-frontend-report
+          path: |
+            playwright-report-notification/
+            test-results/notification/
+          if-no-files-found: error
+          retention-days: 30
+
+  visual-baselines:
+    name: Approved Notification macOS visual baselines
+    runs-on: macos-15
+    timeout-minutes: 45
+    env:
+      E2E_TIMEZONE_ID: Asia/Seoul
+      YARN_ENABLE_HARDENED_MODE: '1'
+      PLAYWRIGHT_HTML_OUTPUT_DIR: playwright-report-notification-visual
+      PLAYWRIGHT_OUTPUT_DIR: test-results/notification-visual
+
+    steps:
+      - name: Check out source
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+
+      - name: Set up Node.js runtime
+        uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version-file: .node-version
+          cache: yarn
+          cache-dependency-path: yarn.lock
+
+      - name: Enable Corepack and activate Yarn
+        run: |
+          corepack enable
+          corepack prepare yarn@4.17.1 --activate
+
+      - name: Install dependencies
+        run: corepack yarn install --immutable
+
+      - name: Install Playwright Chromium
+        run: corepack yarn playwright install chromium
+
+      - name: Run approved Notification visual regression
+        run: >-
+          corepack yarn playwright test
+          e2e/notification-stitch-visual-parity.spec.ts
+          --project=chromium --workers=1
+
+      - name: Upload Notification visual report
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5
+        with:
+          name: notification-visual-report
+          path: |
+            playwright-report-notification-visual/
+            test-results/notification-visual/
+          if-no-files-found: error
+          retention-days: 30

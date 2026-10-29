@@ -426,7 +426,7 @@ test('common Activity excludes labelled Agent samples from both timeline and cur
   const detail = page.getByRole('complementary', { name: 'Signal detail' });
   await expect(detail.getByText('This event cannot be displayed', { exact: true })).toBeVisible();
   await expect(detail.getByText('Development verification data')).toHaveCount(0);
-  await expect(page.getByText('No activity matches these filters', { exact: true })).toBeVisible();
+  await expect(page.getByText('There is no activity to show', { exact: true })).toBeVisible();
 
   if (await page.locator('.MuiDrawer-paper').isVisible()) {
     await page.getByRole('button', { name: 'Close signal detail' }).click();
@@ -457,9 +457,17 @@ test('current counts use the execution summary and filters are sent to the serve
   await expandCurrentSummary(page);
   const summary = page.getByRole('region', { name: 'Activity summary' });
   await expect(summary.getByText('Currently running').locator('..')).toContainText('0');
+  await page.getByRole('textbox', { name: 'Search activity' }).fill('ab');
+  await expect(page.getByText('Enter at least 3 characters to search.')).toBeVisible();
+  await expect(page).toHaveURL((url) => !url.searchParams.has('q'));
+  expect(requested.some((url) => url.searchParams.get('query') === 'ab')).toBe(false);
   await page.getByRole('textbox', { name: 'Search activity' }).fill('older work');
   await expect(page.getByText('No activity matches these filters')).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Reset filters' })).toBeVisible();
   expect(requested.some((url) => url.searchParams.get('query') === 'older work')).toBe(true);
+  await page.getByRole('button', { name: 'Reset filters' }).click();
+  await expect(page).toHaveURL((url) => !url.searchParams.has('q'));
+  await expect(page.getByText('Historical running event', { exact: true })).toBeVisible();
   expect(
     requested
       .filter((url) => url.pathname.endsWith('/activity'))
@@ -494,6 +502,12 @@ test('a failed execution source shows unavailable counts and preserves accessibl
   await expandCurrentSummary(page);
   const summary = page.getByRole('region', { name: 'Activity summary' });
   await expect(summary.getByText('—', { exact: true })).toHaveCount(5);
+  const summaryFailure = page
+    .getByRole('alert')
+    .filter({ hasText: 'Current execution summary is unavailable' });
+  await expect(summaryFailure).toBeVisible();
+  await expect(summaryFailure.getByRole('button', { name: 'Try again' })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Retry activity sources' })).toBeVisible();
   await expect(page.getByText('Some information could not be refreshed').first()).toBeVisible();
   await expect(page.getByRole('button', { name: 'Older events' })).toBeDisabled();
 });

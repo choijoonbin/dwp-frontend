@@ -106,9 +106,7 @@ export function WorkplaceHomeSourceSummary({
                     ? 'workplace.home.sources.degraded'
                     : state === 'STALE'
                       ? 'workplace.home.status.stale'
-                      : state === 'LOADING'
-                        ? 'workplace.home.loading'
-                        : 'workplace.home.sources.unverified'
+                      : 'workplace.home.sources.unverified'
               )}
             </Typography>
           </Stack>

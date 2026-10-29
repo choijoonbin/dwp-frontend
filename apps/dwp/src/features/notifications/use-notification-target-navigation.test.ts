@@ -11,6 +11,14 @@ describe('normalizeNotificationTargetHref', () => {
     );
   });
 
+  it('preserves the exact HRIS employee-change request public identifier', () => {
+    const requestPublicId = '00000000-0000-4000-8000-000000000042';
+    const href =
+      `/hr/operations/people/employee-change-requests?requestPublicId=${requestPublicId}`;
+
+    expect(normalizeNotificationTargetHref(href, baseHref)).toBe(href);
+  });
+
   it.each([
     '//malicious.example/path',
     '/\\\\malicious.example/path',

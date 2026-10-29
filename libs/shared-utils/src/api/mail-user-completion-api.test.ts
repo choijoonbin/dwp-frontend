@@ -1,6 +1,7 @@
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { axiosInstance } from '../axios-instance';
+import { registerMailGovernedRequestAuthority } from './mail-governed-transport';
 import {
   createAdvancedMailDraft,
   downloadMailMessageAttachment,
@@ -8,6 +9,16 @@ import {
 } from './mail-user-completion-api';
 
 describe('mail message attachment API', () => {
+  let releaseMailAuthority: (() => void) | undefined;
+
+  beforeEach(() => {
+    releaseMailAuthority = registerMailGovernedRequestAuthority({
+      mode: 'LEGACY_COMPATIBILITY',
+      rolloutState: '000',
+    });
+  });
+
+  afterEach(() => releaseMailAuthority?.());
   afterEach(() => vi.restoreAllMocks());
 
   it('downloads through the authenticated mail resource path as a blob', async () => {

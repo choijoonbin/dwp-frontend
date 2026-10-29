@@ -11,6 +11,12 @@ vi.mock('react-i18next', () => ({
   useTranslation: () => ({ t: (key: string) => key }),
 }));
 
+vi.mock('./calendar-attendee-picker', () => ({
+  CalendarAttendeePicker: ({ label }: { label: string }) => (
+    <div data-testid="calendar-attendee-picker">{label}</div>
+  ),
+}));
+
 const draft: CalendarEventDraft = {
   title: 'Planning',
   description: '',
@@ -25,6 +31,9 @@ const draft: CalendarEventDraft = {
   recurrence: 'NONE',
   recurrenceInterval: 1,
   recurrenceUntil: '',
+  recurrenceDays: [],
+  recurrenceCount: 10,
+  recurrenceEndMode: 'NEVER',
   responseRequired: true,
   resourceId: '',
   timeZone: 'Asia/Seoul',
@@ -55,14 +64,14 @@ function render(form: CalendarEventDraft) {
         expanded
         form={form}
         attendees={[]}
-        attendeeOptions={[]}
         resources={[room]}
-        peopleLoading={false}
+        externalAttendeePolicyState="ALLOWED"
+        peopleDirectoryEnabled
         workProtected={false}
         workReceiptLocked={false}
         occurrenceOnly={false}
+        participantResourceLocked={false}
         validationVisible={false}
-        resourceRecurrenceError={false}
         onExpandedChange={vi.fn()}
         onFormPatch={vi.fn()}
         onResourceChange={vi.fn()}
@@ -93,5 +102,20 @@ describe('CalendarEventDialogDetails', () => {
     expect(html).toContain('event.recurrenceLabel');
     expect(html).toContain('event.visibilityLabel');
     expect(html).toContain('event.timeZoneLabel');
+  });
+
+  it('renders weekly BYDAY and count controls with an anchored weekday hint', () => {
+    const html = render({
+      ...draft,
+      recurrence: 'WEEKLY',
+      recurrenceDays: ['THURSDAY'],
+      recurrenceEndMode: 'COUNT',
+      recurrenceCount: 12,
+    });
+
+    expect(html).toContain('event.recurrenceDaysLabel');
+    expect(html).toContain('settings.daysLong.THURSDAY');
+    expect(html).toContain('event.recurrenceAnchorHint');
+    expect(html).toContain('event.recurrenceCountLabel');
   });
 });

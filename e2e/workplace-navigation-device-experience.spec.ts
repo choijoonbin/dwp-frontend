@@ -658,12 +658,20 @@ test.describe('Screen 19 indoor navigation and device experience', () => {
     await page.evaluate(() => navigator.clipboard.writeText('probe'));
     expect(sharedUrlViaFallback).toBe('probe');
     const shareOrigin = new URL(page.url()).origin;
+    await page.getByRole('checkbox', { name: '휠체어 접근 경로' }).check();
+    await page.getByRole('checkbox', { name: '계단 피하기' }).check();
+    await expect(page.getByRole('heading', { name: '경로 요약' })).toBeVisible();
     await page.getByRole('button', { name: '스마트폰으로 공유' }).click();
     await expect(page.getByText('안전한 경로 링크를 복사했습니다.')).toBeVisible();
     expect(sharedUrlViaFallback).toBe(
-      `${shareOrigin}/workplace/navigation?accessible=false&avoidStairs=false&destinationPoiId=${DESTINATION_ID}&originPoiId=${ORIGIN_ID}&siteId=${SITE_ID}&v=1`
+      `${shareOrigin}/workplace/navigation?accessible=true&avoidStairs=true&destinationPoiId=${DESTINATION_ID}&originPoiId=${ORIGIN_ID}&siteId=${SITE_ID}&v=1`
     );
     expect(sharedUrlViaFallback).not.toMatch(/credential|pairing|passId|bookingId|correlation/i);
+    const sharedSearch = new URL(sharedUrlViaFallback).searchParams.toString();
+    await page.goto(`/__screen19?view=wayfinding&${sharedSearch}`);
+    await expect(page.getByRole('checkbox', { name: '휠체어 접근 경로' })).toBeChecked();
+    await expect(page.getByRole('checkbox', { name: '계단 피하기' })).toBeChecked();
+    await expect(page.getByRole('heading', { name: '경로 요약' })).toBeVisible();
     await page.goto(
       '/__screen19?view=wayfinding&originPoiId=unauthorized&destinationPoiId=missing'
     );

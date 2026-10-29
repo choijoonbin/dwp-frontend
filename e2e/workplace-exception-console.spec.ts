@@ -12,6 +12,12 @@ import type { Page, Route } from '@playwright/test';
 const NOW = '2026-09-17T03:00:00Z';
 const INCIDENT_ID = '71000000-0000-4000-8000-000000000022';
 const BATCH_ID = '72000000-0000-4000-8000-000000000022';
+const DEVICE_COMMAND_ID = '73000000-0000-4000-8000-000000000022';
+const DEVICE_ID = '73000000-0000-4000-8000-000000000023';
+const SERVICE_ORDER_ID = '74000000-0000-4000-8000-000000000022';
+const ADJUSTMENT_ID = '75000000-0000-4000-8000-000000000022';
+const VISIT_ID = '76000000-0000-4000-8000-000000000022';
+const PASS_ID = '77000000-0000-4000-8000-000000000022';
 const PREVIEW_ID = '81000000-0000-4000-8000-000000000022';
 const COMMAND_ID = '82000000-0000-4000-8000-000000000022';
 const GOVERNED_PRODUCTS = [
@@ -48,12 +54,15 @@ function body(route: Route) {
 async function mockAccessMode(page: Page, elevated: boolean) {
   await page.route('**/api/auth/product-surface-contexts', (route) =>
     fulfillSuccess(route, {
-      contractVersion: 'product-surfaces/v3',
+      contractVersion: '2',
       decisionRevision: `exception-console-${elevated ? 'elevated' : 'normal'}`,
       sourceRevisions: {
         auth: 'auth-exception-console',
         policy: 'policy-exception-console',
         productRelationship: 'relationship-exception-console',
+        targetPopulation: 'target-population-exception-console',
+        support: null,
+        tenantControl: 'tenant-control-exception-console',
       },
       activeAccessMode: elevated ? 'ELEVATED' : 'NORMAL',
       generatedAt: NOW,
@@ -73,14 +82,17 @@ async function mockAccessMode(page: Page, elevated: boolean) {
 function consolePayload() {
   return {
     summary: {
-      active: 3,
-      critical: 2,
-      warning: 0,
-      error: 1,
+      active: 9,
+      critical: 4,
+      warning: 1,
+      error: 4,
       concurrencyConflicts24h: 1,
       deadLetterQueueDepth: 3,
       automaticRecoveryPercent: null,
       slaCompliancePercent: null,
+      unresolvedCount: 9,
+      returnedCount: 9,
+      truncated: false,
     },
     exceptions: [
       {
@@ -99,6 +111,9 @@ function consolePayload() {
         connectorKind: null,
         configurationVersion: null,
         runtimeVersion: null,
+        resolved: false,
+        resolvedAt: null,
+        ageSeconds: 120,
       },
       {
         exceptionId: `BOOKING:${BATCH_ID}`,
@@ -116,6 +131,9 @@ function consolePayload() {
         connectorKind: null,
         configurationVersion: null,
         runtimeVersion: null,
+        resolved: false,
+        resolvedAt: null,
+        ageSeconds: 90,
       },
       {
         exceptionId: 'CONNECTOR:CALENDAR',
@@ -133,6 +151,129 @@ function consolePayload() {
         connectorKind: 'CALENDAR',
         configurationVersion: 4,
         runtimeVersion: 7,
+        resolved: false,
+        resolvedAt: null,
+        ageSeconds: 60,
+      },
+      {
+        exceptionId: `DEVICE_COMMAND:${DEVICE_COMMAND_ID}`,
+        source: 'DEVICE_COMMAND',
+        severity: 'CRITICAL',
+        status: 'MANUAL_REVIEW',
+        title: 'Device command outcome requires review',
+        impact: 'Automatic provider reconciliation exhausted its bounded retry budget.',
+        code: 'DEVICE_RETRY_EXHAUSTED',
+        detectedAt: NOW,
+        version: 5,
+        evidence: ['Operation=RESTART', 'State=RESULT_UNKNOWN', 'Attempts=10'],
+        action: 'REVIEW_DEVICE',
+        actionHref: `/workplace/admin/devices?device=${DEVICE_ID}&command=${DEVICE_COMMAND_ID}`,
+        connectorKind: null,
+        configurationVersion: null,
+        runtimeVersion: null,
+        resolved: false,
+        resolvedAt: null,
+        ageSeconds: 180,
+      },
+      {
+        exceptionId: `SERVICE_ORDER:${SERVICE_ORDER_ID}`,
+        source: 'SERVICE_ORDER',
+        severity: 'ERROR',
+        status: 'ACTIVE',
+        title: 'Service order outcome requires review',
+        impact: 'Review the authoritative fulfillment result.',
+        code: 'SERVICE_ORDER_RESULT_UNKNOWN',
+        detectedAt: NOW,
+        version: 3,
+        evidence: ['State=RESULT_UNKNOWN'],
+        action: 'REVIEW_SERVICE_ORDER',
+        actionHref: `/workplace/admin/service-fulfillment?order=${SERVICE_ORDER_ID}`,
+        connectorKind: null,
+        configurationVersion: null,
+        runtimeVersion: null,
+        resolved: false,
+        resolvedAt: null,
+        ageSeconds: 150,
+      },
+      {
+        exceptionId: 'SERVICE_PROVIDER:ACCESS_CONTROL',
+        source: 'SERVICE_PROVIDER',
+        severity: 'WARNING',
+        status: 'ACTIVE',
+        title: 'Service provider requires review',
+        impact: 'Provider health evidence is stale.',
+        code: 'SERVICE_PROVIDER_DEGRADED',
+        detectedAt: NOW,
+        version: 2,
+        evidence: ['State=DEGRADED'],
+        action: 'REVIEW_SERVICE_PROVIDER',
+        actionHref: '/workplace/admin/service-providers?provider=ACCESS_CONTROL',
+        connectorKind: null,
+        configurationVersion: 2,
+        runtimeVersion: 1,
+        resolved: false,
+        resolvedAt: null,
+        ageSeconds: 140,
+      },
+      {
+        exceptionId: `SERVICE_REFUND:${ADJUSTMENT_ID}`,
+        source: 'SERVICE_REFUND',
+        severity: 'CRITICAL',
+        status: 'MANUAL_REVIEW',
+        title: 'Service refund requires review',
+        impact: 'Reconcile this exact line adjustment.',
+        code: 'SERVICE_REFUND_MANUAL_REVIEW',
+        detectedAt: NOW,
+        version: 4,
+        evidence: ['State=FAILED'],
+        action: 'REVIEW_SERVICE_REFUND',
+        actionHref: `/workplace/admin/service-fulfillment?order=${SERVICE_ORDER_ID}&adjustment=${ADJUSTMENT_ID}`,
+        connectorKind: null,
+        configurationVersion: null,
+        runtimeVersion: null,
+        resolved: false,
+        resolvedAt: null,
+        ageSeconds: 130,
+      },
+      {
+        exceptionId: `VISIT_PROVIDER:${VISIT_ID}`,
+        source: 'VISIT_PROVIDER',
+        severity: 'ERROR',
+        status: 'ACTIVE',
+        title: 'Visit provider requires review',
+        impact: 'Reconcile the exact visit delivery.',
+        code: 'VISIT_PROVIDER_RESULT_UNKNOWN',
+        detectedAt: NOW,
+        version: 5,
+        evidence: ['State=RESULT_UNKNOWN'],
+        action: 'REVIEW_VISIT',
+        actionHref: `/workplace/admin/visits?visit=${VISIT_ID}`,
+        connectorKind: null,
+        configurationVersion: null,
+        runtimeVersion: null,
+        resolved: false,
+        resolvedAt: null,
+        ageSeconds: 120,
+      },
+      {
+        exceptionId: `ACCESS_PASS:${PASS_ID}`,
+        source: 'ACCESS_PASS',
+        severity: 'ERROR',
+        status: 'MANUAL_REVIEW',
+        title: 'Access-pass pairing requires review',
+        impact: 'Open the exact destination credential context.',
+        code: 'ACCESS_PASS_PAIRING_RETRY_EXHAUSTED',
+        detectedAt: NOW,
+        version: 3,
+        evidence: ['State=PAIRING_RETRY_EXHAUSTED'],
+        action: 'REVIEW_ACCESS_PASS',
+        actionHref: null,
+        connectorKind: null,
+        configurationVersion: null,
+        runtimeVersion: null,
+        resolved: false,
+        resolvedAt: null,
+        ageSeconds: 110,
       },
     ],
     guardrails: [
@@ -157,6 +298,24 @@ function consolePayload() {
     ],
     generatedAt: NOW,
     externalTelemetryUrl: null,
+    sourceCoverage: (
+      [
+        ['SAFETY', 1],
+        ['BOOKING', 1],
+        ['CONNECTOR', 1],
+        ['DEVICE_COMMAND', 1],
+        ['SERVICE_ORDER', 1],
+        ['SERVICE_PROVIDER', 1],
+        ['SERVICE_REFUND', 1],
+        ['VISIT_PROVIDER', 1],
+        ['ACCESS_PASS', 1],
+      ] as const
+    ).map(([source, count]) => ({
+      source,
+      unresolvedCount: count,
+      returnedCount: count,
+      truncated: false,
+    })),
   };
 }
 
@@ -181,7 +340,7 @@ async function setup(page: Page, elevated: boolean): Promise<Evidence> {
     evidence.exportPreviews.push({ headers: headers(route), body: body(route) });
     return fulfillSuccess(route, {
       previewId: PREVIEW_ID,
-      rowCount: 3,
+      rowCount: 9,
       purpose: 'Verified incident review',
       createdAt: NOW,
       expiresAt: '2026-09-17T03:10:00Z',
@@ -191,7 +350,7 @@ async function setup(page: Page, elevated: boolean): Promise<Evidence> {
     evidence.exportCommands.push({ headers: headers(route), body: body(route) });
     return fulfillSuccess(route, {
       commandId: COMMAND_ID,
-      rowCount: 3,
+      rowCount: 9,
       acceptedAt: NOW,
       expiresAt: '2026-09-17T04:00:00Z',
       downloadHref: `/v1/admin/workplace/exceptions/exports/${COMMAND_ID}/content`,
@@ -252,6 +411,10 @@ test('renders the responsive exception console and fails closed without current 
   await expect(console.getByRole('heading', { name: 'Unknown' })).toBeVisible();
   await expect(console.getByText(/Current elevated access is required/u)).toBeVisible();
   await expect(console.getByRole('button', { name: 'Export governed CSV' })).toBeDisabled();
+  await console.getByText('Device command outcome requires review').click();
+  await expect(console.getByText(/Automatic recovery has stopped/u)).toBeVisible();
+  await console.getByText('Access-pass pairing requires review').click();
+  await expect(console.getByText(/No administrator-authorized owner view exists/u)).toBeVisible();
   await console.getByText('Calendar delivery queue').click();
   await console.getByRole('textbox', { name: 'Recovery reason' }).fill('Review blocked recovery');
   await expect(console.getByRole('button', { name: 'Preview governed replay' })).toBeDisabled();
@@ -274,7 +437,7 @@ test('executes guarded export and explains an ineligible recovery preview', asyn
   await console.getByRole('textbox', { name: 'Export purpose' }).fill('Verified incident review');
   await console.getByRole('button', { name: 'Export governed CSV' }).click();
   const exportDialog = page.getByRole('alertdialog', { name: 'Confirm governed export' });
-  await expect(exportDialog.getByText(/3 sanitized exception rows/u)).toBeVisible();
+  await expect(exportDialog.getByText(/9 sanitized exception rows/u)).toBeVisible();
   await exportDialog.getByRole('button', { name: 'Create and download' }).click();
   await expect(console.getByText(/Governed export created and downloaded/u)).toBeVisible();
 
@@ -334,4 +497,40 @@ test('routes safety and booking exceptions to their consuming owner workflows', 
   await expect(page).toHaveURL(
     new RegExp(`/workplace/planner\\?batch=${BATCH_ID}&step=RESULT$`, 'u')
   );
+});
+
+test('round-trips every operational exception to its exact owner target', async ({ page }) => {
+  await setup(page, true);
+  const targets = [
+    [
+      'Device command outcome requires review',
+      `/workplace/admin/devices?device=${DEVICE_ID}&command=${DEVICE_COMMAND_ID}`,
+    ],
+    [
+      'Service order outcome requires review',
+      `/workplace/admin/service-fulfillment?order=${SERVICE_ORDER_ID}`,
+    ],
+    [
+      'Service provider requires review',
+      '/workplace/admin/service-providers?provider=ACCESS_CONTROL',
+    ],
+    [
+      'Service refund requires review',
+      `/workplace/admin/service-fulfillment?order=${SERVICE_ORDER_ID}&adjustment=${ADJUSTMENT_ID}`,
+    ],
+    ['Visit provider requires review', `/workplace/admin/visits?visit=${VISIT_ID}`],
+  ] as const;
+
+  for (const [title, expectedTarget] of targets) {
+    await page.goto('/workplace/admin/exceptions');
+    const console = page.getByRole('main');
+    await console.getByText(title, { exact: true }).first().click();
+    await console.getByRole('button', { name: 'Open owner workflow' }).click();
+    await expect
+      .poll(() => {
+        const current = new URL(page.url());
+        return `${current.pathname}${current.search}`;
+      })
+      .toBe(expectedTarget);
+  }
 });

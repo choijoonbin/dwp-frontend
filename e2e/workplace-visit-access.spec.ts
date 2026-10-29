@@ -48,9 +48,16 @@ async function elevatedAuthority(page: Page) {
   await page.unroute('**/api/auth/product-surface-contexts');
   await page.route('**/api/auth/product-surface-contexts', (route) =>
     fulfillSuccess(route, {
-      contractVersion: 'product-surfaces/v3',
+      contractVersion: '2',
       decisionRevision: 'screen-17-elevated',
-      sourceRevisions: { auth: '17', policy: '17', productRelationship: '17' },
+      sourceRevisions: {
+        auth: '17',
+        policy: '17',
+        productRelationship: '17',
+        targetPopulation: '17',
+        support: null,
+        tenantControl: '17',
+      },
       activeAccessMode: 'ELEVATED',
       generatedAt: NOW,
       contexts: [],
@@ -490,7 +497,9 @@ test('operates the elevated visitor exception inspector and fails closed in read
   const evidence = await mockAdminVisit(page);
   await page.goto('/workplace/admin/visits');
   await page.getByRole('button', { name: 'Inspect' }).click();
-  const inspector = page.getByRole('complementary', { name: 'Visitor exception inspector' });
+  const inspector = page
+    .getByRole('complementary', { name: 'Visitor exception inspector' })
+    .or(page.getByRole('dialog', { name: 'Visitor exception inspector' }));
   await inspector.getByRole('checkbox', { name: /elevated operation/i }).check();
   await inspector.getByRole('button', { name: 'Approve visit' }).click();
   await expect(inspector.getByText('Approved', { exact: true })).toBeVisible();

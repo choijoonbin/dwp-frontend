@@ -57,6 +57,14 @@ test('company-wide sharing persists and failed preference writes do not masquera
   await expect(sharing).not.toBeChecked();
   expect(state.privacyRequests[0]).toEqual({ readReceiptsEnabled: false, version: 0 });
   await expect(dialog.getByText(/Your unread conversations and reading position/)).toBeVisible();
+  const presenceSharing = dialog.getByRole('switch', {
+    name: 'Share my Messenger connection presence',
+  });
+  await expect(presenceSharing).toBeChecked();
+  await presenceSharing.click();
+  await expect(presenceSharing).not.toBeChecked();
+  expect(state.privacyRequests[1]).toEqual({ presenceSharingEnabled: false, version: 1 });
+  await expect(dialog.getByText(/current presence lease is withdrawn/iu)).toBeVisible();
   await page.screenshot({ path: testInfo.outputPath('privacy-settings.png') });
   if (testInfo.project.name === 'chromium') {
     await page.setViewportSize({ width: 320, height: 740 });
@@ -70,6 +78,7 @@ test('company-wide sharing persists and failed preference writes do not masquera
   await sharing.click();
   await expect(sharing).not.toBeChecked();
   expect(state.privacy.readReceiptsEnabled).toBe(false);
+  expect(state.privacy.presenceSharingEnabled).toBe(false);
   await page.reload();
   await page.getByRole('button', { name: 'Open conversation settings', exact: true }).click();
   await page.getByRole('tab', { name: 'Privacy', exact: true }).click();

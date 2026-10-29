@@ -19,6 +19,7 @@ import Typography from '@mui/material/Typography';
 import useMediaQuery from '@mui/material/useMediaQuery';
 
 import { messagingInitials } from './messaging-components';
+import { useMessagingAdaptivePollingInterval } from './messaging-adaptive-polling';
 import { messagingReceiptState } from './messaging-read-receipt-model';
 import { messagingVisualTone } from './messaging-visual-model';
 
@@ -80,12 +81,13 @@ function MessagingReadReceiptDialog({
 }) {
   const { t } = useTranslation('messaging');
   const fullScreen = useMediaQuery('(max-width: 599px)');
+  const refetchInterval = useMessagingAdaptivePollingInterval(15_000);
   const query = useQuery({
     queryKey: ['messaging', 'read-receipts', message.conversationId, 'message', message.messageId],
     queryFn: () => getMessagingMessageReadReceipt(message.conversationId, message.messageId),
     staleTime: 0,
     gcTime: 0,
-    refetchInterval: 15_000,
+    refetchInterval,
     retry: 1,
   });
   return (

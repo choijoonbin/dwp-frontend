@@ -8,6 +8,7 @@ import {
   deleteCalendarShare,
   getCalendarAvailability,
   getCalendarEvents,
+  getCalendarEventsV2,
   getCalendarHome,
   getCalendarInsights,
   getCalendarPolicy,
@@ -71,6 +72,66 @@ describe('calendar API boundary', () => {
 
     expect(get).toHaveBeenNthCalledWith(1, path, { signal });
     expect(get).toHaveBeenNthCalledWith(2, path);
+  });
+
+  it('reads the bounded V2 event cursor contract with cancellation and an opaque cursor', async () => {
+    const signal = new AbortController().signal;
+    const page = {
+      items: [],
+      nextCursor: 'opaque+/cursor=',
+      hasMore: true,
+      range: {
+        from: '2026-09-08T00:00:00Z',
+        to: '2026-09-09T00:00:00Z',
+        timeZone: 'Asia/Seoul',
+      },
+      generatedAt: '2026-09-08T00:00:01Z',
+    };
+    const get = vi.spyOn(axiosInstance, 'get').mockResolvedValue({ data: { data: page } });
+
+    await expect(
+      getCalendarEventsV2(
+        {
+          from: page.range.from,
+          to: page.range.to,
+          timeZone: page.range.timeZone,
+          limit: 200,
+          cursor: page.nextCursor,
+        },
+        signal
+      )
+    ).resolves.toEqual(page);
+
+    expect(get).toHaveBeenCalledWith(
+      '/api/platform/v2/calendar/events?from=2026-09-08T00%3A00%3A00Z&to=2026-09-09T00%3A00%3A00Z&timeZone=Asia%2FSeoul&limit=200&cursor=opaque%2B%2Fcursor%3D',
+      { signal }
+    );
+  });
+
+  it('rejects a V2 page that claims more data without a continuation cursor', async () => {
+    vi.spyOn(axiosInstance, 'get').mockResolvedValue({
+      data: {
+        data: {
+          items: [],
+          nextCursor: null,
+          hasMore: true,
+          range: {
+            from: '2026-09-08T00:00:00Z',
+            to: '2026-09-09T00:00:00Z',
+            timeZone: 'Asia/Seoul',
+          },
+          generatedAt: '2026-09-08T00:00:01Z',
+        },
+      },
+    });
+
+    await expect(
+      getCalendarEventsV2({
+        from: '2026-09-08T00:00:00Z',
+        to: '2026-09-09T00:00:00Z',
+        timeZone: 'Asia/Seoul',
+      })
+    ).rejects.toThrow('incomplete cursor contract');
   });
 
   it('passes an optional cancellation signal through event creation', async () => {
@@ -177,6 +238,35 @@ describe('calendar API boundary', () => {
         'X-DWP-DWAI-ON-Action-Key': 'CALENDAR.EVENT.CREATE',
         'X-DWP-DWAI-ON-Handoff-Version': '3',
       },
+    });
+  });
+
+  it('binds a scheduling hard-recheck receipt to Calendar creation without changing the body', async () => {
+    const post = vi.spyOn(axiosInstance, 'post').mockResolvedValue({
+      data: { data: { eventId: 'event-1', version: 1 } },
+    });
+    const input = {
+      title: 'Verified meeting',
+      type: 'MEETING' as const,
+      startsAt: '2026-09-08T00:00:00Z',
+      endsAt: '2026-09-08T01:00:00Z',
+      timeZone: 'Asia/Seoul',
+      allDay: false,
+      visibility: 'DEFAULT' as const,
+      recurrence: 'NONE' as const,
+      recurrenceInterval: 1,
+      responseRequired: true,
+      attendees: [],
+      importance: 'NORMAL' as const,
+      idempotencyKey: 'calendar-event-intent-1',
+    };
+
+    await createCalendarEvent(input, undefined, undefined, undefined, {
+      hardRecheckToken: 'hard-token-1',
+    });
+
+    expect(post).toHaveBeenCalledWith('/api/platform/v1/calendar/events', input, {
+      headers: { 'X-DWP-Calendar-Hard-Recheck-Token': 'hard-token-1' },
     });
   });
 
@@ -322,6 +412,33 @@ describe('calendar API boundary', () => {
     await expect(updateCalendarEvent('event-1', input)).resolves.toEqual(updatedEvent);
 
     expect(JSON.parse(String((fetchMock.mock.calls[1]?.[1] as RequestInit).body))).toEqual(input);
+  });
+
+  it('binds a scheduling hard-recheck receipt to Calendar update', async () => {
+    const put = vi.spyOn(axiosInstance, 'put').mockResolvedValue({
+      data: { data: { eventId: 'event-1', version: 8 } },
+    });
+    const input = {
+      title: 'Verified update',
+      type: 'MEETING' as const,
+      startsAt: '2026-09-08T00:00:00Z',
+      endsAt: '2026-09-08T01:00:00Z',
+      timeZone: 'Asia/Seoul',
+      allDay: false,
+      visibility: 'DEFAULT' as const,
+      recurrence: 'NONE' as const,
+      recurrenceInterval: 1,
+      responseRequired: true,
+      attendees: [],
+      importance: 'NORMAL' as const,
+      version: 7,
+    };
+
+    await updateCalendarEvent('event-1', input, { hardRecheckToken: 'hard-token-2' });
+
+    expect(put).toHaveBeenCalledWith('/api/platform/v1/calendar/events/event-1', input, {
+      headers: { 'X-DWP-Calendar-Hard-Recheck-Token': 'hard-token-2' },
+    });
   });
 
   it('cancels with the current optimistic-lock version', async () => {

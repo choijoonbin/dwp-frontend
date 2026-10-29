@@ -22,6 +22,7 @@ import { HOME_V2_QUERY_ROOT, useHomeV2Runtime } from './use-home-v2-runtime';
 
 type ProbeInput = Readonly<{
   accessFingerprint: string;
+  deviceClass: 'DESKTOP_STANDARD' | 'MOBILE_STANDARD';
   locale: string;
   tenantId: number;
   userId: number;
@@ -30,7 +31,11 @@ type ProbeInput = Readonly<{
 const REQUIRED_VARY =
   'Accept-Language, X-DWP-Tenant-ID, X-DWP-User-ID, X-DWP-Person-Public-ID, X-DWP-Permissions, X-DWP-Roles, X-DWP-Group-Refs, X-DWP-Current-Decision-Revision, X-DWP-Current-Revalidate-At, X-DWP-Home-Runtime-State, X-DWP-Home-Rollout-Ring, X-DWP-Home-Rollout-Revision';
 
-function model(headline: string, changeVersion: string): HomeV2ReadModel {
+function model(
+  headline: string,
+  changeVersion: string,
+  deviceClass: 'DESKTOP_STANDARD' | 'MOBILE_STANDARD' = 'DESKTOP_STANDARD'
+): HomeV2ReadModel {
   return {
     schemaVersion: 3,
     mode: 'CLASSIC',
@@ -48,7 +53,7 @@ function model(headline: string, changeVersion: string): HomeV2ReadModel {
       revision: 7,
       source: 'USER',
       mode: 'CLASSIC',
-      deviceClass: 'DESKTOP_STANDARD',
+      deviceClass,
       composition: { appLayout: null, presentation: 'balanced', widgets: [] },
       deviceOverlay: null,
     },
@@ -126,7 +131,6 @@ let input: ProbeInput;
 function Probe() {
   const runtime = useHomeV2Runtime({
     ...input,
-    deviceClass: 'DESKTOP_STANDARD',
     enabled: true,
     locale: input.locale,
     timeZone: 'Asia/Seoul',
@@ -174,7 +178,13 @@ describe('mounted Home v2 runtime receipt', () => {
     host = document.createElement('div');
     document.body.append(host);
     root = createRoot(host);
-    input = { accessFingerprint: 'v1:scope-a', locale: 'ko-KR', tenantId: 1, userId: 7 };
+    input = {
+      accessFingerprint: 'v1:scope-a',
+      deviceClass: 'DESKTOP_STANDARD',
+      locale: 'ko-KR',
+      tenantId: 1,
+      userId: 7,
+    };
   });
 
   afterEach(async () => {
@@ -274,6 +284,37 @@ describe('mounted Home v2 runtime receipt', () => {
       headline: 'Verified Home',
       legacyEnabled: 'false',
     });
+  });
+
+  it('keeps verified content mounted while the same user changes responsive device class', async () => {
+    const desktopSnapshot = { data: model('Desktop Home', 'home-desktop-1'), etag: '"desktop-1"' };
+    const mobile = deferred<HomeV2ReadResult>();
+    transport.getHomeV2
+      .mockResolvedValueOnce(result(desktopSnapshot))
+      .mockImplementationOnce(() => mobile.promise);
+
+    await render(input);
+    await waitFor(() => expect(receipt().dataset.headline).toBe('Desktop Home'));
+    await render({ ...input, deviceClass: 'MOBILE_STANDARD' });
+    await waitFor(() => expect(transport.getHomeV2).toHaveBeenCalledTimes(2));
+
+    expect(receipt().dataset).toMatchObject({
+      activation: 'ACTIVE',
+      headline: 'Desktop Home',
+      legacyEnabled: 'false',
+    });
+    expect(transport.getHomeV2.mock.calls[1]?.[1]).toBeUndefined();
+
+    const mobileSnapshot = {
+      data: model('Mobile Home', 'home-mobile-1', 'MOBILE_STANDARD'),
+      etag: '"mobile-1"',
+    };
+    await act(async () => {
+      mobile.resolve(result(mobileSnapshot));
+      await mobile.promise;
+    });
+    await waitFor(() => expect(receipt().dataset.headline).toBe('Mobile Home'));
+    expect(receipt().dataset.activation).toBe('ACTIVE');
   });
 
   it('drops old data and ETag before issuing a request for a changed access scope', async () => {

@@ -2,10 +2,10 @@ import { lazy, Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
 import { AuthGuard } from '@dwp-frontend/shared-utils/auth/auth-guard';
 import { PageCanvas } from '@dwp-frontend/design-system/components/page-canvas/page-canvas';
-import { ErrorState } from '@dwp-frontend/design-system/components/states/state-panels';
 import { Navigate, Outlet, useLocation, useParams, useRouteError } from 'react-router-dom';
 
 import { NOTIFICATION_PRODUCT_MANIFEST } from '../features/notifications/notification-product-manifest';
+import { NotificationErrorState } from '../features/notifications/notification-error-support';
 import { NotificationLayout } from '../layouts/notification-layout';
 import {
   authenticationFallback,
@@ -26,40 +26,26 @@ const NotificationHome = lazy(() =>
     default: module.NotificationHome,
   }))
 );
-const NotificationSettingsPage = lazy(() =>
-  import('../features/notifications/notification-product-pages').then((module) => ({
-    default: module.NotificationSettingsPage,
-  }))
+const NotificationSettingsPage = lazy(
+  () => import('../features/notifications/notification-settings-route')
 );
-const NotificationAdminOverview = lazy(() =>
-  import('../features/notifications/notification-product-pages').then((module) => ({
-    default: module.NotificationAdminOverview,
-  }))
+const NotificationAdminOverview = lazy(
+  () => import('../features/notifications/notification-admin-overview-route')
 );
-const NotificationAdminContracts = lazy(() =>
-  import('../features/notifications/notification-product-pages').then((module) => ({
-    default: module.NotificationAdminContracts,
-  }))
+const NotificationAdminContracts = lazy(
+  () => import('../features/notifications/notification-admin-contracts-route')
 );
-const NotificationAdminPolicies = lazy(() =>
-  import('../features/notifications/notification-product-pages').then((module) => ({
-    default: module.NotificationAdminPolicies,
-  }))
+const NotificationAdminPolicies = lazy(
+  () => import('../features/notifications/notification-admin-policies-route')
 );
-const NotificationAdminOperations = lazy(() =>
-  import('../features/notifications/notification-product-pages').then((module) => ({
-    default: module.NotificationAdminOperations,
-  }))
+const NotificationAdminOperations = lazy(
+  () => import('../features/notifications/notification-admin-operations-route')
 );
-const NotificationAdminTemplates = lazy(() =>
-  import('../features/notifications/notification-product-pages').then((module) => ({
-    default: module.NotificationAdminTemplates,
-  }))
+const NotificationAdminTemplates = lazy(
+  () => import('../features/notifications/notification-admin-templates-route')
 );
-const NotificationAdminSuppressions = lazy(() =>
-  import('../features/notifications/notification-product-pages').then((module) => ({
-    default: module.NotificationAdminSuppressions,
-  }))
+const NotificationAdminSuppressions = lazy(
+  () => import('../features/notifications/notification-admin-suppressions-route')
 );
 
 const NOTIFICATION_ADMIN_AUTHORITIES = [
@@ -113,24 +99,16 @@ function LegacyNotificationInboxDetailRedirect() {
 function NotificationRouteError() {
   const { t } = useTranslation('notifications');
   const error = useRouteError();
-  const correlationId =
-    error instanceof Error && 'correlationId' in error
-      ? String((error as Error & { correlationId?: unknown }).correlationId ?? '')
-      : '';
 
   return (
     <PageCanvas mode="workspace">
-      <ErrorState
+      <NotificationErrorState
+        error={error}
         title={t('states.routeErrorTitle')}
         description={t('states.routeErrorDescription')}
         retryLabel={t('actions.retry')}
         onRetry={() => window.location.reload()}
       />
-      {correlationId && (
-        <span data-notification-error-correlation hidden>
-          {correlationId}
-        </span>
-      )}
     </PageCanvas>
   );
 }

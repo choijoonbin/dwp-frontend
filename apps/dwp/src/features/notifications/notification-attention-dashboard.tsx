@@ -23,7 +23,6 @@ import { FormField } from '@dwp-frontend/design-system/components/forms/form-fie
 import { InlineFeedback } from '@dwp-frontend/design-system/components/inline-feedback/inline-feedback';
 import {
   EmptyState,
-  ErrorState,
   LoadingState,
 } from '@dwp-frontend/design-system/components/states/state-panels';
 import { foundationTokens } from '@dwp-frontend/design-system/foundation/tokens';
@@ -44,6 +43,7 @@ import {
   resolveAttentionRuleState,
   validNotificationAttentionCount,
 } from './notification-attention-model';
+import { NotificationErrorState } from './notification-error-support';
 
 import type { LucideIcon } from 'lucide-react';
 import type {
@@ -562,6 +562,7 @@ export type NotificationAttentionDashboardProps = {
   summary?: NotificationAttentionSummary | null;
   rules: readonly NotificationAttentionRule[];
   state: NotificationAttentionDataState;
+  error?: unknown;
   ruleLimit?: NotificationAttentionRuleLimit | null;
   selectedKind: NotificationAttentionRuleKind | 'ALL';
   searchQuery: string;
@@ -582,6 +583,7 @@ export function NotificationAttentionDashboard({
   summary,
   rules,
   state,
+  error,
   ruleLimit,
   selectedKind,
   searchQuery,
@@ -758,7 +760,8 @@ export function NotificationAttentionDashboard({
             bgcolor: 'background.paper',
           }}
         >
-          <ErrorState
+          <NotificationErrorState
+            error={error}
             title={t('states.preferencesErrorTitle')}
             description={state.message}
             retryLabel={onRetry ? t('actions.retry') : undefined}

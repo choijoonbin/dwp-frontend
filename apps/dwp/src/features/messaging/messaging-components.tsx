@@ -136,7 +136,9 @@ export function MessagingConversationListItem({
 }) {
   const { t, i18n } = useTranslation('messaging');
   const Icon = conversationIcon(conversation);
-  const restricted = conversation.dataClassification === 'RESTRICTED';
+  const protectedConversation =
+    conversation.dataClassification === 'CONFIDENTIAL' ||
+    conversation.dataClassification === 'RESTRICTED';
   const visualTone = messagingVisualTone(conversation.conversationId);
   return (
     <Box
@@ -254,8 +256,8 @@ export function MessagingConversationListItem({
               })}
             />
           )}
-          {restricted ? (
-            <Tooltip title={t('classification.RESTRICTED')}>
+          {protectedConversation ? (
+            <Tooltip title={t(`classification.${conversation.dataClassification}`)}>
               <ShieldCheck size={14} style={{ flexShrink: 0 }} color="var(--dwp-status-warning)" />
             </Tooltip>
           ) : null}
@@ -273,9 +275,11 @@ export function MessagingConversationListItem({
               lineHeight: compact ? 'caption.lineHeight' : undefined,
             }}
           >
-            {conversation.lastMessage?.body
-              ? messagingPlainTextPreview(conversation.lastMessage.body)
-              : conversation.topic}
+            {protectedConversation
+              ? t('conversation.protectedPreview')
+              : conversation.lastMessage?.body
+                ? messagingPlainTextPreview(conversation.lastMessage.body)
+                : conversation.topic}
           </Typography>
         ) : null}
         {!compact && (
@@ -327,25 +331,34 @@ export function MessagingConversationListItem({
 }
 
 export function PresenceDot({ state }: { state: MessagingPerson['presenceState'] }) {
-  const color =
-    state === 'AVAILABLE'
-      ? '#1E8E5A'
-      : state === 'FOCUS'
-        ? '#2856C7'
-        : state === 'BUSY'
-          ? '#B54747'
-          : state === 'AWAY'
-            ? '#B7791F'
-            : '#8A94A6';
   return (
     <Box
       aria-hidden="true"
-      sx={{
-        width: 9,
-        height: 9,
-        borderRadius: '50%',
-        bgcolor: color,
-        boxShadow: '0 0 0 2px #fff',
+      sx={(theme) => {
+        const color =
+          state === 'AVAILABLE'
+            ? theme.palette.success.main
+            : state === 'FOCUS'
+              ? theme.palette.info.main
+              : state === 'BUSY'
+                ? theme.palette.error.main
+                : state === 'AWAY'
+                  ? theme.palette.warning.main
+                  : theme.palette.text.disabled;
+        return {
+          width: 9,
+          height: 9,
+          flexShrink: 0,
+          borderRadius: '50%',
+          bgcolor: color,
+          boxShadow: `0 0 0 2px ${theme.palette.background.paper}`,
+          '@media (forced-colors: active)': {
+            bgcolor: 'CanvasText',
+            border: '1px solid Canvas',
+            outline: '1px solid CanvasText',
+            boxShadow: 'none',
+          },
+        };
       }}
     />
   );

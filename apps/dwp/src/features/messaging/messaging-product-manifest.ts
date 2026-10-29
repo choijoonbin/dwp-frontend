@@ -11,6 +11,14 @@ export const MESSAGING_WORK_NAVIGATION = projectProductSurfaceNavigation(MESSAGI
     taskKind: 'work',
     access: { type: 'policy', accessPolicyKey: 'messaging.work-access.v1' },
   },
+  activity: {
+    taskKind: 'work',
+    access: { type: 'policy', accessPolicyKey: 'messaging.work-access.v1' },
+  },
+  threads: {
+    taskKind: 'work',
+    access: { type: 'policy', accessPolicyKey: 'messaging.work-access.v1' },
+  },
   spaces: {
     taskKind: 'work',
     access: { type: 'policy', accessPolicyKey: 'messaging.work-access.v1' },
@@ -23,7 +31,15 @@ export const MESSAGING_WORK_NAVIGATION = projectProductSurfaceNavigation(MESSAGI
     taskKind: 'work',
     access: { type: 'policy', accessPolicyKey: 'messaging.work-access.v1' },
   },
+  files: {
+    taskKind: 'work',
+    access: { type: 'policy', accessPolicyKey: 'messaging.work-access.v1' },
+  },
   later: {
+    taskKind: 'work',
+    access: { type: 'policy', accessPolicyKey: 'messaging.work-access.v1' },
+  },
+  settings: {
     taskKind: 'work',
     access: { type: 'policy', accessPolicyKey: 'messaging.work-access.v1' },
   },

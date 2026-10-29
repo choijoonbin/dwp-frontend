@@ -1,7 +1,8 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { BadgeCheck, Link2, Plus, RefreshCw, ShieldCheck } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import { useSearchParams } from 'react-router-dom';
 import {
   createWorkplaceIdempotencyKey,
   createWorkplaceServiceProvider,
@@ -29,7 +30,10 @@ import Typography from '@mui/material/Typography';
 
 import { useRoomsCapabilities } from './rooms-capabilities';
 import { workplaceMemberCard, workplaceMemberSoftSurface } from './workplace-member-surfaces';
-import { requireWorkplaceServiceWrite } from './workplace-services-ui-model';
+import {
+  requireWorkplaceServiceWrite,
+  resolveWorkplaceServiceProviderTarget,
+} from './workplace-services-ui-model';
 
 import type {
   IdempotentMutationIntent,
@@ -336,6 +340,8 @@ export default function WorkplaceServiceProviderAdminPage() {
   const authority = useProductSurfaceAuthority();
   const elevated = authority.snapshot?.envelope.activeAccessMode === 'ELEVATED';
   const queryClient = useQueryClient();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const requestedProviderCode = searchParams.get('provider')?.trim() || null;
   const [selected, setSelected] = useState<WorkplaceServiceProvider | null>(null);
   const query = useQuery({
     queryKey: ['workplace', 'services', 'providers'],
@@ -343,10 +349,25 @@ export default function WorkplaceServiceProviderAdminPage() {
     enabled: capabilities.isLoaded && capabilities.canViewWorkplaceAdmin,
     retry: false,
   });
-  const providers = query.data?.items ?? [];
+  const providers = useMemo(() => query.data?.items ?? [], [query.data]);
+  const requestedTarget = useMemo(
+    () => resolveWorkplaceServiceProviderTarget(providers, requestedProviderCode),
+    [providers, requestedProviderCode]
+  );
+  const targetUnavailable = Boolean(
+    query.isSuccess && requestedProviderCode && requestedTarget.unavailable
+  );
+  const editorProvider = requestedProviderCode ? requestedTarget.provider : selected;
+  useEffect(() => {
+    if (!query.isSuccess || !requestedProviderCode) return;
+    setSelected(requestedTarget.provider);
+  }, [query.isSuccess, requestedProviderCode, requestedTarget.provider]);
   const lifecycleMutation = useMutation({
-    mutationFn: (provider: WorkplaceServiceProvider) =>
-      setWorkplaceServiceProviderState(
+    mutationFn: (provider: WorkplaceServiceProvider) => {
+      if (requestedProviderCode && provider.providerCode !== requestedProviderCode) {
+        throw new Error('SERVICE_PROVIDER_TARGET_MISMATCH');
+      }
+      return setWorkplaceServiceProviderState(
         provider.providerProfileId,
         {
           expectedVersion: provider.version,
@@ -358,7 +379,8 @@ export default function WorkplaceServiceProviderAdminPage() {
           idempotencyKey: createWorkplaceIdempotencyKey('service-provider-state'),
           activeAccessMode: 'ELEVATED',
         }
-      ),
+      );
+    },
     onSuccess: (result) => {
       setSelected((current) =>
         current?.providerProfileId === result.provider.providerProfileId ? result.provider : current
@@ -367,8 +389,11 @@ export default function WorkplaceServiceProviderAdminPage() {
     },
   });
   const verifyMutation = useMutation({
-    mutationFn: (provider: WorkplaceServiceProvider) =>
-      verifyWorkplaceServiceProvider(
+    mutationFn: (provider: WorkplaceServiceProvider) => {
+      if (requestedProviderCode && provider.providerCode !== requestedProviderCode) {
+        throw new Error('SERVICE_PROVIDER_TARGET_MISMATCH');
+      }
+      return verifyWorkplaceServiceProvider(
         provider.providerProfileId,
         {
           expectedVersion: provider.version,
@@ -379,7 +404,8 @@ export default function WorkplaceServiceProviderAdminPage() {
           idempotencyKey: createWorkplaceIdempotencyKey('service-provider-verify'),
           activeAccessMode: 'ELEVATED',
         }
-      ),
+      );
+    },
     onSuccess: (result) => {
       setSelected((current) =>
         current?.providerProfileId === result.provider.providerProfileId ? result.provider : current
@@ -413,11 +439,23 @@ export default function WorkplaceServiceProviderAdminPage() {
         <ActionButton
           intent="primary"
           startIcon={<Plus size={16} />}
-          onClick={() => setSelected(null)}
+          onClick={() => {
+            setSelected(null);
+            const next = new URLSearchParams(searchParams);
+            next.delete('provider');
+            setSearchParams(next, { replace: true });
+          }}
         >
           {t('workplace.services.extensions.newProvider')}
         </ActionButton>
       </Stack>
+      {targetUnavailable ? (
+        <InlineFeedback severity="error" data-testid="workplace-service-provider-target-error">
+          {t('workplace.services.extensions.providerTargetUnavailable', {
+            providerCode: requestedProviderCode,
+          })}
+        </InlineFeedback>
+      ) : null}
       {!capabilities.isLoaded || query.isLoading ? (
         <Typography color="text.secondary">{t('workplace.services.loading')}</Typography>
       ) : !capabilities.canViewWorkplaceAdmin ? (
@@ -443,7 +481,9 @@ export default function WorkplaceServiceProviderAdminPage() {
         <Box
           sx={{
             display: 'grid',
-            gridTemplateColumns: { xs: '1fr', lg: 'minmax(320px, .8fr) minmax(0, 1.2fr)' },
+            gridTemplateColumns: targetUnavailable
+              ? '1fr'
+              : { xs: '1fr', lg: 'minmax(320px, .8fr) minmax(0, 1.2fr)' },
             gap: 2,
           }}
         >
@@ -452,10 +492,15 @@ export default function WorkplaceServiceProviderAdminPage() {
               <Box
                 component="li"
                 key={provider.providerProfileId}
+                data-testid={`workplace-service-provider-${provider.providerCode}`}
                 sx={(theme) => ({
                   ...workplaceMemberSoftSurface(theme),
                   listStyle: 'none',
                   p: 1.5,
+                  borderColor:
+                    editorProvider?.providerProfileId === provider.providerProfileId
+                      ? 'primary.main'
+                      : 'divider',
                 })}
               >
                 <Stack direction="row" justifyContent="space-between" gap={1}>
@@ -482,7 +527,16 @@ export default function WorkplaceServiceProviderAdminPage() {
                   </Typography>
                 ) : null}
                 <Stack direction="row" gap={0.75} flexWrap="wrap" mt={1}>
-                  <ActionButton size="small" intent="quiet" onClick={() => setSelected(provider)}>
+                  <ActionButton
+                    size="small"
+                    intent="quiet"
+                    onClick={() => {
+                      setSelected(provider);
+                      const next = new URLSearchParams(searchParams);
+                      next.set('provider', provider.providerCode);
+                      setSearchParams(next, { replace: true });
+                    }}
+                  >
                     {t('actions.edit')}
                   </ActionButton>
                   <ActionButton
@@ -490,6 +544,9 @@ export default function WorkplaceServiceProviderAdminPage() {
                     intent="secondary"
                     startIcon={<BadgeCheck size={15} />}
                     disabled={
+                      Boolean(
+                        requestedProviderCode && provider.providerCode !== requestedProviderCode
+                      ) ||
                       !elevated ||
                       verifyMutation.isPending ||
                       provider.lifecycleState !== 'ACTIVE' ||
@@ -503,6 +560,9 @@ export default function WorkplaceServiceProviderAdminPage() {
                     size="small"
                     intent={provider.lifecycleState === 'ACTIVE' ? 'danger' : 'secondary'}
                     disabled={
+                      Boolean(
+                        requestedProviderCode && provider.providerCode !== requestedProviderCode
+                      ) ||
                       !elevated ||
                       lifecycleMutation.isPending ||
                       provider.lifecycleState === 'RETIRED' ||
@@ -519,17 +579,22 @@ export default function WorkplaceServiceProviderAdminPage() {
               </Box>
             ))}
           </Stack>
-          <Box component="aside" sx={(theme) => ({ ...workplaceMemberCard(theme), p: 2 })}>
-            <ProviderEditor
-              provider={selected}
-              onSaved={(saved) => {
-                setSelected(saved);
-                void queryClient.invalidateQueries({
-                  queryKey: ['workplace', 'services', 'providers'],
-                });
-              }}
-            />
-          </Box>
+          {!targetUnavailable ? (
+            <Box component="aside" sx={(theme) => ({ ...workplaceMemberCard(theme), p: 2 })}>
+              <ProviderEditor
+                provider={editorProvider}
+                onSaved={(saved) => {
+                  setSelected(saved);
+                  const next = new URLSearchParams(searchParams);
+                  next.set('provider', saved.providerCode);
+                  setSearchParams(next, { replace: true });
+                  void queryClient.invalidateQueries({
+                    queryKey: ['workplace', 'services', 'providers'],
+                  });
+                }}
+              />
+            </Box>
+          ) : null}
         </Box>
       )}
     </Box>

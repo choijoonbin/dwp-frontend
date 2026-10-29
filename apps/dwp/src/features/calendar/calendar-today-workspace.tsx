@@ -23,7 +23,7 @@ import {
 import { eventCapability } from './calendar-source-model';
 import { CalendarWorkspaceRailSurface } from './calendar-workspace-overlays';
 
-import type { CalendarEvent, CalendarHome } from '@dwp-frontend/shared-utils';
+import type { CalendarDayOfWeek, CalendarEvent, CalendarHome } from '@dwp-frontend/shared-utils';
 import type { CalendarReadSourceState } from './calendar-read-source-state';
 
 const COMPACT_RADIUS = `${foundationTokens.radius.compact}px`;
@@ -208,6 +208,7 @@ function CalendarDayCloseout({
 function CalendarTodayTimeline({
   data,
   currentTime,
+  workingDays,
   workingDayStart,
   workingDayEnd,
   language,
@@ -222,6 +223,7 @@ function CalendarTodayTimeline({
 }: {
   data: CalendarHome;
   currentTime: string;
+  workingDays?: readonly CalendarDayOfWeek[];
   workingDayStart?: string | null;
   workingDayEnd?: string | null;
   language: string;
@@ -240,10 +242,11 @@ function CalendarTodayTimeline({
       calendarTodayStream(data.today, currentTime, {
         date: data.date,
         timeZone: data.timeZone,
+        workingDays,
         workingDayStart,
         workingDayEnd,
       }),
-    [currentTime, data.date, data.timeZone, data.today, workingDayEnd, workingDayStart]
+    [currentTime, data.date, data.timeZone, data.today, workingDayEnd, workingDayStart, workingDays]
   );
   const metrics = useMemo(
     () => calendarTodayMetrics(data.today, data.date, data.timeZone),
@@ -259,6 +262,7 @@ function CalendarTodayTimeline({
   const workdayPhase = calendarWorkdayPhase(currentTime, {
     date: data.date,
     timeZone: data.timeZone,
+    workingDays,
     workingDayStart,
     workingDayEnd,
   });
@@ -477,6 +481,7 @@ function CalendarTodayTimeline({
 export function CalendarTodayWorkspace({
   data,
   currentTime,
+  workingDays,
   workingDayStart,
   workingDayEnd,
   railState,
@@ -499,6 +504,7 @@ export function CalendarTodayWorkspace({
 }: {
   data: CalendarHome;
   currentTime: string;
+  workingDays?: readonly CalendarDayOfWeek[];
   workingDayStart?: string | null;
   workingDayEnd?: string | null;
   railState: CalendarReadSourceState;
@@ -543,6 +549,7 @@ export function CalendarTodayWorkspace({
             <CalendarTodayTimeline
               data={data}
               currentTime={currentTime}
+              workingDays={workingDays}
               workingDayStart={workingDayStart}
               workingDayEnd={workingDayEnd}
               language={language}

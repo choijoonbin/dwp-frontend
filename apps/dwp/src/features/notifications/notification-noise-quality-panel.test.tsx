@@ -24,6 +24,12 @@ vi.mock('react-i18next', () => ({
         'noiseQuality.privacy.unavailable':
           'Privacy threshold is unavailable. All analytics values remain withheld.',
         'noiseQuality.privacy.guard': 'Privacy guard: minimum cohort 20.',
+        'noiseQuality.trend.summary': '70 notifications; 0 elevated mute points.',
+        'noiseQuality.trend.normalLegend': 'Mute rate below 25%',
+        'noiseQuality.trend.highMuteLegend': 'Mute rate 25% or higher',
+        'noiseQuality.trend.exactData': 'View exact trend data',
+        'noiseQuality.trend.tableScrollLabel': 'Scrollable notification quality trend data',
+        'noiseQuality.trend.tableLabel': 'Exact notification quality trend data',
         'noiseQuality.fourEyes.separationRequired':
           'The drafter and reviewer must be different people.',
         'noiseQuality.fourEyes.separationUnavailable':
@@ -185,6 +191,12 @@ describe('NotificationNoiseQualityPanel', () => {
     expect(markup).toContain('value="deployment"');
     expect(markup).toContain('aria-pressed="true"');
     expect(markup).toContain('admin.overview.trendChartLabel');
+    expect(markup).toContain('aria-label="Exact notification quality trend data"');
+    expect(markup).toContain('View exact trend data');
+    expect(markup).toContain('Mute rate below 25%');
+    expect(markup).toContain('data-mute-risk="normal"');
+    expect(markup).toContain('role="img"');
+    expect(markup).toContain('tabindex="0"');
     expect(markup).toContain('20%');
     expect(markup).toContain('10%');
     expect(markup).toContain('40%');

@@ -270,6 +270,25 @@ export async function mockMailMember(
   await page.route('**/api/platform/v1/mail/preferences', (route) =>
     fulfill(route, defaultMailPreferences())
   );
+  await page.route('**/api/platform/v1/mail/home**', (route) => fulfill(route, defaultMailHome()));
+}
+
+export function defaultMailHome() {
+  return {
+    accounts: mailOrganization().accounts,
+    metrics: {
+      unread: 0,
+      urgent: 0,
+      needsReply: 0,
+      assigned: 0,
+      snoozed: 0,
+      activeProposals: 0,
+    },
+    focusQueue: [],
+    proposals: [],
+    sharedInboxes: [],
+    generatedAt: '2026-09-17T05:00:00Z',
+  };
 }
 
 export function defaultMailPreferences() {

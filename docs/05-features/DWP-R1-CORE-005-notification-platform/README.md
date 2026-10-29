@@ -17,6 +17,8 @@
 - [Attention Rules 아키텍처](16-attention-rules-architecture-2026-09-16.md)
 - [Design AI 전달 프롬프트](17-design-ai-prompt-attention-personalization-2026-09-16.md)
 - [Notification R2 완료 증적](18-notification-r2-completion-evidence-2026-09-17.md)
+- [Notification R3 P1/P2 하드닝 설계](19-notification-r3-p1-p2-hardening-design-2026-10-28.md)
+- [Notification R3 P1/P2 완료 증적](20-notification-r3-p1-p2-completion-evidence-2026-10-28.md)
 
 - [기획 정의](01-기획 정의.md)
 - [화면 설계서](02-화면 설계서.md)

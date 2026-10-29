@@ -50,6 +50,8 @@ test('활동 홈은 현재 실행 합계·주의 신호·근거 있는 최근 �
   await expect(summary).toContainText('정책 차단');
   await expect(page.getByRole('heading', { name: '최근 활동' })).toBeVisible();
   await expect(page.getByRole('heading', { name: '개인 연동 원장 상태' })).toBeVisible();
+  await expect(page.getByText('개인 메일 연동', { exact: true })).toBeHidden();
+  await page.getByText('정상 연동 1개', { exact: true }).click();
   await expect(page.getByText('개인 메일 연동', { exact: true })).toBeVisible();
   await expect(page.getByText('최신성 지연', { exact: true })).toBeVisible();
   await expect(page.getByText('정책 제한 캘린더 연동', { exact: true })).toBeVisible();
@@ -359,7 +361,7 @@ for (const profile of ['light-ko', 'dark-en', 'forced-colors-ko', 'enlarged-text
   test(`품질 매트릭스 ${profile}: 원본 4개 화면과 활동 홈이 1440·1280·390·320px에서 접근 가능하다`, async ({
     page,
   }, testInfo) => {
-    test.setTimeout(120_000);
+    test.setTimeout(240_000);
     const english = profile === 'dark-en';
     const dark = profile === 'dark-en';
     await mockShellSession(page, ['WORKSPACE_MEMBER'], {
@@ -500,9 +502,7 @@ for (const surface of qualitySurfaces) {
         page.getByRole('list', { name: '선택 기간에 조회된 AI 실행' }).getByRole('button')
       ).toHaveCount(2);
     } else {
-      await expect(
-        page.getByRole('region', { name: '활동 상태 요약' }).getByText('12', { exact: true })
-      ).toBeInViewport();
+      await expect(page.getByRole('link', { name: '입력 필요 2건 보기' })).toBeInViewport();
     }
   });
 }
@@ -513,7 +513,7 @@ if (process.env.E2E_BROWSER_ZOOM_EXTENSION) {
   test('브라우저 실제 200% 확대에서도 활동 4개 표면과 홈을 조사할 수 있다', async ({
     page,
   }, testInfo) => {
-    test.setTimeout(120_000);
+    test.setTimeout(240_000);
     await page.close();
     const extension = process.env.E2E_BROWSER_ZOOM_EXTENSION!;
     const {

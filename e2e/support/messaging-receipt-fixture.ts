@@ -2,7 +2,12 @@ import type { Page } from '@playwright/test';
 import { mockShellSession } from './shell-session';
 import { fulfillMessagingRoute, messagingMessage } from './messaging-ui-contracts';
 
-import type { MessagingConversation, MessagingReadReceipt } from '@dwp-frontend/shared-utils';
+import type {
+  MessagingConversation,
+  MessagingPrivacyPreference,
+  MessagingPrivacyPreferenceUpdate,
+  MessagingReadReceipt,
+} from '@dwp-frontend/shared-utils';
 
 export const RECEIPT_CONVERSATION = '71000000-0000-0000-0000-000000000001';
 export const RECEIPT_OWN_MESSAGE = '72000000-0000-0000-0000-000000000001';
@@ -80,9 +85,13 @@ export async function mockMessagingReceipts(
   };
   const state = {
     messages,
-    privacy: { readReceiptsEnabled: true, version: 0 },
+    privacy: {
+      readReceiptsEnabled: true,
+      presenceSharingEnabled: true,
+      version: 0,
+    } satisfies MessagingPrivacyPreference,
     observations: [] as string[][],
-    privacyRequests: [] as Array<{ readReceiptsEnabled: boolean; version: number }>,
+    privacyRequests: [] as MessagingPrivacyPreferenceUpdate[],
     failPrivacy: false,
     failReceipts: false,
     receipt: {
@@ -102,12 +111,15 @@ export async function mockMessagingReceipts(
     const path = url.pathname;
     const method = route.request().method();
     const fulfill = (data: unknown, status = 200) => fulfillMessagingRoute(route, data, status);
+    if (path.endsWith('/presence/heartbeat') && method === 'PUT') {
+      return route.fulfill({ status: 204 });
+    }
     if (path.endsWith('/privacy-preferences')) {
       if (method === 'PUT') {
-        const input = route.request().postDataJSON();
+        const input = route.request().postDataJSON() as MessagingPrivacyPreferenceUpdate;
         state.privacyRequests.push(input);
         if (state.failPrivacy || input.version !== state.privacy.version) return fulfill(null, 409);
-        state.privacy = { ...input, version: input.version + 1 };
+        state.privacy = { ...state.privacy, ...input, version: input.version + 1 };
       }
       return fulfill(state.privacy);
     }

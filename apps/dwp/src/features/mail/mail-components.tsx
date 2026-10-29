@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { foundationTokens } from '@dwp-frontend/design-system';
-import { Paperclip, Star, UserRoundPlus } from 'lucide-react';
+import { Paperclip, Square, SquareCheckBig, Star, UserRoundPlus } from 'lucide-react';
 import { formatRelativeTime, resolveSupportedLocale } from '@dwp-frontend/shared-i18n';
 
 import Avatar from '@mui/material/Avatar';
@@ -88,6 +88,7 @@ export function MailThreadListItem({
   compact = false,
   disabled = false,
   presentation = 'default',
+  selectionMode = false,
 }: {
   thread: MailThread;
   buttonId?: string;
@@ -96,6 +97,7 @@ export function MailThreadListItem({
   compact?: boolean;
   disabled?: boolean;
   presentation?: 'default' | 'focus';
+  selectionMode?: boolean;
 }) {
   const { t, i18n } = useTranslation('mail');
   const participant = thread.participants[0];
@@ -106,6 +108,9 @@ export function MailThreadListItem({
     i18n.resolvedLanguage ?? i18n.language
   );
   const accessibleName = [
+    selectionMode
+      ? t(selected ? 'mailbox.bulk.deselectMessage' : 'mailbox.bulk.selectMessage')
+      : null,
     participant?.name ?? thread.accountName,
     thread.subject,
     thread.unread ? t('thread.unread') : null,
@@ -123,7 +128,8 @@ export function MailThreadListItem({
       onClick={onSelect}
       disabled={disabled}
       aria-label={accessibleName}
-      aria-pressed={selected}
+      aria-pressed={selectionMode ? selected : undefined}
+      aria-current={!selectionMode && selected ? 'true' : undefined}
       aria-busy={disabled || undefined}
       sx={(theme) => ({
         width: 1,
@@ -176,18 +182,33 @@ export function MailThreadListItem({
         },
       })}
     >
-      <Avatar
-        sx={{
-          width: compact ? 34 : 38,
-          height: compact ? 34 : 38,
-          fontSize: 'caption.fontSize',
-          fontWeight: 'fontWeightBold',
-          bgcolor: urgent ? 'error.main' : 'var(--dwp-product-soft)',
-          color: urgent ? 'error.contrastText' : 'var(--dwp-product-accent)',
-        }}
-      >
-        {initials(participant?.name ?? thread.accountName)}
-      </Avatar>
+      {selectionMode ? (
+        <Box
+          aria-hidden="true"
+          sx={{
+            width: compact ? 34 : 38,
+            height: compact ? 34 : 38,
+            display: 'grid',
+            placeItems: 'center',
+            color: selected ? 'primary.main' : 'text.secondary',
+          }}
+        >
+          {selected ? <SquareCheckBig size={22} /> : <Square size={22} />}
+        </Box>
+      ) : (
+        <Avatar
+          sx={{
+            width: compact ? 34 : 38,
+            height: compact ? 34 : 38,
+            fontSize: 'caption.fontSize',
+            fontWeight: 'fontWeightBold',
+            bgcolor: urgent ? 'error.main' : 'var(--dwp-product-soft)',
+            color: urgent ? 'error.contrastText' : 'var(--dwp-product-accent)',
+          }}
+        >
+          {initials(participant?.name ?? thread.accountName)}
+        </Avatar>
+      )}
       <Box sx={{ minWidth: 0 }}>
         <Stack direction="row" spacing={0.75} alignItems="center" sx={{ minWidth: 0 }}>
           <Typography

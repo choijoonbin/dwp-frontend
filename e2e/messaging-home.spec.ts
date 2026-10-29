@@ -203,6 +203,13 @@ async function mockMessagingHome(
   await page.route('**/api/messaging/v1/**', async (route) => {
     const request = route.request();
     const url = new URL(request.url());
+    if (url.pathname === '/api/messaging/v1/privacy-preferences' && request.method() === 'GET') {
+      return fulfill(route, {
+        readReceiptsEnabled: true,
+        presenceSharingEnabled: true,
+        version: 0,
+      });
+    }
     if (url.pathname === '/api/messaging/v1/presence/heartbeat' && request.method() === 'PUT') {
       return route.fulfill({ status: 204 });
     }
@@ -229,6 +236,7 @@ async function mockMessagingHome(
                 sharedAt: data.home.generatedAt,
                 senderName: 'Alex Park',
                 title: 'Launch plan.pdf',
+                protectedContent: false,
                 attachmentId: 'attachment-1',
                 url: null,
                 contentType: 'application/pdf',
@@ -243,6 +251,7 @@ async function mockMessagingHome(
                 sharedAt: data.home.generatedAt,
                 senderName: 'Mina Kim',
                 title: 'figma.com',
+                protectedContent: false,
                 attachmentId: null,
                 url: 'https://figma.com/design/example',
                 contentType: null,
@@ -324,7 +333,7 @@ test('turns Messenger home into a truthful, actionable attention workspace', asy
   ).toBeVisible();
   await expect(page.getByText('Confidential acquisition details', { exact: false })).toHaveCount(0);
   await expect(page.getByRole('heading', { name: 'My Space flow' })).toBeVisible();
-  await expect(page.getByRole('heading', { name: 'People available now' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'People active in Messenger' })).toBeVisible();
   await expect(page.getByText('Jun Lee', { exact: true })).toBeVisible();
   await expect(page.getByText('Sara Jenkins', { exact: true })).toHaveCount(0);
   await expect(page.getByRole('heading', { name: 'Continue where you left off' })).toBeVisible();
@@ -369,8 +378,10 @@ test('distinguishes unavailable presence authority from zero available people', 
 
   const unavailable = page.getByTestId('messaging-presence-unavailable');
   await expect(unavailable).toBeVisible();
-  await expect(unavailable.getByRole('heading')).toHaveText('Presence is temporarily unavailable');
-  await expect(page.getByText('No one is available right now')).toHaveCount(0);
+  await expect(unavailable.getByRole('heading')).toHaveText(
+    'Messenger activity is temporarily unavailable'
+  );
+  await expect(page.getByText('No one is active in Messenger right now')).toHaveCount(0);
 });
 
 test('fails closed during a rolling deploy when the backend omits presence metadata', async ({
@@ -380,7 +391,7 @@ test('fails closed during a rolling deploy when the backend omits presence metad
   await page.goto('/messages/home');
 
   await expect(page.getByTestId('messaging-presence-unavailable')).toBeVisible();
-  await expect(page.getByText('No one is available right now')).toHaveCount(0);
+  await expect(page.getByText('No one is active in Messenger right now')).toHaveCount(0);
 });
 
 test('home filters, shared assets and huddle selection connect to real product flows', async ({
@@ -398,10 +409,10 @@ test('home filters, shared assets and huddle selection connect to real product f
   const assets = page.getByTestId('messaging-home-shared-assets');
   await expect(
     assets.getByRole('link', { name: 'Open Launch plan.pdf in Alex Park' })
-  ).toHaveAttribute('href', /conversation=direct-1/);
+  ).toHaveAttribute('href', /conversation=direct-1&message=message-direct-1/);
   await expect(
     assets.getByRole('link', { name: 'Open figma.com in AI Governance Space' })
-  ).toHaveAttribute('href', /conversation=space-1/);
+  ).toHaveAttribute('href', /conversation=space-1&message=message-space-1/);
   for (const width of testInfo.project.name === 'chromium' ? [1440, 1280, 390, 320] : [390]) {
     await page.setViewportSize({ width, height: 900 });
     expect(
@@ -419,7 +430,9 @@ test('home filters, shared assets and huddle selection connect to real product f
   await expect(lobby).toBeVisible();
   await expect(lobby.getByRole('button', { name: 'Start meeting', exact: true })).toBeVisible();
   await lobby.getByRole('button', { name: 'Close', exact: true }).click();
-  await page.getByRole('button', { name: 'Message Jun Lee, Available', exact: true }).click();
+  await page
+    .getByRole('button', { name: 'Message Jun Lee, Active in Messenger', exact: true })
+    .click();
   await expect(page).toHaveURL(/\/messages\/direct\?conversation=direct-1/);
 });
 

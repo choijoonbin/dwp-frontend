@@ -18,6 +18,7 @@ import {
   getRoomBookings,
   getRoomsPolicy,
   getWorkplaceBookings,
+  getWorkplaceExplore,
   releaseWorkplaceBooking,
   respondToRoomBooking,
   useAuth,
@@ -163,6 +164,14 @@ export function WorkplaceUnifiedReservations() {
     refetchInterval: 60_000,
     retry: retryRecoverableWorkplaceRead,
   });
+  const workplacePolicyQuery = useQuery({
+    queryKey: ['workplace', 'reservation-policy', identityKey, range.from, range.to],
+    queryFn: () => getWorkplaceExplore(range.from, range.to),
+    enabled: Boolean(editingEvent && capabilities.isLoaded && capabilities.canViewWorkplace),
+    staleTime: 30_000,
+    refetchInterval: 60_000,
+    retry: retryRecoverableWorkplaceRead,
+  });
 
   const workplaceState = resolveReservationSourceState({
     loaded: capabilities.isLoaded,
@@ -178,6 +187,11 @@ export function WorkplaceUnifiedReservations() {
     loaded: capabilities.isLoaded,
     permitted: capabilities.canViewRooms,
     snapshot: roomPolicyQuery,
+  });
+  const workplacePolicyState = resolveReservationSourceState({
+    loaded: capabilities.isLoaded,
+    permitted: capabilities.canViewWorkplace,
+    snapshot: workplacePolicyQuery,
   });
   const workplaceStateRef = useRef(workplaceState);
   const calendarStateRef = useRef(calendarState);
@@ -844,6 +858,15 @@ export function WorkplaceUnifiedReservations() {
         room={editingEvent?.resource ?? null}
         event={editingEvent}
         policy={workplaceHomeSourceData(policyState, roomPolicyQuery.data) ?? null}
+        allowRecurring={Boolean(
+          (editingEvent && editingEvent.recurrence !== 'NONE') ||
+          workplaceHomeSourceData(workplacePolicyState, workplacePolicyQuery.data)?.policy
+            .allowRecurring
+        )}
+        recurrencePolicyEnabled={
+          workplaceHomeSourceData(workplacePolicyState, workplacePolicyQuery.data)?.policy
+            .allowRecurring === true
+        }
         commandSourceReady={calendarState === 'READY' && policyState === 'READY'}
         onClose={() => setEditingEvent(null)}
         onSaved={async () => {

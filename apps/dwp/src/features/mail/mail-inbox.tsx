@@ -1,19 +1,9 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import {
-  ChevronLeft,
-  ChevronRight,
-  Command,
-  FolderTree,
-  MailCheck,
-  MailPlus,
-  Search,
-} from 'lucide-react';
+import { ChevronLeft, ChevronRight, FolderTree, MailCheck, Search } from 'lucide-react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import {
-  applyMailThreadAction,
-  applyMailLifecycle,
   dwaionHandoffStrings,
   dwaionHandoffText,
   getMailHome,
@@ -55,9 +45,32 @@ import { MailCommandPalette, type MailCommand } from './mail-command-palette';
 import { validMailAccountScope } from './mail-account-scope';
 import { parseMailComposeNavigationState } from './mail-compose-navigation';
 import { MailComposeDialog } from './mail-compose-dialog';
-import { MailPageHeading, MailThreadListItem } from './mail-components';
+import { MailThreadListItem } from './mail-components';
 import { isMailShortcutTargetInteractive } from './mail-keyboard';
 import { MailLifecycleUndo, type MailLifecycleUndoState } from './mail-lifecycle-undo';
+import {
+  applyMailQuickCommand,
+  MailInboxBulkToolbar,
+  resolveMailBulkCommandPlan,
+  summarizeMailBulkResults,
+  updateMailThreadPageAfterBulk,
+  type MailBulkCommandExecutionItem,
+  type MailBulkCommandPlan,
+  type MailQuickCommand,
+} from './mail-inbox-bulk';
+import {
+  MAIL_INBOX_LANES as LANES,
+  MAIL_INBOX_PAGE_SIZE as PAGE_SIZE,
+  requestedMailInboxPage as requestedPage,
+  resolveMailInboxImportance as resolveImportance,
+  resolveMailInboxLane as resolveLane,
+  type MailboxMode,
+} from './mail-inbox-query-state';
+import {
+  MailInboxAccountGate,
+  MailInboxHeading,
+  type MailInboxAccountGateState,
+} from './mail-inbox-page-state';
 import { mailInboxFirstAutoSelection } from './mail-inbox-selection';
 import { mailSendCustodyOwner } from './mail-send-attempt';
 import { mailSharedAssignmentFilter, updateMailSharedFilters } from './mail-shared-filter';
@@ -70,30 +83,7 @@ import {
   useMailRuntimePreferences,
 } from './mail-runtime-preferences';
 
-import type { MailImportance, MailThread, MailTriageLane } from '@dwp-frontend/shared-utils';
-
-type MailboxMode = 'inbox' | 'sent' | 'drafts' | 'archive' | 'spam' | 'trash' | 'custom' | 'shared';
-type MailQuickCommand = Extract<MailCommand, 'mark-read' | 'star' | 'archive'>;
-
-const LANES: readonly MailTriageLane[] = ['PRIORITY', 'NEEDS_REPLY', 'ASSIGNED', 'UPDATES'];
-const PAGE_SIZE = 30;
-const IMPORTANCE_FILTERS: readonly MailImportance[] = ['LOW', 'NORMAL', 'HIGH', 'URGENT'];
-
-function requestedPage(value: string | null) {
-  const parsed = Number(value);
-  return Number.isSafeInteger(parsed) && parsed >= 0 ? parsed : 0;
-}
-
-function resolveLane(value: string | null, mode: MailboxMode): MailTriageLane | null {
-  if (value && LANES.includes(value as MailTriageLane)) return value as MailTriageLane;
-  return mode === 'shared' ? null : 'PRIORITY';
-}
-
-function resolveImportance(value: string | null): MailImportance | undefined {
-  return IMPORTANCE_FILTERS.includes(value as MailImportance)
-    ? (value as MailImportance)
-    : undefined;
-}
+import type { MailThread, MailThreadPage, MailTriageLane } from '@dwp-frontend/shared-utils';
 
 export function MailInbox({ mode }: { mode: MailboxMode }) {
   const { t } = useTranslation('mail');
@@ -118,6 +108,9 @@ export function MailInbox({ mode }: { mode: MailboxMode }) {
   const [debouncedSearch, setDebouncedSearch] = useState(requestedQuery.trim());
   const page = requestedPage(params.get('page'));
   const [commandOpen, setCommandOpen] = useState(false);
+  const [bulkMode, setBulkMode] = useState(false);
+  const [bulkSelectedIds, setBulkSelectedIds] = useState<Set<string>>(() => new Set());
+  const bulkPlanRef = useRef<MailBulkCommandPlan | null>(null);
   const [snoozeTarget, setSnoozeTarget] = useState<MailThread | null>(null);
   const [undoState, setUndoState] = useState<MailLifecycleUndoState | null>(null);
   const searchRef = useRef<HTMLInputElement | null>(null);
@@ -153,17 +146,17 @@ export function MailInbox({ mode }: { mode: MailboxMode }) {
     composeNavigationState.owner === custodyOwner
       ? composeNavigationState
       : { seed: null, returnTo: null };
-  const organizationQuery = useQuery({
-    queryKey: ['mail', 'organization'],
-    queryFn: getMailOrganization,
-    enabled: mode === 'custom',
-    staleTime: 30_000,
-    retry: 1,
-  });
   const scopeOptionsQuery = useQuery({
     queryKey: ['mail', 'home', 'scope-options'],
     queryFn: () => getMailHome(),
     staleTime: 60_000,
+    retry: 1,
+  });
+  const organizationQuery = useQuery({
+    queryKey: ['mail', 'organization'],
+    queryFn: getMailOrganization,
+    enabled: mode === 'custom' && Boolean(scopeOptionsQuery.data?.accounts.length),
+    staleTime: 30_000,
     retry: 1,
   });
   const accountScope = scopeOptionsQuery.data
@@ -200,22 +193,23 @@ export function MailInbox({ mode }: { mode: MailboxMode }) {
           : undefined;
   const activeLane = (mode === 'inbox' || mode === 'shared') && !snoozedView ? lane : undefined;
   const mailboxCopyKey = snoozedView ? 'later' : mode;
+  const threadQueryKey = [
+    'mail',
+    'threads',
+    mode,
+    activeLane,
+    importance,
+    unreadOnly,
+    state,
+    requestedFolderId,
+    accountScope,
+    requestedSharedInboxId,
+    sharedAssignment,
+    debouncedSearch,
+    page,
+  ] as const;
   const query = useQuery({
-    queryKey: [
-      'mail',
-      'threads',
-      mode,
-      activeLane,
-      importance,
-      unreadOnly,
-      state,
-      requestedFolderId,
-      accountScope,
-      requestedSharedInboxId,
-      sharedAssignment,
-      debouncedSearch,
-      page,
-    ],
+    queryKey: threadQueryKey,
     queryFn: () =>
       getMailThreads({
         lane: activeLane ?? undefined,
@@ -233,7 +227,9 @@ export function MailInbox({ mode }: { mode: MailboxMode }) {
         pageSize: PAGE_SIZE,
       }),
     placeholderData: (previous) => previous,
-    enabled: mode !== 'custom' || Boolean(requestedFolderId),
+    enabled:
+      Boolean(scopeOptionsQuery.data?.accounts.length) &&
+      (mode !== 'custom' || Boolean(requestedFolderId)),
     staleTime: 20_000,
     retry: 1,
   });
@@ -256,17 +252,7 @@ export function MailInbox({ mode }: { mode: MailboxMode }) {
   const quickMutation = useMutation({
     mutationFn: async ({ command, thread }: { command: MailQuickCommand; thread: MailThread }) => {
       if (!canUpdate) throw new Error('Mail update permission is required.');
-      if (command === 'archive') {
-        return {
-          command,
-          result: await applyMailLifecycle(thread.threadId, 'ARCHIVE', thread.version),
-        } as const;
-      }
-      const action = command === 'star' ? 'STAR' : 'MARK_READ';
-      return {
-        command,
-        result: await applyMailThreadAction(thread.threadId, action, thread.version),
-      } as const;
+      return applyMailQuickCommand(command, thread);
     },
     onSuccess: async ({ command, result }) => {
       if (command === 'archive' && 'deleted' in result && result.thread) {
@@ -276,6 +262,54 @@ export function MailInbox({ mode }: { mode: MailboxMode }) {
       await queryClient.invalidateQueries({ queryKey: ['mail'] });
     },
     onError: () => toast.error(t('thread.actionError')),
+  });
+  const bulkMutation = useMutation({
+    mutationFn: async ({
+      command,
+      items,
+    }: {
+      command: MailQuickCommand;
+      items: MailBulkCommandExecutionItem[];
+    }) => {
+      if (!canUpdate) throw new Error('Mail update permission is required.');
+      const results = await Promise.allSettled(
+        items.map(({ thread, identity, expectedVersion }) =>
+          applyMailQuickCommand(command, thread, identity, expectedVersion)
+        )
+      );
+      const summary = summarizeMailBulkResults(
+        items.map(({ thread }) => thread.threadId),
+        results
+      );
+      const updatedThreads = results.flatMap((result) =>
+        result.status === 'fulfilled' && 'messages' in result.value.result
+          ? [result.value.result.thread]
+          : []
+      );
+      return { command, updatedThreads, ...summary };
+    },
+    onSuccess: async ({ command, succeededIds, failedIds, updatedThreads }) => {
+      queryClient.setQueryData<MailThreadPage>(threadQueryKey, (current) =>
+        updateMailThreadPageAfterBulk(current, command, succeededIds, updatedThreads)
+      );
+      setBulkSelectedIds(new Set(failedIds));
+      setBulkMode(failedIds.length > 0);
+      if (!failedIds.length) bulkPlanRef.current = null;
+      await queryClient.invalidateQueries({ queryKey: ['mail'] });
+      if (!failedIds.length) {
+        toast.success(t('mailbox.bulk.success', { count: succeededIds.length }));
+      } else if (succeededIds.length) {
+        toast.warning(
+          t('mailbox.bulk.partial', {
+            succeeded: succeededIds.length,
+            failed: failedIds.length,
+          })
+        );
+      } else {
+        toast.error(t('mailbox.bulk.failed', { count: failedIds.length }));
+      }
+    },
+    onError: () => toast.error(t('mailbox.bulk.failed', { count: bulkSelectedIds.size })),
   });
   const snoozeMutation = useMutation({
     mutationFn: (until: string) => {
@@ -360,6 +394,9 @@ export function MailInbox({ mode }: { mode: MailboxMode }) {
   useEffect(() => {
     if (previousContextRef.current === contextKey) return;
     previousContextRef.current = contextKey;
+    bulkPlanRef.current = null;
+    setBulkMode(false);
+    setBulkSelectedIds(new Set());
     if (!selectedId) return;
     const next = new URLSearchParams(params);
     next.delete('thread');
@@ -374,6 +411,7 @@ export function MailInbox({ mode }: { mode: MailboxMode }) {
   }, [customFolders, mode, params, requestedFolderId, setParams]);
 
   useEffect(() => {
+    if (bulkMode) return;
     const firstThreadId = mailInboxFirstAutoSelection({
       desktopSplitView,
       fetching: query.isFetching,
@@ -384,7 +422,15 @@ export function MailInbox({ mode }: { mode: MailboxMode }) {
     const next = new URLSearchParams(params);
     next.set('thread', firstThreadId);
     setParams(next, { replace: true });
-  }, [desktopSplitView, params, query.data?.items, query.isFetching, selectedId, setParams]);
+  }, [
+    bulkMode,
+    desktopSplitView,
+    params,
+    query.data?.items,
+    query.isFetching,
+    selectedId,
+    setParams,
+  ]);
 
   useEffect(() => {
     if (
@@ -442,7 +488,7 @@ export function MailInbox({ mode }: { mode: MailboxMode }) {
   });
 
   const openCompose = () => {
-    if (!canCreate) return;
+    if (!canCreate || !scopeOptionsQuery.data?.accounts.length) return;
     const next = new URLSearchParams(params);
     next.set('compose', 'open');
     setParams(next, { replace: true });
@@ -482,6 +528,30 @@ export function MailInbox({ mode }: { mode: MailboxMode }) {
     const next = new URLSearchParams(params);
     next.set('thread', threadId);
     setParams(next);
+  };
+  const enterBulkMode = () => {
+    bulkPlanRef.current = null;
+    setBulkMode(true);
+    setBulkSelectedIds(new Set());
+    if (selectedId) clearSelection();
+  };
+  const toggleBulkThread = (threadId: string) => {
+    bulkPlanRef.current = null;
+    setBulkSelectedIds((current) => {
+      const next = new Set(current);
+      if (next.has(threadId)) next.delete(threadId);
+      else next.add(threadId);
+      return next;
+    });
+  };
+  const runBulkCommand = (command: MailQuickCommand) => {
+    const threads = (query.data?.items ?? []).filter((thread) =>
+      bulkSelectedIds.has(thread.threadId)
+    );
+    if (!threads.length) return;
+    const resolved = resolveMailBulkCommandPlan(bulkPlanRef.current, command, contextKey, threads);
+    bulkPlanRef.current = resolved.plan;
+    bulkMutation.mutate({ command, items: [...resolved.items] });
   };
   const clearSelection = () => {
     restoreListContextRef.current = true;
@@ -525,38 +595,41 @@ export function MailInbox({ mode }: { mode: MailboxMode }) {
     [mailboxCopyKey, t]
   );
   const pageCount = Math.max(1, Math.ceil((query.data?.total ?? 0) / PAGE_SIZE));
+  const accountGateState: MailInboxAccountGateState | null = scopeOptionsQuery.isPending
+    ? 'loading'
+    : scopeOptionsQuery.isError
+      ? 'error'
+      : scopeOptionsQuery.data.accounts.length === 0
+        ? 'empty'
+        : null;
+  if (accountGateState) {
+    return (
+      <MailInboxAccountGate
+        state={accountGateState}
+        retrying={scopeOptionsQuery.isFetching}
+        onRetry={() => void scopeOptionsQuery.refetch()}
+        onConnect={() => navigate('/mail/accounts')}
+      />
+    );
+  }
 
   return (
     <PageCanvas topInset="compact">
-      <MailPageHeading
-        eyebrow={t(`mailbox.${mailboxCopyKey}.eyebrow`)}
-        title={selectedCustomFolder?.displayName ?? t(`mailbox.${mailboxCopyKey}.title`)}
-        description={t(`mailbox.${mailboxCopyKey}.description`)}
-        actions={
-          <Stack direction="row" spacing={1}>
-            <ActionIconButton label={t('command.open')} onClick={() => setCommandOpen(true)}>
-              <Command size={18} />
-            </ActionIconButton>
-            <ActionButton
-              intent="primary"
-              startIcon={<MailPlus size={17} />}
-              disabled={!canCreate}
-              onClick={openCompose}
-            >
-              {t('actions.compose')}
-            </ActionButton>
-          </Stack>
-        }
+      <MailInboxHeading
+        mailboxCopyKey={mailboxCopyKey}
+        title={selectedCustomFolder?.displayName}
+        canCreate={canCreate}
+        canUpdate={canUpdate}
+        hasItems={Boolean(query.data?.items.length)}
+        bulkMode={bulkMode}
+        onOpenCommand={() => setCommandOpen(true)}
+        onEnterBulkMode={enterBulkMode}
+        onExitBulkMode={() => {
+          setBulkMode(false);
+          setBulkSelectedIds(new Set());
+        }}
+        onCompose={openCompose}
       />
-
-      {!canCreate && !canUpdate ? (
-        <Alert severity="info" sx={{ mt: 2 }}>
-          {t('permissions.readOnly', {
-            defaultValue:
-              'You have read-only mail access. Draft and message update actions are unavailable.',
-          })}
-        </Alert>
-      ) : null}
 
       {!composeOpen && <MailProposalOwnerHandoffNotice handoff={proposalOwnerHandoff} />}
 
@@ -711,6 +784,27 @@ export function MailInbox({ mode }: { mode: MailboxMode }) {
                 ))}
               </Tabs>
             )}
+            {bulkMode && (
+              <MailInboxBulkToolbar
+                selectedCount={bulkSelectedIds.size}
+                totalCount={query.data?.items.length ?? 0}
+                busy={bulkMutation.isPending}
+                onTogglePage={() => {
+                  bulkPlanRef.current = null;
+                  setBulkSelectedIds(
+                    bulkSelectedIds.size === (query.data?.items.length ?? 0)
+                      ? new Set()
+                      : new Set(query.data?.items.map((thread) => thread.threadId) ?? [])
+                  );
+                }}
+                onCommand={runBulkCommand}
+                onDone={() => {
+                  bulkPlanRef.current = null;
+                  setBulkMode(false);
+                  setBulkSelectedIds(new Set());
+                }}
+              />
+            )}
           </Box>
           {query.isFetching && !query.isLoading && (
             <LinearProgress aria-label={t('mailbox.updating')} sx={{ height: 2 }} />
@@ -748,10 +842,15 @@ export function MailInbox({ mode }: { mode: MailboxMode }) {
                   key={thread.threadId}
                   buttonId={`mail-thread-${thread.threadId}`}
                   thread={thread}
-                  selected={selectedId === thread.threadId}
+                  selected={
+                    bulkMode ? bulkSelectedIds.has(thread.threadId) : selectedId === thread.threadId
+                  }
                   compact={mailUsesCompactDensity(runtimePreferences.data)}
-                  disabled={query.isFetching}
-                  onSelect={() => selectThread(thread.threadId)}
+                  selectionMode={bulkMode}
+                  disabled={query.isFetching || bulkMutation.isPending}
+                  onSelect={() =>
+                    bulkMode ? toggleBulkThread(thread.threadId) : selectThread(thread.threadId)
+                  }
                 />
               ))
             ) : (

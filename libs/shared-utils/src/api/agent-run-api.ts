@@ -1,17 +1,20 @@
-import type { AgentComponents } from '@dwp-frontend/api-contracts';
+import type { components as GatewayComponents } from '@dwp-frontend/api-contracts';
 
 import { axiosInstance } from '../axios-instance';
 import { HttpError } from '../http-error';
 
 import type { ApiResponse } from '../types';
 
-type AgentSchemas = AgentComponents['schemas'];
+type GatewaySchemas = GatewayComponents['schemas'];
 
-export type DwaionRunState = AgentSchemas['AgentRunState'];
+export type DwaionRunState = GatewaySchemas['agent_AgentRunState'];
 export type DwaionRunStageKey =
   'AUTHORIZING' | 'RETRIEVING' | 'REASONING' | 'VERIFYING' | 'PERSISTING' | 'COMPLETED' | 'FAILED';
 export type DwaionRunStageState = 'ACTIVE' | 'COMPLETED' | 'FAILED' | 'SKIPPED';
 export type DwaionRunMeasurementStatus = 'MEASURING' | 'MEASURED' | 'PARTIAL' | 'NOT_AVAILABLE';
+export type DwaionRunRecoveryHint = GatewaySchemas['agent_RunRecoveryHint'];
+export type DwaionSafeErrorCode = GatewaySchemas['agent_RunSafeErrorCode'];
+export type DwaionRunSourceType = GatewaySchemas['agent_CitationSourceType'];
 
 export type DwaionRunStage = {
   key: DwaionRunStageKey;
@@ -34,7 +37,7 @@ export type DwaionRunAuditEvidence = {
 };
 
 export type DwaionRunSourceHealth = {
-  sourceType: string;
+  sourceType: DwaionRunSourceType;
   status: 'SUCCESS' | 'UNAVAILABLE' | 'NOT_CONFIGURED';
   latencyMs: number | null;
   lastAttemptAt: string;
@@ -42,6 +45,9 @@ export type DwaionRunSourceHealth = {
 };
 
 type DwaionRunObservability = {
+  stateChangedAt?: string | null;
+  safeErrorCode?: DwaionSafeErrorCode | null;
+  recoveryHint?: DwaionRunRecoveryHint | null;
   dataProvenance?: 'LIVE' | 'SAMPLE';
   /** Privacy-minimized server title; question and answer plaintext are never accepted here. */
   activityTitle?: string;
@@ -58,7 +64,7 @@ type DwaionRunObservability = {
 // Optional during a rolling Agent deployment. When the server supplies observability fields,
 // the runtime validator below validates every value before the UI can display it.
 export type DwaionUserRun = Omit<
-  AgentSchemas['UserAgentRunSummary'],
+  GatewaySchemas['agent_UserAgentRunSummary'],
   keyof DwaionRunObservability
 > &
   DwaionRunObservability;
@@ -81,6 +87,48 @@ export type DwaionUserRunPageOptions = {
 
 const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/iu;
 const RUN_STATES = new Set<DwaionRunState>(['RUNNING', 'COMPLETED', 'FAILED']);
+const SAFE_ERROR_CODE_MEMBERS = {
+  AGENT_EXECUTION_FAILED: true,
+  AGENT_SAFETY_CONFIGURATION_REQUIRED: true,
+  ASK_RUNTIME_FAILED: true,
+  CONTEXT_SOURCE_NOT_CONFIGURED: true,
+  CONTEXT_SOURCE_UNAVAILABLE: true,
+  MODEL_CALL_FAILED: true,
+  MODEL_GROUNDING_CONTRACT_INVALID: true,
+  MODEL_OUTPUT_CONTRACT_INVALID: true,
+  MODEL_OUTPUT_MISSING: true,
+  MODEL_PROVIDER_UNAVAILABLE: true,
+  MODEL_RESPONSE_INVALID_JSON: true,
+  MODEL_ROUTE_CONFIGURATION_INVALID: true,
+  MODEL_ROUTE_CONFIGURATION_REQUIRED: true,
+  NO_SCOPED_EVIDENCE: true,
+} satisfies Record<DwaionSafeErrorCode, true>;
+const SAFE_ERROR_CODES = new Set<DwaionSafeErrorCode>(
+  Object.keys(SAFE_ERROR_CODE_MEMBERS) as DwaionSafeErrorCode[]
+);
+const RECOVERY_HINT_MEMBERS = {
+  RETRY_LATER: true,
+  REVIEW_CONFIGURATION: true,
+  CHECK_SOURCE_CONNECTION: true,
+  REVIEW_REQUEST: true,
+  CONTACT_SUPPORT: true,
+} satisfies Record<DwaionRunRecoveryHint, true>;
+const RECOVERY_HINTS = new Set<DwaionRunRecoveryHint>(
+  Object.keys(RECOVERY_HINT_MEMBERS) as DwaionRunRecoveryHint[]
+);
+const SOURCE_TYPE_MEMBERS = {
+  WORK_ITEM: true,
+  MAIL: true,
+  CALENDAR: true,
+  APPROVAL_TASK: true,
+  APPROVAL_REQUEST: true,
+  APPROVAL_FORM: true,
+  APPROVAL_OPERATION: true,
+  ATTACHMENT: true,
+} satisfies Record<DwaionRunSourceType, true>;
+const SOURCE_TYPES = new Set<DwaionRunSourceType>(
+  Object.keys(SOURCE_TYPE_MEMBERS) as DwaionRunSourceType[]
+);
 const USER_RUN_KEYS = new Set([
   'runId',
   'agentKey',
@@ -95,6 +143,9 @@ const USER_RUN_KEYS = new Set([
   'conversationId',
   'createdAt',
   'completedAt',
+  'stateChangedAt',
+  'safeErrorCode',
+  'recoveryHint',
   'dataProvenance',
   'activityTitle',
   'attempt',
@@ -226,6 +277,15 @@ const MEASUREMENT_STATES = new Set<DwaionRunMeasurementStatus>([
 
 function isRunObservability(run: Record<string, unknown>): boolean {
   return (
+    optionalNullable(run.stateChangedAt, isDate) &&
+    optionalNullable(
+      run.safeErrorCode,
+      (value) => typeof value === 'string' && SAFE_ERROR_CODES.has(value as DwaionSafeErrorCode)
+    ) &&
+    optionalNullable(
+      run.recoveryHint,
+      (value) => typeof value === 'string' && RECOVERY_HINTS.has(value as DwaionRunRecoveryHint)
+    ) &&
     optional(run.dataProvenance, (value) => ['LIVE', 'SAMPLE'].includes(String(value))) &&
     optional(run.activityTitle, isActivityTitle) &&
     optional(run.attempt, isPositiveInteger) &&
@@ -301,23 +361,17 @@ function isSourceHealth(value: unknown): boolean {
       new Set(['sourceType', 'status', 'latencyMs', 'lastAttemptAt', 'lastSuccessAt'])
     ) &&
     typeof value.sourceType === 'string' &&
-    [
-      'WORK_ITEM',
-      'MAIL',
-      'CALENDAR',
-      'APPROVAL_TASK',
-      'APPROVAL_REQUEST',
-      'APPROVAL_FORM',
-      'APPROVAL_OPERATION',
-    ].includes(value.sourceType) &&
+    SOURCE_TYPES.has(value.sourceType as DwaionRunSourceType) &&
     ['SUCCESS', 'UNAVAILABLE', 'NOT_CONFIGURED'].includes(String(value.status)) &&
     (value.latencyMs === null || isNonnegativeInteger(value.latencyMs)) &&
     isDate(value.lastAttemptAt) &&
     (value.lastSuccessAt === null || isDate(value.lastSuccessAt));
   if (!validShape) return false;
-  return value.status === 'SUCCESS'
-    ? value.lastSuccessAt === value.lastAttemptAt
-    : value.lastSuccessAt === null;
+  if (value.status === 'SUCCESS') return value.lastSuccessAt === value.lastAttemptAt;
+  return (
+    value.lastSuccessAt === null ||
+    Date.parse(value.lastSuccessAt as string) <= Date.parse(value.lastAttemptAt as string)
+  );
 }
 
 function isStageKey(value: unknown): value is DwaionRunStageKey {

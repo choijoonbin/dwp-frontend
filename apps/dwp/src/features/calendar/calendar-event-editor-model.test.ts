@@ -4,6 +4,8 @@ import {
   calendarEditorAttendees,
   calendarEventDraft,
   calendarEventInput,
+  calendarRecurrenceUntilIsValid,
+  patchCalendarEventDraft,
 } from './calendar-event-editor-model';
 
 import type { CalendarEvent } from '@dwp-frontend/shared-utils';
@@ -27,6 +29,7 @@ const EVENT: CalendarEvent = {
   recurrence: 'WEEKLY',
   recurrenceInterval: 2,
   recurrenceUntil: '2027-01-31',
+  recurrenceDays: ['SUNDAY', 'TUESDAY'],
   responseRequired: true,
   attendees: [
     {
@@ -55,6 +58,8 @@ describe('calendar event editor model', () => {
       recurrence: 'WEEKLY',
       recurrenceInterval: 2,
       recurrenceUntil: '2027-01-31',
+      recurrenceDays: ['TUESDAY', 'SUNDAY'],
+      recurrenceCount: null,
     });
     expect(input.attendees).toEqual([
       expect.objectContaining({
@@ -144,6 +149,8 @@ describe('calendar event editor model', () => {
       recurrence: 'NONE',
       recurrenceInterval: 1,
       recurrenceUntil: null,
+      recurrenceDays: [],
+      recurrenceCount: null,
       responseRequired: false,
       attendees: [],
       resourceId: null,
@@ -173,4 +180,67 @@ describe('calendar event editor model', () => {
       });
     }
   );
+
+  it('keeps the weekly anchor day and emits COUNT without UNTIL', () => {
+    const initial = calendarEventDraft(null, {
+      initialStart: '2026-11-02T09:00:00Z',
+      initialEnd: '2026-11-02T09:30:00Z',
+      fallbackTimeZone: 'UTC',
+    });
+    const weekly = patchCalendarEventDraft(initial, {
+      recurrence: 'WEEKLY',
+      recurrenceDays: ['WEDNESDAY'],
+      recurrenceEndMode: 'COUNT',
+      recurrenceCount: 12,
+    });
+
+    expect(calendarEventInput(weekly, [])).toMatchObject({
+      recurrence: 'WEEKLY',
+      recurrenceDays: ['MONDAY', 'WEDNESDAY'],
+      recurrenceUntil: null,
+      recurrenceCount: 12,
+    });
+  });
+
+  it('moves a sole weekly anchor when the event start day changes', () => {
+    const weekly = patchCalendarEventDraft(
+      calendarEventDraft(null, {
+        initialStart: '2026-11-02T09:00:00Z',
+        initialEnd: '2026-11-02T09:30:00Z',
+        fallbackTimeZone: 'UTC',
+      }),
+      { recurrence: 'WEEKLY' }
+    );
+
+    expect(weekly.recurrenceDays).toEqual(['MONDAY']);
+    expect(
+      patchCalendarEventDraft(weekly, { startsAt: '2026-11-03T09:00:00Z' }).recurrenceDays
+    ).toEqual(['TUESDAY']);
+  });
+
+  it('supports a bounded yearly series without weekly BYDAY fields', () => {
+    const yearly = patchCalendarEventDraft(
+      calendarEventDraft(null, {
+        initialStart: '2028-02-29T09:00:00Z',
+        initialEnd: '2028-02-29T10:00:00Z',
+        fallbackTimeZone: 'UTC',
+      }),
+      {
+        recurrence: 'YEARLY',
+        recurrenceEndMode: 'UNTIL',
+        recurrenceUntil: '2032-03-01',
+      }
+    );
+
+    expect(calendarEventInput(yearly, [])).toMatchObject({
+      recurrence: 'YEARLY',
+      recurrenceDays: [],
+      recurrenceUntil: '2032-03-01',
+      recurrenceCount: null,
+    });
+    expect(calendarRecurrenceUntilIsValid(yearly)).toBe(true);
+    expect(calendarRecurrenceUntilIsValid({ ...yearly, recurrenceUntil: '2028-02-28' })).toBe(
+      false
+    );
+  });
 });

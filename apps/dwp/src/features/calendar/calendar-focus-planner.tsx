@@ -11,7 +11,6 @@ import {
 } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { resolveSystemTimeZone } from '@dwp-frontend/shared-i18n';
 import {
   getCalendarAvailability,
   getCalendarEvents,
@@ -33,6 +32,10 @@ import Typography from '@mui/material/Typography';
 import { alpha } from '@mui/material/styles';
 
 import { CalendarEventDialog } from './calendar-event-dialog';
+import {
+  calendarSlotMatchesWorkingSchedule,
+  useCalendarEffectivePreferences,
+} from './calendar-effective-preferences';
 import {
   calendarReadSourceData,
   calendarReadSourceState,
@@ -212,9 +215,10 @@ export function CalendarFocusPlanner() {
   const toast = useToast();
   const queryClient = useQueryClient();
   const language = i18n.resolvedLanguage ?? i18n.language;
-  const timeZone = resolveSystemTimeZone('Asia/Seoul');
+  const { preferences: calendarPreferences } = useCalendarEffectivePreferences();
+  const timeZone = calendarPreferences.timeZone;
   const now = useMemo(() => new Date(), []);
-  const range = useMemo(() => calendarHorizon(now, 0, 14), [now]);
+  const range = useMemo(() => calendarHorizon(now, 0, 14, timeZone), [now, timeZone]);
   const [creating, setCreating] = useState<PlannerCreateState | null>(null);
   const [selected, setSelected] = useState<CalendarEvent | null>(null);
   const [editing, setEditing] = useState<CalendarEvent | null>(null);
@@ -301,6 +305,10 @@ export function CalendarFocusPlanner() {
   }, [readState, writable]);
 
   const plan = useMemo(() => calendarPlanningEvents(eventsData ?? [], now), [eventsData, now]);
+  const recommendationSuggestions =
+    recommendations.data?.suggestions.filter((slot) =>
+      calendarSlotMatchesWorkingSchedule(slot, calendarPreferences)
+    ) ?? [];
   const metrics = homeData?.metrics;
   const focusProgress = metrics
     ? Math.min(
@@ -540,9 +548,9 @@ export function CalendarFocusPlanner() {
                     {t('focusPlan.recommendationError')}
                   </Alert>
                 )}
-                {recommendations.data?.suggestions.length ? (
+                {recommendationSuggestions.length ? (
                   <Stack spacing={0.75} sx={{ mt: 1.75 }}>
-                    {recommendations.data.suggestions.slice(0, 3).map((slot) => (
+                    {recommendationSuggestions.slice(0, 3).map((slot) => (
                       <Box
                         component={canCreate ? 'button' : 'div'}
                         type={canCreate ? 'button' : undefined}
@@ -677,6 +685,7 @@ export function CalendarFocusPlanner() {
           initialType={creating?.type}
           initialStart={creating?.start}
           initialEnd={creating?.end}
+          initialTimeZone={timeZone}
           onClose={() => setCreating(null)}
         />
       )}

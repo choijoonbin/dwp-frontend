@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { ShieldCheck } from 'lucide-react';
-import { LiveStatus, PageCanvas } from '@dwp-frontend/design-system';
+import { ActionButton, InlineFeedback, LiveStatus, PageCanvas } from '@dwp-frontend/design-system';
 import { formatDate, resolveSupportedLocale } from '@dwp-frontend/shared-i18n';
 import {
   getDwaionUserRun,
@@ -24,6 +24,8 @@ import {
   findExactDwaionRun,
   resolveDwaionActivityFilter,
   resolveDwaionActivityPeriod,
+  resolveDwaionSelectedRun,
+  shouldRenderDwaionActivityLatency,
   summarizeDwaionActivityWindow,
   updateDwaionActivityFilter,
   updateDwaionActivityPeriod,
@@ -34,7 +36,18 @@ import { DwaionActivityLatency } from './dwaion-activity-latency';
 import { DwaionActivitySummary } from './dwaion-activity-summary';
 import { ActivityListBody, ActivityListHeader, EmptyInspector } from './dwaion-activity-view';
 import { DWAION_ACTIVITY_REFRESH_EVENT } from './dwaion-mobile-shell-profile';
-import { useDwaionRunPages } from './use-dwaion-run-pages';
+import {
+  dwaionKnownRunDetailRefetchInterval,
+  dwaionKnownRunDetailRefetchOnWindowFocus,
+  dwaionRunDetailStaleTime,
+  overlayDwaionRunPages,
+  useDwaionRunPages,
+} from './use-dwaion-run-pages';
+import {
+  isAuthoritativeActivityDenial,
+  isAuthoritativeActivityRootDenial,
+  usableActivityQueryData,
+} from '../activity/activity-query-state';
 
 import type { DwaionActivityFilter, DwaionActivityPeriod } from './dwaion-activity-model';
 
@@ -66,57 +79,97 @@ export function DwaionActivity() {
     period,
     periodFrom,
     enabled: canLoadRuns,
+    selectedRunId,
   });
-  const accessResponseDenied =
-    runs.isError && runs.error instanceof HttpError && [401, 403].includes(runs.error.status);
-  const runDataUsable = canLoadRuns && !accessResponseDenied;
-  const allRuns = useMemo(() => {
-    if (!runDataUsable || !runs.data) return EMPTY_RUNS;
-    const unique = new Map<string, DwaionUserRun>();
-    for (const page of runs.data.pages) {
-      for (const run of page.runs) unique.set(run.runId.toLowerCase(), run);
-    }
-    return [...unique.values()];
-  }, [runDataUsable, runs.data]);
-  const visibleRuns = useMemo(() => filterDwaionActivityWindow(allRuns, filter), [allRuns, filter]);
-  const metrics = useMemo(() => summarizeDwaionActivityWindow(allRuns), [allRuns]);
-  const selectedWindowRun = findExactDwaionRun(allRuns, selectedRunId);
+  const rootRunDataUsable = canLoadRuns && !runs.rootDenied;
+  const runPages = rootRunDataUsable ? runs.data : undefined;
+  const listedRuns = useMemo(
+    () =>
+      rootRunDataUsable && runPages
+        ? overlayDwaionRunPages(
+            runs.headPage,
+            runPages.pages,
+            runs.runningRunDetails,
+            runs.deniedRunningRunIds
+          )
+        : EMPTY_RUNS,
+    [rootRunDataUsable, runPages, runs.deniedRunningRunIds, runs.headPage, runs.runningRunDetails]
+  );
+  const selectedListedRun = findExactDwaionRun(listedRuns, selectedRunId);
   const selectedRunDetail = useQuery({
     queryKey: ['dwaion', 'user-run', 'detail', identity, selectedRunId],
     queryFn: ({ signal }) => getDwaionUserRun(selectedRunId, signal),
-    enabled: runDataUsable && Boolean(selectedRunId) && !selectedWindowRun,
-    staleTime: 15_000,
-    refetchInterval: 60_000,
+    enabled: rootRunDataUsable && Boolean(selectedRunId),
+    staleTime: (query) => dwaionRunDetailStaleTime(query.state.data ?? selectedListedRun),
+    refetchInterval: (query) =>
+      dwaionKnownRunDetailRefetchInterval(query.state.data, selectedListedRun, query.state.error),
+    refetchOnWindowFocus: (query) =>
+      dwaionKnownRunDetailRefetchOnWindowFocus(
+        query.state.data,
+        selectedListedRun,
+        query.state.error
+      ),
     retry: (count, error) =>
       !(error instanceof TypeError) &&
       !(error instanceof HttpError && [400, 401, 403, 404].includes(error.status)) &&
       count < 1,
     meta: { accessSensitive: true },
   });
+  const selectedRootDenied =
+    selectedRunDetail.isError && isAuthoritativeActivityRootDenial(selectedRunDetail.error);
+  const selectedDetailDenied =
+    selectedRunDetail.isError && isAuthoritativeActivityDenial(selectedRunDetail.error);
+  const selectedDetailData = usableActivityQueryData(selectedRunDetail);
+  const runDataUsable = rootRunDataUsable && !selectedRootDenied;
+  const accessResponseDenied = runs.rootDenied || selectedRootDenied;
+  const allRuns = useMemo(
+    () =>
+      runDataUsable && runPages
+        ? overlayDwaionRunPages(
+            runs.headPage,
+            runPages.pages,
+            [...(selectedDetailData ? [selectedDetailData] : []), ...runs.runningRunDetails],
+            [
+              ...(selectedDetailDenied && selectedRunId ? [selectedRunId] : []),
+              ...runs.deniedRunningRunIds,
+            ]
+          )
+        : EMPTY_RUNS,
+    [
+      runDataUsable,
+      runPages,
+      runs.deniedRunningRunIds,
+      runs.headPage,
+      runs.runningRunDetails,
+      selectedDetailData,
+      selectedDetailDenied,
+      selectedRunId,
+    ]
+  );
+  const visibleRuns = useMemo(() => filterDwaionActivityWindow(allRuns, filter), [allRuns, filter]);
+  const metrics = useMemo(() => summarizeDwaionActivityWindow(allRuns), [allRuns]);
+  const selectedWindowRun = findExactDwaionRun(allRuns, selectedRunId);
   const selectedRun = runDataUsable
-    ? (selectedWindowRun ?? (selectedRunDetail.isError ? undefined : selectedRunDetail.data))
+    ? resolveDwaionSelectedRun({
+        listRun: selectedWindowRun,
+        detailRun: selectedDetailData,
+        detailDenied: selectedDetailDenied,
+      })
     : undefined;
   const selectedRunLoading =
     !selectedRun && runDataUsable && selectedRunDetail.isPending && Boolean(selectedRunId);
-  const exactSelectionActive = Boolean(selectedRunId) && !selectedWindowRun;
-  const selectionAccessDenied =
-    !runDataUsable ||
-    (exactSelectionActive &&
-      selectedRunDetail.isError &&
-      selectedRunDetail.error instanceof HttpError &&
-      [401, 403].includes(selectedRunDetail.error.status));
+  const selectionActive = Boolean(selectedRunId);
+  const selectionAccessDenied = !runDataUsable || (selectionActive && selectedDetailDenied);
   const retrievalError =
-    runs.isError ||
-    runs.isFetchNextPageError ||
-    (exactSelectionActive && selectedRunDetail.isError);
+    runs.isError || runs.isFetchNextPageError || (selectionActive && selectedRunDetail.isError);
   const retrievalPending =
-    runs.isPending || runs.isFetching || (exactSelectionActive && selectedRunDetail.isFetching);
+    runs.isPending || runs.isFetching || (selectionActive && selectedRunDetail.isFetching);
   const refetchSelectedRun = selectedRunDetail.refetch;
   const refreshRuns = useCallback(() => {
     if (!canLoadRuns) return Promise.resolve([]);
     setPeriodAnchor((current) => Math.max(Date.now(), current + 1));
-    return exactSelectionActive ? Promise.all([refetchSelectedRun()]) : Promise.resolve([]);
-  }, [canLoadRuns, exactSelectionActive, refetchSelectedRun]);
+    return selectionActive ? Promise.all([refetchSelectedRun()]) : Promise.resolve([]);
+  }, [canLoadRuns, refetchSelectedRun, selectionActive]);
   useEffect(() => {
     const handleRefresh = () => void refreshRuns();
     globalThis.addEventListener(DWAION_ACTIVITY_REFRESH_EVENT, handleRefresh);
@@ -221,8 +274,28 @@ export function DwaionActivity() {
           </Stack>
         </Box>
 
-        {runs.data && runDataUsable && (
+        {runPages && runDataUsable && (
           <DwaionActivitySummary metrics={metrics} filter={filter} onFilter={selectFilter} />
+        )}
+
+        {runs.isError && runPages && runDataUsable && (
+          <InlineFeedback
+            severity="warning"
+            title={t('dwaionActivity.cachedTitle')}
+            sx={{ mt: 1.25 }}
+          >
+            {t('dwaionActivity.cachedDescription')}
+            <Box sx={{ mt: 1 }}>
+              <ActionButton
+                intent="secondary"
+                size="small"
+                onClick={() => void refreshRuns()}
+                disabled={retrievalPending}
+              >
+                {t('dwaionActivity.refresh')}
+              </ActionButton>
+            </Box>
+          </InlineFeedback>
         )}
 
         <ActivityListHeader
@@ -232,7 +305,7 @@ export function DwaionActivity() {
           visible={visibleRuns.length}
           onFilter={selectFilter}
           onPeriod={selectPeriod}
-          showCounts={runDataUsable && Boolean(runs.data)}
+          showCounts={runDataUsable && Boolean(runPages)}
           disabled={!runDataUsable}
         />
 
@@ -251,7 +324,7 @@ export function DwaionActivity() {
           <Box component="section" aria-labelledby="dwaion-activity-list" sx={{ minWidth: 0 }}>
             <ActivityListBody
               runs={{
-                data: runs.data ? allRuns : undefined,
+                data: runPages ? allRuns : undefined,
                 isPending: runs.isPending,
                 isError: runs.isError,
                 isFetching: runs.isFetching,
@@ -270,7 +343,7 @@ export function DwaionActivity() {
               loadMoreError={runs.isFetchNextPageError}
               onLoadMore={() => void runs.fetchNextPage()}
             />
-            {runDataUsable && !runs.isError && !runs.isPending && (
+            {shouldRenderDwaionActivityLatency(Boolean(runDataUsable && runPages), runs) && (
               <DwaionActivityLatency
                 runs={visibleRuns}
                 selectedRunId={selectedRunId}
@@ -285,6 +358,9 @@ export function DwaionActivity() {
                 runId={selectedRunId}
                 run={selectedRun}
                 runLoading={selectedRunLoading}
+                runRefreshFailed={
+                  selectedRunDetail.isError && !selectedDetailDenied && Boolean(selectedRun)
+                }
                 locale={locale}
                 refreshing={retrievalPending}
                 accessDenied={selectionAccessDenied}

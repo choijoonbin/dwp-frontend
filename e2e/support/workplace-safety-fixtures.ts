@@ -139,6 +139,8 @@ function dispatch(state: string) {
     failedCount: state === 'PARTIAL' || state === 'FAILED' ? 3 : 0,
     unknownCount: state === 'RESULT_UNKNOWN' ? 1 : 0,
     channels: ['APP_PUSH', 'SMS'],
+    reviewState: 'NONE',
+    manualReviewCount: 0,
     updatedAt: NOW,
   };
 }
@@ -391,9 +393,16 @@ export async function mockWorkplaceSafety(
   await page.unroute('**/api/auth/product-surface-contexts');
   await page.route('**/api/auth/product-surface-contexts', (route) =>
     fulfillSuccess(route, {
-      contractVersion: 'product-surfaces/v3',
+      contractVersion: '2',
       decisionRevision: SAFETY_DECISION_REVISION,
-      sourceRevisions: { auth: '20', policy: '20', productRelationship: '20' },
+      sourceRevisions: {
+        auth: '20',
+        policy: '20',
+        productRelationship: '20',
+        targetPopulation: '20',
+        support: null,
+        tenantControl: '20',
+      },
       activeAccessMode: 'ELEVATED',
       generatedAt: NOW,
       contexts: [],

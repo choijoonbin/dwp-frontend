@@ -50,6 +50,8 @@ function incident(state: 'FAILED' | 'RESULT_UNKNOWN'): WorkplaceSafetyIncident {
         failedCount: state === 'FAILED' ? 1 : 0,
         unknownCount: state === 'RESULT_UNKNOWN' ? 1 : 0,
         channels: ['APP_PUSH'],
+        reviewState: 'NONE',
+        manualReviewCount: 0,
         updatedAt: NOW,
       },
     ],
@@ -66,6 +68,22 @@ describe('Workplace safety UI policy', () => {
     expect(workplaceSafetyCanResend(incident('FAILED'))).toBe(true);
     expect(workplaceSafetyCanResend(incident('RESULT_UNKNOWN'))).toBe(false);
     expect(workplaceSafetyNeedsGetOnlyRecovery(incident('RESULT_UNKNOWN'))).toBe(true);
+  });
+
+  it('allows an explicitly confirmed administrator resend after automatic retries stop', () => {
+    const failed = incident('FAILED');
+    expect(
+      workplaceSafetyCanResend({
+        ...failed,
+        dispatches: [
+          {
+            ...failed.dispatches[0]!,
+            reviewState: 'MANUAL_REVIEW_REQUIRED',
+            manualReviewCount: 1,
+          },
+        ],
+      })
+    ).toBe(true);
   });
 
   it('blocks resend through an external channel until matching connector truth is READY', () => {

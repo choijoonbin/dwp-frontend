@@ -16,6 +16,7 @@ import {
 } from './support/home-wave2-acceptance-fixtures';
 import { routeHomeWave4ShadowRuntime } from './support/home-wave4-runtime-fixtures';
 import { mockUnreadAppBadge } from './support/ui-contracts';
+import { CALENDAR_EVENT_FIXTURE } from './support/product-area-fixtures';
 
 test.beforeEach(async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' });
@@ -893,7 +894,9 @@ test('home schedule opens the selected event in the calendar detail drawer', asy
   await event.focus();
   await page.keyboard.press('Enter');
 
-  await expect(page).toHaveURL(/\/calendar\/schedule\?event=calendar-event-operating-review/);
+  await expect(page).toHaveURL(
+    new RegExp(`/calendar/schedule\\?event=${CALENDAR_EVENT_FIXTURE.eventId}`)
+  );
   await expect(
     page.getByRole('heading', { name: 'Digital workplace operating review', level: 2 })
   ).toBeVisible();

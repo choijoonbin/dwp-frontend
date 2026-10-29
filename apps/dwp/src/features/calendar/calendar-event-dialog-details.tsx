@@ -1,23 +1,21 @@
 import { memo, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Building2, ChevronDown, SlidersHorizontal } from 'lucide-react';
-import {
-  AutocompleteMultiField,
-  DatePickerField,
-  FormField,
-  SelectField,
-} from '@dwp-frontend/design-system';
+import { FormField, SelectField } from '@dwp-frontend/design-system';
 
 import Accordion from '@mui/material/Accordion';
 import AccordionDetails from '@mui/material/AccordionDetails';
 import AccordionSummary from '@mui/material/AccordionSummary';
 import Box from '@mui/material/Box';
 import Checkbox from '@mui/material/Checkbox';
-import Chip from '@mui/material/Chip';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
+import {
+  CalendarAttendeePicker,
+  type CalendarExternalAttendeePolicyState,
+} from './calendar-attendee-picker';
 import type { CalendarResource } from '@dwp-frontend/shared-utils';
 import {
   CALENDAR_EDITOR_COMMON_TIME_ZONES,
@@ -25,19 +23,20 @@ import {
   type CalendarEditorAttendee,
   type CalendarEventDraft,
 } from './calendar-event-editor-model';
+import { CalendarRecurrenceFields } from './calendar-recurrence-fields';
 
 type CalendarEventDialogDetailsProps = {
   expanded: boolean;
   form: CalendarEventDraft;
   attendees: readonly CalendarEditorAttendee[];
-  attendeeOptions: readonly CalendarEditorAttendee[];
   resources: readonly CalendarResource[];
-  peopleLoading: boolean;
+  externalAttendeePolicyState: CalendarExternalAttendeePolicyState;
+  peopleDirectoryEnabled: boolean;
   workProtected: boolean;
   workReceiptLocked: boolean;
   occurrenceOnly: boolean;
+  participantResourceLocked: boolean;
   validationVisible: boolean;
-  resourceRecurrenceError: boolean;
   eventResourceId?: string | null;
   onExpandedChange: (expanded: boolean) => void;
   onFormPatch: (patch: Partial<CalendarEventDraft>) => void;
@@ -52,14 +51,14 @@ export const CalendarEventDialogDetails = memo(function CalendarEventDialogDetai
   expanded,
   form,
   attendees,
-  attendeeOptions,
   resources,
-  peopleLoading,
+  externalAttendeePolicyState,
+  peopleDirectoryEnabled,
   workProtected,
   workReceiptLocked,
   occurrenceOnly,
+  participantResourceLocked,
   validationVisible,
-  resourceRecurrenceError,
   eventResourceId,
   onExpandedChange,
   onFormPatch,
@@ -155,40 +154,25 @@ export const CalendarEventDialogDetails = memo(function CalendarEventDialogDetai
             (['REQUIRED', 'OPTIONAL'] as const).map((attendeeType) => {
               const selectedForType = attendees.filter((person) => person.type === attendeeType);
               return (
-                <AutocompleteMultiField
+                <CalendarAttendeePicker
                   key={attendeeType}
-                  multiple
-                  disabled={occurrenceOnly}
-                  options={attendeeOptions.map((person) => ({ ...person, type: attendeeType }))}
+                  scope={`event-dialog:${attendeeType}`}
+                  type={attendeeType}
+                  disabled={participantResourceLocked}
                   value={selectedForType}
-                  onChange={(_, value) => onReplaceAttendees(attendeeType, value)}
-                  loading={peopleLoading}
-                  getOptionLabel={(person) => `${person.displayName} · ${person.workEmail ?? ''}`}
-                  isOptionEqualToValue={(option, value) => option.personId === value.personId}
-                  renderTags={(values, getTagProps) =>
-                    values.map((person, index) => (
-                      <Chip
-                        {...getTagProps({ index })}
-                        key={person.personId}
-                        size="small"
-                        label={person.displayName}
-                      />
-                    ))
-                  }
+                  externalPolicyState={externalAttendeePolicyState}
+                  directoryEnabled={peopleDirectoryEnabled}
+                  onChange={(value) => onReplaceAttendees(attendeeType, value)}
                   label={t(
                     attendeeType === 'REQUIRED'
                       ? 'event.requiredAttendeesLabel'
                       : 'event.optionalAttendeesLabel'
                   )}
-                  textFieldProps={{
-                    placeholder: selectedForType.length
-                      ? undefined
-                      : t(
-                          attendeeType === 'REQUIRED'
-                            ? 'event.requiredAttendeesPlaceholder'
-                            : 'event.optionalAttendeesPlaceholder'
-                        ),
-                  }}
+                  placeholder={t(
+                    attendeeType === 'REQUIRED'
+                      ? 'event.requiredAttendeesPlaceholder'
+                      : 'event.optionalAttendeesPlaceholder'
+                  )}
                 />
               );
             })}
@@ -208,7 +192,7 @@ export const CalendarEventDialogDetails = memo(function CalendarEventDialogDetai
                   inputProps={{ maxLength: 240 }}
                 />
                 <SelectField
-                  disabled={occurrenceOnly}
+                  disabled={participantResourceLocked}
                   label={t('event.resourceLabel')}
                   value={form.resourceId}
                   options={resourceOptions}
@@ -236,16 +220,6 @@ export const CalendarEventDialogDetails = memo(function CalendarEventDialogDetai
             }}
           >
             <SelectField
-              disabled={workProtected || occurrenceOnly}
-              label={t('event.recurrenceLabel')}
-              value={form.recurrence}
-              options={(['NONE', 'DAILY', 'WEEKLY', 'MONTHLY'] as const).map((value) => ({
-                value,
-                label: t(`event.recurrence.${value}`),
-              }))}
-              onValueChange={(value) => value && onFormPatch({ recurrence: value })}
-            />
-            <SelectField
               disabled={workProtected}
               label={t('event.visibilityLabel')}
               value={form.visibility}
@@ -266,6 +240,13 @@ export const CalendarEventDialogDetails = memo(function CalendarEventDialogDetai
               onValueChange={(value) => value && onFormPatch({ importance: value })}
             />
           </Box>
+          <CalendarRecurrenceFields
+            form={form}
+            disabled={workProtected || occurrenceOnly}
+            validationVisible={validationVisible}
+            boundedRequired={Boolean(form.type === 'MEETING' && form.resourceId)}
+            onFormPatch={onFormPatch}
+          />
           <SelectField
             disabled={workReceiptLocked || occurrenceOnly}
             label={t('event.timeZoneLabel')}
@@ -284,31 +265,6 @@ export const CalendarEventDialogDetails = memo(function CalendarEventDialogDetai
             }
             label={t('event.allDay')}
           />
-          {form.recurrence !== 'NONE' && (
-            <SelectField<number>
-              disabled={occurrenceOnly}
-              label={t('event.recurrenceIntervalLabel')}
-              value={form.recurrenceInterval}
-              options={[1, 2, 3, 4].map((value) => ({
-                value,
-                label: t(`event.recurrenceIntervals.${form.recurrence}`, { count: value }),
-              }))}
-              onValueChange={(value) => value && onFormPatch({ recurrenceInterval: Number(value) })}
-            />
-          )}
-          {form.recurrence !== 'NONE' && (
-            <DatePickerField
-              disabled={occurrenceOnly}
-              label={t('event.recurrenceUntilLabel')}
-              value={form.recurrenceUntil}
-              onValueChange={(value) => onFormPatch({ recurrenceUntil: value ?? '' })}
-              errorMessage={
-                validationVisible && resourceRecurrenceError
-                  ? t('event.resourceRecurrenceUntilRequired')
-                  : undefined
-              }
-            />
-          )}
           {form.type === 'MEETING' ? (
             <FormControlLabel
               control={

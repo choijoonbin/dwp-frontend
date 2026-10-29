@@ -1,7 +1,9 @@
 import type {
   WorkplaceServiceCatalogItem,
+  WorkplaceServiceLineAdjustment,
   WorkplaceServiceOrderEvent,
   WorkplaceServiceOrderState,
+  WorkplaceServiceProvider,
   WorkplaceServiceProviderState,
   WorkplaceServiceWorkState,
 } from '@dwp-frontend/shared-utils';
@@ -253,6 +255,30 @@ export function providerAllowsFulfillmentWrite(state: WorkplaceServiceProviderSt
   return state === 'READY';
 }
 
+export function workplaceServiceAdjustmentMatchesTarget(
+  adjustment:
+    Pick<WorkplaceServiceLineAdjustment, 'lineAdjustmentId' | 'serviceOrderId'> | null | undefined,
+  orderId: string,
+  adjustmentId: string
+): boolean {
+  return adjustment?.serviceOrderId === orderId && adjustment.lineAdjustmentId === adjustmentId;
+}
+
+export type WorkplaceServiceProviderTarget = Readonly<{
+  provider: WorkplaceServiceProvider | null;
+  unavailable: boolean;
+}>;
+
+export function resolveWorkplaceServiceProviderTarget(
+  providers: readonly WorkplaceServiceProvider[],
+  requestedCode: string | null | undefined
+): WorkplaceServiceProviderTarget {
+  const exactCode = requestedCode?.trim() ?? '';
+  if (!exactCode) return { provider: null, unavailable: false };
+  const provider = providers.find((candidate) => candidate.providerCode === exactCode) ?? null;
+  return { provider, unavailable: provider === null };
+}
+
 export type WorkplaceServiceResultUnknownAdjustment = Readonly<{
   lineAdjustmentId: string;
   serviceOrderLineId: string;
@@ -418,6 +444,7 @@ export function updateWorkplaceServiceFulfillmentSearch(
   update: Readonly<{
     state?: WorkplaceServiceOrderState | '';
     orderId?: string | null;
+    adjustmentId?: string | null;
     query?: string | null;
     sort?: WorkplaceServiceFulfillmentSort;
     direction?: 'asc' | 'desc';
@@ -428,16 +455,23 @@ export function updateWorkplaceServiceFulfillmentSearch(
     if (update.state) next.set('state', update.state);
     else next.delete('state');
     next.delete('order');
+    next.delete('adjustment');
   }
   if (update.orderId !== undefined) {
     if (update.orderId) next.set('order', update.orderId);
     else next.delete('order');
+    next.delete('adjustment');
+  }
+  if (update.adjustmentId !== undefined) {
+    if (update.adjustmentId) next.set('adjustment', update.adjustmentId);
+    else next.delete('adjustment');
   }
   if (update.query !== undefined) {
     const query = parseWorkplaceServiceFulfillmentQuery(update.query);
     if (query) next.set('q', query);
     else next.delete('q');
     next.delete('order');
+    next.delete('adjustment');
   }
   if (update.sort !== undefined) {
     if (update.sort === 'sla') next.delete('sort');

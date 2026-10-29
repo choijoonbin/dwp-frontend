@@ -46,18 +46,21 @@ export function WorkplaceServiceLineAdjustmentRecovery({
   administrator = false,
   canWrite = false,
   elevated = false,
+  targeted = false,
 }: {
   orderId: string;
   recovery: WorkplaceServiceResultUnknownAdjustment;
   administrator?: boolean;
   canWrite?: boolean;
   elevated?: boolean;
+  targeted?: boolean;
 }) {
   const { t, i18n } = useTranslation('rooms');
   const queryClient = useQueryClient();
   const [reason, setReason] = useState('');
   const [confirmed, setConfirmed] = useState(false);
   const intentRef = useRef<IdempotentMutationIntent | null>(null);
+  const targetRef = useRef<HTMLDivElement | null>(null);
   const locale = resolveSupportedLocale(i18n.resolvedLanguage);
   const statusQuery = useQuery({
     queryKey: [
@@ -108,8 +111,23 @@ export function WorkplaceServiceLineAdjustmentRecovery({
     onError: () => void statusQuery.refetch(),
   });
   const adjustment = reconcileMutation.data?.adjustment ?? statusQuery.data;
+  useEffect(() => {
+    if (!targeted || !targetRef.current) return;
+    targetRef.current.focus({ preventScroll: true });
+    targetRef.current.scrollIntoView?.({ block: 'center' });
+  }, [targeted]);
   return (
-    <Stack spacing={1} sx={{ border: 1, borderColor: 'warning.main', p: 1.25 }}>
+    <Stack
+      ref={targetRef}
+      tabIndex={targeted ? -1 : undefined}
+      data-testid={`workplace-service-adjustment-${recovery.lineAdjustmentId}`}
+      spacing={1}
+      sx={{
+        border: targeted ? 2 : 1,
+        borderColor: targeted ? 'primary.main' : 'warning.main',
+        p: 1.25,
+      }}
+    >
       <Stack direction="row" justifyContent="space-between" gap={1} alignItems="center">
         <Typography variant="subtitle2">{t('workplace.services.lineRecovery.title')}</Typography>
         {adjustment ? (

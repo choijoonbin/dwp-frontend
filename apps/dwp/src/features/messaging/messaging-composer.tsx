@@ -1,6 +1,6 @@
 import { useId, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { AtSign, Paperclip, RotateCcw, Send, SmilePlus, Video } from 'lucide-react';
+import { AtSign, Clock3, Paperclip, RotateCcw, Send, SmilePlus, Video } from 'lucide-react';
 import { ActionButton, ActionIconButton, FormField } from '@dwp-frontend/design-system';
 
 import Alert from '@mui/material/Alert';
@@ -26,12 +26,14 @@ import {
 import { MessagingAttachmentDrafts } from './messaging-attachment-drafts';
 import { MessagingExpressionPicker } from './messaging-expression-picker';
 import { MessagingMentionMenu } from './messaging-mention-menu';
+import { MessagingScheduleDialog } from './messaging-schedule-dialog';
 import { shouldSendMessagingMessage } from './messaging-model';
 import { MESSAGING_ATTACHMENT_ACCEPT } from './use-messaging-attachment-queue';
 
 import type { MessagingMember } from '@dwp-frontend/shared-utils';
 import type { MessagingAttachmentDraft } from './use-messaging-attachment-queue';
 import type { MessagingFormatAction } from './messaging-formatting-model';
+import type { MessagingDraftPersistenceState } from './use-messaging-draft-continuity';
 
 export function MessagingComposer({
   value,
@@ -55,6 +57,11 @@ export function MessagingComposer({
   onMentionsChange,
   allowMentionAll = false,
   onOpenMeeting,
+  onSchedule,
+  scheduleBusy = false,
+  scheduleError = false,
+  draftPersistenceState = 'IDLE',
+  onResolveDraftConflict,
 }: {
   value: string;
   onChange: (value: string) => void;
@@ -77,6 +84,11 @@ export function MessagingComposer({
   onMentionsChange?: (mentions: MessagingMentionDraft[]) => void;
   allowMentionAll?: boolean;
   onOpenMeeting?: () => void;
+  onSchedule?: (input: { scheduledFor: string; displayTimeZone: string }) => Promise<boolean>;
+  scheduleBusy?: boolean;
+  scheduleError?: boolean;
+  draftPersistenceState?: MessagingDraftPersistenceState;
+  onResolveDraftConflict?: (choice: 'SERVER' | 'LOCAL') => void;
 }) {
   const { t, i18n } = useTranslation('messaging');
   const statusId = useId();
@@ -89,22 +101,35 @@ export function MessagingComposer({
   const [mentionQuery, setMentionQuery] =
     useState<ReturnType<typeof resolveMessagingMentionQuery>>(null);
   const [mentionActiveIndex, setMentionActiveIndex] = useState(0);
+  const [scheduleOpen, setScheduleOpen] = useState(false);
   const hasReadyAttachment = attachments.some((attachment) => attachment.state === 'READY');
   const drafting = Boolean(value.trim() || hasReadyAttachment);
   const attachmentFailed = attachments.some(
     (attachment) => attachment.state === 'ERROR' || attachment.state === 'REJECTED'
   );
+  const draftPersistenceError =
+    draftPersistenceState === 'ERROR' || draftPersistenceState === 'CONFLICT';
   const status = hasError
     ? t('conversation.composerStatus.error')
     : attachmentBusy
       ? t('conversation.attachments.uploading')
       : attachmentFailed
         ? t('conversation.attachments.reviewFailed')
-        : isSending
-          ? t('conversation.composerStatus.sending')
-          : drafting
-            ? t('conversation.composerStatus.drafting')
-            : t('conversation.composerHint');
+        : draftPersistenceState === 'CONFLICT'
+          ? t('draft.conflict')
+          : draftPersistenceState === 'ERROR'
+            ? t('draft.error')
+            : draftPersistenceState === 'SAVING'
+              ? t('draft.saving')
+              : draftPersistenceState === 'LOADING'
+                ? t('draft.loading')
+                : isSending
+                  ? t('conversation.composerStatus.sending')
+                  : drafting
+                    ? draftPersistenceState === 'SAVED'
+                      ? t('draft.saved')
+                      : t('conversation.composerStatus.drafting')
+                    : t('conversation.composerHint');
   const korean = (i18n.resolvedLanguage ?? i18n.language).startsWith('ko');
   const mentionOptions = useMemo(
     () =>
@@ -235,6 +260,31 @@ export function MessagingComposer({
           }
         >
           {t('conversation.sendError')}
+        </Alert>
+      )}
+      {draftPersistenceState === 'CONFLICT' && onResolveDraftConflict && (
+        <Alert
+          severity="warning"
+          action={
+            <Stack direction="row" spacing={0.5}>
+              <ActionButton
+                intent="quiet"
+                size="small"
+                onClick={() => onResolveDraftConflict('SERVER')}
+              >
+                {t('draft.useServer')}
+              </ActionButton>
+              <ActionButton
+                intent="quiet"
+                size="small"
+                onClick={() => onResolveDraftConflict('LOCAL')}
+              >
+                {t('draft.keepMine')}
+              </ActionButton>
+            </Stack>
+          }
+        >
+          {t('draft.conflictDescription')}
         </Alert>
       )}
       <MessagingFormattingToolbar disabled={isSending} onFormat={format} />
@@ -428,6 +478,16 @@ export function MessagingComposer({
               <Video size={16} />
             </ActionIconButton>
           )}
+          {onSchedule && (
+            <ActionIconButton
+              label={t('schedule.action')}
+              disabled={isSending || scheduleBusy}
+              onClick={() => setScheduleOpen(true)}
+              size="small"
+            >
+              <Clock3 size={16} />
+            </ActionIconButton>
+          )}
           <Stack
             id={statusId}
             direction="row"
@@ -454,7 +514,7 @@ export function MessagingComposer({
                 flexShrink: 0,
                 borderRadius: '50%',
                 bgcolor:
-                  hasError || attachmentFailed
+                  hasError || attachmentFailed || draftPersistenceError
                     ? 'error.main'
                     : isSending || attachmentBusy
                       ? 'warning.main'
@@ -497,6 +557,17 @@ export function MessagingComposer({
         onClose={() => setExpressionAnchor(null)}
         onSelect={insertExpression}
       />
+      {onSchedule && (
+        <MessagingScheduleDialog
+          open={scheduleOpen}
+          bodyReady={Boolean(value.trim())}
+          attachmentBlocked={attachments.length > 0}
+          busy={scheduleBusy}
+          error={scheduleError}
+          onClose={() => setScheduleOpen(false)}
+          onSchedule={onSchedule}
+        />
+      )}
     </Stack>
   );
 }

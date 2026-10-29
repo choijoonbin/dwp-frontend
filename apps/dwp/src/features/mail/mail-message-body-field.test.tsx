@@ -57,4 +57,63 @@ describe('mail message body variable insertion', () => {
 
     expect(textarea.value).toBe('Hello {{recipientName}}');
   });
+
+  it('sanitizes rich clipboard content before inserting it into the live editor', async () => {
+    const onChange = vi.fn();
+    await act(async () =>
+      root.render(
+        <MailMessageBodyField
+          format="HTML"
+          value="<p>Hello </p>"
+          disabled={false}
+          onChange={onChange}
+        />
+      )
+    );
+    const editor = host.querySelector('[contenteditable="true"]') as HTMLDivElement;
+    const range = document.createRange();
+    range.selectNodeContents(editor);
+    range.collapse(false);
+    const selection = window.getSelection()!;
+    selection.removeAllRanges();
+    selection.addRange(range);
+    const paste = new Event('paste', { bubbles: true, cancelable: true });
+    Object.defineProperty(paste, 'clipboardData', {
+      value: {
+        getData: (type: string) =>
+          type === 'text/html'
+            ? '<strong onclick="steal()">safe</strong><img src=x onerror="steal()"><script>bad()</script>'
+            : 'safe',
+      },
+    });
+
+    await act(async () => editor.dispatchEvent(paste));
+
+    expect(editor.innerHTML).toBe('<p>Hello </p><strong>safe</strong>');
+    expect(editor.innerHTML).not.toContain('onclick');
+    expect(editor.innerHTML).not.toContain('<img');
+    expect(editor.innerHTML).not.toContain('<script');
+    expect(onChange).toHaveBeenLastCalledWith('<p>Hello </p><strong>safe</strong>');
+  });
+
+  it('sanitizes stored HTML before synchronizing it into the live editor', async () => {
+    const onChange = vi.fn();
+    await act(async () =>
+      root.render(
+        <MailMessageBodyField
+          format="HTML"
+          value={
+            '<p>Visible</p><script>steal()</script><style>bad</style><template>hidden</template><img src="https://tracker.example/pixel.png">'
+          }
+          disabled={false}
+          onChange={onChange}
+        />
+      )
+    );
+
+    const editor = host.querySelector('[contenteditable="true"]') as HTMLDivElement;
+    expect(editor.innerHTML).toBe('<p>Visible</p>');
+    expect(editor.querySelector('script, style, template, img')).toBeNull();
+    expect(onChange).toHaveBeenLastCalledWith('<p>Visible</p>');
+  });
 });

@@ -8,7 +8,6 @@ import {
   ActionIconButton,
   EmptyState,
   LoadingState,
-  LocalErrorState,
 } from '@dwp-frontend/design-system';
 import {
   applyNotificationTriage,
@@ -34,6 +33,7 @@ import { scheduleNotificationCacheInvalidation } from './notification-cache-poli
 import { NotificationActionCard } from './notification-action-card';
 import { NotificationHomeHeader } from './notification-home-header';
 import { NotificationHomeInsights } from './notification-home-insights';
+import { NotificationErrorState } from './notification-error-support';
 import { resolveNotificationDeliveryStatus } from './notification-delivery-status-model';
 import { NotificationPageFrame } from './notification-page-frame';
 import {
@@ -441,7 +441,8 @@ export function NotificationHome() {
         <Box>
           {header}
           <Box sx={{ mt: 2.5 }}>
-            <LocalErrorState
+            <NotificationErrorState
+              error={[summaryQuery.error, inboxQuery.error, profileQuery.error]}
               title={t('home.errorTitle')}
               description={t('home.errorDescription')}
               retryLabel={t('actions.retry')}
@@ -467,6 +468,7 @@ export function NotificationHome() {
       apps={topApps}
       appsLoading={appSummaryQuery.isLoading}
       appsError={appSummaryQuery.isError}
+      appsErrorValue={appSummaryQuery.error}
       appsRefreshing={appSummaryQuery.isFetching}
       profile={profile}
       deliveryStatus={resolveNotificationDeliveryStatus({
@@ -672,7 +674,8 @@ export function NotificationHome() {
               {activeKpi && selectionQuery.isLoading ? (
                 <LoadingState label={t('states.loading')} variant="skeleton" skeletonRows={3} />
               ) : activeKpi && selectionQuery.isError ? (
-                <LocalErrorState
+                <NotificationErrorState
+                  error={selectionQuery.error}
                   title={t('states.loadErrorTitle')}
                   description={t('states.loadErrorDescription')}
                   retryLabel={t('actions.retry')}

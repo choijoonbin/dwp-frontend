@@ -24,11 +24,9 @@ export function CalendarEventDialogStatus({
   saveError,
   versionConflict,
   calendarsError,
-  peopleError,
   onKeepDraft,
   onReloadCurrent,
   onRetryCalendars,
-  onRetryPeople,
 }: Readonly<{
   fromDwaion: boolean;
   workHandoff: boolean;
@@ -36,11 +34,9 @@ export function CalendarEventDialogStatus({
   saveError?: string | null;
   versionConflict: boolean;
   calendarsError: boolean;
-  peopleError: boolean;
   onKeepDraft: () => void;
   onReloadCurrent: () => void;
   onRetryCalendars: () => void;
-  onRetryPeople: () => void;
 }>) {
   const { t } = useTranslation('calendar');
   return (
@@ -83,18 +79,6 @@ export function CalendarEventDialogStatus({
           }
         >
           {t('event.calendarsLoadError')}
-        </InlineFeedback>
-      ) : null}
-      {peopleError ? (
-        <InlineFeedback
-          severity="warning"
-          action={
-            <ActionButton intent="quiet" size="small" onClick={onRetryPeople}>
-              {t('actions.retry')}
-            </ActionButton>
-          }
-        >
-          {t('event.peopleLoadError')}
         </InlineFeedback>
       ) : null}
     </>

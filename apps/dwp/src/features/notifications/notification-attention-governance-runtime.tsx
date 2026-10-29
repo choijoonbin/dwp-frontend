@@ -207,6 +207,7 @@ export function NotificationAttentionGovernanceRuntime() {
         workspace={workspace.data}
         status={status}
         errorMessage={status === 'ERROR' ? loadError : undefined}
+        error={workspace.error}
         actorUserId={actorUserId ?? 0}
         canManage={queryEnabled && canManage}
         canApprove={queryEnabled && canApprove}

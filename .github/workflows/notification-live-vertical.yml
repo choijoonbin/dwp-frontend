@@ -1,0 +1,211 @@
+name: Notification live vertical
+
+on:
+  workflow_dispatch:
+    inputs:
+      backend_ref:
+        description: dwp-backend branch, tag, or full commit SHA
+        required: true
+        default: dwp-dev
+        type: string
+  pull_request:
+    paths:
+      - '.github/workflows/notification-live-vertical.yml'
+      - 'apps/dwp/src/components/notification-*.ts'
+      - 'apps/dwp/src/components/notification-*.tsx'
+      - 'apps/dwp/src/features/notifications/**'
+      - 'apps/dwp/src/routes/notification-routes.tsx'
+      - 'e2e/live-notification-vertical.spec.ts'
+      - 'e2e/support/notification-live-*.ts'
+      - 'libs/shared-utils/src/api/notification-*.ts'
+      - 'libs/shared-utils/src/api/auth-api.ts'
+      - 'libs/shared-utils/src/axios-instance*.ts'
+      - 'libs/shared-utils/src/http-error.ts'
+      - '.node-version'
+      - 'playwright.notification-live.config.ts'
+      - 'playwright.config.ts'
+      - 'scripts/check-notification-live-workflow.test.mjs'
+      - 'vite.config.ts'
+      - 'package.json'
+      - 'yarn.lock'
+  push:
+    branches:
+      - dwp-dev
+    paths:
+      - '.github/workflows/notification-live-vertical.yml'
+      - 'apps/dwp/src/components/notification-*.ts'
+      - 'apps/dwp/src/components/notification-*.tsx'
+      - 'apps/dwp/src/features/notifications/**'
+      - 'apps/dwp/src/routes/notification-routes.tsx'
+      - 'e2e/live-notification-vertical.spec.ts'
+      - 'e2e/support/notification-live-*.ts'
+      - 'libs/shared-utils/src/api/notification-*.ts'
+      - 'libs/shared-utils/src/api/auth-api.ts'
+      - 'libs/shared-utils/src/axios-instance*.ts'
+      - 'libs/shared-utils/src/http-error.ts'
+      - '.node-version'
+      - 'playwright.notification-live.config.ts'
+      - 'playwright.config.ts'
+      - 'scripts/check-notification-live-workflow.test.mjs'
+      - 'vite.config.ts'
+      - 'package.json'
+      - 'yarn.lock'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: notification-live-vertical-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  live-vertical:
+    name: Browser to durable Notification delivery
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+
+    steps:
+      - name: Check out frontend under test
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          path: dwp-frontend
+
+      - name: Check out backend runtime
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          repository: choijoonbin/dwp-backend
+          ref: ${{ github.event_name == 'workflow_dispatch' && inputs.backend_ref || 'dwp-dev' }}
+          path: dwp-backend
+          token: ${{ secrets.RELEASE_COORDINATOR_TOKEN || github.token }}
+
+      - name: Bind evidence to the exact source revisions
+        id: source-revisions
+        run: |
+          set -Eeuo pipefail
+          frontend_sha="$(git -C dwp-frontend rev-parse HEAD)"
+          backend_sha="$(git -C dwp-backend rev-parse HEAD)"
+          [[ "$frontend_sha" =~ ^[0-9a-f]{40,64}$ ]]
+          [[ "$backend_sha" =~ ^[0-9a-f]{40,64}$ ]]
+          printf 'frontend_sha=%s\n' "$frontend_sha" >> "$GITHUB_OUTPUT"
+          printf 'backend_sha=%s\n' "$backend_sha" >> "$GITHUB_OUTPUT"
+
+      - name: Set up Java
+        uses: actions/setup-java@b6effb05e454b25005698d916606bdc6ffcbf961 # v5
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@9c971963bec38e04b3d30dcc455b5382be2fdbfb # v6
+        with:
+          cache-provider: basic
+
+      - name: Set up Node.js
+        uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version-file: dwp-frontend/.node-version
+          cache: yarn
+          cache-dependency-path: dwp-frontend/yarn.lock
+
+      - name: Verify the live gate cannot degrade to a mock or no-op
+        working-directory: dwp-frontend
+        env:
+          DWP_BACKEND_CHECKOUT: ${{ github.workspace }}/dwp-backend
+        run: >-
+          node --test
+          scripts/check-notification-live-workflow.test.mjs
+          e2e/support/notification-live-evidence.test.ts
+
+      - name: Install frontend dependencies
+        working-directory: dwp-frontend
+        env:
+          YARN_ENABLE_HARDENED_MODE: '1'
+        run: |
+          set -Eeuo pipefail
+          corepack enable
+          corepack prepare yarn@4.17.1 --activate
+          corepack yarn install --immutable
+          corepack yarn playwright install --with-deps chromium
+
+      - name: Lint the live gate source and evidence helpers
+        working-directory: dwp-frontend
+        run: >-
+          corepack yarn eslint
+          e2e/live-notification-vertical.spec.ts
+          e2e/support/notification-live-*.ts
+          scripts/check-notification-live-workflow.test.mjs
+
+      - name: Start disposable PostgreSQL, Redis, Kafka, and application services
+        working-directory: dwp-backend
+        env:
+          DWP_DEVCTL_STARTUP_TIMEOUT_SECONDS: '600'
+        run: |
+          set -Eeuo pipefail
+          docker compose --profile events down -v --remove-orphans
+          python3 scripts/devctl.py up auth platform people provider notification gateway
+
+      - name: Require all durable dependencies and the Notification outbox topic
+        working-directory: dwp-backend
+        env:
+          REDISCLI_AUTH: dwp_redis_password
+        run: |
+          set -Eeuo pipefail
+          test "$(docker compose exec -T -e REDISCLI_AUTH redis redis-cli --raw PING)" = 'PONG'
+          test "$(docker compose exec -T postgres psql -U dwp_user -d dwp_notification -Atc "SELECT to_regclass('public.ntf_user_notifications')")" = 'ntf_user_notifications'
+          docker compose --profile events exec -T kafka /opt/kafka/bin/kafka-topics.sh \
+            --bootstrap-server kafka:29092 \
+            --describe \
+            --topic dwp.notification.outbox.v1
+
+      - name: Build the production frontend used by the browser gate
+        working-directory: dwp-frontend
+        env:
+          VITE_API_URL: http://127.0.0.1:4318
+          VITE_API_PROXY_TARGET: http://127.0.0.1:8080
+          VITE_PRODUCT_NOTIFICATION_RUNTIME: enabled
+          VITE_PRODUCT_SURFACE_TELEMETRY_COLLECTION: 'false'
+        run: corepack yarn vite build
+
+      - name: Run the real Notification vertical gate
+        working-directory: dwp-frontend
+        env:
+          NOTIFICATION_LIVE_ACK: I_UNDERSTAND_THIS_WRITES_DISPOSABLE_LOCAL_NOTIFICATIONS
+          NOTIFICATION_LIVE_BACKEND_ROOT: ${{ github.workspace }}/dwp-backend
+          NOTIFICATION_LIVE_BASE_URL: http://127.0.0.1:4318
+          NOTIFICATION_LIVE_GATEWAY_URL: http://127.0.0.1:8080
+          NOTIFICATION_LIVE_SERVICE_URL: http://127.0.0.1:8008
+          NOTIFICATION_LIVE_TENANT_ID: '1'
+          NOTIFICATION_LIVE_EMAIL: joonbin@sk.com
+          NOTIFICATION_LIVE_PASSWORD: admin1234!
+          NOTIFICATION_LIVE_PRODUCER_SOURCE: dwp-approval-server
+          NOTIFICATION_LIVE_PRODUCER_TOKEN: dwp-local-approval-notification-token
+          NOTIFICATION_LIVE_REDIS_PASSWORD: dwp_redis_password
+          NOTIFICATION_LIVE_FRONTEND_SHA: ${{ steps.source-revisions.outputs.frontend_sha }}
+          NOTIFICATION_LIVE_BACKEND_SHA: ${{ steps.source-revisions.outputs.backend_sha }}
+          NOTIFICATION_LIVE_EVIDENCE_TIMEOUT_MS: '60000'
+          NOTIFICATION_LIVE_RUN_ID: ci-${{ github.run_id }}-${{ github.run_attempt }}
+        run: corepack yarn playwright test --config playwright.notification-live.config.ts
+
+      - name: Stop disposable runtime
+        if: ${{ always() }}
+        working-directory: dwp-backend
+        run: |
+          set +e
+          python3 scripts/devctl.py stop
+          devctl_status=$?
+          docker compose --profile events down -v --remove-orphans
+          compose_status=$?
+          if (( devctl_status != 0 || compose_status != 0 )); then
+            exit 1
+          fi
+
+      - name: Upload vertical evidence and service logs
+        if: ${{ always() }}
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        with:
+          name: notification-live-vertical-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            dwp-frontend/artifacts/notification-live-vertical/
+            dwp-backend/.dev-runtime/logs/
+          if-no-files-found: error
+          retention-days: 30

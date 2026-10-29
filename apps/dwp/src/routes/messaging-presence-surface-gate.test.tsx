@@ -44,6 +44,7 @@ vi.mock('../components/product-surface-loading-shell', () => ({
 
 vi.mock('@dwp-frontend/shared-utils', () => ({
   isAppReadEntitled: () => true,
+  useAuth: () => ({ user: { tenantId: 7, userId: 42 } }),
   usePermissions: () => ({ permissions: [], isLoaded: true }),
 }));
 
@@ -121,7 +122,10 @@ describe('Messaging presence ProductSurface gate', () => {
 
     await renderBoundary();
 
-    expect(mocks.useMessagingPresenceHeartbeat).toHaveBeenCalledWith(true);
+    expect(mocks.useMessagingPresenceHeartbeat).toHaveBeenCalledWith(true, {
+      tenantId: 7,
+      userId: 42,
+    });
     expect(host.textContent).toContain('messaging work');
   });
 

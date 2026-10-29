@@ -9,6 +9,10 @@
       "navigationLabel": "메일 탐색"
     }
   },
+  "live": {
+    "stale": "실시간 메일 업데이트를 사용할 수 없어 현재 표시된 메일 근거가 오래되었을 수 있습니다.",
+    "refresh": "메일 새로고침"
+  },
   "navigation": {
     "groups": {
       "mail": {
@@ -41,6 +45,9 @@
         },
         "drafts": {
           "label": "임시 보관함"
+        },
+        "more": {
+          "label": "기타 메일함"
         },
         "archive": {
           "label": "보관함"
@@ -163,10 +170,37 @@
       "badge": "오늘의 메일 흐름",
       "attentionTitle": "지금 {{count}}개의 중요 신호가 판단을 기다립니다",
       "clearTitle": "중요한 메일을 모두 정리했습니다",
+      "noAccountTitle": "메일 계정을 연결해 시작하세요",
+      "noAccountDescription": "메일을 작성하거나 검색하고 받은 메일을 열기 전에 할당된 메일 계정을 연결하세요.",
       "description": "도착 순서보다 업무 영향과 다음 행동을 기준으로 가장 짧은 처리 경로를 제안합니다.",
       "accountWarning": "연결 확인 {{count}}개",
       "accountHealthy": "표시된 계정에 연결 경고 없음",
       "updatedAt": "{{value}} 기준",
+      "freshnessBasis": "최근 {{minutes}}분 이내 성공 동기화 근거 기준",
+      "oldestSuccessfulSync": "계정 중 가장 오래된 확인 동기화 {{value}}",
+      "noSuccessfulSync": "확인된 성공 동기화 기록 없음",
+      "health": {
+        "NO_ACCOUNT": {
+          "label": "연결된 메일 계정 없음",
+          "action": "계정 연결"
+        },
+        "ACTION_REQUIRED": {
+          "label": "계정 연결 {{count}}개 복구 필요",
+          "action": "계정 복구"
+        },
+        "PAUSED": {
+          "label": "계정 연결 {{count}}개 일시 중지됨",
+          "action": "연결 상태 확인"
+        },
+        "STALE": {
+          "label": "계정 {{count}}개의 동기화 근거가 오래됨",
+          "action": "동기화 확인"
+        },
+        "HEALTHY": {
+          "label": "모든 계정의 동기화 근거가 최신 상태",
+          "action": "받은 메일 보기"
+        }
+      },
       "start": "집중 처리 시작",
       "openInbox": "받은 메일 보기",
       "flowTitle": "처리 리듬",
@@ -385,6 +419,21 @@
     "page": "{{current}} / {{total}} 페이지",
     "previousPage": "이전 페이지",
     "nextPage": "다음 페이지",
+    "bulk": {
+      "select": "메일 선택",
+      "done": "선택 완료",
+      "selected_one": "메일 {{count}}건 선택됨",
+      "selected_other": "메일 {{count}}건 선택됨",
+      "selectPage": "현재 페이지 전체 선택",
+      "clear": "선택 해제",
+      "selectMessage": "메일 선택",
+      "deselectMessage": "메일 선택 해제",
+      "success_one": "메일 {{count}}건을 변경했습니다.",
+      "success_other": "메일 {{count}}건을 변경했습니다.",
+      "partial": "메일 {{succeeded}}건을 변경했고 {{failed}}건은 변경하지 못해 선택 상태로 남겼습니다.",
+      "failed_one": "선택한 메일을 변경하지 못했습니다. 새로고침 후 다시 시도하세요.",
+      "failed_other": "선택한 메일 {{count}}건을 변경하지 못했습니다. 새로고침 후 다시 시도하세요."
+    },
     "inbox": {
       "eyebrow": "우선순위 받은편지함",
       "title": "받은 메일",
@@ -567,6 +616,9 @@
       "SENDING": "발송 중",
       "RETRYING": "재시도 대기",
       "SENT": "발송 완료",
+      "PROVIDER_ACCEPTED": "공급자 접수(수신자 전달 미확인)",
+      "RESULT_UNKNOWN": "결과 확인 필요",
+      "DELIVERED": "수신자 전달 확인",
       "FAILED": "발송 실패"
     },
     "retry": "다시 보내기",
@@ -1243,6 +1295,10 @@
       "attachmentOnly": "첨부 있음",
       "folder": "폴더",
       "allFolders": "모든 폴더",
+      "applyFilters": "필터 적용",
+      "pendingFilters": "변경한 필터를 확인한 뒤 적용하면 검색을 실행합니다.",
+      "filtersApplied": "현재 결과에 이 필터가 적용되어 있습니다.",
+      "invalidDateRange": "종료 날짜는 시작 날짜와 같거나 이후여야 합니다.",
       "clearFilters": "필터 초기화",
       "startTitle": "내 메일 검색",
       "startDescription": "보낸 사람, 제목 또는 문구를 입력해 접근 가능한 메일을 찾으세요.",
@@ -1310,6 +1366,8 @@
       "description": "메일 발송 서비스가 보고한 최신 상태를 확인합니다.",
       "sentUnconfirmed": "공급자 수락",
       "recipientDeliveryUnconfirmed": "수신자 배달은 아직 확인되지 않았습니다.",
+      "providerAcceptedDescription": "공급자가 메일을 접수했지만 수신자 전달은 확인되지 않았습니다.",
+      "resultUnknownDescription": "발송 결과를 확인할 수 없어 중복 발송 방지를 위해 자동 재전송하지 않습니다. 다음 동작 전에 공급자 근거를 확인하세요.",
       "limitTitle": "확인 가능한 발송 정보가 제한되어 있습니다",
       "limitDescription": "예약 변경, 취소와 안전한 재시도는 공급자 접수와 재시도 가능 여부를 확인할 수 있을 때 제공됩니다.",
       "emptyTitle": "보낸 메일이 없습니다",
@@ -1332,10 +1390,12 @@
         "QUEUED": "발송 대기",
         "SENDING": "전송 중",
         "ACCEPTED": "공급자 접수",
+        "PROVIDER_ACCEPTED": "공급자 접수(수신자 전달 미확인)",
         "DELIVERED": "배달 확인",
         "BOUNCED": "반송됨",
         "FAILED": "발송 실패",
         "UNKNOWN": "결과 확인 필요",
+        "RESULT_UNKNOWN": "결과 확인 필요",
         "CANCELLED": "예약 취소"
       },
       "listLabel": "발송 요청 목록",
@@ -1458,6 +1518,7 @@
       "shortcutTab": "단축키",
       "defaultSender": "기본 발신 계정",
       "manageWritingAssets": "템플릿 및 서명 관리",
+      "requestSetup": "메일 계정 설정 요청",
       "capabilityBoundary": "기능 준비 상태는 계정별로 각각 검증합니다. 사용할 수 없는 기능은 관련 공급자 어댑터, 인증, 동기화 또는 신뢰된 첨부파일 검사기가 준비되어야 합니다.",
       "capabilityLoadError": "기능 준비 상태를 확인하지 못했습니다. 발송은 계속 서버에서 통제하며 준비되지 않은 기능은 차단됩니다.",
       "capabilityLoading": "기능 준비 상태 확인 중",
@@ -1494,8 +1555,14 @@
           "ACTIVATE_EXTERNALLY": "이 계정을 사용하기 전에 공급자에서 다시 연결하세요.",
           "CONTACT_ADMIN": "메일 관리자에게 문의하세요.",
           "REQUEST_ACCESS": "이 발신 계정에 대한 접근 권한을 요청하세요."
+        },
+        "cta": {
+          "ACTIVATE_EXTERNALLY": "재연결 도움 요청",
+          "CONTACT_ADMIN": "관리자 지원 요청",
+          "REQUEST_ACCESS": "계정 접근 권한 요청"
         }
       },
+      "diagnostics": "진단 근거 보기",
       "authorization": {
         "title": "공급자 인증 근거",
         "consent": "공급자 동의",
@@ -1557,6 +1624,11 @@
       "keyboardShortcuts": "메일 키보드 단축키 사용",
       "keyboardShortcutsDescription": "입력창 밖에서만 메일 이동과 작성 단축키를 사용합니다.",
       "shortcutList": "메일 키보드 단축키 목록",
+      "unsavedChanges": "저장하지 않은 환경설정 변경이 있습니다. 탭을 이동해도 이 초안은 유지됩니다.",
+      "discardChanges": "변경 취소",
+      "refreshConfirmTitle": "저장하지 않은 변경을 취소할까요?",
+      "refreshConfirmDescription": "새로고침하면 서버의 최신 환경설정을 불러오고 현재 초안 변경을 제거합니다.",
+      "refreshAndDiscard": "취소 후 새로고침",
       "preferencesSaved": "개인 메일 환경설정을 저장했습니다.",
       "preferencesSaveError": "환경설정이 변경되었거나 저장하지 못했습니다. 새로고침 후 다시 시도하세요.",
       "preferencesLoadError": "계정과 개인 환경설정을 불러오지 못했습니다."

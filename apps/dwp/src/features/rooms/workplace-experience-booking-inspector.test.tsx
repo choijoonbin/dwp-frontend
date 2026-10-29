@@ -7,6 +7,9 @@ import { HttpError } from '@dwp-frontend/shared-utils/http-error';
 import { WorkplaceExperienceBookingInspector } from './workplace-experience-booking-inspector';
 
 const api = vi.hoisted(() => ({ detail: vi.fn(), cancel: vi.fn(), impact: vi.fn() }));
+const authority = vi.hoisted(() => ({
+  activeAccessMode: 'ELEVATED' as 'NORMAL' | 'ELEVATED',
+}));
 const controls = vi.hoisted(() => ({
   submit: () => {},
   reason: (_event: { target: { value: string } }) => {},
@@ -17,6 +20,14 @@ vi.mock('@dwp-frontend/shared-utils', async () => ({
   getWorkplaceExperienceBookingDetail: api.detail,
   getWorkplaceFutureBookingImpact: api.impact,
   forceCancelWorkplaceBooking: api.cancel,
+  useProductSurfaceAuthority: () => ({
+    snapshot: {
+      envelope: {
+        activeAccessMode: authority.activeAccessMode,
+        decisionRevision: `decision-${authority.activeAccessMode}`,
+      },
+    },
+  }),
 }));
 vi.mock('react-i18next', () => ({ useTranslation: () => ({ t: (key: string) => key }) }));
 vi.mock('./workplace-experience-authority', () => ({
@@ -159,6 +170,7 @@ const confirm = async (reason: string) => {
 beforeEach(() => {
   (globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
   vi.clearAllMocks();
+  authority.activeAccessMode = 'ELEVATED';
   api.detail.mockResolvedValue(detail(5));
   api.impact.mockResolvedValue({ affectedBookings: null });
   client = new QueryClient({
@@ -192,7 +204,9 @@ it('captures one original command and discards its late 409 after the same booki
     controls.submit();
   });
   expect(api.cancel).toHaveBeenCalledTimes(1);
-  expect(api.cancel).toHaveBeenNthCalledWith(1, bookingId, 5, 'Original approved reason');
+  expect(api.cancel).toHaveBeenNthCalledWith(1, bookingId, 5, 'Original approved reason', {
+    activeAccessMode: 'ELEVATED',
+  });
   await render(null);
   api.detail.mockResolvedValue(detail(6));
   await render(bookingId);
@@ -217,6 +231,34 @@ it('captures one original command and discards its late 409 after the same booki
     controls.submit();
   });
   expect(api.cancel).toHaveBeenCalledTimes(2);
-  expect(api.cancel).toHaveBeenNthCalledWith(2, bookingId, 6, 'Reopened approved reason');
+  expect(api.cancel).toHaveBeenNthCalledWith(2, bookingId, 6, 'Reopened approved reason', {
+    activeAccessMode: 'ELEVATED',
+  });
   expect(onClose).toHaveBeenCalledTimes(1);
+});
+
+it('keeps force cancellation read-only in NORMAL mode and enables it in ELEVATED mode', async () => {
+  authority.activeAccessMode = 'NORMAL';
+  await render(bookingId);
+  await act(async () => {
+    await new Promise((resolve) => setTimeout(resolve, 0));
+  });
+
+  expect(container.textContent).toContain('workplace.admin.operations.elevationRequired');
+  expect(container.textContent).not.toContain('workplace.admin.operations.forceCancel.submit');
+  await act(async () => controls.submit());
+  expect(api.cancel).not.toHaveBeenCalled();
+
+  authority.activeAccessMode = 'ELEVATED';
+  await render(bookingId);
+  await act(async () => {
+    await new Promise((resolve) => setTimeout(resolve, 0));
+  });
+  await confirm('Elevated approved reason');
+  api.cancel.mockResolvedValueOnce(undefined);
+  await act(async () => controls.submit());
+
+  expect(api.cancel).toHaveBeenCalledWith(bookingId, 5, 'Elevated approved reason', {
+    activeAccessMode: 'ELEVATED',
+  });
 });

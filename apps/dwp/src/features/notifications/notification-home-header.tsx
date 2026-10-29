@@ -28,15 +28,18 @@ export function NotificationHomeHeader({
   onRefresh: () => void;
 }) {
   const { t } = useTranslation('notifications');
+  const synchronizedAt = generatedAt
+    ? formatDate(generatedAt, { hour: '2-digit', minute: '2-digit' })
+    : null;
   return (
     <Box
       component="header"
       data-testid="notification-home-header"
       sx={{
         display: 'grid',
-        gridTemplateColumns: { xs: 'minmax(0, 1fr) auto', md: 'auto minmax(220px, 1fr) auto' },
+        gridTemplateColumns: { xs: 'minmax(0, 1fr)', md: 'auto minmax(220px, 1fr) auto' },
         gridTemplateAreas: {
-          xs: '"title state" "search search"',
+          xs: '"title" "state" "search"',
           md: '"title search state"',
         },
         alignItems: 'center',
@@ -97,23 +100,27 @@ export function NotificationHomeHeader({
         direction="row"
         gap={0.5}
         alignItems="center"
-        sx={{ gridArea: 'state', justifyContent: 'flex-end' }}
+        sx={{ gridArea: 'state', justifyContent: { xs: 'space-between', md: 'flex-end' } }}
       >
         <Chip
           size="small"
           label={
             <Stack direction="row" alignItems="center" gap={1}>
               <Box component="span">{state === 'live' ? t('home.live') : t(`states.${state}`)}</Box>
-              {generatedAt && (
+              {generatedAt && synchronizedAt && (
                 <Typography
                   component="time"
                   dateTime={generatedAt}
                   variant="caption"
-                  sx={{ display: { xs: 'none', md: 'inline' } }}
+                  aria-label={t('workbench.syncedAt', { time: synchronizedAt })}
+                  sx={{ whiteSpace: 'nowrap' }}
                 >
-                  {t('workbench.syncedAt', {
-                    time: formatDate(generatedAt, { hour: '2-digit', minute: '2-digit' }),
-                  })}
+                  <Box component="span" sx={{ display: { xs: 'inline', md: 'none' } }}>
+                    {synchronizedAt}
+                  </Box>
+                  <Box component="span" sx={{ display: { xs: 'none', md: 'inline' } }}>
+                    {t('workbench.syncedAt', { time: synchronizedAt })}
+                  </Box>
                 </Typography>
               )}
             </Stack>

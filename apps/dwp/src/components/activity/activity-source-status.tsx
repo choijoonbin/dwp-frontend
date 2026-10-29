@@ -1,5 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { CheckCircle2, CircleAlert, LockKeyhole } from 'lucide-react';
+import { ActionButton } from '@dwp-frontend/design-system';
 import { formatDate } from '@dwp-frontend/shared-i18n';
 import type { ActivitySourceState } from '@dwp-frontend/shared-utils';
 import Box from '@mui/material/Box';
@@ -10,12 +11,17 @@ import Typography from '@mui/material/Typography';
 export function ActivitySourceStatus({
   sources,
   partial = false,
+  onRetry,
+  retrying = false,
 }: {
   sources?: ActivitySourceState[];
   partial?: boolean;
+  onRetry?: () => void;
+  retrying?: boolean;
 }) {
   const { t } = useTranslation('work');
   if (!sources?.length) return null;
+  const sourceUnavailable = sources.some((source) => source.status === 'UNAVAILABLE');
   return (
     <Box aria-label={t('activityFoundation.sources.title')} sx={{ mt: 1.5 }}>
       <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
@@ -62,10 +68,23 @@ export function ActivitySourceStatus({
           );
         })}
       </Box>
-      {partial && (
-        <Typography role="status" variant="body2" sx={{ mt: 1, color: 'text.secondary' }}>
-          {t('activityFoundation.sources.partial')}
-        </Typography>
+      {(partial || sourceUnavailable) && (
+        <Box role="status" sx={{ mt: 1 }}>
+          <Typography variant="body2" color="text.secondary">
+            {t('activityFoundation.sources.partial')}
+          </Typography>
+          {onRetry && (
+            <ActionButton
+              intent="secondary"
+              size="small"
+              onClick={onRetry}
+              disabled={retrying}
+              sx={{ mt: 0.75 }}
+            >
+              {t('activityFoundation.sources.retry')}
+            </ActionButton>
+          )}
+        </Box>
       )}
     </Box>
   );

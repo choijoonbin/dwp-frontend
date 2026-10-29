@@ -1,5 +1,8 @@
 {
   "shellReadyMs": 3000,
+  "mailRouteReadyMs": 5000,
+  "workplaceRouteReadyMs": 3500,
   "routeTransitionMs": 1000,
+  "workplaceRouteTransitionMs": 1200,
   "cumulativeLayoutShift": 0.1
 }

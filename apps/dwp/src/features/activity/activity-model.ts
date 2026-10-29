@@ -28,6 +28,23 @@ export const ACTIVITY_OBJECT_TYPES = ['WORK_ITEM', 'WORKSPACE_APP', 'AGENT_RUN']
 export type ActorFilter = 'all' | WorkspaceActivityActor;
 export type StateFilter = 'all' | WorkspaceActivityState;
 
+export const ACTIVITY_SEARCH_MIN_LENGTH = 3;
+const ACTIVITY_EXACT_UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/iu;
+
+export function normalizeActivitySearchQuery(value: string): string {
+  return value.trim();
+}
+
+export function validActivitySearchQuery(value: string): boolean {
+  const normalized = normalizeActivitySearchQuery(value);
+  const codePointLength = Array.from(normalized).length;
+  return (
+    codePointLength === 0 ||
+    codePointLength >= ACTIVITY_SEARCH_MIN_LENGTH ||
+    ACTIVITY_EXACT_UUID.test(normalized)
+  );
+}
+
 function isActorFilter(value: unknown): value is ActorFilter {
   return ACTIVITY_ACTORS.includes(value as ActorFilter);
 }
@@ -42,10 +59,11 @@ const FILTER_KEYS = ['source', 'objectType', 'objectId', 'executionId', 'from', 
 export function readActivityFilters(params: URLSearchParams): WorkspaceActivityFilters {
   const actor = params.get('actor');
   const state = params.get('state');
+  const query = normalizeActivitySearchQuery(params.get('q') ?? '');
   return {
     actor: isActorFilter(actor) && actor !== 'all' ? actor : undefined,
     state: isStateFilter(state) && state !== 'all' ? state : undefined,
-    query: params.get('q') || undefined,
+    query: query && validActivitySearchQuery(query) ? query : undefined,
     ...Object.fromEntries(FILTER_KEYS.map((key) => [key, params.get(key) || undefined])),
     cursor: params.get('cursor') || undefined,
     limit: 50,
@@ -123,7 +141,8 @@ export function activityRefreshState(
     dataUpdatedAt: number;
     data?: { generatedAt?: string; partial?: boolean };
   },
-  now: number
+  now: number,
+  staleAfterMs = 90_000
 ): 'live' | 'syncing' | 'stale' | 'degraded' {
   if (query.isError || query.data?.partial) return 'degraded';
   if (query.isFetching) return 'syncing';
@@ -133,8 +152,21 @@ export function activityRefreshState(
   if (
     !query.dataUpdatedAt ||
     !Number.isFinite(sourceAt) ||
-    now - Math.min(sourceAt, query.dataUpdatedAt) > 90_000
+    now - Math.min(sourceAt, query.dataUpdatedAt) > staleAfterMs
   )
     return 'stale';
   return 'live';
+}
+
+export function activityCompositeRefreshState(
+  states: readonly ('live' | 'syncing' | 'stale' | 'degraded')[]
+): 'live' | 'syncing' | 'stale' | 'degraded' {
+  if (states.includes('degraded')) return 'degraded';
+  if (states.includes('stale')) return 'stale';
+  if (states.includes('syncing')) return 'syncing';
+  return 'live';
+}
+
+export function activityEmptyStateKind(activeFilterCount: number): 'empty' | 'filtered' {
+  return activeFilterCount > 0 ? 'filtered' : 'empty';
 }

@@ -4,7 +4,6 @@ import { CalendarDays } from 'lucide-react';
 import { resolveSystemTimeZone } from '@dwp-frontend/shared-i18n';
 import { resolveIdempotentMutationIntent } from '@dwp-frontend/shared-utils';
 import {
-  DatePickerField,
   DateTimePickerField,
   FormDialog,
   FormField,
@@ -21,6 +20,7 @@ import Typography from '@mui/material/Typography';
 import type {
   CalendarEventImportance,
   CalendarEventType,
+  CalendarDayOfWeek,
   CalendarRecurrence,
   CalendarVisibility,
   CompanyCalendar,
@@ -32,6 +32,12 @@ import type {
 } from '@dwp-frontend/shared-utils';
 
 import { calendarDate, calendarTime } from './calendar-components';
+import {
+  calendarRecurrenceUntilIsValid,
+  patchCalendarEventDraft,
+  type CalendarRecurrenceEndMode,
+} from './calendar-event-editor-model';
+import { CalendarRecurrenceFields } from './calendar-recurrence-fields';
 
 const COMPANY_COLORS = ['#0F766E', '#2563EB', '#7C3AED', '#B45309', '#BE123C'] as const;
 
@@ -153,12 +159,15 @@ type CompanyEventDraft = {
   recurrence: CalendarRecurrence;
   recurrenceInterval: number;
   recurrenceUntil: string;
+  recurrenceDays: CalendarDayOfWeek[];
+  recurrenceCount: number;
+  recurrenceEndMode: CalendarRecurrenceEndMode;
   importance: CalendarEventImportance;
 };
 
 function eventDraft(event: CompanyCalendarEvent | null): CompanyEventDraft {
   const start = nextHour();
-  return {
+  const draft: CompanyEventDraft = {
     title: event?.title ?? '',
     description: event?.description ?? '',
     type: event?.type ?? 'REMINDER',
@@ -171,8 +180,16 @@ function eventDraft(event: CompanyCalendarEvent | null): CompanyEventDraft {
     recurrence: event?.recurrence ?? 'NONE',
     recurrenceInterval: event?.recurrenceInterval ?? 1,
     recurrenceUntil: event?.recurrenceUntil ?? '',
+    recurrenceDays: event?.recurrenceDays ?? [],
+    recurrenceCount: event?.recurrenceCount ?? 10,
+    recurrenceEndMode: event?.recurrenceCount
+      ? 'COUNT'
+      : event?.recurrenceUntil
+        ? 'UNTIL'
+        : 'NEVER',
     importance: event?.importance ?? 'NORMAL',
   };
+  return patchCalendarEventDraft(draft, {});
 }
 
 function createInput(draft: CompanyEventDraft): Omit<CreateCalendarEventInput, 'idempotencyKey'> {
@@ -189,7 +206,15 @@ function createInput(draft: CompanyEventDraft): Omit<CreateCalendarEventInput, '
     visibility: draft.visibility,
     recurrence: draft.recurrence,
     recurrenceInterval: draft.recurrenceInterval,
-    recurrenceUntil: draft.recurrence === 'NONE' ? null : draft.recurrenceUntil || null,
+    recurrenceUntil:
+      draft.recurrence === 'NONE' || draft.recurrenceEndMode !== 'UNTIL'
+        ? null
+        : draft.recurrenceUntil || null,
+    recurrenceDays: draft.recurrence === 'WEEKLY' ? draft.recurrenceDays : [],
+    recurrenceCount:
+      draft.recurrence !== 'NONE' && draft.recurrenceEndMode === 'COUNT'
+        ? draft.recurrenceCount
+        : null,
     responseRequired: false,
     attendees: [],
     resourceId: null,
@@ -220,6 +245,8 @@ export function CompanyEventDialog({
   const [reviewConfirmed, setReviewConfirmed] = useState(false);
   const createIntent = useRef<IdempotentMutationIntent | null>(null);
   const language = i18n.resolvedLanguage ?? i18n.language;
+  const patchDraft = (patch: Partial<CompanyEventDraft>) =>
+    setDraft((current) => patchCalendarEventDraft(current, patch));
   useEffect(() => {
     if (!open) return;
     setDraft(eventDraft(event));
@@ -233,7 +260,14 @@ export function CompanyEventDialog({
     draft.title.trim() &&
     draft.startsAt &&
     draft.endsAt &&
-    new Date(draft.endsAt) > new Date(draft.startsAt)
+    new Date(draft.endsAt) > new Date(draft.startsAt) &&
+    (draft.recurrence === 'NONE' ||
+      draft.recurrenceEndMode === 'NEVER' ||
+      (draft.recurrenceEndMode === 'UNTIL' && calendarRecurrenceUntilIsValid(draft)) ||
+      (draft.recurrenceEndMode === 'COUNT' &&
+        Number.isInteger(draft.recurrenceCount) &&
+        draft.recurrenceCount >= 1 &&
+        draft.recurrenceCount <= 4_000))
   );
   return (
     <FormDialog
@@ -290,9 +324,7 @@ export function CompanyEventDialog({
             required
             label={t('event.startLabel')}
             value={draft.startsAt}
-            onValueChange={(value) =>
-              value && setDraft((current) => ({ ...current, startsAt: value }))
-            }
+            onValueChange={(value) => value && patchDraft({ startsAt: value })}
           />
           <DateTimePickerField
             required
@@ -346,27 +378,12 @@ export function CompanyEventDialog({
               value && setDraft((current) => ({ ...current, visibility: value }))
             }
           />
-          <SelectField
-            label={t('event.recurrenceLabel')}
-            value={draft.recurrence}
-            options={(['NONE', 'DAILY', 'WEEKLY', 'MONTHLY'] as const).map((value) => ({
-              value,
-              label: t(`event.recurrence.${value}`),
-            }))}
-            onValueChange={(value) =>
-              value && setDraft((current) => ({ ...current, recurrence: value }))
-            }
-          />
         </Stack>
-        {draft.recurrence !== 'NONE' && (
-          <DatePickerField
-            label={t('event.recurrenceUntilLabel')}
-            value={draft.recurrenceUntil}
-            onValueChange={(value) =>
-              setDraft((current) => ({ ...current, recurrenceUntil: value ?? '' }))
-            }
-          />
-        )}
+        <CalendarRecurrenceFields
+          form={draft}
+          validationVisible={validation}
+          onFormPatch={patchDraft}
+        />
         <FormControlLabel
           control={
             <Checkbox

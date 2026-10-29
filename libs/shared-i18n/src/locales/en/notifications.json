@@ -159,6 +159,20 @@
     },
     "icon": "Identification icon",
     "color": "Identification color",
+    "icons": {
+      "BELL": "Bell",
+      "INBOX": "Inbox",
+      "AT_SIGN": "Mention",
+      "BOLT": "Bolt",
+      "BOOKMARK": "Bookmark"
+    },
+    "colors": {
+      "BLUE": "Blue",
+      "TEAL": "Teal",
+      "VIOLET": "Violet",
+      "AMBER": "Amber",
+      "RED": "Red"
+    },
     "previewLoading": "Calculating the filtered result count.",
     "previewUnavailable": "The current filtered result count is unavailable.",
     "previewCount": "This saved view will include {{count}} notifications.",
@@ -174,6 +188,7 @@
     "back": "Back",
     "cancel": "Cancel",
     "close": "Close",
+    "copySupportId": "Copy support ID",
     "complete": "Move to done",
     "detail": "View details",
     "delete": "Delete",
@@ -191,6 +206,9 @@
     "snooze": "Remind me later",
     "snoozeHours": "Remind me in {{count}} hours",
     "unsave": "Remove from saved"
+  },
+  "support": {
+    "idLabel": "Support ID: {{supportId}}"
   },
   "arrival": {
     "open": "Open related work",
@@ -321,9 +339,16 @@
     "title": "Notifications",
     "dialogLabel": "Recent notifications",
     "triggerLabel": "{{actionable}} actionable notifications, {{total}} total unread",
+    "triggerUnknown": "Notification counts unavailable",
+    "triggerStale": "{{actionable}} actionable notifications, {{total}} total unread, last known values",
     "summary": "{{actionable}} actionable · {{total}} total unread",
+    "summaryUnknown": "Notification counts are unavailable. Recent notifications are still shown.",
+    "summaryStale": "{{actionable}} actionable · {{total}} total unread · last known values",
     "viewsLabel": "Notification view",
     "markVisibleRead": "Mark displayed notifications as read",
+    "readVisibleSuccess": "Marked {{count}} displayed notifications as read.",
+    "readVisiblePartial": "{{count}} displayed notifications could not be marked as read and remain unread.",
+    "readVisibleError": "The displayed notifications could not be marked as read.",
     "openSettings": "Open notification settings",
     "openCenter": "Open notification center",
     "newItems": "Show {{count}} new notifications"
@@ -417,7 +442,9 @@
     "bulkUndoPartial": "{{count}} items were not restored because they changed afterward.",
     "bulkUndoError": "The bulk change could not be undone. The undo window may have expired.",
     "targetUnavailable": "The related work was deleted or is no longer accessible.",
-    "targetOpenError": "The related work could not be verified. Try again shortly."
+    "targetOpenError": "The related work could not be verified. Try again shortly.",
+    "supportIdCopied": "Support ID copied.",
+    "supportIdCopyFailed": "The support ID could not be copied. Select and copy it manually."
   },
   "preferences": {
     "title": "Notification settings",
@@ -670,7 +697,7 @@
     },
     "feedback": {
       "conflictRecovered": "Your change was reapplied while preserving newer settings from another window.",
-      "profileError": "Notification settings could not be saved. The latest server settings were restored.",
+      "profileError": "Notification settings were not saved. Your changes remain on screen; change them again or retry.",
       "ruleError": "The notification type setting could not be saved. Review the latest state and try again."
     }
   },
@@ -1668,6 +1695,14 @@
         "label": "Fatigue cohort",
         "description": "Anonymous recipients exposed to burst risk"
       }
+    },
+    "trend": {
+      "summary": "{{total}} notifications across this period; {{risky}} points have an elevated mute rate.",
+      "normalLegend": "Mute rate below 25%",
+      "highMuteLegend": "Mute rate 25% or higher",
+      "exactData": "View exact trend data",
+      "tableScrollLabel": "Scrollable notification quality trend data",
+      "tableLabel": "Exact notification quality trend data"
     },
     "datum": {
       "withheld": "Withheld",

@@ -4,8 +4,14 @@ import type { ApiResponse } from '../types';
 
 export type MessagingPrivacyPreference = {
   readReceiptsEnabled: boolean;
+  presenceSharingEnabled: boolean;
   version: number;
 };
+
+export type MessagingPrivacyPreferenceUpdate = { version: number } & (
+  | { readReceiptsEnabled: boolean; presenceSharingEnabled?: boolean }
+  | { readReceiptsEnabled?: boolean; presenceSharingEnabled: boolean }
+);
 
 export type MessagingReceiptRecipient = {
   userId: number;
@@ -30,7 +36,7 @@ export async function getMessagingPrivacyPreference(): Promise<MessagingPrivacyP
 }
 
 export async function updateMessagingPrivacyPreference(
-  input: MessagingPrivacyPreference
+  input: MessagingPrivacyPreferenceUpdate
 ): Promise<MessagingPrivacyPreference> {
   const response = await axiosInstance.put<ApiResponse<MessagingPrivacyPreference>>(
     '/api/messaging/v1/privacy-preferences',

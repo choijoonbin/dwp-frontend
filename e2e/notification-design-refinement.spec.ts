@@ -45,6 +45,7 @@ test('Mobile browser retains home, detail and receiving settings workflows', asy
   await page.goto('/notifications/home');
   await expect(page.getByRole('heading', { name: '알림 홈', level: 1 })).toBeVisible();
   await expect(page.locator('[data-notification-card]').first()).toBeVisible();
+  await expect(page.getByTestId('notification-home-header').locator('time')).toBeVisible();
   await expectNoHorizontalOverflow(page);
   await page.goto('/notifications/center/notification-e2e-1?view=all');
   const detail = page.getByRole('complementary', { name: '선택한 알림 상세' });
@@ -67,6 +68,72 @@ test('Mobile browser retains home, detail and receiving settings workflows', asy
     path: testInfo.outputPath('receiving-settings-webkit.png'),
     fullPage: true,
   });
+});
+
+test('Notification settings deep links survive history navigation and canonicalize invalid state', async ({
+  page,
+}, testInfo) => {
+  test.skip(testInfo.project.name !== 'chromium', 'History behavior is covered once on Chromium.');
+  await mockShellSession(page, ['WORKSPACE_MEMBER'], {
+    locale: 'en',
+    permissions: NOTIFICATION_PERMISSION,
+  });
+  await mockNotificationPreferences(page);
+
+  await page.goto(
+    '/notifications/settings?view=diagnostics&section=apps&app=approvals&source=deep-link'
+  );
+  await expect(page.getByTestId('notification-delivery-diagnostics')).toBeVisible();
+  await expect(page).toHaveURL(/view=diagnostics/);
+  await expect(page).toHaveURL(/section=apps/);
+  await expect(page).toHaveURL(/app=approvals/);
+  await expect(page).toHaveURL(/source=deep-link/);
+
+  await page.getByRole('tab', { name: 'Notification settings', exact: true }).click();
+  await expect(page.locator('#notification-preferences-apps')).toBeVisible();
+  await expect(
+    page.locator('#notification-preferences-apps').getByRole('button', { name: 'Approvals' })
+  ).toHaveAttribute('aria-current', 'page');
+
+  await page
+    .getByRole('navigation', { name: 'Notification settings shortcuts' })
+    .getByRole('button', { name: 'Global delivery channels' })
+    .click();
+  await expect(page.getByTestId('notification-channel-grid')).toBeVisible();
+  await expect(page).not.toHaveURL(/section=apps/);
+  await expect(page).toHaveURL(/source=deep-link/);
+
+  await page.goBack();
+  await expect(page.locator('#notification-preferences-apps')).toBeVisible();
+  await expect(page).toHaveURL(/section=apps/);
+  await page.goBack();
+  await expect(page.getByTestId('notification-delivery-diagnostics')).toBeVisible();
+  await expect(page).toHaveURL(/view=diagnostics/);
+  await page.goForward();
+  await expect(page.locator('#notification-preferences-apps')).toBeVisible();
+  await expect(page).toHaveURL(/section=apps/);
+  await page.goForward();
+  await expect(page.getByTestId('notification-channel-grid')).toBeVisible();
+  await expect(page).not.toHaveURL(/section=apps/);
+
+  await page.goto(
+    '/notifications/settings?view=broken&section=unknown&app=..%2Funsafe&source=preserved'
+  );
+  await expect(
+    page.getByRole('heading', { name: 'Notification settings', level: 1 })
+  ).toBeVisible();
+  await expect(page).toHaveURL(/source=preserved/);
+  await expect(page).not.toHaveURL(/view=broken/);
+  await expect(page).not.toHaveURL(/section=unknown/);
+  await expect(page).not.toHaveURL(/app=/);
+
+  await page.goto('/notifications/settings?section=apps&app=missing&source=preserved');
+  await expect(page.getByRole('heading', { name: 'Notification settings', level: 1 })).toBeVisible({
+    timeout: 15_000,
+  });
+  await expect(page).not.toHaveURL(/app=missing/, { timeout: 15_000 });
+  await expect(page.locator('#notification-preferences-apps')).toBeVisible({ timeout: 15_000 });
+  await expect(page).toHaveURL(/source=preserved/);
 });
 
 for (const width of [1440, 1280, 390, 320]) {
@@ -105,7 +172,7 @@ for (const width of [1440, 1280, 390, 320]) {
           'font-size',
           '20px'
         );
-        await expect(frame.getByTestId('notification-home-header').locator('time')).toHaveCount(1);
+        await expect(frame.getByTestId('notification-home-header').locator('time')).toBeVisible();
         await expect(frame.getByRole('progressbar')).toHaveCount(0);
         if (width >= 1280) {
           const workspace = frame.getByTestId('notification-home-workspace');

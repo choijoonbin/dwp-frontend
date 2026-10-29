@@ -52,6 +52,7 @@ import {
   consumeActivitySourceReturnFocus,
   recordActivitySourceReturnFocus,
 } from './activity-source-focus-handoff';
+import { usableActivityQueryData } from '../../features/activity/activity-query-state';
 
 import type { ActivityDetailField } from './activity-detail-model';
 
@@ -60,6 +61,9 @@ type ActivityEventDetailProps = {
   query: UseQueryResult<WorkspaceActivityEvent, Error>;
   evidenceQuery?: UseQueryResult<WorkspaceActivityEvidence, Error>;
   executionRun?: DwaionUserRun;
+  executionRunRefreshFailed?: boolean;
+  accessDenied?: boolean;
+  onAccessRetry?: () => void;
   showSourceAction?: boolean;
   variant?: 'inline' | 'drawer';
   onClose?: () => void;
@@ -163,6 +167,9 @@ export function ActivityEventDetail({
   query,
   evidenceQuery,
   executionRun,
+  executionRunRefreshFailed = false,
+  accessDenied = false,
+  onAccessRetry,
   showSourceAction = true,
   variant = 'inline',
   onClose,
@@ -182,7 +189,9 @@ export function ActivityEventDetail({
       activeEventRef.current = null;
     };
   }, [eventId]);
-  const selected = query.isError ? undefined : selectedActivityEvent(eventId, query.data);
+  const selected = accessDenied
+    ? undefined
+    : selectedActivityEvent(eventId, usableActivityQueryData(query));
   const model = selected ? activityEventDetailModel(selected) : null;
   const kindLabel = model
     ? t(`activityFoundation.detail.kind.${model.kind}.label`)
@@ -267,19 +276,38 @@ export function ActivityEventDetail({
 
   const content = !eventId ? (
     <EmptyState title={t('activityFoundation.selectEvent')} size="compact" />
-  ) : query.isLoading ? (
+  ) : !accessDenied && query.isLoading && !selected ? (
     <LoadingState label={t('activityPage.loading')} size="compact" />
-  ) : query.isError || !selected || !model ? (
+  ) : accessDenied || !selected || !model ? (
     <LocalErrorState
       title={t('activityFoundation.unavailableTitle')}
       description={t('activityFoundation.unavailableDescription')}
       retryLabel={t('activityPage.retry')}
-      onRetry={() => void query.refetch()}
+      onRetry={onAccessRetry ?? (() => void query.refetch())}
       retrying={query.isFetching}
       size="compact"
     />
   ) : (
     <Stack gap={2.5} divider={<Divider flexItem />}>
+      {query.isError && (
+        <InlineFeedback
+          severity="warning"
+          title={t('activityFoundation.cachedDetail.title')}
+          sx={accessibleFeedbackSx}
+        >
+          {t('activityFoundation.cachedDetail.description')}
+          <Box sx={{ mt: 1 }}>
+            <ActionButton
+              intent="secondary"
+              size="small"
+              onClick={() => void query.refetch()}
+              disabled={query.isFetching}
+            >
+              {t('activityPage.retry')}
+            </ActionButton>
+          </Box>
+        </InlineFeedback>
+      )}
       <Box>
         {selected.dataProvenance === 'SAMPLE' && (
           <Chip
@@ -456,7 +484,20 @@ export function ActivityEventDetail({
         </DetailSection>
       )}
 
-      {executionRun && <ActivityRunObservability run={executionRun} locale={locale} />}
+      {executionRun && (
+        <Box>
+          {executionRunRefreshFailed && (
+            <InlineFeedback
+              severity="warning"
+              title={t('activityFoundation.cachedRun.title')}
+              sx={{ ...accessibleFeedbackSx, mb: 1.5 }}
+            >
+              {t('activityFoundation.cachedRun.description')}
+            </InlineFeedback>
+          )}
+          <ActivityRunObservability run={executionRun} locale={locale} />
+        </Box>
+      )}
 
       <DetailSection icon={ShieldCheck} title={t('activityFoundation.detail.sections.audit')}>
         <InlineFeedback

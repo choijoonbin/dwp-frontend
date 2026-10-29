@@ -132,6 +132,8 @@ export function WorkplaceWayfindingPage() {
         locale={locale}
         initialOriginPoiId={search.get('originPoiId') ?? ''}
         initialDestinationPoiId={search.get('destinationPoiId') ?? ''}
+        initialAccessible={search.get('accessible') === 'true'}
+        initialAvoidStairs={search.get('avoidStairs') === 'true'}
         defaultDestinationResourceId={defaultResourceId}
         siteOptions={sites.map((site) => ({ siteId: site.siteId, name: site.name }))}
         onSiteChange={(siteId) => {

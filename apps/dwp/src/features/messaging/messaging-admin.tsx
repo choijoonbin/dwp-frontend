@@ -9,7 +9,13 @@ import {
   usePermissions,
   useToast,
 } from '@dwp-frontend/shared-utils';
-import { ActionButton, FormField, PageCanvas } from '@dwp-frontend/design-system';
+import {
+  ActionButton,
+  ErrorState,
+  FormField,
+  GuidedEmptyState,
+  PageCanvas,
+} from '@dwp-frontend/design-system';
 
 import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
@@ -27,11 +33,13 @@ import {
   messagingPolicyFormChanged,
   validateMessagingPolicyForm,
 } from './messaging-admin-model';
+import { MessagingAdminReadiness } from './messaging-admin-readiness';
 import {
   MessagingConversationListItem,
   MessagingMetric,
   MessagingPageHeading,
 } from './messaging-components';
+import { MessagingReadErrorState } from './messaging-read-error-state';
 
 import type { MessagingAdminOverview } from '@dwp-frontend/shared-utils';
 
@@ -41,6 +49,8 @@ export function MessagingAdminOverview() {
     queryKey: ['messaging', 'admin'],
     queryFn: getMessagingAdminOverview,
     staleTime: 20_000,
+    refetchInterval: () =>
+      typeof document === 'undefined' || document.visibilityState === 'visible' ? 30_000 : false,
     retry: 1,
   });
   const data = query.data;
@@ -55,25 +65,40 @@ export function MessagingAdminOverview() {
           <ActionButton
             intent="quiet"
             startIcon={<RefreshCw size={17} />}
-            onClick={() => query.refetch()}
+            disabled={query.isFetching}
+            onClick={() => void query.refetch()}
           >
             {t('actions.refresh')}
           </ActionButton>
         }
       />
 
-      {query.isError && <Alert severity="error">{t('admin.loadError')}</Alert>}
       {query.isLoading ? (
         <Stack spacing={2}>
           <Skeleton variant="rounded" height={132} />
           <Skeleton variant="rounded" height={420} />
         </Stack>
+      ) : query.isError ? (
+        <ErrorState
+          title={t('admin.loadError')}
+          retryLabel={t('actions.retry')}
+          retrying={query.isFetching}
+          onRetry={() => void query.refetch()}
+        />
       ) : data ? (
         <Stack spacing={3}>
+          <MessagingAdminReadiness
+            readiness={data.runtimeReadiness}
+            generatedAt={data.generatedAt}
+          />
           <Box
             sx={{
               display: 'grid',
-              gridTemplateColumns: { xs: '1fr 1fr', lg: 'repeat(5, minmax(0, 1fr))' },
+              gridTemplateColumns: {
+                xs: 'minmax(0, 1fr)',
+                sm: 'repeat(2, minmax(0, 1fr))',
+                lg: 'repeat(5, minmax(0, 1fr))',
+              },
               border: 1,
               borderColor: 'divider',
               bgcolor: 'background.paper',
@@ -86,48 +111,65 @@ export function MessagingAdminOverview() {
               label={t('admin.metrics.conversations')}
               value={data.metrics.activeConversations}
               detail={t('admin.metrics.conversationsDetail')}
-              tone="#2856C7"
+              tone="primary.main"
             />
             <MessagingMetric
               label={t('admin.metrics.spaces')}
               value={data.metrics.spaceLinkedConversations}
               detail={t('admin.metrics.spacesDetail')}
-              tone="#0F8B8D"
+              tone="success.main"
             />
             <MessagingMetric
               label={t('admin.metrics.members')}
               value={data.metrics.activeMembers}
               detail={t('admin.metrics.membersDetail')}
-              tone="#6B4BB8"
+              tone="info.main"
             />
             <MessagingMetric
               label={t('admin.metrics.messages')}
               value={data.metrics.retainedMessages}
               detail={t('admin.metrics.messagesDetail')}
-              tone="#B66A0A"
+              tone="warning.main"
             />
             <MessagingMetric
               label={t('admin.metrics.restricted')}
               value={data.metrics.restrictedConversations}
               detail={t('admin.metrics.restrictedDetail')}
-              tone="#A73549"
+              tone="error.main"
             />
           </Box>
-          <Box
-            sx={{
-              border: 1,
-              borderColor: 'divider',
-              borderRadius: 1,
-              bgcolor: 'background.paper',
-              overflow: 'hidden',
-            }}
-          >
-            {data.governedConversations.map((conversation) => (
-              <MessagingConversationListItem
-                key={conversation.conversationId}
-                conversation={conversation}
+          <Box component="section" aria-labelledby="messaging-admin-conversations-title">
+            <Typography id="messaging-admin-conversations-title" component="h2" variant="h6">
+              {t('admin.overview.governedConversations')}
+            </Typography>
+            <Typography variant="body2" color="text.secondary" sx={{ mt: 0.25, mb: 1 }}>
+              {t('admin.overview.governedConversationsDescription')}
+            </Typography>
+            {data.governedConversations.length ? (
+              <Box
+                sx={{
+                  border: 1,
+                  borderColor: 'divider',
+                  borderRadius: 1,
+                  bgcolor: 'background.paper',
+                  overflow: 'hidden',
+                }}
+              >
+                {data.governedConversations.map((conversation) => (
+                  <MessagingConversationListItem
+                    key={conversation.conversationId}
+                    conversation={conversation}
+                    showPreview={false}
+                  />
+                ))}
+              </Box>
+            ) : (
+              <GuidedEmptyState
+                kind="empty"
+                title={t('admin.overview.emptyTitle')}
+                description={t('admin.overview.emptyDescription')}
               />
-            ))}
+            )}
           </Box>
         </Stack>
       ) : null}
@@ -199,7 +241,13 @@ export function MessagingAdminPolicy() {
       {query.isLoading ? (
         <Skeleton variant="rounded" height={420} />
       ) : query.isError ? (
-        <Alert severity="error">{t('admin.loadError')}</Alert>
+        <MessagingReadErrorState
+          error={query.error}
+          title={t('admin.loadError')}
+          retrying={query.isFetching}
+          onRetry={() => void query.refetch()}
+          size="standard"
+        />
       ) : (
         <Stack spacing={2} sx={{ maxWidth: 920 }}>
           {!canManage ? <Alert severity="info">{t('admin.policy.readOnly')}</Alert> : null}

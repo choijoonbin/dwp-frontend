@@ -9,6 +9,10 @@
       "navigationLabel": "Mail navigation"
     }
   },
+  "live": {
+    "stale": "Live mail updates are unavailable and the visible mail evidence may be stale.",
+    "refresh": "Refresh mail"
+  },
   "navigation": {
     "groups": {
       "mail": {
@@ -41,6 +45,9 @@
         },
         "drafts": {
           "label": "Drafts"
+        },
+        "more": {
+          "label": "More mailboxes"
         },
         "archive": {
           "label": "Archive"
@@ -163,10 +170,37 @@
       "badge": "Today's mail flow",
       "attentionTitle": "{{count}} important signals are waiting for a decision",
       "clearTitle": "Your priority mail is under control",
+      "noAccountTitle": "Connect mail to begin",
+      "noAccountDescription": "Connect an assigned mail account before composing, searching, or opening an inbox.",
       "description": "The shortest path through your mail is organized by business impact and next action, not arrival time.",
       "accountWarning": "{{count}} connections need attention",
       "accountHealthy": "No connection warnings for the accounts shown",
       "updatedAt": "Updated {{value}}",
+      "freshnessBasis": "Freshness uses successful sync evidence from the last {{minutes}} minutes",
+      "oldestSuccessfulSync": "Oldest verified account sync {{value}}",
+      "noSuccessfulSync": "No successful sync has been verified",
+      "health": {
+        "NO_ACCOUNT": {
+          "label": "No mail account connected",
+          "action": "Connect an account"
+        },
+        "ACTION_REQUIRED": {
+          "label": "{{count}} account connections require recovery",
+          "action": "Recover accounts"
+        },
+        "PAUSED": {
+          "label": "{{count}} account connections are paused",
+          "action": "Review connections"
+        },
+        "STALE": {
+          "label": "{{count}} accounts have stale sync evidence",
+          "action": "Check synchronization"
+        },
+        "HEALTHY": {
+          "label": "All account sync evidence is current",
+          "action": "Open inbox"
+        }
+      },
       "start": "Start focused triage",
       "openInbox": "Open inbox",
       "flowTitle": "Processing rhythm",
@@ -385,6 +419,21 @@
     "page": "Page {{current}} of {{total}}",
     "previousPage": "Previous page",
     "nextPage": "Next page",
+    "bulk": {
+      "select": "Select messages",
+      "done": "Done selecting",
+      "selected_one": "{{count}} message selected",
+      "selected_other": "{{count}} messages selected",
+      "selectPage": "Select this page",
+      "clear": "Clear selection",
+      "selectMessage": "Select message",
+      "deselectMessage": "Deselect message",
+      "success_one": "Updated {{count}} message.",
+      "success_other": "Updated {{count}} messages.",
+      "partial": "Updated {{succeeded}} messages; {{failed}} could not be updated and remain selected.",
+      "failed_one": "The selected message could not be updated. Refresh and try again.",
+      "failed_other": "{{count}} selected messages could not be updated. Refresh and try again."
+    },
     "inbox": {
       "eyebrow": "Split Inbox",
       "title": "Inbox",
@@ -567,6 +616,9 @@
       "SENDING": "Sending",
       "RETRYING": "Retry scheduled",
       "SENT": "Sent",
+      "PROVIDER_ACCEPTED": "Accepted by provider (recipient delivery unconfirmed)",
+      "RESULT_UNKNOWN": "Result needs verification",
+      "DELIVERED": "Recipient delivery confirmed",
       "FAILED": "Delivery failed"
     },
     "retry": "Retry delivery",
@@ -1243,6 +1295,10 @@
       "attachmentOnly": "Has attachments",
       "folder": "Folder",
       "allFolders": "All folders",
+      "applyFilters": "Apply filters",
+      "pendingFilters": "Review and apply these filter changes to run the search.",
+      "filtersApplied": "The displayed results use these filters.",
+      "invalidDateRange": "The end date must be the same as or later than the start date.",
       "clearFilters": "Clear filters",
       "startTitle": "Search your mail",
       "startDescription": "Enter a sender, subject, or phrase to find messages you can access.",
@@ -1310,6 +1366,8 @@
       "description": "Inspect the latest state reported by the mail delivery service.",
       "sentUnconfirmed": "Accepted by provider",
       "recipientDeliveryUnconfirmed": "Recipient delivery has not been confirmed.",
+      "providerAcceptedDescription": "The provider accepted the message, but recipient delivery has not been confirmed.",
+      "resultUnknownDescription": "The delivery result is unknown. Automatic resend is disabled to avoid duplicate delivery. Review provider evidence before taking another action.",
       "limitTitle": "Delivery evidence is limited",
       "limitDescription": "Scheduled changes, cancellation, and safe retry stay unavailable until the service can verify provider acceptance and retry eligibility.",
       "emptyTitle": "No sent messages",
@@ -1332,10 +1390,12 @@
         "QUEUED": "Queued",
         "SENDING": "Sending",
         "ACCEPTED": "Accepted by provider",
+        "PROVIDER_ACCEPTED": "Accepted by provider (recipient delivery unconfirmed)",
         "DELIVERED": "Delivery confirmed",
         "BOUNCED": "Bounced",
         "FAILED": "Failed",
         "UNKNOWN": "Outcome needs verification",
+        "RESULT_UNKNOWN": "Result needs verification",
         "CANCELLED": "Cancelled"
       },
       "listLabel": "Delivery requests",
@@ -1458,6 +1518,7 @@
       "shortcutTab": "Shortcuts",
       "defaultSender": "Default sender account",
       "manageWritingAssets": "Manage templates and signatures",
+      "requestSetup": "Request mail account setup",
       "capabilityBoundary": "Feature readiness is verified separately for each account. Unavailable features require the relevant provider adapter, authorization, synchronization, or trusted attachment scanner to become ready.",
       "capabilityLoadError": "Feature readiness could not be verified. Sending remains governed by the server and unavailable capabilities stay blocked.",
       "capabilityLoading": "Checking feature readiness",
@@ -1494,8 +1555,14 @@
           "ACTIVATE_EXTERNALLY": "Reconnect with the provider before using this account.",
           "CONTACT_ADMIN": "Contact your mail administrator.",
           "REQUEST_ACCESS": "Request access to this sending account."
+        },
+        "cta": {
+          "ACTIVATE_EXTERNALLY": "Request reconnection help",
+          "CONTACT_ADMIN": "Request administrator help",
+          "REQUEST_ACCESS": "Request account access"
         }
       },
+      "diagnostics": "Show diagnostic evidence",
       "authorization": {
         "title": "Provider authorization evidence",
         "consent": "Provider consent",
@@ -1557,6 +1624,11 @@
       "keyboardShortcuts": "Enable mail keyboard shortcuts",
       "keyboardShortcutsDescription": "Use mail navigation and compose shortcuts only outside text inputs.",
       "shortcutList": "Mail keyboard shortcuts",
+      "unsavedChanges": "You have unsaved preference changes. They are kept while you move between tabs.",
+      "discardChanges": "Discard changes",
+      "refreshConfirmTitle": "Discard unsaved preference changes?",
+      "refreshConfirmDescription": "Refreshing loads the latest server preferences and removes the changes in this draft.",
+      "refreshAndDiscard": "Discard and refresh",
       "preferencesSaved": "Personal mail preferences were saved.",
       "preferencesSaveError": "Preferences changed or could not be saved. Refresh and try again.",
       "preferencesLoadError": "Accounts and personal preferences could not be loaded."

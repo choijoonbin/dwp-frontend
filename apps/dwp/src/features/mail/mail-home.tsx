@@ -84,12 +84,14 @@ export function MailHome() {
   const organizationQuery = useQuery({
     queryKey: ['mail', 'organization'],
     queryFn: getMailOrganization,
+    enabled: Boolean(query.data?.accounts.length),
     staleTime: 30_000,
     retry: 1,
   });
   const addressBookQuery = useQuery({
     queryKey: ['mail', 'address-book', 'home-summary'],
     queryFn: () => getMailAddressBook({ pageSize: 1 }),
+    enabled: Boolean(query.data?.accounts.length),
     staleTime: 60_000,
     retry: 1,
   });
@@ -177,14 +179,16 @@ export function MailHome() {
             >
               {t('home.addressBook.open')}
             </ActionButton>
-            <ActionButton
-              intent="primary"
-              startIcon={<MailPlus size={17} />}
-              disabled={!canCreate}
-              onClick={() => navigateInScope('/mail/inbox?compose=open')}
-            >
-              {t('actions.compose')}
-            </ActionButton>
+            {data?.accounts.length ? (
+              <ActionButton
+                intent="primary"
+                startIcon={<MailPlus size={17} />}
+                disabled={!canCreate}
+                onClick={() => navigateInScope('/mail/inbox?compose=open')}
+              >
+                {t('actions.compose')}
+              </ActionButton>
+            ) : null}
           </Stack>
         }
       />
@@ -220,52 +224,54 @@ export function MailHome() {
         />
       ) : null}
 
-      <Box
-        component="form"
-        role="search"
-        onSubmit={(event) => {
-          event.preventDefault();
-          const queryValue = search.trim();
-          navigateInScope(
-            queryValue ? `/mail/inbox?query=${encodeURIComponent(queryValue)}` : '/mail/inbox'
-          );
-        }}
-        sx={(theme) => ({
-          mt: data?.accounts.length ? 1.25 : 2.25,
-          maxWidth: 760,
-          display: 'grid',
-          gridTemplateColumns: { xs: '1fr', sm: 'minmax(0, 1fr) auto' },
-          gap: 1,
-          p: 0.75,
-          border: 1,
-          borderColor: 'divider',
-          borderRadius: COMPACT_RADIUS,
-          bgcolor: theme.palette.background.paper,
-          boxShadow: 'none',
-        })}
-      >
-        <FormField
-          fullWidth
-          size="small"
-          type="search"
-          value={search}
-          placeholder={t('home.searchPlaceholder')}
-          inputProps={{ 'aria-label': t('home.searchLabel') }}
-          onChange={(event) => setSearch(event.target.value)}
-          slotProps={{
-            input: {
-              startAdornment: (
-                <InputAdornment position="start">
-                  <Search size={17} />
-                </InputAdornment>
-              ),
-            },
+      {data?.accounts.length ? (
+        <Box
+          component="form"
+          role="search"
+          onSubmit={(event) => {
+            event.preventDefault();
+            const queryValue = search.trim();
+            navigateInScope(
+              queryValue ? `/mail/inbox?query=${encodeURIComponent(queryValue)}` : '/mail/inbox'
+            );
           }}
-        />
-        <ActionButton intent="primary" type="submit" startIcon={<Search size={16} />}>
-          {t('home.searchAction')}
-        </ActionButton>
-      </Box>
+          sx={(theme) => ({
+            mt: 1.25,
+            maxWidth: 760,
+            display: 'grid',
+            gridTemplateColumns: { xs: '1fr', sm: 'minmax(0, 1fr) auto' },
+            gap: 1,
+            p: 0.75,
+            border: 1,
+            borderColor: 'divider',
+            borderRadius: COMPACT_RADIUS,
+            bgcolor: theme.palette.background.paper,
+            boxShadow: 'none',
+          })}
+        >
+          <FormField
+            fullWidth
+            size="small"
+            type="search"
+            value={search}
+            placeholder={t('home.searchPlaceholder')}
+            inputProps={{ 'aria-label': t('home.searchLabel') }}
+            onChange={(event) => setSearch(event.target.value)}
+            slotProps={{
+              input: {
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <Search size={17} />
+                  </InputAdornment>
+                ),
+              },
+            }}
+          />
+          <ActionButton intent="primary" type="submit" startIcon={<Search size={16} />}>
+            {t('home.searchAction')}
+          </ActionButton>
+        </Box>
+      ) : null}
 
       {query.isError && (
         <Alert
@@ -294,162 +300,175 @@ export function MailHome() {
             onNavigate={navigateInScope}
           />
 
-          <Box
-            sx={{
-              display: 'grid',
-              gridTemplateColumns: { xs: '1fr', lg: 'minmax(0, 1.5fr) minmax(340px, 1fr)' },
-              gridTemplateAreas: {
-                xs: '"focus" "assistant" "tools"',
-                lg: '"focus assistant" "tools assistant"',
-              },
-              gridTemplateRows: { lg: 'min-content auto' },
-              gap: 3,
-              alignItems: 'start',
-            }}
-          >
+          {data.accounts.length ? (
             <Box
-              component="section"
-              aria-labelledby="mail-focus-title"
-              sx={{ minWidth: 0, gridArea: 'focus' }}
+              sx={{
+                display: 'grid',
+                gridTemplateColumns: { xs: '1fr', lg: 'minmax(0, 1.5fr) minmax(340px, 1fr)' },
+                gridTemplateAreas: {
+                  xs: '"focus" "assistant" "tools"',
+                  lg: '"focus assistant" "tools tools"',
+                },
+                gap: 3,
+                alignItems: 'start',
+              }}
             >
-              <Stack direction="row" justifyContent="space-between" alignItems="flex-end" mb={1.25}>
-                <Stack direction="row" spacing={1} alignItems="flex-start">
-                  <Box
-                    aria-hidden="true"
-                    sx={{
-                      width: 3,
-                      height: 22,
-                      mt: 0.2,
-                      borderRadius: COMPACT_RADIUS,
-                      bgcolor: 'primary.main',
-                    }}
-                  />
+              <Box
+                component="section"
+                aria-labelledby="mail-focus-title"
+                sx={{ minWidth: 0, gridArea: 'focus' }}
+              >
+                <Stack
+                  direction="row"
+                  justifyContent="space-between"
+                  alignItems="flex-end"
+                  mb={1.25}
+                >
+                  <Stack direction="row" spacing={1} alignItems="flex-start">
+                    <Box
+                      aria-hidden="true"
+                      sx={{
+                        width: 3,
+                        height: 22,
+                        mt: 0.2,
+                        borderRadius: COMPACT_RADIUS,
+                        bgcolor: 'primary.main',
+                      }}
+                    />
+                    <Box>
+                      <Typography
+                        id="mail-focus-title"
+                        component="h2"
+                        variant="h6"
+                        fontWeight="fontWeightBold"
+                      >
+                        {t('home.focus.title')}
+                      </Typography>
+                      <Typography variant="body2" color="text.secondary" sx={{ mt: 0.35 }}>
+                        {t('home.focus.description')}
+                      </Typography>
+                    </Box>
+                  </Stack>
+                  <ActionButton
+                    intent="quiet"
+                    size="small"
+                    endIcon={<ArrowRight size={15} />}
+                    onClick={() => navigateInScope('/mail/inbox')}
+                  >
+                    {t('home.focus.openInbox')}
+                  </ActionButton>
+                </Stack>
+                <Stack spacing={0.9}>
+                  {data.focusQueue.length ? (
+                    data.focusQueue.map((thread) => (
+                      <MailThreadListItem
+                        key={thread.threadId}
+                        thread={thread}
+                        compact={mailUsesCompactDensity(runtimePreferences.data)}
+                        presentation="focus"
+                        onSelect={() => navigateInScope(`/mail/inbox?thread=${thread.threadId}`)}
+                      />
+                    ))
+                  ) : (
+                    <GuidedEmptyState
+                      kind="empty"
+                      title={t('home.focus.emptyTitle')}
+                      description={t('home.focus.emptyDescription')}
+                    />
+                  )}
+                </Stack>
+              </Box>
+
+              <Box
+                component="section"
+                aria-labelledby="mail-assistant-title"
+                sx={{ minWidth: 0, gridArea: 'assistant' }}
+              >
+                <Stack
+                  direction="row"
+                  justifyContent="space-between"
+                  alignItems="flex-end"
+                  mb={1.25}
+                >
                   <Box>
                     <Typography
-                      id="mail-focus-title"
+                      id="mail-assistant-title"
                       component="h2"
                       variant="h6"
                       fontWeight="fontWeightBold"
                     >
-                      {t('home.focus.title')}
+                      {t('home.assistant.title')}
                     </Typography>
                     <Typography variant="body2" color="text.secondary" sx={{ mt: 0.35 }}>
-                      {t('home.focus.description')}
+                      {t('home.assistant.description')}
                     </Typography>
-                  </Box>
-                </Stack>
-                <ActionButton
-                  intent="quiet"
-                  size="small"
-                  endIcon={<ArrowRight size={15} />}
-                  onClick={() => navigateInScope('/mail/inbox')}
-                >
-                  {t('home.focus.openInbox')}
-                </ActionButton>
-              </Stack>
-              <Stack spacing={0.9}>
-                {data.focusQueue.length ? (
-                  data.focusQueue.map((thread) => (
-                    <MailThreadListItem
-                      key={thread.threadId}
-                      thread={thread}
-                      compact={mailUsesCompactDensity(runtimePreferences.data)}
-                      presentation="focus"
-                      onSelect={() => navigateInScope(`/mail/inbox?thread=${thread.threadId}`)}
-                    />
-                  ))
-                ) : (
-                  <GuidedEmptyState
-                    kind="empty"
-                    title={t('home.focus.emptyTitle')}
-                    description={t('home.focus.emptyDescription')}
-                  />
-                )}
-              </Stack>
-            </Box>
-
-            <Box
-              component="section"
-              aria-labelledby="mail-assistant-title"
-              sx={{ minWidth: 0, gridArea: 'assistant' }}
-            >
-              <Stack direction="row" justifyContent="space-between" alignItems="flex-end" mb={1.25}>
-                <Box>
-                  <Typography
-                    id="mail-assistant-title"
-                    component="h2"
-                    variant="h6"
-                    fontWeight="fontWeightBold"
-                  >
-                    {t('home.assistant.title')}
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary" sx={{ mt: 0.35 }}>
-                    {t('home.assistant.description')}
-                  </Typography>
-                  {data.metrics.activeProposals > data.proposals.length && (
-                    <Typography variant="caption" color="text.secondary">
-                      {t('home.assistant.previewCount', {
-                        shown: data.proposals.length,
-                        total: data.metrics.activeProposals,
-                      })}
-                    </Typography>
-                  )}
-                </Box>
-                <ShieldCheck size={19} color="var(--dwp-product-accent)" />
-              </Stack>
-              <Stack spacing={1.25}>
-                {data.proposals.length ? (
-                  <>
-                    {visibleProposals.map((proposal) => (
-                      <MailProposalCard
-                        key={proposal.proposalId}
-                        proposal={proposal}
-                        busy={!canDecide || proposalMutation.isPending || proposalHandoff.isPending}
-                        onAccept={() => canDecide && setProposalToAccept(proposal)}
-                        onDismiss={() =>
-                          canDecide && proposalMutation.mutate({ proposal, decision: 'DISMISS' })
-                        }
-                      />
-                    ))}
-                    {hiddenProposalCount > 0 && (
-                      <ActionButton
-                        intent="quiet"
-                        size="small"
-                        endIcon={
-                          proposalsExpanded ? <ChevronUp size={15} /> : <ChevronDown size={15} />
-                        }
-                        aria-expanded={proposalsExpanded}
-                        onClick={() => setProposalsExpanded((expanded) => !expanded)}
-                        sx={{ alignSelf: 'center' }}
-                      >
-                        {proposalsExpanded
-                          ? t('home.assistant.showLess')
-                          : t('home.assistant.showMore', { count: hiddenProposalCount })}
-                      </ActionButton>
+                    {data.metrics.activeProposals > data.proposals.length && (
+                      <Typography variant="caption" color="text.secondary">
+                        {t('home.assistant.previewCount', {
+                          shown: data.proposals.length,
+                          total: data.metrics.activeProposals,
+                        })}
+                      </Typography>
                     )}
-                  </>
-                ) : (
-                  <GuidedEmptyState
-                    kind="empty"
-                    title={t('home.assistant.emptyTitle')}
-                    description={t('home.assistant.emptyDescription')}
-                  />
-                )}
-              </Stack>
+                  </Box>
+                  <ShieldCheck size={19} color="var(--dwp-product-accent)" />
+                </Stack>
+                <Stack spacing={1.25}>
+                  {data.proposals.length ? (
+                    <>
+                      {visibleProposals.map((proposal) => (
+                        <MailProposalCard
+                          key={proposal.proposalId}
+                          proposal={proposal}
+                          busy={
+                            !canDecide || proposalMutation.isPending || proposalHandoff.isPending
+                          }
+                          onAccept={() => canDecide && setProposalToAccept(proposal)}
+                          onDismiss={() =>
+                            canDecide && proposalMutation.mutate({ proposal, decision: 'DISMISS' })
+                          }
+                        />
+                      ))}
+                      {hiddenProposalCount > 0 && (
+                        <ActionButton
+                          intent="quiet"
+                          size="small"
+                          endIcon={
+                            proposalsExpanded ? <ChevronUp size={15} /> : <ChevronDown size={15} />
+                          }
+                          aria-expanded={proposalsExpanded}
+                          onClick={() => setProposalsExpanded((expanded) => !expanded)}
+                          sx={{ alignSelf: 'center' }}
+                        >
+                          {proposalsExpanded
+                            ? t('home.assistant.showLess')
+                            : t('home.assistant.showMore', { count: hiddenProposalCount })}
+                        </ActionButton>
+                      )}
+                    </>
+                  ) : (
+                    <GuidedEmptyState
+                      kind="empty"
+                      title={t('home.assistant.emptyTitle')}
+                      description={t('home.assistant.emptyDescription')}
+                    />
+                  )}
+                </Stack>
+              </Box>
+              <Box sx={{ minWidth: 0, gridArea: 'tools' }}>
+                <MailWorkTools
+                  home={data}
+                  addressBook={addressBookQuery.data}
+                  addressBookLoading={addressBookQuery.isLoading}
+                  addressBookError={addressBookQuery.isError}
+                  organization={organizationQuery.data}
+                  organizationLoading={organizationQuery.isLoading}
+                  organizationError={organizationQuery.isError}
+                  onNavigate={navigateInScope}
+                />
+              </Box>
             </Box>
-            <Box sx={{ minWidth: 0, gridArea: 'tools' }}>
-              <MailWorkTools
-                home={data}
-                addressBook={addressBookQuery.data}
-                addressBookLoading={addressBookQuery.isLoading}
-                addressBookError={addressBookQuery.isError}
-                organization={organizationQuery.data}
-                organizationLoading={organizationQuery.isLoading}
-                organizationError={organizationQuery.isError}
-                onNavigate={navigateInScope}
-              />
-            </Box>
-          </Box>
+          ) : null}
         </Stack>
       ) : null}
 
@@ -524,7 +543,7 @@ function MailWorkTools({
       <Box
         sx={{
           display: 'grid',
-          gridTemplateColumns: 'minmax(0, 1fr)',
+          gridTemplateColumns: { xs: 'minmax(0, 1fr)', lg: 'repeat(3, minmax(0, 1fr))' },
           gap: 1.25,
         }}
       >

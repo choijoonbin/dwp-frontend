@@ -159,6 +159,20 @@
     },
     "icon": "식별 아이콘",
     "color": "식별 색상",
+    "icons": {
+      "BELL": "종",
+      "INBOX": "받은 알림함",
+      "AT_SIGN": "멘션",
+      "BOLT": "번개",
+      "BOOKMARK": "북마크"
+    },
+    "colors": {
+      "BLUE": "파랑",
+      "TEAL": "청록",
+      "VIOLET": "보라",
+      "AMBER": "황색",
+      "RED": "빨강"
+    },
     "previewLoading": "필터 결과를 계산하는 중입니다.",
     "previewUnavailable": "현재 필터 결과 수를 확인할 수 없습니다.",
     "previewCount": "저장 시 {{count}}건의 알림이 포함됩니다.",
@@ -174,6 +188,7 @@
     "back": "뒤로",
     "cancel": "취소",
     "close": "닫기",
+    "copySupportId": "지원 ID 복사",
     "complete": "알림 정리",
     "detail": "상세 보기",
     "delete": "삭제",
@@ -191,6 +206,9 @@
     "snooze": "나중에 알림",
     "snoozeHours": "{{count}}시간 후 다시 알림",
     "unsave": "저장 해제"
+  },
+  "support": {
+    "idLabel": "지원 ID: {{supportId}}"
   },
   "arrival": {
     "open": "관련 업무 열기",
@@ -321,9 +339,16 @@
     "title": "알림",
     "dialogLabel": "최근 알림",
     "triggerLabel": "조치 필요 알림 {{actionable}}건, 전체 새 알림 {{total}}건",
+    "triggerUnknown": "알림 개수를 확인할 수 없음",
+    "triggerStale": "조치 필요 알림 {{actionable}}건, 전체 새 알림 {{total}}건, 마지막 확인값",
     "summary": "조치 필요 {{actionable}} · 전체 새 알림 {{total}}",
+    "summaryUnknown": "알림 개수를 확인할 수 없습니다. 최근 알림은 계속 표시합니다.",
+    "summaryStale": "조치 필요 {{actionable}} · 전체 새 알림 {{total}} · 마지막 확인값",
     "viewsLabel": "알림 보기",
     "markVisibleRead": "표시된 알림을 모두 읽음으로 표시",
+    "readVisibleSuccess": "표시된 알림 {{count}}개를 읽음으로 표시했습니다.",
+    "readVisiblePartial": "표시된 알림 중 {{count}}개를 읽음으로 표시하지 못해 안 읽음 상태로 유지했습니다.",
+    "readVisibleError": "표시된 알림을 읽음으로 표시하지 못했습니다.",
     "openSettings": "알림 설정 열기",
     "openCenter": "알림 센터 열기",
     "newItems": "새 알림 {{count}}개 보기"
@@ -417,7 +442,9 @@
     "bulkUndoPartial": "{{count}}건은 이후 변경과 충돌해 복원하지 않았습니다.",
     "bulkUndoError": "대량 변경을 되돌리지 못했습니다. 실행 가능 시간이 지났을 수 있습니다.",
     "targetUnavailable": "연결된 업무가 삭제되었거나 더 이상 접근할 수 없습니다.",
-    "targetOpenError": "연결된 업무를 확인하지 못했습니다. 잠시 후 다시 시도해 주세요."
+    "targetOpenError": "연결된 업무를 확인하지 못했습니다. 잠시 후 다시 시도해 주세요.",
+    "supportIdCopied": "지원 ID를 복사했습니다.",
+    "supportIdCopyFailed": "지원 ID를 복사하지 못했습니다. 직접 선택해 복사해 주세요."
   },
   "preferences": {
     "title": "알림 설정",
@@ -670,7 +697,7 @@
     },
     "feedback": {
       "conflictRecovered": "다른 창의 최신 설정을 유지하면서 내 변경을 다시 적용했습니다.",
-      "profileError": "알림 설정을 저장하지 못했습니다. 서버의 최신 설정으로 되돌렸습니다.",
+      "profileError": "알림 설정을 저장하지 못했습니다. 화면의 변경은 유지되므로 다시 변경하거나 재시도해 주세요.",
       "ruleError": "알림 유형 설정을 저장하지 못했습니다. 최신 상태를 확인한 뒤 다시 시도해 주세요."
     }
   },
@@ -1665,6 +1692,14 @@
         "label": "피로 노출 집단",
         "description": "짧은 시간에 알림이 집중된 익명 수신자 수"
       }
+    },
+    "trend": {
+      "summary": "이 기간 알림 {{total}}건 중 음소거율이 높은 구간은 {{risky}}개입니다.",
+      "normalLegend": "음소거율 25% 미만",
+      "highMuteLegend": "음소거율 25% 이상",
+      "exactData": "정확한 추이 데이터 보기",
+      "tableScrollLabel": "스크롤 가능한 알림 품질 추이 데이터",
+      "tableLabel": "정확한 알림 품질 추이 데이터"
     },
     "datum": {
       "withheld": "비공개",

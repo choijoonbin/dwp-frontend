@@ -1,3 +1,4 @@
+// @vitest-environment jsdom
 import { createElement, type ReactNode } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { MemoryRouter } from 'react-router-dom';
@@ -10,7 +11,10 @@ import {
   flowActivityHistoryRoute,
   validFlowActivitySummary,
 } from './flow-activity-signal-model';
-import { RolePulseInsight } from './home-purpose-role-pulse-insight';
+import {
+  restoreFlowActivitySignalTriggerFocus,
+  RolePulseInsight,
+} from './home-purpose-role-pulse-insight';
 import type { FlowSignal } from './flow-home-model';
 
 vi.mock('react-i18next', () => ({
@@ -113,6 +117,22 @@ describe('Flow execution signal ledger', () => {
     expect(markup).toContain('aria-haspopup="dialog"');
     expect(markup).toContain('data-testid="flow-activity-mini-distribution"');
     expect(markup).toContain('flow.signals.activityBreakdown');
+  });
+
+  it('restores focus to the current trigger when responsive layout replaced the opener', () => {
+    const previous = document.createElement('button');
+    previous.dataset.testid = 'flow-activity-signal-trigger';
+    document.body.append(previous);
+    previous.focus();
+    previous.remove();
+    const current = document.createElement('button');
+    current.dataset.testid = 'flow-activity-signal-trigger';
+    document.body.append(current);
+
+    expect(restoreFlowActivitySignalTriggerFocus(previous)).toBe(true);
+
+    expect(document.activeElement).toBe(current);
+    current.remove();
   });
 
   it('distinguishes historical state filters from current execution totals', () => {

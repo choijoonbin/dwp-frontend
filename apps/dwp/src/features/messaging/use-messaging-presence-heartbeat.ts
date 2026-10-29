@@ -7,10 +7,21 @@ import {
   type MessagingPresenceLeaseTiming,
 } from '@dwp-frontend/shared-utils';
 
+import {
+  MESSAGING_CROSS_TAB_LEASE_RENEW_MS,
+  MessagingCrossTabLease,
+  openMessagingBroadcastChannel,
+} from './messaging-cross-tab-coordination';
+
 export const MESSAGING_PRESENCE_HEARTBEAT_INTERVAL_MS =
   MESSAGING_PRESENCE_DEFAULT_LEASE_TIMING.refreshAfterSeconds * 1_000;
 export const MESSAGING_PRESENCE_MAX_RETRY_MS = 60_000;
 const MESSAGING_PRESENCE_JITTER_RATIO = 0.1;
+
+type MessagingPresenceIdentity = Readonly<{
+  tenantId: string | number;
+  userId: string | number;
+}>;
 
 type HeartbeatAttempt =
   | Readonly<{
@@ -28,6 +39,12 @@ type SuccessfulLease = Readonly<{
   timing: MessagingPresenceLeaseTiming;
 }>;
 
+type PresenceScopeState = {
+  identityScope: string | null;
+  requestInFlight: Promise<HeartbeatAttempt> | null;
+  lastSuccessfulLease: SuccessfulLease | null;
+};
+
 export function messagingPresenceHeartbeatDelayMs(
   consecutiveFailures: number,
   random = Math.random,
@@ -41,18 +58,43 @@ export function messagingPresenceHeartbeatDelayMs(
   return Math.min(MESSAGING_PRESENCE_MAX_RETRY_MS, Math.round(baseDelay * (1 + jitter)));
 }
 
-export function useMessagingPresenceHeartbeat(enabled = true): void {
-  const requestInFlight = useRef<Promise<HeartbeatAttempt> | null>(null);
-  const lastSuccessfulLease = useRef<SuccessfulLease | null>(null);
+export function useMessagingPresenceHeartbeat(
+  enabled = true,
+  identity?: MessagingPresenceIdentity | null
+): void {
+  const scopeStateRef = useRef<PresenceScopeState>({
+    identityScope: null,
+    requestInFlight: null,
+    lastSuccessfulLease: null,
+  });
+  const identityScope = identity
+    ? `${encodeURIComponent(String(identity.tenantId))}:${encodeURIComponent(String(identity.userId))}`
+    : null;
 
   useEffect(() => {
+    if (scopeStateRef.current.identityScope !== identityScope) {
+      scopeStateRef.current = {
+        identityScope,
+        requestInFlight: null,
+        lastSuccessfulLease: null,
+      };
+    }
+    const scopeState = scopeStateRef.current;
     let disposed = false;
     let active = false;
+    let leader = false;
     let timeoutId: number | undefined;
     let consecutiveFailures = 0;
     let observedRequest: Promise<HeartbeatAttempt> | null = null;
+    const coordinationName = `presence-heartbeat:${identityScope ?? 'unresolved'}`;
+    const lease = new MessagingCrossTabLease({ name: coordinationName });
+    const channel = openMessagingBroadcastChannel(coordinationName);
 
-    const canPublish = () => enabled && document.visibilityState === 'visible' && navigator.onLine;
+    const canPublish = () =>
+      enabled &&
+      identityScope !== null &&
+      document.visibilityState === 'visible' &&
+      navigator.onLine;
 
     const stop = () => {
       if (timeoutId === undefined) return;
@@ -61,8 +103,8 @@ export function useMessagingPresenceHeartbeat(enabled = true): void {
     };
 
     const schedule = () => {
-      if (disposed || !active || !canPublish() || timeoutId !== undefined) return;
-      const lease = lastSuccessfulLease.current;
+      if (disposed || !leader || !active || !canPublish() || timeoutId !== undefined) return;
+      const lease = scopeState.lastSuccessfulLease;
       const refreshAfterMs =
         (lease?.timing.refreshAfterSeconds ??
           MESSAGING_PRESENCE_DEFAULT_LEASE_TIMING.refreshAfterSeconds) * 1_000;
@@ -94,17 +136,17 @@ export function useMessagingPresenceHeartbeat(enabled = true): void {
     };
 
     function publish() {
-      if (disposed || !canPublish()) return;
-      let pending = requestInFlight.current;
+      if (disposed || !leader || !canPublish()) return;
+      let pending = scopeState.requestInFlight;
       if (!pending) {
         const requestStartedAt = Date.now();
         pending = refreshMessagingPresence().then(
           (timing): HeartbeatAttempt => ({ succeeded: true, requestStartedAt, timing }),
           (): HeartbeatAttempt => ({ succeeded: false, requestStartedAt })
         );
-        requestInFlight.current = pending;
+        scopeState.requestInFlight = pending;
         void pending.finally(() => {
-          if (requestInFlight.current === pending) requestInFlight.current = null;
+          if (scopeState.requestInFlight === pending) scopeState.requestInFlight = null;
         });
       }
       if (observedRequest === pending) return;
@@ -114,7 +156,7 @@ export function useMessagingPresenceHeartbeat(enabled = true): void {
         if (disposed) return;
         if (attempt.succeeded) {
           consecutiveFailures = 0;
-          lastSuccessfulLease.current = {
+          scopeState.lastSuccessfulLease = {
             requestStartedAt: attempt.requestStartedAt,
             timing: attempt.timing,
           };
@@ -128,25 +170,58 @@ export function useMessagingPresenceHeartbeat(enabled = true): void {
     const synchronize = () => {
       if (!canPublish()) {
         active = false;
+        if (leader) {
+          leader = false;
+          lease.release();
+          channel?.postMessage({ type: 'released' });
+        }
         stop();
         return;
       }
+      const ownsLease = leader ? lease.renew() : lease.claim();
+      if (!ownsLease) {
+        leader = false;
+        active = false;
+        stop();
+        return;
+      }
+      leader = true;
       if (active) return;
       active = true;
+      channel?.postMessage({ type: 'leader' });
       publish();
     };
 
+    const handleStorage = (event: StorageEvent) => {
+      if (event.key === lease.key) synchronize();
+    };
+
+    if (channel) {
+      channel.onmessage = (event) => {
+        if (event.data?.type === 'released') synchronize();
+      };
+    }
+
     synchronize();
+    const electionId = window.setInterval(synchronize, MESSAGING_CROSS_TAB_LEASE_RENEW_MS);
     document.addEventListener('visibilitychange', synchronize);
     window.addEventListener('online', synchronize);
     window.addEventListener('offline', synchronize);
+    window.addEventListener('storage', handleStorage);
 
     return () => {
       disposed = true;
       stop();
+      window.clearInterval(electionId);
+      if (leader) {
+        lease.release();
+        channel?.postMessage({ type: 'released' });
+      }
+      channel?.close();
       document.removeEventListener('visibilitychange', synchronize);
       window.removeEventListener('online', synchronize);
       window.removeEventListener('offline', synchronize);
+      window.removeEventListener('storage', handleStorage);
     };
-  }, [enabled]);
+  }, [enabled, identityScope]);
 }

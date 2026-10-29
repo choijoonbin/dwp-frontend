@@ -45,6 +45,15 @@ import {
   activityQueryKeys,
   selectedActivityEvent,
 } from '../../components/activity/activity-detail-model';
+import {
+  isAuthoritativeActivityDenial,
+  usableActivityQueryData,
+} from '../activity/activity-query-state';
+import {
+  activityDetailRefetchOnWindowFocus,
+  activityDetailRefreshInterval,
+  activityDetailStaleTime,
+} from '../activity/use-activity-data';
 
 import type {
   DwaionUserRun,
@@ -56,6 +65,7 @@ export function DwaionActivitySelection({
   runId,
   run,
   runLoading = false,
+  runRefreshFailed = false,
   locale,
   refreshing = false,
   accessDenied = false,
@@ -65,6 +75,7 @@ export function DwaionActivitySelection({
   runId: string;
   run?: DwaionUserRun;
   runLoading?: boolean;
+  runRefreshFailed?: boolean;
   locale: 'ko' | 'en';
   refreshing?: boolean;
   accessDenied?: boolean;
@@ -92,21 +103,26 @@ export function DwaionActivitySelection({
     queryFn: ({ signal }) => getActivityEvent(eventId, signal),
     enabled:
       Boolean(runId) && Boolean(user) && isAuthenticated && isLoaded && canQueryCommonActivity,
-    staleTime: 15_000,
-    refetchInterval: 60_000,
+    staleTime: (query) => activityDetailStaleTime(query.state.data),
+    refetchInterval: (query) => activityDetailRefreshInterval(query.state.data),
+    refetchOnWindowFocus: (query) => activityDetailRefetchOnWindowFocus(query.state.data),
     retry: (count, error) =>
       !(error instanceof HttpError && [400, 401, 403, 404].includes(error.status)) && count < 1,
     meta: { accessSensitive: true },
   });
-  const auditRecordId = detail.data?.auditRecordId ?? run?.auditEvidence?.auditRecordId ?? null;
+  const detailData = usableActivityQueryData(detail);
+  const detailAuthoritativelyDenied = detail.isError && isAuthoritativeActivityDenial(detail.error);
+  const auditRecordId =
+    detailData?.auditRecordId ??
+    (detailAuthoritativelyDenied ? null : (run?.auditEvidence?.auditRecordId ?? null));
   const evidence = useQuery({
     queryKey: [...activityQueryKeys.detail(identity, eventId), 'evidence', auditRecordId],
     queryFn: ({ signal }) => getWorkspaceActivityAuditEvidence(auditRecordId!, runId, signal),
-    enabled: canQueryCommonActivity && Boolean(auditRecordId),
-    staleTime: 15_000,
-    refetchInterval: 60_000,
-    retry: (count, error) =>
-      !(error instanceof HttpError && [400, 401, 403, 404].includes(error.status)) && count < 1,
+    enabled: canQueryCommonActivity && !detailAuthoritativelyDenied && Boolean(auditRecordId),
+    staleTime: Infinity,
+    refetchInterval: false,
+    refetchOnWindowFocus: false,
+    retry: false,
     meta: { accessSensitive: true },
   });
   const agentName = run
@@ -258,6 +274,11 @@ export function DwaionActivitySelection({
       </Box>
 
       <Stack gap={{ xs: 1.25, md: 1.5 }} sx={{ p: { xs: 1.25, sm: 1.5 } }}>
+        {run && runRefreshFailed && (
+          <InlineFeedback severity="warning" title={t('dwaionActivity.details.cachedRunTitle')}>
+            {t('dwaionActivity.details.cachedRunDescription')}
+          </InlineFeedback>
+        )}
         {run ? (
           <>
             <RunBoundary run={run} />
@@ -366,7 +387,7 @@ function CommonActivityEvidence({
 }) {
   const { t } = useTranslation('work');
   const { t: displayT } = useTranslation('display');
-  const selected = query.isError ? undefined : selectedActivityEvent(eventId, query.data);
+  const selected = selectedActivityEvent(eventId, usableActivityQueryData(query));
   const model = selected ? activityEventDetailModel(selected) : null;
 
   return (
@@ -380,9 +401,9 @@ function CommonActivityEvidence({
         bgcolor: 'action.hover',
       }}
     >
-      {query.isLoading ? (
+      {query.isLoading && !selected ? (
         <LoadingState label={t('activityPage.loading')} size="compact" />
-      ) : query.isError || !selected || !model ? (
+      ) : !selected || !model ? (
         <LocalErrorState
           title={t('activityFoundation.unavailableTitle')}
           description={t('activityFoundation.unavailableDescription')}
@@ -393,6 +414,21 @@ function CommonActivityEvidence({
         />
       ) : (
         <Stack gap={0.85}>
+          {query.isError && (
+            <InlineFeedback severity="warning" title={t('activityFoundation.cachedDetail.title')}>
+              {t('activityFoundation.cachedDetail.description')}
+              <Box sx={{ mt: 1 }}>
+                <ActionButton
+                  intent="secondary"
+                  size="small"
+                  onClick={() => void query.refetch()}
+                  disabled={query.isFetching}
+                >
+                  {t('activityPage.retry')}
+                </ActionButton>
+              </Box>
+            </InlineFeedback>
+          )}
           <Box>
             <Stack direction="row" gap={0.75} alignItems="center" flexWrap="wrap">
               <Typography

@@ -361,11 +361,13 @@
       "degraded": "최근 실행 조회 확인 필요",
       "pending": "첫 조회를 기다리는 중"
     },
-    "lastRetrieved": "마지막 조회 {{at}} · 60초마다 자동 확인",
+    "lastRetrieved": "마지막 조회 {{at}} · 실행 상태에 따라 갱신 주기 조정",
     "refresh": "실행 이력 새로고침",
     "loading": "AI 실행 이력을 불러오는 중입니다.",
     "errorTitle": "AI 실행 이력을 불러오지 못했습니다",
     "errorDescription": "확인되지 않은 실행 상태는 표시하지 않았습니다. 연결 상태를 확인한 뒤 다시 시도하세요.",
+    "cachedTitle": "AI 실행 이력을 새로 고치지 못했습니다",
+    "cachedDescription": "최신 정보를 가져올 수 없어 마지막으로 검증된 실행 범위를 계속 표시합니다.",
     "summaryLabel": "AI 실행 상태 요약",
     "metrics": {
       "total": "조회된 실행",
@@ -446,6 +448,8 @@
       "error": "현재 목록은 유지했지만 이전 실행을 더 불러오지 못했습니다."
     },
     "details": {
+      "cachedRunTitle": "선택한 실행을 새로 고치지 못했습니다",
+      "cachedRunDescription": "마지막으로 검증된 실행 상세를 표시합니다. 새로 고쳐 현재 상태를 확인하세요.",
       "title": "선택 실행 상세",
       "inspectorLabel": "실행 트레이스 인스펙터",
       "copyRunId": "실행 ID 복사",
@@ -509,6 +513,79 @@
         "description": "로컬 환경에서 계약을 검증하기 위한 표본입니다. 실제 운영 연결이나 성공 실적으로 집계하지 않습니다.",
         "listLabel": "개발 계약 검증 실행",
         "summaryExcluded": "{{count}}건은 위 운영 수치에서 제외되며 목록에서 배지로 구분됩니다."
+      },
+      "failure": {
+        "codes": {
+          "AGENT_EXECUTION_FAILED": {
+            "title": "AI 실행을 완료하지 못했습니다",
+            "description": "검증된 결과를 만들기 전에 실행이 종료되었습니다. 내부 오류 상세는 이 화면에 노출하지 않습니다."
+          },
+          "AGENT_SAFETY_CONFIGURATION_REQUIRED": {
+            "title": "안전 설정이 필요합니다",
+            "description": "필수 안전 설정을 사용할 수 없어 실행을 중단했습니다."
+          },
+          "ASK_RUNTIME_FAILED": {
+            "title": "AI 런타임을 일시적으로 사용할 수 없습니다",
+            "description": "관리형 런타임이 이 실행을 완료하지 못했습니다."
+          },
+          "CONTEXT_SOURCE_NOT_CONFIGURED": {
+            "title": "필수 소스가 설정되지 않았습니다",
+            "description": "소스 연결이 설정되지 않아 실행에 필요한 근거를 조회하지 못했습니다."
+          },
+          "CONTEXT_SOURCE_UNAVAILABLE": {
+            "title": "필수 소스를 사용할 수 없습니다",
+            "description": "설정된 소스에서 실행에 필요한 근거를 조회하지 못했습니다."
+          },
+          "MODEL_CALL_FAILED": {
+            "title": "모델 요청에 실패했습니다",
+            "description": "승인된 모델 경로가 이 실행에 사용할 수 있는 결과를 반환하지 못했습니다."
+          },
+          "MODEL_GROUNDING_CONTRACT_INVALID": {
+            "title": "근거 연결을 검증하지 못했습니다",
+            "description": "응답이 필수 근거 연결 계약을 충족하지 못했습니다."
+          },
+          "MODEL_OUTPUT_CONTRACT_INVALID": {
+            "title": "응답 형식을 검증하지 못했습니다",
+            "description": "모델 응답이 필수 출력 계약을 충족하지 못했습니다."
+          },
+          "MODEL_OUTPUT_MISSING": {
+            "title": "사용할 수 있는 응답이 없습니다",
+            "description": "모델 경로가 안전하게 표시할 수 있는 응답 없이 종료되었습니다."
+          },
+          "MODEL_PROVIDER_UNAVAILABLE": {
+            "title": "모델 서비스를 사용할 수 없습니다",
+            "description": "승인된 모델 공급자가 이 실행을 처리하지 못했습니다."
+          },
+          "MODEL_RESPONSE_INVALID_JSON": {
+            "title": "모델 응답을 읽을 수 없습니다",
+            "description": "구조화된 응답이 올바르지 않아 결과로 표시하지 않았습니다."
+          },
+          "MODEL_ROUTE_CONFIGURATION_INVALID": {
+            "title": "모델 경로 설정이 올바르지 않습니다",
+            "description": "설정된 모델 경로가 런타임 검증을 통과하지 못했습니다."
+          },
+          "MODEL_ROUTE_CONFIGURATION_REQUIRED": {
+            "title": "모델 경로 설정이 필요합니다",
+            "description": "이 실행에 사용할 수 있는 승인된 모델 경로가 없습니다."
+          },
+          "NO_SCOPED_EVIDENCE": {
+            "title": "권한 범위에서 사용할 근거가 없습니다",
+            "description": "현재 접근 범위에서 검증된 결과를 뒷받침할 근거를 찾지 못했습니다."
+          },
+          "GENERIC": {
+            "title": "이 실행을 완료하지 못했습니다",
+            "description": "사용자에게 안전하게 제공할 추가 오류 정보가 없습니다."
+          }
+        },
+        "recoveryLabel": "해결 방법:",
+        "recovery": {
+          "RETRY_LATER": "잠시 후 다시 시도하세요.",
+          "REVIEW_CONFIGURATION": "AI 및 연동 설정을 확인한 뒤 다시 시도하세요.",
+          "CHECK_SOURCE_CONNECTION": "소스 연결을 확인한 뒤 다시 시도하세요.",
+          "REVIEW_REQUEST": "요청 범위나 표현을 확인한 뒤 다시 시도하세요.",
+          "CONTACT_SUPPORT": "문제가 계속되면 실행 ID와 함께 지원팀에 문의하세요.",
+          "GENERIC": "다시 시도하고 문제가 계속되면 실행 ID와 함께 지원팀에 문의하세요."
+        }
       },
       "measurement": {
         "MEASURING": "계측 중",
@@ -2014,6 +2091,11 @@
     "attention": {
       "title": "지금 확인할 신호",
       "description": "현재 실행 원장에서 사용자 판단이나 정책 확인이 필요한 항목입니다.",
+      "listLabel": "현재 확인이 필요한 신호",
+      "stateChangedAt": "상태 변경 {{at}}",
+      "latestAt": "최근 신호 {{at}}",
+      "openItem": "신호 열기: {{title}}",
+      "legacyFallback": "현재 원장 버전에서는 정확한 신호를 제공하지 않습니다. 필터된 타임라인에서 계속 확인하세요.",
       "input": "입력 필요 {{count}}건 보기",
       "blocked": "정책 차단 {{count}}건 보기",
       "clearTitle": "즉시 확인할 신호가 없습니다",
@@ -3584,6 +3666,30 @@
     }
   },
   "activityFoundation": {
+    "cachedSummary": {
+      "title": "현재 요약을 새로 확인하지 못했습니다",
+      "description": "새 스냅샷을 다시 확인하는 동안 마지막으로 성공한 실행 요약을 표시합니다."
+    },
+    "cachedFeed": {
+      "title": "최근 활동을 새로 확인하지 못했습니다",
+      "description": "이전에 조회한 이벤트를 표시합니다. 새로 고침에 성공할 때까지 최신성이 저하된 상태입니다."
+    },
+    "cachedDetail": {
+      "title": "신호를 새로 확인하지 못했습니다",
+      "description": "현재 접근 권한과 최신성을 다시 확인하는 동안 마지막으로 성공한 신호를 표시합니다."
+    },
+    "cachedRun": {
+      "title": "실행 관찰 근거를 새로 확인하지 못했습니다",
+      "description": "마지막으로 성공한 실행 근거를 표시합니다. 새로운 종료 상태를 추정하지 않습니다."
+    },
+    "cachedEvidence": {
+      "title": "무결성 근거를 새로 확인하지 못했습니다",
+      "description": "새 검증을 다시 시도하는 동안 마지막으로 성공한 근거를 표시합니다."
+    },
+    "summaryUnavailable": {
+      "title": "현재 실행 요약을 확인할 수 없습니다",
+      "description": "타임라인은 계속 확인할 수 있지만 요약 조회에 성공할 때까지 현재 집계는 표시하지 않습니다."
+    },
     "sample": {
       "title": "개발 검증 데이터",
       "description": "로컬 계약 검증용 표본이며 운영 집계에 포함되지 않습니다."
@@ -3593,7 +3699,8 @@
       "AVAILABLE": "조회됨",
       "FORBIDDEN": "권한 범위 밖",
       "UNAVAILABLE": "조회 불가",
-      "partial": "일부 원천을 조회하지 못해 확인된 이력만 표시합니다. 누락된 이력을 0건으로 판단하지 마세요."
+      "partial": "일부 원천을 조회하지 못해 확인된 이력만 표시합니다. 누락된 이력을 0건으로 판단하지 마세요.",
+      "retry": "활동 원천 다시 조회"
     },
     "connectorStatus": {
       "title": "개인 연동 원장 상태",
@@ -3602,9 +3709,15 @@
       "empty": "현재 권한에서 확인되는 개인 연동 원장이 없습니다. 모든 연결이 정상이라는 의미가 아닙니다.",
       "unavailableTitle": "연동 원장 상태를 확인할 수 없습니다",
       "unavailableDescription": "확인되지 않은 연결을 정상으로 표시하지 않았습니다.",
+      "cachedDescription": "최신 상태 조회에 실패했습니다. 다시 시도하는 동안 마지막으로 성공한 연동 원장 상태를 표시합니다.",
+      "lastAttempt": "마지막 동기화 시도 {{at}}",
+      "noAttempt": "기록된 동기화 시도 없음",
       "lastSuccess": "마지막 동기화 성공 {{at}}",
       "noSuccess": "기록된 동기화 성공 없음",
       "observedAt": "원장 관측 시각 {{at}}",
+      "readySummary": "정상 연동 {{count}}개",
+      "resolveMail": "메일 연동 해결",
+      "resolveCalendar": "캘린더 연동 해결",
       "localFixture": "개발 검증 데이터",
       "states": {
         "READY": "준비됨",
@@ -3827,6 +3940,7 @@
     "nextPage": "이전 사건 더 보기",
     "filters": {
       "advanced": "고급 필터",
+      "queryMinimum": "검색어를 3자 이상 입력하세요. 전체 사건 또는 실행 UUID도 사용할 수 있습니다.",
       "source": "소스",
       "objectType": "객체 유형",
       "objectId": "객체 ID",

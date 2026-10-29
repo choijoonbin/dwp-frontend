@@ -182,6 +182,27 @@ const DELIVERY_PRESENTATIONS: Record<MailDeliveryState, MailDeliveryPresentation
     confirmedDelivered: false,
     retryAllowed: false,
   },
+  PROVIDER_ACCEPTED: {
+    severity: 'info',
+    labelKey: 'delivery.state.PROVIDER_ACCEPTED',
+    labelFallback: 'Accepted by provider (recipient delivery unconfirmed)',
+    confirmedDelivered: false,
+    retryAllowed: false,
+  },
+  RESULT_UNKNOWN: {
+    severity: 'warning',
+    labelKey: 'delivery.state.RESULT_UNKNOWN',
+    labelFallback: 'Result needs verification',
+    confirmedDelivered: false,
+    retryAllowed: false,
+  },
+  DELIVERED: {
+    severity: 'success',
+    labelKey: 'delivery.state.DELIVERED',
+    labelFallback: 'Recipient delivery confirmed',
+    confirmedDelivered: true,
+    retryAllowed: false,
+  },
   FAILED: {
     severity: 'error',
     labelKey: 'delivery.state.FAILED',

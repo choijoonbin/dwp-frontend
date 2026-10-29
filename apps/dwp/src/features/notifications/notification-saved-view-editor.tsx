@@ -195,9 +195,10 @@ export function NotificationSavedViewEditor({
           >
             {NOTIFICATION_SAVED_VIEW_ICONS.map((icon) => {
               const Icon = SAVED_VIEW_ICON[icon];
+              const iconLabel = tn(`savedViews.icons.${icon}`);
               return (
-                <ToggleButton key={icon} value={icon} aria-label={icon}>
-                  <Tooltip title={icon}>
+                <ToggleButton key={icon} value={icon} aria-label={iconLabel}>
+                  <Tooltip title={iconLabel}>
                     <Icon size={16} />
                   </Tooltip>
                 </ToggleButton>
@@ -219,20 +220,23 @@ export function NotificationSavedViewEditor({
             }
             sx={{ mt: 0.75 }}
           >
-            {NOTIFICATION_SAVED_VIEW_COLORS.map((color) => (
-              <ToggleButton key={color} value={color} aria-label={color}>
-                <Tooltip title={color}>
-                  <Box
-                    sx={{
-                      width: 16,
-                      height: 16,
-                      borderRadius: '50%',
-                      bgcolor: SAVED_VIEW_COLOR[color],
-                    }}
-                  />
-                </Tooltip>
-              </ToggleButton>
-            ))}
+            {NOTIFICATION_SAVED_VIEW_COLORS.map((color) => {
+              const colorLabel = tn(`savedViews.colors.${color}`);
+              return (
+                <ToggleButton key={color} value={color} aria-label={colorLabel}>
+                  <Tooltip title={colorLabel}>
+                    <Box
+                      sx={{
+                        width: 16,
+                        height: 16,
+                        borderRadius: '50%',
+                        bgcolor: SAVED_VIEW_COLOR[color],
+                      }}
+                    />
+                  </Tooltip>
+                </ToggleButton>
+              );
+            })}
           </ToggleButtonGroup>
         </Box>
         <SelectField

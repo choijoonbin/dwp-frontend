@@ -1,7 +1,7 @@
 import { useId } from 'react';
 import { useTranslation } from 'react-i18next';
 import dayjs from 'dayjs';
-import { Building2, ChevronLeft, Layers3, LockKeyhole, Star, Users } from 'lucide-react';
+import { Building2, ChevronLeft, Cloud, Layers3, LockKeyhole, Star, Users } from 'lucide-react';
 import { DateCalendar } from '@mui/x-date-pickers/DateCalendar';
 import { ActionButton, ActionIconButton } from '@dwp-frontend/design-system';
 
@@ -48,7 +48,9 @@ type CalendarSourcePickerProps = CalendarSourcePanelProps &
   }>;
 
 function groupIcon(group: CalendarSourceGroupKey) {
-  return group === 'company' ? <Building2 size={14} /> : <Layers3 size={14} />;
+  if (group === 'company') return <Building2 size={14} />;
+  if (group === 'external') return <Cloud size={14} />;
+  return <Layers3 size={14} />;
 }
 
 function CalendarSourceRow({
@@ -143,19 +145,21 @@ function CalendarSourceRow({
           <Users size={16} />
         </ActionIconButton>
       )}
-      <ActionIconButton
-        size="small"
-        label={
-          calendar.favorite
-            ? t('sources.removeFavoriteFor', { name: calendar.name })
-            : t('sources.addFavoriteFor', { name: calendar.name })
-        }
-        intent={calendar.favorite ? 'primary' : 'default'}
-        onClick={() => onFavoriteChange(calendar, !calendar.favorite)}
-        disabled={busy}
-      >
-        <Star size={16} fill={calendar.favorite ? 'currentColor' : 'none'} />
-      </ActionIconButton>
+      {!calendar.externalProvider && (
+        <ActionIconButton
+          size="small"
+          label={
+            calendar.favorite
+              ? t('sources.removeFavoriteFor', { name: calendar.name })
+              : t('sources.addFavoriteFor', { name: calendar.name })
+          }
+          intent={calendar.favorite ? 'primary' : 'default'}
+          onClick={() => onFavoriteChange(calendar, !calendar.favorite)}
+          disabled={busy}
+        >
+          <Star size={16} fill={calendar.favorite ? 'currentColor' : 'none'} />
+        </ActionIconButton>
+      )}
     </Stack>
   );
 }

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState, type MouseEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { TFunction } from 'i18next';
 import { Link } from 'react-router-dom';
@@ -11,7 +11,11 @@ import { alpha, type Theme } from '@mui/material/styles';
 
 import type { FlowSignal } from './flow-home-model';
 import { flowSourceLabel } from './flow-source-label';
-import { FlowActivityDistribution, FlowActivitySignalPanel } from './flow-activity-signal-panel';
+import {
+  FLOW_ACTIVITY_SIGNAL_DIALOG_TEST_ID,
+  FlowActivityDistribution,
+  FlowActivitySignalPanel,
+} from './flow-activity-signal-panel';
 
 const signalOrder: readonly FlowSignal['key'][] = [
   'open-work',
@@ -26,6 +30,8 @@ const signalIcon = {
   'schedule-load': CalendarRange,
   'activity-attention': BellDot,
 } as const;
+
+const FLOW_ACTIVITY_FOCUS_RESTORE_MAX_FRAMES = 120;
 
 export type RolePulseInsightDensity = 'short' | 'standard' | 'tall';
 
@@ -254,7 +260,7 @@ function RolePulseLens({
 }: {
   signal: FlowSignal;
   density: RolePulseInsightDensity;
-  onInspectActivity?: () => void;
+  onInspectActivity?: (trigger: HTMLElement) => void;
 }) {
   const { t } = useTranslation('home');
   const Icon = signalIcon[signal.key];
@@ -277,7 +283,11 @@ function RolePulseLens({
     <Box
       component={inspectActivity ? 'button' : Link}
       {...(inspectActivity
-        ? { type: 'button', onClick: onInspectActivity, 'aria-haspopup': 'dialog' as const }
+        ? {
+            type: 'button',
+            onClick: (event: MouseEvent<HTMLElement>) => onInspectActivity?.(event.currentTarget),
+            'aria-haspopup': 'dialog' as const,
+          }
         : { to: signal.route })}
       data-testid={inspectActivity ? 'flow-activity-signal-trigger' : undefined}
       data-home-role-lens={signal.key}
@@ -628,6 +638,25 @@ function RolePulseLens({
   );
 }
 
+export function restoreFlowActivitySignalTriggerFocus(
+  previousTrigger: HTMLElement | null
+): boolean {
+  const candidates = [
+    ...document.querySelectorAll<HTMLElement>('[data-testid="flow-activity-signal-trigger"]'),
+  ].filter(
+    (candidate) =>
+      !candidate.hasAttribute('disabled') && candidate.getAttribute('aria-disabled') !== 'true'
+  );
+  const previousVisible = Boolean(
+    previousTrigger?.isConnected && previousTrigger.getClientRects().length
+  );
+  const target = previousVisible
+    ? previousTrigger
+    : (candidates.find((candidate) => candidate.getClientRects().length > 0) ?? candidates[0]);
+  target?.focus({ preventScroll: true });
+  return Boolean(target && document.activeElement === target);
+}
+
 export function RolePulseInsight({
   signals,
   density = 'standard',
@@ -643,10 +672,38 @@ export function RolePulseInsight({
 }) {
   const { t } = useTranslation('home');
   const [activityOpen, setActivityOpen] = useState(false);
+  const activityTriggerRef = useRef<HTMLElement | null>(null);
+  const activityWasOpenedRef = useRef(false);
   const layout = rolePulseLayoutPolicy[density];
   const visible = signalOrder
     .map((key) => signals.find((signal) => signal.key === key))
     .filter((signal): signal is FlowSignal => Boolean(signal));
+  useEffect(() => {
+    if (activityOpen) {
+      activityWasOpenedRef.current = true;
+      return;
+    }
+    if (!activityWasOpenedRef.current) return;
+    let frame = 0;
+    let remainingFrames = FLOW_ACTIVITY_FOCUS_RESTORE_MAX_FRAMES;
+    const transferFocus = () => {
+      const dialogExited = !document.querySelector(
+        `[data-testid="${FLOW_ACTIVITY_SIGNAL_DIALOG_TEST_ID}"]`
+      );
+      if (dialogExited && restoreFlowActivitySignalTriggerFocus(activityTriggerRef.current)) {
+        activityWasOpenedRef.current = false;
+        return;
+      }
+      remainingFrames -= 1;
+      if (remainingFrames <= 0) {
+        activityWasOpenedRef.current = false;
+        return;
+      }
+      frame = globalThis.requestAnimationFrame(transferFocus);
+    };
+    frame = globalThis.requestAnimationFrame(transferFocus);
+    return () => globalThis.cancelAnimationFrame(frame);
+  }, [activityOpen]);
   if (visible.length === 0) return null;
 
   const accessibleSummary = visible
@@ -692,7 +749,10 @@ export function RolePulseInsight({
             key={signal.key}
             signal={signal}
             density={density}
-            onInspectActivity={() => setActivityOpen(true)}
+            onInspectActivity={(trigger) => {
+              activityTriggerRef.current = trigger;
+              setActivityOpen(true);
+            }}
           />
         ))}
       </Box>

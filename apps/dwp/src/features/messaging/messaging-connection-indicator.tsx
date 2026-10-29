@@ -20,6 +20,8 @@ export function MessagingConnectionIndicator({ state }: { state: MessagingConnec
     <Chip
       role="status"
       aria-live="polite"
+      aria-label={t(`conversation.connection.${state}`)}
+      data-testid="messaging-connection-indicator"
       size="small"
       variant="outlined"
       color={color}
@@ -38,12 +40,13 @@ export function MessagingConnectionIndicator({ state }: { state: MessagingConnec
       sx={{
         flexShrink: 0,
         '& .MuiChip-label': {
-          maxWidth: { xs: 0, xl: 120 },
-          px: { xs: 0, xl: 1 },
+          maxWidth: { xs: 96, sm: 120 },
+          px: 0.75,
           overflow: 'hidden',
+          textOverflow: 'ellipsis',
         },
-        '& .MuiChip-icon': { mx: { xs: 0.65, xl: 0.5 } },
-        minWidth: { xs: 24, xl: 'auto' },
+        '& .MuiChip-icon': { ml: 0.75, mr: 0 },
+        minWidth: 0,
       }}
     />
   );

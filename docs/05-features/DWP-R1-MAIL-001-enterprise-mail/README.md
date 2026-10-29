@@ -1,6 +1,6 @@
 # DWP-R1-MAIL-001 Enterprise Mail
 
-- 상태: Implemented with governed sandbox delivery
+- 상태: Production-readiness implementation complete; external provider certification is environment-gated
 - 사용자 진입점: `/mail/home`
 - 관리자 진입점: `/mail/admin/overview`
 - 리소스: `APP.MAIL`, `ADMIN.MAIL`
@@ -15,6 +15,11 @@
 - Split Inbox: 우선, 회신 필요, 담당, 업데이트 분류와 서버 검색
 - 메일 처리: 읽음, 중요 표시, Snooze, 보관, 회신, 신규 작성
 - 발송 신뢰성: 영속 Delivery Outbox, lease worker, 지수 재시도, 실패 재처리, 멱등 응답
+- 공급자 결과 증거: Sandbox 전달 완료, 외부 공급자 접수, 결과 불명·조정 필요 상태를 분리하고 결과 불명 자동 재전송 차단
+- 동기화 신뢰성: 영속 Sync Job, lease 회수, cursor generation fencing, reset 복구, 구독 갱신·검증된 webhook
+- 실시간 경험: 권한 lease로 제한된 SSE와 cursor catch-up, heartbeat, 오프라인·숨김 탭 중지, polling fallback
+- 검색·규칙: 권한 범위의 본문 FTS, BCC 색인 제외, 메시지 materialization과 원자적으로 생성되는 수신 규칙 작업
+- 첨부 보안: 신뢰 scanner 준비 상태, 크기 제한, redirect 차단, 검사 성공 전 다운로드·본문 노출 차단
 - 임시 보관함: 서버 저장, 이어 쓰기, 재저장, 발송 전환
 - 대화형 본문: 외부 발신자 경고, 첨부 메타데이터, 분류 등급, 받은·보낸 메일 다중 소속
 - 팀 협업: 공유함 구성원 경계, 담당자, 내부 댓글, 응답 목표
@@ -23,6 +28,8 @@
 - 공급사 계약: Microsoft Graph, Gmail, NAVER WORKS, JMAP, IMAP/SMTP와 배포 상태 분리
 - AI 확장: 회신, 일정, 휴가, 업무, 긴급 알림의 근거 기반·사람 승인형 제안
 - 다국어·반응형: 한국어·영어, Desktop 2열, Mobile 단계형 탐색
+- 복구 UX: 계정 없음·재인증 필요·일시 중지·동기화 지연을 구분하고 가능한 다음 동작만 노출
+- 대량 처리: 사용자 intent 1개와 항목별 멱등 키·최초 version을 고정해 부분 실패와 응답 유실을 정확 재생
 
 ## SKAX Seed
 
@@ -48,6 +55,9 @@
 9. AI 액션은 버전 1 계약과 액션별 필수 payload를 사용하며, 미지원 버전·불완전 payload·만료된 제안은 거부한다.
 10. 계약만 등록된 외부 공급자는 Runtime Adapter가 배포되기 전 활성화할 수 없다.
 11. 동일 idempotency key의 신규 작성·회신·초안 발송 재요청은 기존 결과를 반환한다.
+12. 대량 변경은 같은 항목 키에 다른 payload나 version을 결합하면 충돌로 거부하고, 같은 fingerprint의 성공 receipt는 변경을 중복 실행하지 않고 재사용한다.
+13. 공급자 삭제는 법적 보존을 다시 검증하고 로컬 삭제와 별도 영수증을 남긴다. 미지원·불명 결과는 완료가 아니다.
+14. 실시간 스트림은 서버와 브라우저 모두 권한 재검증 시각을 넘겨 이벤트를 전달하지 않는다.
 
 ## 검증 시나리오
 
@@ -74,12 +84,25 @@
 - Platform `V140`: 근거·확인·권한·경로·만료 DB 불변식과 롤링 계약 버전 보강
 - Platform `V141`: lease 기반 발송 Outbox, 상태·재시도·Provider receipt 불변식
 - Platform `V142`: 대화별 다중 폴더 멤버십과 Inbox·Sent 동시 조회
+- Platform `V203`~`V313`: 개인 메일 조직, 발송 fingerprint, 사용자·관리자 워크스페이스, 제안 handoff, writing asset, 보존·법적 보존·purge 및 이벤트 식별자 계약
+- Platform `V341`: 영속 수신 규칙 작업과 권한 범위 본문 Full-Text Search
+- Platform `V370`: 영속 동기화·cursor fencing, 구독·webhook, SSE, 첨부 검사·운영 지표
+- Platform `V371`: `PROVIDER_ACCEPTED`/`DELIVERED`/`RESULT_UNKNOWN` 분리와 공급자 purge 영수증
+- Platform `V372`: AI 제안 provenance와 항목별 bulk mutation 멱등 receipt
+- Notification `V38`: `MAIL.ACTION_ESCALATED` 소유자 계약과 내용 최소화 알림 템플릿
 - Auth `V60`: `APP.MAIL`, `ADMIN.MAIL`, `MAIL_ADMIN`, SKAX 위임 그룹
 
 ## 외부 준비가 필요한 범위
 
-실제 Microsoft, Google, NAVER WORKS 또는 회사 메일 송수신은 고객 OAuth App, 관리자
-동의, callback URL, Secret Store와 도메인 검증이 준비된 뒤 각 `MailConnectorPort`
-어댑터를 활성화한다. 로컬은 동일한 도메인 계약을 사용하는 DWP Sandbox로 기능을 검증한다.
+실제 Microsoft Graph와 Gmail, 이후 NAVER WORKS 또는 회사 메일 송수신은 고객 OAuth App,
+관리자 동의, callback·webhook URL, Secret Broker와 도메인 검증이 준비된 뒤 각
+`MailConnectorPort` 어댑터를 활성화한다. 로컬은 동일한 도메인 계약을 사용하는 DWP
+Sandbox로 기능을 검증한다.
+SSE와 catch-up은 중앙 product-authorization bundle에
+`route.mail.work.events.data`, `route.mail.work.events-catch-up.data`가 배포되기 전까지
+fail-closed 상태를 유지한다.
 관리 화면은 계약 지원 여부와 실제 Runtime Adapter 배포 여부를 별도로 표시하며, 준비되지 않은
 연결을 정상 또는 활성 상태로 가장하지 않는다.
+
+완료 기준과 상태 전이, 공급자 인증 항목, 운영 지표 및 검증 매트릭스는
+[Production-readiness architecture](03-production-readiness-architecture.md)를 단일 근거로 사용한다.

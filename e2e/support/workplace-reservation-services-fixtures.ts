@@ -486,9 +486,16 @@ export async function elevatedAuthority(page: Page) {
   await page.unroute('**/api/auth/product-surface-contexts');
   await page.route('**/api/auth/product-surface-contexts', (route) =>
     fulfillSuccess(route, {
-      contractVersion: 'product-surfaces/v3',
+      contractVersion: '2',
       decisionRevision: 'screen-18-elevated',
-      sourceRevisions: { auth: '18', policy: '18', productRelationship: '18' },
+      sourceRevisions: {
+        auth: '18',
+        policy: '18',
+        productRelationship: '18',
+        targetPopulation: '18',
+        support: null,
+        tenantControl: '18',
+      },
       activeAccessMode: 'ELEVATED',
       generatedAt: '2026-09-17T00:00:00Z',
       contexts: [],

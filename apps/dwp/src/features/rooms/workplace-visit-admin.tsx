@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { AlertTriangle, RefreshCw, ShieldAlert } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
@@ -68,7 +68,6 @@ export function WorkplaceVisitAdmin() {
   const openerRef = useRef<HTMLElement | null>(null);
   const headingRef = useRef<HTMLHeadingElement | null>(null);
   const elevated = authority.snapshot?.envelope.activeAccessMode === 'ELEVATED';
-  const canMutate = capabilities.canManageWorkplaceAdmin && elevated;
 
   const exceptionsQuery = useQuery({
     queryKey: ['workplace', 'visits', 'admin', 'exceptions'],
@@ -77,24 +76,23 @@ export function WorkplaceVisitAdmin() {
     retry: false,
     refetchInterval: 30_000,
   });
+  const canMutate = capabilities.canManageWorkplaceAdmin && elevated && !exceptionsQuery.isError;
   const exceptions = useMemo(
     () => exceptionsQuery.data?.items ?? [],
     [exceptionsQuery.data?.items]
   );
-  useEffect(() => {
-    if (!selectedId || exceptions.some((item) => item.visitId === selectedId)) return;
-    const next = new URLSearchParams(params);
-    next.delete('visit');
-    setParams(next, { replace: true });
-  }, [exceptions, params, selectedId, setParams]);
   const detailQuery = useQuery({
     queryKey: ['workplace', 'visits', 'admin', selectedId],
     queryFn: () => getAdminWorkplaceVisit(selectedId!),
-    enabled: Boolean(selectedId),
+    enabled: capabilities.isLoaded && capabilities.canViewWorkplaceAdmin && Boolean(selectedId),
     retry: false,
   });
   const selectedException = exceptions.find((item) => item.visitId === selectedId) ?? null;
-  const selected = detailQuery.data ?? null;
+  const detailMatchesTarget = Boolean(selectedId && detailQuery.data?.visitId === selectedId);
+  const selected = detailMatchesTarget ? (detailQuery.data ?? null) : null;
+  const detailTargetUnavailable = Boolean(
+    selectedId && (detailQuery.isError || (detailQuery.isSuccess && !detailMatchesTarget))
+  );
   const proposedAction = selectedException
     ? (adminVisitAction(selectedException.kind) as AdminAction | null)
     : null;
@@ -102,7 +100,13 @@ export function WorkplaceVisitAdmin() {
 
   const mutation = useMutation({
     mutationFn: (nextAction: AdminAction) => {
-      if (!selected || !canMutate || !reason.trim() || !confirmed) {
+      if (
+        !selected ||
+        selected.visitId !== selectedId ||
+        !canMutate ||
+        !reason.trim() ||
+        !confirmed
+      ) {
         throw new Error('VISIT_ADMIN_COMMAND_BLOCKED');
       }
       const input = {
@@ -186,9 +190,9 @@ export function WorkplaceVisitAdmin() {
           skeletonRows={5}
           label={t('workplace.visits.loading')}
         />
-      ) : exceptionsQuery.isError ? (
+      ) : exceptionsQuery.isError && !selectedId ? (
         <InlineFeedback severity="error">{t('workplace.visits.admin.loadError')}</InlineFeedback>
-      ) : exceptions.length === 0 ? (
+      ) : exceptions.length === 0 && (!selectedId || !capabilities.canViewWorkplaceAdmin) ? (
         <EmptyState
           title={t('workplace.visits.admin.emptyTitle')}
           description={t('workplace.visits.admin.emptyDescription')}
@@ -204,6 +208,11 @@ export function WorkplaceVisitAdmin() {
             gap: 2,
           }}
         >
+          {exceptionsQuery.isError ? (
+            <InlineFeedback severity="warning" sx={{ gridColumn: '1 / -1' }}>
+              {t('workplace.visits.admin.listDegraded')}
+            </InlineFeedback>
+          ) : null}
           <TableContainer sx={(theme) => workplaceMemberCard(theme)}>
             <Table aria-label={t('workplace.visits.admin.tableLabel')} size="small">
               <TableHead>
@@ -264,7 +273,7 @@ export function WorkplaceVisitAdmin() {
               <Box sx={{ p: { xs: 1.5, md: 2 } }}>
                 {detailQuery.isLoading ? (
                   <LoadingState embedded label={t('workplace.visits.loading')} />
-                ) : detailQuery.isError || !selected ? (
+                ) : detailTargetUnavailable || !selected ? (
                   <InlineFeedback severity="error">
                     {t('workplace.visits.admin.detailError')}
                   </InlineFeedback>

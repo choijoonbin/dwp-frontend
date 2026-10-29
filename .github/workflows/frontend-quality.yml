@@ -161,8 +161,8 @@ jobs:
       - name: Run governed menu route contracts
         run: corepack yarn playwright test e2e/menu-route-contract.spec.ts --project=chromium --project=mobile --workers=2
 
-      - name: Run Workplace booking and administration gates
-        run: corepack yarn playwright test e2e/rooms.spec.ts --project=chromium --workers=1
+      - name: Run Workplace member and operator smoke gates on desktop and mobile
+        run: corepack yarn test:e2e:workplace:smoke
 
       - name: Run Product Surface pilot gates on desktop and mobile
         run: corepack yarn playwright test e2e/product-surface-approvals-pilot.spec.ts --project=chromium --project=mobile --workers=1
@@ -181,6 +181,263 @@ jobs:
           path: playwright-report/
           if-no-files-found: error
           retention-days: 14
+
+  calendar-quality:
+    name: Calendar behavior and accessibility gates
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    env:
+      YARN_ENABLE_HARDENED_MODE: '1'
+
+    steps:
+      - name: Check out source
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+
+      - name: Set up Node.js runtime
+        uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version-file: .node-version
+
+      - name: Enable Corepack and activate Yarn
+        run: |
+          corepack enable
+          corepack prepare yarn@4.17.1 --activate
+
+      - name: Restore Yarn cache
+        uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version-file: .node-version
+          cache: yarn
+          cache-dependency-path: yarn.lock
+
+      - name: Install dependencies
+        run: corepack yarn install --immutable
+
+      - name: Install Playwright Chromium
+        run: corepack yarn playwright install --with-deps chromium
+
+      - name: Run Calendar behavior, resilience, responsive, and accessibility gates
+        env:
+          PLAYWRIGHT_HTML_OUTPUT_DIR: playwright-report-calendar
+          PLAYWRIGHT_OUTPUT_DIR: test-results/calendar
+        run: >-
+          corepack yarn playwright test
+          e2e/calendar-advanced-scheduling.spec.ts
+          e2e/calendar-enterprise.spec.ts
+          e2e/calendar-home-enterprise.spec.ts
+          e2e/calendar-home-flow.spec.ts
+          e2e/calendar-home-rail-design.spec.ts
+          e2e/calendar-insights-and-settings.spec.ts
+          e2e/calendar-precision-design.spec.ts
+          e2e/calendar-visual-quality.spec.ts
+          e2e/calendar-work-handoff.spec.ts
+          e2e/flow-home-calendar-insights.spec.ts
+          --project=chromium --project=mobile --workers=1 --ignore-snapshots
+
+      - name: Upload Calendar acceptance report
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5
+        with:
+          name: calendar-e2e-report
+          path: |
+            playwright-report-calendar/
+            test-results/calendar/
+          if-no-files-found: error
+          retention-days: 30
+
+  calendar-webkit-quality:
+    name: Calendar Safari/WebKit compatibility gate
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      YARN_ENABLE_HARDENED_MODE: '1'
+
+    steps:
+      - name: Check out source
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+
+      - name: Set up Node.js runtime
+        uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version-file: .node-version
+
+      - name: Enable Corepack and activate Yarn
+        run: |
+          corepack enable
+          corepack prepare yarn@4.17.1 --activate
+
+      - name: Restore Yarn cache
+        uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version-file: .node-version
+          cache: yarn
+          cache-dependency-path: yarn.lock
+
+      - name: Install dependencies
+        run: corepack yarn install --immutable
+
+      - name: Install Playwright WebKit
+        run: corepack yarn playwright install --with-deps webkit
+
+      - name: Run Calendar desktop and mobile WebKit smoke gates
+        env:
+          PLAYWRIGHT_HTML_OUTPUT_DIR: playwright-report-calendar-webkit
+          PLAYWRIGHT_OUTPUT_DIR: test-results/calendar-webkit
+        run: corepack yarn test:e2e:calendar:webkit
+
+      - name: Upload Calendar WebKit acceptance report
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5
+        with:
+          name: calendar-webkit-e2e-report
+          path: |
+            playwright-report-calendar-webkit/
+            test-results/calendar-webkit/
+          if-no-files-found: error
+          retention-days: 30
+
+  mail-quality:
+    name: Mail behavior, governance, and accessibility gates
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    env:
+      YARN_ENABLE_HARDENED_MODE: '1'
+
+    steps:
+      - name: Check out source
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+
+      - name: Set up Node.js runtime
+        uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version-file: .node-version
+
+      - name: Enable Corepack and activate Yarn
+        run: |
+          corepack enable
+          corepack prepare yarn@4.17.1 --activate
+
+      - name: Restore Yarn cache
+        uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version-file: .node-version
+          cache: yarn
+          cache-dependency-path: yarn.lock
+
+      - name: Install dependencies
+        run: corepack yarn install --immutable
+
+      - name: Install Playwright Chromium
+        run: corepack yarn playwright install --with-deps chromium
+
+      - name: Run all Mail desktop and mobile behavior gates
+        env:
+          PLAYWRIGHT_HTML_OUTPUT_DIR: playwright-report-mail
+          PLAYWRIGHT_OUTPUT_DIR: test-results/mail
+        run: corepack yarn test:e2e:mail
+
+      - name: Upload Mail acceptance report
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5
+        with:
+          name: mail-e2e-report
+          path: |
+            playwright-report-mail/
+            test-results/mail/
+          if-no-files-found: error
+          retention-days: 30
+
+  activity-quality:
+    name: Activity behavior, resilience, accessibility, and native zoom gates
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    env:
+      E2E_BASE_URL: http://127.0.0.1:4200
+      E2E_TIMEZONE_ID: Asia/Seoul
+      YARN_ENABLE_HARDENED_MODE: '1'
+
+    steps:
+      - name: Check out source
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+
+      - name: Set up Node.js runtime
+        uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version-file: .node-version
+
+      - name: Enable Corepack and activate Yarn
+        run: |
+          corepack enable
+          corepack prepare yarn@4.17.1 --activate
+
+      - name: Restore Yarn cache
+        uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version-file: .node-version
+          cache: yarn
+          cache-dependency-path: yarn.lock
+
+      - name: Install dependencies
+        run: corepack yarn install --immutable
+
+      - name: Install Activity Playwright browsers
+        run: corepack yarn playwright install --with-deps chromium webkit
+
+      - name: Run Activity Chromium acceptance gates
+        env:
+          PLAYWRIGHT_HTML_OUTPUT_DIR: playwright-report-activity-chromium
+          PLAYWRIGHT_OUTPUT_DIR: test-results/activity-chromium
+        run: >-
+          corepack yarn playwright test
+          e2e/activity-foundation.spec.ts
+          e2e/activity-stitch-visual-quality.spec.ts
+          e2e/dwaion-activity-list-detail.spec.ts
+          e2e/activity-source-link.spec.ts
+          e2e/activity-personal-work-handoff.spec.ts
+          e2e/activity-work-handoff.spec.ts
+          e2e/work-activity-return-focus.spec.ts
+          --project=chromium --workers=1 --ignore-snapshots
+
+      - name: Run Activity mobile acceptance gates
+        env:
+          PLAYWRIGHT_HTML_OUTPUT_DIR: playwright-report-activity-mobile
+          PLAYWRIGHT_OUTPUT_DIR: test-results/activity-mobile
+        run: >-
+          corepack yarn playwright test
+          e2e/activity-foundation.spec.ts
+          e2e/activity-stitch-visual-quality.spec.ts
+          e2e/dwaion-activity-list-detail.spec.ts
+          e2e/activity-source-link.spec.ts
+          e2e/activity-personal-work-handoff.spec.ts
+          e2e/activity-work-handoff.spec.ts
+          e2e/work-activity-return-focus.spec.ts
+          --project=mobile --workers=1 --ignore-snapshots
+
+      - name: Run real Chromium 200 percent tab zoom gate
+        env:
+          E2E_BROWSER_ZOOM_EXTENSION: ${{ github.workspace }}/docs/05-features/DWP-R1-WRK-001-unified-work-execution/implementation-evidence/2026-09-07-resume/mobile-accessibility-final/qa-browser-zoom-extension
+          PLAYWRIGHT_HTML_OUTPUT_DIR: playwright-report-activity-zoom
+          PLAYWRIGHT_OUTPUT_DIR: test-results/activity-zoom
+        run: >-
+          corepack yarn playwright test
+          e2e/activity-stitch-visual-quality.spec.ts
+          --project=chromium --workers=1
+          --grep "브라우저 실제 200% 확대"
+
+      - name: Upload Activity acceptance and native zoom reports
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5
+        with:
+          name: activity-e2e-report
+          path: |
+            playwright-report-activity-chromium/
+            playwright-report-activity-mobile/
+            playwright-report-activity-zoom/
+            test-results/activity-chromium/
+            test-results/activity-mobile/
+            test-results/activity-zoom/
+          if-no-files-found: error
+          retention-days: 30
 
   visual-baselines:
     name: Approved macOS pixel baselines
@@ -271,6 +528,18 @@ jobs:
           PLAYWRIGHT_OUTPUT_DIR: test-results/flow-home-mobile
         run: corepack yarn playwright test e2e/flow-home-visual.spec.ts --project=mobile --workers=1
 
+      - name: Run approved Darwin Activity visual baselines
+        env:
+          PLAYWRIGHT_HTML_OUTPUT_DIR: playwright-report/activity
+          PLAYWRIGHT_OUTPUT_DIR: test-results/activity-visual
+        run: corepack yarn playwright test e2e/activity-stitch-visual-quality.spec.ts --project=chromium --workers=1
+
+      - name: Run approved Darwin Mail visual baselines
+        env:
+          PLAYWRIGHT_HTML_OUTPUT_DIR: playwright-report/mail
+          PLAYWRIGHT_OUTPUT_DIR: test-results/mail
+        run: corepack yarn test:e2e:mail:visual
+
       - name: Upload visual regression report
         if: ${{ !cancelled() }}
         uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5
@@ -281,6 +550,62 @@ jobs:
             test-results/
           if-no-files-found: error
           retention-days: 14
+
+  calendar-visual-baselines:
+    name: Approved Calendar macOS pixel baselines
+    runs-on: macos-15
+    timeout-minutes: 60
+    env:
+      E2E_TIMEZONE_ID: Asia/Seoul
+      YARN_ENABLE_HARDENED_MODE: '1'
+
+    steps:
+      - name: Check out source
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+
+      - name: Set up Node.js runtime
+        uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version-file: .node-version
+
+      - name: Enable Corepack and activate Yarn
+        run: |
+          corepack enable
+          corepack prepare yarn@4.17.1 --activate
+
+      - name: Restore Yarn cache
+        uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version-file: .node-version
+          cache: yarn
+          cache-dependency-path: yarn.lock
+
+      - name: Install dependencies
+        run: corepack yarn install --immutable
+
+      - name: Install Playwright Chromium
+        run: corepack yarn playwright install chromium
+
+      - name: Run approved Darwin Calendar visual baselines
+        env:
+          PLAYWRIGHT_HTML_OUTPUT_DIR: playwright-report-calendar-visual
+          PLAYWRIGHT_OUTPUT_DIR: test-results/calendar-visual
+        run: >-
+          corepack yarn playwright test
+          e2e/calendar-home-flow.spec.ts
+          e2e/calendar-visual-quality.spec.ts
+          --project=chromium --project=mobile --workers=1
+
+      - name: Upload Calendar visual regression report
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5
+        with:
+          name: calendar-visual-report-macos
+          path: |
+            playwright-report-calendar-visual/
+            test-results/calendar-visual/
+          if-no-files-found: error
+          retention-days: 30
 
   dependency-review:
     if: github.event_name == 'pull_request'

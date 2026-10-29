@@ -1,10 +1,11 @@
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test, type Page, type Route } from '@playwright/test';
 
+import { mailOrganization } from './support/mail-fixtures';
 import { mockShellSession } from './support/shell-session';
 
 const MAIL_PERMISSIONS = [
-  ...['VIEW', 'UPDATE'].map((permissionCode) => ({
+  ...['VIEW', 'UPDATE', 'DECIDE'].map((permissionCode) => ({
     resourceType: 'APP',
     resourceKey: 'APP.MAIL',
     permissionCode,
@@ -423,6 +424,7 @@ async function mockMailProposalHome(
   mode: 'light' | 'dark' = 'light',
   highContrast = false
 ) {
+  const organization = mailOrganization();
   await mockShellSession(page, ['WORKSPACE_MEMBER'], {
     locale: 'en',
     displayName: 'Mina Kim',
@@ -440,7 +442,7 @@ async function mockMailProposalHome(
   );
   await page.route('**/api/platform/v1/mail/organization', (route) =>
     fulfill(route, {
-      accounts: [],
+      accounts: organization.accounts,
       folders: [],
       rules: [],
       recentRuns: [],
@@ -449,7 +451,7 @@ async function mockMailProposalHome(
   );
   await page.route('**/api/platform/v1/mail/home', (route) =>
     fulfill(route, {
-      accounts: [],
+      accounts: organization.accounts,
       metrics: {
         unread: 14,
         urgent: 3,

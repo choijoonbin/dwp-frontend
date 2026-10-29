@@ -19,6 +19,11 @@ vi.mock('react-i18next', () => ({
         return `You are leaving DWP for ${String(options?.domain)} at ${String(options?.url)}`;
       if (key === 'actions.cancel') return 'Cancel';
       if (key === 'thread.forward') return 'Forward';
+      if (key === 'delivery.retry') return 'Retry delivery';
+      if (key === 'secondary.delivery.providerAcceptedDescription')
+        return 'Provider accepted; recipient delivery is unconfirmed.';
+      if (key === 'secondary.delivery.resultUnknownDescription')
+        return 'Outcome unknown; automatic resend is disabled.';
       return String(options?.defaultValue ?? key);
     },
   }),
@@ -95,5 +100,38 @@ describe('Mail HTML external-link boundary', () => {
       'noopener,noreferrer'
     );
     expect(openedWindow.opener).toBeNull();
+  });
+
+  it('distinguishes provider acceptance from an unknown result without enabling resend', async () => {
+    const queryClient = new QueryClient({ defaultOptions: { queries: { retry: false } } });
+    const renderState = async (deliveryState: MailMessage['deliveryState']) =>
+      act(async () =>
+        root.render(
+          <QueryClientProvider client={queryClient}>
+            <MailThreadMessageCard
+              threadId="thread-1"
+              message={{ ...message, direction: 'OUTBOUND', deliveryState }}
+              language="en"
+              remoteImagePolicy="BLOCK"
+              remoteImagesManuallyAllowed={false}
+              canForward={false}
+              onLoadRemoteImages={vi.fn()}
+              onForward={vi.fn()}
+            />
+          </QueryClientProvider>
+        )
+      );
+
+    await renderState('PROVIDER_ACCEPTED');
+    expect(host.textContent).toContain('Accepted by provider (recipient delivery unconfirmed)');
+    expect(host.textContent).toContain('Provider accepted; recipient delivery is unconfirmed.');
+    expect(() => getByRole(host, 'button', { name: 'Retry delivery' })).toThrow();
+
+    await renderState('RESULT_UNKNOWN');
+    expect(host.textContent).toContain('Result needs verification');
+    expect(host.textContent).toContain('Outcome unknown; automatic resend is disabled.');
+    expect(
+      (getByRole(host, 'button', { name: 'Retry delivery' }) as HTMLButtonElement).disabled
+    ).toBe(true);
   });
 });

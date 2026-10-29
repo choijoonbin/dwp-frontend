@@ -1,10 +1,15 @@
-import { axiosInstance } from '../axios-instance';
 import { dwaionProposalHandoffHeaders } from '../dwaion-contract';
 import { parseMailAccountReadinessEvidence } from './mail-api';
+import { mailGovernedHttp as axiosInstance } from './mail-governed-transport';
 import { mailProposalMutationHeaders } from './mail-proposal-binding';
 
 import type { ApiResponse } from '../types';
 import type { DwaionProposalHandoffBinding } from '../dwaion-contract';
+import type {
+  MailSaveDraftContractPath,
+  MailUpdateDraftContractPath,
+  MailUpdateDraftContractRequest,
+} from './mail-contract-types';
 import type {
   MailAccount,
   MailAccountReadinessEvidence,
@@ -181,6 +186,8 @@ export type MailUserDeliveryState =
   | 'SCHEDULED'
   | 'QUEUED'
   | 'SENDING'
+  | 'PROVIDER_ACCEPTED'
+  | 'RESULT_UNKNOWN'
   | 'ACCEPTED'
   | 'DELIVERED'
   | 'BOUNCED'
@@ -230,6 +237,14 @@ export type MailAdvancedThreadDetail = MailThreadDetail & {
 export type MailAdvancedDraftSaveInput = MailDraftSaveInput & {
   classification: MailClassification;
   externalRecipientConfirmed: boolean;
+  composeOptions?: MailComposeOptions;
+};
+
+export type MailAdvancedDraftUpdateInput = Omit<
+  MailUpdateDraftContractRequest,
+  'composeOptions' | 'toName'
+> & {
+  toName?: string | null;
   composeOptions?: MailComposeOptions;
 };
 
@@ -540,7 +555,7 @@ export async function createAdvancedMailDraft(
 }
 
 export async function saveAdvancedMailDraft(
-  threadId: string,
+  threadId: MailSaveDraftContractPath['threadId'],
   input: MailAdvancedDraftSaveInput & { version: number }
 ): Promise<MailAdvancedThreadDetail> {
   const response = await axiosInstance.put<
@@ -551,19 +566,8 @@ export async function saveAdvancedMailDraft(
 }
 
 export async function updateAdvancedMailDraft(
-  threadId: string,
-  input: {
-    toEmail: string;
-    toName?: string | null;
-    subject: string;
-    body: string;
-    deliveryMode: 'SEND' | 'DRAFT';
-    idempotencyKey: string;
-    version: number;
-    classification: MailClassification;
-    externalRecipientConfirmed: boolean;
-    composeOptions?: MailComposeOptions;
-  },
+  threadId: MailUpdateDraftContractPath['threadId'],
+  input: MailAdvancedDraftUpdateInput,
   proposalBinding?: MailProposalMutationBinding
 ): Promise<MailAdvancedThreadDetail> {
   const response = await axiosInstance.put<ApiResponse<MailAdvancedThreadDetail>, typeof input>(

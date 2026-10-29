@@ -6,10 +6,14 @@
     "shareDescription": "Let message senders see when you have viewed their messages. This does not change anyone else's sharing preference.",
     "enabledDescription": "Turning this off hides your read status, including past messages. Turning it back on shares previously recorded views too.",
     "disabledDescription": "Others see ‘Not shared’. Your unread conversations and reading position are still maintained.",
+    "sharePresence": "Share my Messenger connection presence",
+    "presenceDescription": "Allow other members to see an ephemeral connection signal while Messenger is visible and connected.",
+    "presenceEnabledDescription": "Your server-timed presence lease is renewed only while Messenger is visible and connected. It does not mean you are reading or ready to respond.",
+    "presenceDisabledDescription": "Your current presence lease is withdrawn and future heartbeats cannot publish a connection signal until you enable sharing again.",
     "loading": "Loading privacy settings",
     "loadError": "Privacy settings could not be loaded.",
     "saveError": "Your preference could not be saved. Check the latest setting and try again.",
-    "saved": "Read status sharing preference saved.",
+    "saved": "Privacy sharing preference saved.",
     "retry": "Try again"
   },
   "receipts": {
@@ -54,10 +58,14 @@
       "messaging": {
         "home": { "label": "Home" },
         "inbox": { "label": "Inbox" },
+        "activity": { "label": "Activity" },
+        "threads": { "label": "Threads" },
         "spaces": { "label": "Space conversations" },
         "direct": { "label": "DMs" },
         "people": { "label": "Find people" },
+        "files": { "label": "Files and links" },
         "later": { "label": "Later" },
+        "settings": { "label": "Personal settings" },
         "admin-overview": { "label": "Operations" },
         "admin-policy": { "label": "Policy" }
       }
@@ -73,6 +81,136 @@
     "saving": "Saving",
     "cancel": "Cancel",
     "close": "Close"
+  },
+  "readFailure": {
+    "offline": "You are offline. Reconnect to the network, then try again.",
+    "permission": "Your access is no longer available. Refresh your permissions or contact an administrator.",
+    "unavailable": "The service is temporarily unavailable. Try again."
+  },
+  "settingsPage": {
+    "eyebrow": "Personal environment",
+    "title": "Messenger settings",
+    "description": "Manage display, privacy, and interaction preferences across your conversations.",
+    "appearance": {
+      "title": "Display and reading",
+      "description": "Adapt message presentation and information density to your work."
+    },
+    "accessibility": {
+      "title": "Accessibility",
+      "description": "Apply your account accessibility preferences to Messenger and the rest of DWP.",
+      "loading": "Loading accessibility preferences",
+      "loadError": "Accessibility preferences could not be loaded.",
+      "highContrast": "High contrast",
+      "highContrastDescription": "Increase foreground and focus-ring contrast across Messenger.",
+      "reduceMotion": "Reduce motion",
+      "reduceMotionDescription": "Remove non-essential transitions and respect system motion preferences."
+    },
+    "notifications": {
+      "title": "Notifications",
+      "description": "Manage delivery channels globally and choose a level for each conversation.",
+      "globalDescription": "Global channel, quiet-hours, and delivery controls are governed in Notification settings.",
+      "manageGlobal": "Open notification settings",
+      "perConversation": "Use a conversation’s settings menu to choose All, Mentions, Default, or Mute for that conversation."
+    },
+    "privacy": {
+      "title": "Privacy and read status",
+      "description": "Control the read status shared with other members."
+    },
+    "presence": {
+      "title": "Connection presence",
+      "description": "Understand what the current presence signal represents.",
+      "currentContract": "You appear as ‘Active in Messenger’ only while Messenger is visible and connected. This does not prove that you are reading a message or available to respond immediately."
+    },
+    "shortcuts": {
+      "title": "Keyboard shortcuts",
+      "description": "Move through conversations and search quickly.",
+      "search": "Search Messenger",
+      "filter": "Focus conversation list search",
+      "send": "Send message",
+      "newLine": "Insert a new line"
+    }
+  },
+  "files": {
+    "eyebrow": "Shared knowledge",
+    "title": "Files and links",
+    "description": "Find recent governed files and links without losing their conversation context.",
+    "search": "Search shared items",
+    "searchPlaceholder": "Title, conversation, sender, or file type",
+    "kindFilter": "Shared item type",
+    "kinds": {
+      "ALL": "All",
+      "FILE": "Files",
+      "LINK": "Links"
+    },
+    "results": "Recent shares",
+    "resultCount": "{{count}} results",
+    "loading": "Loading shared files and links",
+    "loadError": "Shared files and links could not be loaded.",
+    "emptyTitle": "No shared files or links yet",
+    "emptyDescription": "Clean files and links from conversations you can access will appear here.",
+    "noMatchesTitle": "No shared items match",
+    "noMatchesDescription": "Try another search term or item type.",
+    "open": "Open {{title}} in {{conversation}}",
+    "protectedTitle": "Protected shared item",
+    "unnamedConversation": "Conversation",
+    "limitNotice": "Showing the {{count}} most recent accessible shares. Older shares remain available in their conversations."
+  },
+  "activity": {
+    "eyebrow": "Attention",
+    "title": "Activity",
+    "description": "Review mentions, replies, reactions, and system changes from conversations you can still access.",
+    "search": "Search activity",
+    "searchPlaceholder": "Person, conversation, or message preview",
+    "filterLabel": "Activity type",
+    "kinds": {
+      "ALL": "All",
+      "MENTION": "Mentions",
+      "THREAD_REPLY": "Thread replies",
+      "REACTION": "Reactions",
+      "SYSTEM": "System",
+      "SCHEDULE_FAILED": "Scheduled delivery failures"
+    },
+    "itemTitle": {
+      "MENTION": "{{actor}} mentioned you",
+      "THREAD_REPLY": "{{actor}} replied in a thread",
+      "REACTION": "{{actor}} reacted to your message",
+      "SYSTEM": "Conversation update",
+      "SCHEDULE_FAILED": "Scheduled message was not delivered"
+    },
+    "results": "Recent activity",
+    "resultCount": "{{count}} results",
+    "loading": "Loading activity",
+    "loadError": "Activity could not be loaded.",
+    "emptyTitle": "No recent activity",
+    "emptyDescription": "New mentions, participating thread replies, reactions, and system changes will appear here.",
+    "noMatchesTitle": "No activity matches",
+    "noMatchesDescription": "Try another search term or activity type.",
+    "protectedPreview": "Protected conversation content is hidden in Activity.",
+    "noPreview": "Open the conversation for details.",
+    "open": "Open {{kind}} in {{conversation}}",
+    "unnamedConversation": "Conversation"
+  },
+  "threadsPage": {
+    "eyebrow": "Conversation work",
+    "title": "Threads",
+    "description": "Resume threads you started or participated in, ordered by the latest reply.",
+    "search": "Search threads",
+    "searchPlaceholder": "Conversation, participant, or message preview",
+    "results": "Participating threads",
+    "resultCount": "{{count}} threads",
+    "replyCount": "{{count}} replies",
+    "latestReply": "Latest reply from {{actor}} · {{time}}",
+    "loading": "Loading threads",
+    "loadError": "Threads could not be loaded.",
+    "emptyTitle": "No participating threads yet",
+    "emptyDescription": "Threads you start or reply to will appear here after another reply is added.",
+    "noMatchesTitle": "No threads match",
+    "noMatchesDescription": "Try another conversation or participant name.",
+    "protectedPreview": "Protected conversation content is hidden in this list.",
+    "deletedRoot": "The original message was deleted.",
+    "noPreview": "Open the thread for details.",
+    "open": "Open thread with {{count}} replies in {{conversation}}",
+    "unnamedConversation": "Conversation"
   },
   "formatting": {
     "toolbar": "Message formatting",
@@ -133,6 +271,7 @@
       "emptyTitle": "No shared files or links yet",
       "emptyDescription": "Recent conversation shares will appear here.",
       "openConversation": "Open {{title}} in {{conversation}}",
+      "protectedTitle": "Protected shared item",
       "FILE": "File",
       "LINK": "Link"
     },
@@ -232,28 +371,29 @@
       "open": "Open all saved items",
       "loading": "Loading saved items",
       "loadError": "Saved items could not be loaded.",
+      "protectedPreview": "Protected message content is hidden from the home view.",
       "emptyTitle": "No saved messages",
       "emptyDescription": "Save a message to resume it from here later.",
       "startDirect": "Find a person and start a new DM"
     },
     "people": {
-      "availableSnapshot": "Showing {{count}} people who are available now",
-      "unavailableSnapshot": "Live availability could not be verified",
-      "unavailableTitle": "Presence is temporarily unavailable",
-      "unavailableDescription": "We couldn't verify who is available. Last checked {{time}}.",
-      "emptyTitle": "No one is available right now",
+      "availableSnapshot": "Showing {{count}} people active in Messenger",
+      "unavailableSnapshot": "Messenger activity could not be verified",
+      "unavailableTitle": "Messenger activity is temporarily unavailable",
+      "unavailableDescription": "We couldn't verify who is active in Messenger. Last checked {{time}}.",
+      "emptyTitle": "No one is active in Messenger right now",
       "emptyDescription": "People appear here while they have Messenger open.",
       "messagePerson": "Message {{name}}, {{presence}}",
       "presence": {
-        "AVAILABLE": "Available",
+        "AVAILABLE": "Active in Messenger",
         "BUSY": "Busy",
         "AWAY": "Away",
         "FOCUS": "Focus mode",
         "OFFLINE": "Offline",
         "UNKNOWN": "Presence unavailable"
       },
-      "title": "People available now",
-      "description": "{{count}} people are currently active",
+      "title": "People active in Messenger",
+      "description": "Recent Messenger activity from {{count}} people",
       "open": "Open people directory"
     }
   },
@@ -276,6 +416,7 @@
     "timeline": "Messages",
     "unread": "Unread messages",
     "newMessages": "{{count}} new messages",
+    "protectedPreview": "Protected conversation content is hidden in the conversation list.",
     "history": {
       "loadOlder": "Load earlier messages",
       "loading": "Loading earlier messages",
@@ -492,6 +633,49 @@
     "previous": "Previous",
     "next": "Next"
   },
+  "laterPage": {
+    "eyebrow": "Follow-up queue",
+    "title": "Later",
+    "description": "Turn saved messages into a clear follow-up queue with reminders and completion state.",
+    "search": "Search Later",
+    "searchPlaceholder": "Conversation, sender, or visible message text",
+    "stateFilter": "Later state",
+    "states": {
+      "ALL": "All",
+      "SAVED": "Saved",
+      "SNOOZED": "Snoozed",
+      "DUE": "Due",
+      "COMPLETED": "Done"
+    },
+    "results": "Follow-up items",
+    "resultCount": "{{count}} items",
+    "loading": "Loading Later items",
+    "loadError": "Later items could not be loaded.",
+    "noMatchesTitle": "No Later items match",
+    "noMatchesDescription": "Try another search term or follow-up state.",
+    "protectedPreview": "Protected message content is hidden in this queue.",
+    "noPreview": "Open the conversation for details.",
+    "unnamedConversation": "Conversation",
+    "savedAt": "Saved {{time}}",
+    "snoozedUntil": "Remind me {{time}}",
+    "snooze": "Remind me later",
+    "reschedule": "Change reminder",
+    "restore": "Return to saved",
+    "complete": "Mark done",
+    "reopen": "Reopen",
+    "updateSuccess": "Later item updated.",
+    "updateError": "The item changed or could not be updated. The latest state has been loaded.",
+    "snoozeDialog": {
+      "title": "Set a reminder",
+      "description": "Hide this item until the selected local time, then move it to Due.",
+      "timeLabel": "Remind me at",
+      "futureRequired": "Choose a time in the future.",
+      "nonexistentTime": "This local time does not exist because the clocks move forward. Choose another time.",
+      "ambiguousTime": "This local time occurs twice because the clocks move back. Choose another time.",
+      "timeZone": "Displayed in {{timeZone}} and stored as an exact UTC instant.",
+      "confirm": "Set reminder"
+    }
+  },
   "create": {
     "action": "New conversation",
     "title": "New group or channel",
@@ -507,6 +691,7 @@
     "members": "Members",
     "membersDescription": "You are included automatically as the owner.",
     "membersPlaceholder": "Search by name or company email",
+    "membersLoadError": "Available members could not be loaded.",
     "submit": "Create conversation",
     "creating": "Creating",
     "error": "The conversation could not be created. Check its name and members, then try again."
@@ -516,6 +701,7 @@
     "title": "Conversation members",
     "description": "Manage participants and conversation roles for {{name}}.",
     "loadError": "Conversation members could not be loaded.",
+    "candidatesLoadError": "Available members could not be loaded.",
     "addTitle": "Add a member",
     "searchLabel": "Name or company email",
     "roleLabel": "Initial role",
@@ -650,21 +836,131 @@
   "people": {
     "eyebrow": "Organization directory",
     "title": "Find people and start a conversation",
-    "description": "Start secure DMs from the SKAX people directory and live availability.",
+    "description": "Start secure DMs using the SKAX directory and current Messenger connection state.",
     "search": "Search name, email, or title",
+    "filters": {
+      "search": "Search people",
+      "organization": "Organization",
+      "jobTitle": "Job or title",
+      "presence": "Messenger connection state",
+      "clear": "Clear filters",
+      "presenceOptions": {
+        "ALL": "All states",
+        "AVAILABLE": "Connected to Messenger",
+        "OFFLINE": "Offline",
+        "UNKNOWN": "State unavailable"
+      }
+    },
+    "results": {
+      "loading": "Checking directory count",
+      "all": "Showing {{loaded}} of {{total}} people",
+      "filtered": "{{loaded}} matching loaded · {{total}} directory candidates"
+    },
     "openError": "DM could not be opened.",
     "loadError": "People could not be loaded.",
+    "refreshError": "The latest directory could not be refreshed. The last loaded results remain visible.",
+    "loadMoreError": "The next range of people could not be loaded.",
+    "retry": "Retry",
+    "loading": "Loading people",
+    "loadMore": "Load more people",
+    "loadingMore": "Loading more people",
+    "presenceUnavailable": "Messenger connection state is unavailable. Connected and offline filters show only verified results.",
     "message": "Message",
+    "messagePerson": "Message {{name}}",
+    "openingPerson": "Opening a conversation with {{name}}",
     "emptyTitle": "No people found",
     "emptyDescription": "Try a shorter query or another name.",
-    "directoryNote": "Directory details come from HR. Availability refreshes automatically."
+    "pageEmptyDescription": "No matching person is in this range. Check the next range.",
+    "directoryNote": "People details come from HR. Connection state refreshes from Messenger connection signals."
+  },
+  "draft": {
+    "loading": "Loading the server draft",
+    "saving": "Saving the draft securely",
+    "saved": "Draft saved to the server",
+    "error": "The draft could not be saved to the server",
+    "conflict": "The draft changed in another window",
+    "conflictDescription": "The latest server draft differs from your current text. Choose which one to keep.",
+    "useServer": "Use server draft",
+    "keepMine": "Save my draft"
+  },
+  "schedule": {
+    "action": "Schedule send",
+    "title": "Schedule message",
+    "description": "Membership and conversation policy are checked again immediately before delivery.",
+    "timeLabel": "Delivery time",
+    "timeZone": "Display time zone: {{timeZone}}",
+    "futureRequired": "Choose a time in the future.",
+    "nonexistentTime": "This local time does not exist because the clocks move forward. Choose another time.",
+    "ambiguousTime": "This local time occurs twice because the clocks move back. Choose another time.",
+    "bodyRequired": "Write the message to schedule first. You can still review or cancel existing schedules below.",
+    "attachmentBlocked": "Attachments cannot be scheduled until a governed reservation contract is available. Remove the attachment or send now.",
+    "confirm": "Schedule send",
+    "scheduling": "Scheduling",
+    "success": "Message delivery scheduled.",
+    "error": "Message delivery could not be scheduled. Retrying the same request will not create a duplicate.",
+    "pendingTitle": "Pending schedules",
+    "pendingDescription": "You can cancel until scheduled delivery starts.",
+    "pendingLoading": "Loading scheduled messages",
+    "pendingError": "Scheduled messages could not be loaded.",
+    "pendingLoadMore": "Load more scheduled messages",
+    "pendingLoadingMore": "Loading more scheduled messages",
+    "pendingMoreError": "The next scheduled-message range could not be loaded. Try again.",
+    "pendingEmpty": "No scheduled messages are waiting.",
+    "conversationUnavailable": "Conversation no longer available",
+    "cancel": "Cancel schedule",
+    "cancelling": "Cancelling",
+    "cancelError": "Delivery already started or the schedule changed in another window. Refresh the list to confirm."
   },
   "admin": {
     "eyebrow": "Messenger administration",
     "loadError": "Administration data could not be loaded.",
     "overview": {
       "title": "Conversation operations",
-      "description": "Review tenant conversations, retention, restricted data, and Space-linked activity."
+      "description": "Review tenant conversations, retention, restricted data, and Space-linked activity.",
+      "governedConversations": "Governed conversations",
+      "governedConversationsDescription": "Current conversation metadata only. Message content is not exposed to administrators.",
+      "emptyTitle": "No governed conversations",
+      "emptyDescription": "No active conversations are currently visible in this tenant scope."
+    },
+    "readiness": {
+      "title": "Runtime readiness",
+      "description": "Verified provider and policy enforcement state, including evidence freshness and pending work.",
+      "contractUnavailable": "Runtime readiness evidence was not returned. No provider or policy enforcement capability is assumed ready.",
+      "overallState": "Overall runtime state: {{state}}",
+      "evaluated": "Evaluated {{time}}",
+      "required": "Required",
+      "optional": "Optional",
+      "yes": "yes",
+      "no": "no",
+      "neverVerified": "never verified",
+      "evidence": "Configured: {{configured}} · Effective: {{effective}} · Verified: {{verified}} · {{freshness}}",
+      "pendingWork": "Pending governed work: {{count}}",
+      "states": {
+        "READY": "Ready",
+        "DEGRADED": "Degraded",
+        "BLOCKED": "Blocked",
+        "UNAVAILABLE": "Unavailable",
+        "DISABLED": "Disabled"
+      },
+      "freshness": {
+        "CURRENT": "evidence current",
+        "STALE": "evidence stale",
+        "NEVER": "no verification evidence"
+      },
+      "capabilities": {
+        "ATTACHMENT_STORAGE": "Attachment storage",
+        "ATTACHMENT_SCANNER": "Attachment scanner",
+        "MEETING": "Meeting provider",
+        "SEARCH": "Message search",
+        "PRESENCE": "Messenger presence",
+        "REALTIME_FANOUT": "Realtime fan-out",
+        "DURABLE_COMMIT": "Durable message commit",
+        "SSE_RESUME": "Realtime stream resume",
+        "NOTIFICATION_OUTBOX": "Notification outbox",
+        "OBSERVABILITY": "Telemetry export",
+        "RETENTION_ENFORCEMENT": "Retention enforcement",
+        "SCHEDULED_DELIVERY": "Scheduled delivery"
+      }
     },
     "metrics": {
       "conversations": "Active conversations",

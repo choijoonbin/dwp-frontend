@@ -969,6 +969,7 @@ export function WorkplaceExplore({
         initialStart={selectedRange?.from ?? ''}
         initialEnd={selectedRange?.to ?? ''}
         policy={roomPolicy}
+        allowRecurring={Boolean(policy?.allowRecurring)}
         sourceSnapshot={roomBookingSourceSnapshot}
         onClose={() => setRoom(null)}
       />

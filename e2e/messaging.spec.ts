@@ -29,6 +29,7 @@ const CONVERSATION_ID = '71000000-0000-0000-0000-000000000001';
 const SECOND_CONVERSATION_ID = '71000000-0000-0000-0000-000000000002';
 const OWNER_MESSAGE_ID = '72000000-0000-0000-0000-000000000001';
 const COLLEAGUE_MESSAGE_ID = '72000000-0000-0000-0000-000000000002';
+const OLD_REPLY_MESSAGE_ID = '72000000-0000-0000-0000-000000000003';
 
 const MESSAGING_PERMISSIONS = ['VIEW', 'CREATE', 'UPDATE'].map((permissionCode) => ({
   resourceType: 'APP',
@@ -81,6 +82,7 @@ type CreateRequest = {
 
 type MessagingFixtureState = {
   conversations: MessagingConversation[];
+  directoryPeople: MessagingPerson[];
   messages: Map<string, MessagingMessage[]>;
   replies: Map<string, MessagingMessage[]>;
   sentRequests: SendRequest[];
@@ -117,7 +119,7 @@ function createFixtureState(): MessagingFixtureState {
     createdAt: '2026-08-19T08:35:00Z',
   });
   const initialReply = message({
-    messageId: '72000000-0000-0000-0000-000000000003',
+    messageId: OLD_REPLY_MESSAGE_ID,
     body: 'I checked the rollout and security sections.',
     senderUserId: COLLEAGUE.userId,
     senderPersonPublicId: COLLEAGUE.personPublicId,
@@ -148,6 +150,7 @@ function createFixtureState(): MessagingFixtureState {
 
   return {
     conversations: [conversation],
+    directoryPeople: [COLLEAGUE],
     messages: new Map([[CONVERSATION_ID, [ownerMessage, colleagueMessage]]]),
     replies: new Map([[OWNER_MESSAGE_ID, [initialReply]]]),
     sentRequests: [],
@@ -290,6 +293,17 @@ async function mockMessaging(page: Page): Promise<MessagingFixtureState> {
     const url = new URL(request.url());
     const path = url.pathname;
 
+    if (path === '/api/messaging/v1/privacy-preferences' && method === 'GET') {
+      return fulfill(route, {
+        readReceiptsEnabled: true,
+        presenceSharingEnabled: true,
+        version: 0,
+      });
+    }
+    if (path === '/api/messaging/v1/presence/heartbeat' && method === 'PUT') {
+      return route.fulfill({ status: 204 });
+    }
+
     if (path === '/api/messaging/v1/conversations' && method === 'GET') {
       const page = Number(url.searchParams.get('page') ?? 0);
       const pageSize = Number(url.searchParams.get('pageSize') ?? 30);
@@ -379,6 +393,48 @@ async function mockMessaging(page: Page): Promise<MessagingFixtureState> {
             },
           ],
           people: [COLLEAGUE],
+        },
+      });
+    }
+
+    if (path === '/api/messaging/v1/people/page' && method === 'GET') {
+      const query = (url.searchParams.get('q') ?? '').toLocaleLowerCase();
+      const organization = (url.searchParams.get('organization') ?? '').toLocaleLowerCase();
+      const jobTitle = (url.searchParams.get('jobTitle') ?? '').toLocaleLowerCase();
+      const presence = url.searchParams.get('presence') ?? 'ALL';
+      const candidates = state.directoryPeople.filter((person) => {
+        const searchable = [
+          person.displayName,
+          person.emailAddress,
+          person.jobTitle,
+          person.organizationName,
+        ]
+          .filter(Boolean)
+          .join(' ')
+          .toLocaleLowerCase();
+        return (
+          (!query || searchable.includes(query)) &&
+          (!organization || person.organizationName?.toLocaleLowerCase().includes(organization)) &&
+          (!jobTitle || person.jobTitle?.toLocaleLowerCase().includes(jobTitle))
+        );
+      });
+      const start = Number(url.searchParams.get('cursor') ?? url.searchParams.get('offset') ?? 0);
+      const limit = Number(url.searchParams.get('limit') ?? 30);
+      const end = Math.min(start + limit, candidates.length);
+      const items = candidates
+        .slice(start, end)
+        .filter((person) => presence === 'ALL' || person.presenceState === presence);
+      return fulfill(route, {
+        items,
+        total: candidates.length,
+        hasMore: end < candidates.length,
+        nextCursor: end < candidates.length ? String(end) : null,
+        nextOffset: end < candidates.length ? end : null,
+        presence: {
+          authority: 'LIVE',
+          evaluatedAt: '2026-10-27T07:00:00Z',
+          leaseTtlSeconds: 75,
+          refreshAfterSeconds: 20,
         },
       });
     }
@@ -928,6 +984,200 @@ test('conversation navigator progressively loads beyond the first page', async (
   await expect(page.getByText('Navigator channel 34', { exact: true })).toBeVisible();
 });
 
+test('conversation search and loaded-list filter survive reload through URL state', async ({
+  page,
+}) => {
+  await mockMessaging(page);
+  await page.goto('/messages/inbox');
+
+  const search = page.getByRole('textbox', { name: 'Search conversation name or topic' });
+  await search.fill('launch review');
+  await page.getByRole('tab', { name: 'Unread' }).click();
+  await expect(page).toHaveURL(/q=launch(?:\+|%20)review/u);
+  await expect(page).toHaveURL(/filter=UNREAD/u);
+
+  await page.reload();
+  await expect(search).toHaveValue('launch review');
+  await expect(page.getByRole('tab', { name: 'Unread' })).toHaveAttribute('aria-selected', 'true');
+});
+
+test('conversation navigator prefers cursor continuation and preserves its deep link', async ({
+  page,
+}) => {
+  const state = await mockMessaging(page);
+  const template = state.conversations[0]!;
+  for (let index = 1; index <= 34; index += 1) {
+    const conversationId = `71000000-0000-0000-0001-${String(index).padStart(12, '0')}`;
+    state.conversations.push({
+      ...template,
+      conversationId,
+      conversationKey: `cursor-navigator-${index}`,
+      name: `Cursor navigator channel ${index}`,
+      unreadCount: 0,
+      lastMessage: null,
+      lastMessageAt: null,
+    });
+  }
+  const pageRequests: URL[] = [];
+  await page.route('**/api/messaging/v1/conversations?*', async (route) => {
+    const request = route.request();
+    if (request.method() !== 'GET') return route.fallback();
+    const url = new URL(request.url());
+    pageRequests.push(url);
+    const pageSize = Number(url.searchParams.get('pageSize') ?? 30);
+    const cursor = url.searchParams.get('cursor');
+    const pageNumber = Number(url.searchParams.get('page') ?? 0);
+    const start = cursor === null ? pageNumber * pageSize : Number(cursor.split('.').at(-1));
+    const end = Math.min(start + pageSize, state.conversations.length);
+    const hasMore = end < state.conversations.length;
+    return fulfill(route, {
+      items: state.conversations.slice(start, end),
+      total: state.conversations.length,
+      page: pageNumber,
+      pageSize,
+      hasMore,
+      nextCursor: hasMore ? `v1.opaque.${end}` : null,
+      nextPage: cursor === null && hasMore ? pageNumber + 1 : null,
+    });
+  });
+
+  await page.goto(`/messages/inbox?conversation=${CONVERSATION_ID}`);
+  await expect(page.getByRole('heading', { name: 'Launch coordination' })).toBeVisible();
+  if (test.info().project.name === 'mobile') {
+    await expect(page.getByTestId('messaging-conversation-navigator')).toBeHidden();
+    await page.getByRole('button', { name: 'Back', exact: true }).click();
+    await expect(page).not.toHaveURL(/conversation=/u);
+  }
+  await page.getByRole('button', { name: 'Load more conversations' }).click();
+
+  await expect(page.getByText('Cursor navigator channel 34', { exact: true })).toBeVisible();
+  if (test.info().project.name === 'chromium') {
+    await expect(page).toHaveURL(new RegExp(`conversation=${CONVERSATION_ID}`, 'u'));
+    await expect(page.getByRole('heading', { name: 'Launch coordination' })).toBeVisible();
+  }
+  await expect
+    .poll(() =>
+      pageRequests.some((request) => request.searchParams.get('cursor') === 'v1.opaque.30')
+    )
+    .toBe(true);
+  expect(
+    pageRequests.some(
+      (request) =>
+        request.searchParams.get('cursor') === 'v1.opaque.30' &&
+        request.searchParams.get('page') === '0'
+    )
+  ).toBe(true);
+  expect(pageRequests.some((request) => request.searchParams.get('page') === '1')).toBe(false);
+});
+
+test('an old reply deep link keeps its thread error and retry action visible', async ({ page }) => {
+  const state = await mockMessaging(page);
+  const oldReply = findMessage(state, OLD_REPLY_MESSAGE_ID)!;
+
+  await page.route(
+    `**/api/messaging/v1/conversations/${CONVERSATION_ID}/messages/${OLD_REPLY_MESSAGE_ID}`,
+    (route) => fulfill(route, oldReply)
+  );
+  await page.route(
+    `**/api/messaging/v1/conversations/${CONVERSATION_ID}/messages/${OWNER_MESSAGE_ID}/replies?*`,
+    (route) =>
+      route.fulfill({
+        status: 503,
+        contentType: 'application/json',
+        body: JSON.stringify({ status: 'ERROR', message: 'Thread temporarily unavailable' }),
+      })
+  );
+
+  await page.goto(
+    `/messages/inbox?conversation=${CONVERSATION_ID}&message=${OLD_REPLY_MESSAGE_ID}`
+  );
+
+  const thread = page.getByRole('region', { name: 'Thread', exact: true });
+  await expect(thread).toBeVisible();
+  await expect(thread.getByText('Thread replies could not be loaded.')).toBeVisible();
+  await expect(thread.getByRole('button', { name: 'Retry' })).toBeVisible();
+});
+
+test('people directory preserves filters and continues with the cursor contract', async ({
+  page,
+}, testInfo) => {
+  await page.setViewportSize({
+    width: testInfo.project.name === 'mobile' ? 320 : 1440,
+    height: 900,
+  });
+  const state = await mockMessaging(page);
+  for (let index = 0; index < 35; index += 1) {
+    state.directoryPeople.push({
+      userId: 1_000 + index,
+      personPublicId: `directory-person-${index}`,
+      emailAddress: `directory.person.${index}@example.com`,
+      displayName: `Directory Person ${String(index).padStart(2, '0')}`,
+      jobTitle: 'Risk Analyst',
+      organizationName: 'Risk Operations',
+      presenceState: 'AVAILABLE',
+    });
+  }
+
+  await page.goto('/messages/people?q=Directory&org=Risk&job=Analyst&presence=AVAILABLE');
+  const search = page.getByRole('textbox', { name: 'Search people' });
+  const organization = page.getByRole('textbox', { name: 'Organization' });
+  const jobTitle = page.getByRole('textbox', { name: 'Job or title' });
+  const presence = page.getByRole('combobox', { name: 'Messenger connection state' });
+  await expect(search).toHaveValue('Directory');
+  await expect(organization).toHaveValue('Risk');
+  await expect(jobTitle).toHaveValue('Analyst');
+  await expect(presence).toHaveText('Connected to Messenger');
+  for (const control of [search, organization, jobTitle, presence]) {
+    await expectInsideViewport(control, page);
+  }
+  await expect(page.getByText('30 matching loaded · 35 directory candidates')).toBeVisible();
+  await expect(page.getByText('Directory Person 34', { exact: true })).toHaveCount(0);
+  await expect(page.getByRole('button', { name: 'Message Directory Person 00' })).toBeVisible();
+
+  const loadMore = page.getByRole('button', { name: 'Load more people' });
+  await expectInsideViewport(loadMore, page);
+  const nextPageRequest = page.waitForRequest((request) => {
+    const url = new URL(request.url());
+    return url.pathname === '/api/messaging/v1/people/page' && url.searchParams.has('cursor');
+  });
+  await loadMore.click();
+  const requestUrl = new URL((await nextPageRequest).url());
+  expect(requestUrl.searchParams.get('cursor')).toBe('30');
+  expect(requestUrl.searchParams.has('offset')).toBe(false);
+  await expect(page.getByText('Directory Person 34', { exact: true })).toBeVisible();
+  const containedRows = page.getByTestId('messaging-people-directory').getByRole('listitem');
+  await expect(containedRows).toHaveCount(35);
+  expect(
+    await containedRows.nth(20).evaluate((row) => getComputedStyle(row).contentVisibility)
+  ).toBe('auto');
+  await expect(page).toHaveURL(/q=Directory.*org=Risk.*job=Analyst.*presence=AVAILABLE/u);
+});
+
+test('people directory exposes an explicit retry after a bounded load failure', async ({
+  page,
+}) => {
+  await mockMessaging(page);
+  let failures = 0;
+  let allowSuccess = false;
+  await page.route(/\/api\/messaging\/v1\/people\/page(?:\?|$)/u, async (route) => {
+    if (allowSuccess) return route.fallback();
+    failures += 1;
+    return route.fulfill({
+      status: 503,
+      contentType: 'application/json',
+      body: JSON.stringify({ status: 'ERROR', message: 'Temporary directory failure' }),
+    });
+  });
+
+  await page.goto('/messages/people');
+  await expect.poll(() => failures).toBeGreaterThanOrEqual(2);
+  await expect(page.getByRole('button', { name: 'Retry' })).toBeVisible();
+  allowSuccess = true;
+  await page.getByRole('button', { name: 'Retry' }).click();
+  await expect(page.getByText(COLLEAGUE.displayName, { exact: true })).toBeVisible();
+  expect(failures).toBeGreaterThanOrEqual(2);
+});
+
 test('composer offers searchable expressions, structured mentions, and conversation meeting history', async ({
   page,
 }) => {
@@ -1159,6 +1409,17 @@ test('new conversation dialog supports group and channel modes and command searc
   await expect(page).toHaveURL(new RegExp(`conversation=${CONVERSATION_ID}`, 'u'));
 
   if (testInfo.project.name === 'mobile') await page.getByRole('button', { name: 'Back' }).click();
+  await page.keyboard.press(process.platform === 'darwin' ? 'Meta+K' : 'Control+K');
+  const messageSearchDialog = page.getByRole('dialog', { name: 'Messenger search' });
+  await messageSearchDialog
+    .getByRole('textbox', { name: 'Search conversations, messages, or people' })
+    .fill('launch');
+  await messageSearchDialog.getByText('The customer briefing deck is ready.').click();
+  await expect(page).toHaveURL(
+    new RegExp(`conversation=${CONVERSATION_ID}.*message=${COLLEAGUE_MESSAGE_ID}`, 'u')
+  );
+
+  if (testInfo.project.name === 'mobile') await page.getByRole('button', { name: 'Back' }).click();
   await page.getByRole('button', { name: 'New conversation' }).click();
   const createDialog = page.getByRole('dialog', { name: 'New group or channel' });
   await expect(createDialog).toBeVisible();
@@ -1346,6 +1607,7 @@ test('narrow viewport keeps the main composer and thread composer reachable with
   await mockMessaging(page);
   await openConversation(page);
 
+  await expect(page.getByRole('status', { name: 'Auto sync' })).toBeVisible();
   const mainComposer = page.getByRole('textbox', { name: 'Compose message' });
   await expectInsideViewport(mainComposer, page);
   await expectCompactComposer(page.getByTestId('messaging-composer'));

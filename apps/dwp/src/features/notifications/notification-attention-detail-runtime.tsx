@@ -18,6 +18,7 @@ import Typography from '@mui/material/Typography';
 
 import { controlEffect, toAttentionScopeOption } from './notification-attention-adapters';
 import { NotificationAttentionControls } from './notification-attention-controls';
+import { NotificationSupportReference } from './notification-error-support';
 import { notificationQueryKeys } from './integration-contract';
 import { useOnlineStatus } from './use-notification-runtime';
 
@@ -272,6 +273,7 @@ export function NotificationAttentionDetailRuntime({
       ) : query.isError || !query.data ? (
         <InlineFeedback severity="warning" sx={{ mb: 1.5 }}>
           {t('attention.controls.loadFailed')}
+          <NotificationSupportReference error={query.error} />
         </InlineFeedback>
       ) : (
         <NotificationAttentionControls

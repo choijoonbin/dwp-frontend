@@ -1,6 +1,11 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ContentDialog, GuidedEmptyState, PageCanvas } from '@dwp-frontend/design-system';
+import {
+  ActionButton,
+  ContentDialog,
+  GuidedEmptyState,
+  PageCanvas,
+} from '@dwp-frontend/design-system';
 import { isAppPermissionEntitled } from '@dwp-frontend/shared-utils/auth/app-entitlements';
 import { usePermissions } from '@dwp-frontend/shared-utils/auth/use-permissions';
 
@@ -14,6 +19,7 @@ import { MessagingConversationContext } from './messaging-conversation-context';
 import { MessagingConversationHeader } from './messaging-conversation-header';
 import { MessagingConversationListPane } from './messaging-conversation-list-pane';
 import { MessagingCreateConversationDialog } from './messaging-create-conversation-dialog';
+import { MessagingConnectionStateProvider } from './messaging-adaptive-polling';
 import { MessagingMeetingHost } from './messaging-meeting-host';
 import { MessagingMessageDialogs } from './messaging-message-dialogs';
 import { MessagingMembersDialog } from './messaging-members-dialog';
@@ -21,6 +27,7 @@ import { MessagingSearchPalette } from './messaging-search-palette';
 import { MessagingThreadPanel } from './messaging-thread-panel';
 import { MessagingTimelinePane } from './messaging-timeline-pane';
 import { MessagingWorkspaceChrome } from './messaging-workspace-chrome';
+import { messagingWorkspaceGridColumns } from './messaging-workspace-layout';
 import { createWorkMessengerCaptureState } from '../../components/work-messenger-capture-state';
 import { useWorkHubOperationOwner } from '../../components/use-work-hub-operation-owner';
 import { messagingVisualTokens } from './messaging-visual-model';
@@ -58,6 +65,8 @@ export function MessagingConversationWorkspace({ scope }: { scope: MessagingScop
     messageTargetState,
     search,
     setSearch,
+    navigatorFilter,
+    setNavigatorFilter,
     searchRef,
     detailScrollRef,
     conversationsQuery,
@@ -69,6 +78,7 @@ export function MessagingConversationWorkspace({ scope }: { scope: MessagingScop
     rootMessages,
     fallbackReplyCounts,
     thread,
+    threadRootId,
     currentMember,
     meetingLabels,
     realtimeConnection,
@@ -100,8 +110,16 @@ export function MessagingConversationWorkspace({ scope }: { scope: MessagingScop
     setEditBody,
     sendPending,
     sendError,
+    mainSchedulePending,
+    mainScheduleError,
+    mainDraftPersistenceState,
+    resolveMainDraftConflict,
     threadSendPending,
     threadSendError,
+    threadSchedulePending,
+    threadScheduleError,
+    threadDraftPersistenceState,
+    resolveThreadDraftConflict,
     resetSendError,
     resetThreadSendError,
     editMutation,
@@ -114,8 +132,10 @@ export function MessagingConversationWorkspace({ scope }: { scope: MessagingScop
     openConversation,
     send,
     retrySend,
+    scheduleMainMessage,
     sendThreadReply,
     retryThreadReply,
+    scheduleThreadMessage,
     toggleReaction,
     saveMessage,
     openEditMessage,
@@ -211,381 +231,401 @@ export function MessagingConversationWorkspace({ scope }: { scope: MessagingScop
       }}
     />
   );
+  const workspaceGridColumns = messagingWorkspaceGridColumns(threadRootId, contextCollapsed);
 
   return (
-    <PageCanvas topInset="compact">
-      <Box
-        data-testid="messaging-workspace-canvas"
-        sx={{
-          width: 1,
-          minWidth: 0,
-        }}
-      >
-        <Box sx={{ display: { xs: selectedId ? 'none' : 'block', lg: 'block' } }}>
-          <MessagingWorkspaceChrome
-            eyebrow={t('workspace.eyebrow')}
-            title={title}
-            description={description}
-            mentionFilterActive={mentionFilterActive}
-            labels={{
-              showAll: t('workspace.MENTIONS.showAll'),
-              create: t('create.action'),
-              search: t('search.open'),
-              refresh: t('actions.refresh'),
-            }}
-            onShowAll={clearMentionFilter}
-            onCreate={() => setCreateDialogOpen(true)}
-            onSearch={() => setSearchPaletteOpen(true)}
-            onRefresh={refresh}
-          />
-        </Box>
-
+    <MessagingConnectionStateProvider state={realtimeConnection.state}>
+      <PageCanvas topInset="compact">
         <Box
-          sx={(theme) => ({
-            width: { xs: selectedId ? 'calc(100% + 32px)' : 1, lg: 1 },
-            height: { xs: selectedId ? 'calc(100dvh - 64px)' : 'auto', lg: 'calc(100dvh - 128px)' },
-            minHeight: { xs: selectedId ? 0 : 'auto', lg: 520 },
-            mx: { xs: selectedId ? -2 : 0, lg: 0 },
-            mt: { xs: selectedId ? -2 : 0, lg: 0 },
-            display: 'grid',
-            gridTemplateColumns: {
-              xs: '1fr',
-              lg: thread
-                ? 'minmax(0, 1fr) minmax(336px, 372px)'
-                : 'minmax(260px, 292px) minmax(0, 1fr)',
-            },
-            '@media (min-width: 1280px)': {
-              gridTemplateColumns: thread
-                ? 'minmax(0, 1fr) 340px'
-                : contextCollapsed
-                  ? '240px minmax(0, 1fr)'
-                  : '224px minmax(0, 1fr) 248px',
-            },
-            '@media (min-width: 1600px)': {
-              gridTemplateColumns: thread
-                ? '258px minmax(0, 1fr) 340px'
-                : contextCollapsed
-                  ? '258px minmax(0, 1fr)'
-                  : '258px minmax(0, 1fr) 288px',
-            },
-            borderStyle: 'solid',
-            borderWidth: { xs: selectedId ? 0 : 1, lg: 1 },
-            borderColor: alpha(
-              theme.palette.primary.main,
-              theme.palette.mode === 'dark' ? 0.22 : 0.1
-            ),
-            borderRadius: {
-              xs: selectedId ? 0 : messagingVisualTokens.radius.surface,
-              lg: messagingVisualTokens.radius.surface,
-            },
-            bgcolor: alpha(
-              theme.palette.primary.main,
-              theme.palette.mode === 'dark' ? 0.08 : 0.035
-            ),
-            overflow: 'hidden',
-          })}
+          data-testid="messaging-workspace-canvas"
+          sx={{
+            width: 1,
+            minWidth: 0,
+          }}
         >
-          <Box
-            sx={(theme) => ({
-              minWidth: 0,
-              minHeight: 0,
-              display: {
-                xs: selectedId ? 'none' : 'block',
-                lg: thread ? 'none' : 'block',
-              },
-              '@media (min-width: 1600px)': { display: 'block' },
-              borderRightStyle: 'solid',
-              borderRightWidth: { xs: 0, lg: 1 },
-              borderColor: alpha(
-                theme.palette.primary.main,
-                theme.palette.mode === 'dark' ? 0.22 : 0.11
-              ),
-              bgcolor: alpha(
-                theme.palette.background.paper,
-                theme.palette.mode === 'dark' ? 0.82 : 0.86
-              ),
-              overflow: 'hidden',
-            })}
-          >
-            <MessagingConversationListPane
-              conversations={conversations}
-              selectedId={selectedId}
-              search={search}
-              searchInputRef={searchRef}
-              loading={conversationsQuery.isLoading}
-              loadError={conversationsQuery.isError}
+          <Box sx={{ display: { xs: selectedId ? 'none' : 'block', lg: 'block' } }}>
+            <MessagingWorkspaceChrome
+              eyebrow={t('workspace.eyebrow')}
+              title={title}
+              description={description}
+              mentionFilterActive={mentionFilterActive}
               labels={{
-                search: t('workspace.search'),
-                list: t('workspace.list'),
-                loadError: t('workspace.loadError'),
-                emptyTitle: t('workspace.emptyTitle'),
-                emptyDescription: t('workspace.emptyDescription'),
-                create: t('navigator.create'),
-                loadMore: t('workspace.loadMore'),
-                loadingMore: t('workspace.loadingMore'),
+                showAll: t('workspace.MENTIONS.showAll'),
+                create: t('create.action'),
+                search: t('search.open'),
+                refresh: t('actions.refresh'),
               }}
-              hasMore={Boolean(conversationsQuery.hasNextPage)}
-              loadingMore={conversationsQuery.isFetchingNextPage}
-              onSearchChange={setSearch}
-              onSelect={selectConversation}
+              onShowAll={clearMentionFilter}
               onCreate={() => setCreateDialogOpen(true)}
-              onLoadMore={() => conversationsQuery.fetchNextPage()}
+              onSearch={() => setSearchPaletteOpen(true)}
+              onRefresh={refresh}
             />
           </Box>
 
           <Box
-            sx={{
-              minWidth: 0,
-              minHeight: { xs: selectedId ? 'calc(100dvh - 150px)' : 0, lg: 0 },
-              display: { xs: selectedId ? 'grid' : 'none', lg: 'grid' },
-              gridTemplateColumns: 'minmax(0, 1fr)',
-              gridTemplateRows: 'auto minmax(0, 1fr) auto',
-              bgcolor: 'background.paper',
+            sx={(theme) => ({
+              width: { xs: selectedId ? 'calc(100% + 32px)' : 1, lg: 1 },
+              height: {
+                xs: selectedId ? 'calc(100dvh - 64px)' : 'auto',
+                lg: 'calc(100dvh - 128px)',
+              },
+              minHeight: { xs: selectedId ? 0 : 'auto', lg: 520 },
+              mx: { xs: selectedId ? -2 : 0, lg: 0 },
+              mt: { xs: selectedId ? -2 : 0, lg: 0 },
+              display: 'grid',
+              gridTemplateColumns: {
+                xs: '1fr',
+                lg: workspaceGridColumns.desktop,
+              },
+              '@media (min-width: 1280px)': {
+                gridTemplateColumns: workspaceGridColumns.wide,
+              },
+              '@media (min-width: 1600px)': {
+                gridTemplateColumns: workspaceGridColumns.extraWide,
+              },
+              borderStyle: 'solid',
+              borderWidth: { xs: selectedId ? 0 : 1, lg: 1 },
+              borderColor: alpha(
+                theme.palette.primary.main,
+                theme.palette.mode === 'dark' ? 0.22 : 0.1
+              ),
+              borderRadius: {
+                xs: selectedId ? 0 : messagingVisualTokens.radius.surface,
+                lg: messagingVisualTokens.radius.surface,
+              },
+              bgcolor: alpha(
+                theme.palette.primary.main,
+                theme.palette.mode === 'dark' ? 0.08 : 0.035
+              ),
               overflow: 'hidden',
-            }}
+            })}
           >
-            {!selectedId ? (
-              <Box sx={{ display: 'grid', placeItems: 'center', p: 3 }}>
-                <GuidedEmptyState
-                  kind="empty"
-                  title={t('conversation.selectTitle')}
-                  description={t('conversation.selectDescription')}
-                />
-              </Box>
-            ) : detailQuery.isLoading ? (
-              <Box sx={{ p: 2 }} aria-busy="true">
-                <Skeleton variant="rounded" height={74} />
-                <Skeleton variant="rounded" height={420} sx={{ mt: 2 }} />
-              </Box>
-            ) : detailQuery.isError || !detail ? (
-              <Alert severity="error" sx={{ m: 2 }}>
-                {t('conversation.loadError')}
-              </Alert>
-            ) : (
-              <>
-                <MessagingConversationHeader
-                  detail={detail}
-                  currentMember={currentMember}
-                  connectionState={realtimeConnection.state}
-                  labels={{
-                    back: t('actions.back'),
-                    members: t('members.action'),
-                    meeting: t('conversation.meetingAction'),
-                  }}
-                  onBack={clearSelection}
-                  onOpenMembers={() => setMembersDialogOpen(true)}
-                  onOpenMeeting={() => setMeetingDialogOpen(true)}
-                  contextExpanded={wideContext ? !contextCollapsed && !thread : contextDialogOpen}
-                  onToggleContext={() => {
-                    if (wideContext) {
-                      if (thread) setThreadRootId(null);
-                      setContextCollapsed(thread ? false : !contextCollapsed);
-                    } else setContextDialogOpen(true);
-                  }}
-                />
-                <MessagingTimelinePane
-                  conversation={detail.conversation}
-                  messages={rootMessages}
-                  currentUserId={auth.user?.userId}
-                  replyCounts={fallbackReplyCounts}
-                  typingNames={typingNames}
-                  scrollRef={detailScrollRef}
-                  draft={draft}
-                  draftMentions={draftMentions}
-                  members={detail.members}
-                  allowMentionAll={
-                    currentMember?.memberRole === 'OWNER' ||
-                    currentMember?.memberRole === 'MODERATOR'
-                  }
-                  sending={sendPending}
-                  sendError={sendError}
-                  attachmentQueue={mainAttachmentQueue}
-                  lastReadSequence={currentMember?.lastReadSequence}
-                  newMessageCount={newMessageCount}
-                  hasOlder={Boolean(messageHistoryQuery.hasNextPage)}
-                  loadingOlder={messageHistoryQuery.isFetchingNextPage}
-                  olderLoadError={messageHistoryQuery.isFetchNextPageError}
-                  labels={{
-                    timeline: t('conversation.timeline'),
-                    loadOlder: t('conversation.history.loadOlder'),
-                    loadingOlder: t('conversation.history.loading'),
-                    olderLoadError: t('conversation.history.loadError'),
-                    emptyTitle: t('conversation.noMessagesTitle'),
-                    emptyDescription: t('conversation.noMessagesDescription'),
-                    unread: t('conversation.unread'),
-                    newMessages: t('conversation.newMessages', { count: newMessageCount }),
-                    targetLoading: t('conversation.deepLink.loading'),
-                    targetNotFound: t('conversation.deepLink.notFound'),
-                    targetUnavailable: t('conversation.deepLink.unavailable'),
-                    targetRetry: t('conversation.deepLink.retry'),
-                    targetDismiss: t('conversation.deepLink.dismiss'),
-                  }}
-                  targetState={messageTargetState}
-                  highlightMessageId={messageTargetState === 'FOUND' ? requestedMessageId : null}
-                  onScroll={handleTimelineScroll}
-                  onLoadOlder={loadOlderMessages}
-                  onJumpToLatest={jumpToLatest}
-                  onDraftChange={(value) => {
-                    if (sendError) resetSendError();
-                    setDraft(value);
-                  }}
-                  onDraftMentionsChange={setDraftMentions}
-                  onOpenMeeting={() => setMeetingDialogOpen(true)}
-                  onSend={send}
-                  onRetrySend={retrySend}
-                  onReply={setThreadRootId}
-                  onReact={toggleReaction}
-                  onSave={saveMessage}
-                  onTrackAsTask={canTrackAsTask ? trackMessageAsTask : undefined}
-                  onEdit={openEditMessage}
-                  onDelete={setDeletingMessage}
-                  onRetryTarget={retryMessageTarget}
-                  onDismissTarget={clearMessageTarget}
-                />
-              </>
-            )}
-          </Box>
-
-          {thread ? (
             <Box
               sx={(theme) => ({
-                display: { xs: 'contents', lg: 'block' },
                 minWidth: 0,
                 minHeight: 0,
-                borderLeftStyle: 'solid',
-                borderLeftWidth: { xs: 0, lg: 1 },
-                borderColor: alpha(
-                  theme.palette.primary.main,
-                  theme.palette.mode === 'dark' ? 0.22 : 0.11
-                ),
-                bgcolor: 'background.paper',
-                overflow: 'hidden',
-              })}
-            >
-              <MessagingThreadPanel
-                open
-                desktop={desktopSplitView}
-                thread={thread}
-                currentUserId={auth.user?.userId}
-                conversation={detail?.conversation}
-                draft={threadDraft}
-                draftMentions={threadDraftMentions}
-                members={detail?.members ?? []}
-                allowMentionAll={
-                  currentMember?.memberRole === 'OWNER' || currentMember?.memberRole === 'MODERATOR'
-                }
-                onDraftChange={(value) => {
-                  if (threadSendError) resetThreadSendError();
-                  setThreadDraft(value);
-                }}
-                onDraftMentionsChange={setThreadDraftMentions}
-                onSend={sendThreadReply}
-                onRetry={retryThreadReply}
-                isSending={threadSendPending}
-                hasError={threadSendError}
-                attachmentQueue={threadAttachmentQueue}
-                onClose={() => setThreadRootId(null)}
-                onReact={toggleReaction}
-                onSave={saveMessage}
-                onTrackAsTask={canTrackAsTask ? trackMessageAsTask : undefined}
-                onEdit={openEditMessage}
-                onDelete={setDeletingMessage}
-                highlightMessageId={messageTargetState === 'FOUND' ? requestedMessageId : null}
-                loading={threadQuery.isLoading}
-                loadError={threadQuery.isError}
-              />
-            </Box>
-          ) : wideContext && !contextCollapsed ? (
-            <Box
-              component="aside"
-              sx={(theme) => ({
-                display: 'block',
-                minWidth: 0,
-                minHeight: 0,
-                overflowY: 'auto',
-                borderLeft: 1,
+                display: {
+                  xs: selectedId ? 'none' : 'block',
+                  lg: threadRootId ? 'none' : 'block',
+                },
+                '@media (min-width: 1600px)': { display: 'block' },
+                borderRightStyle: 'solid',
+                borderRightWidth: { xs: 0, lg: 1 },
                 borderColor: alpha(
                   theme.palette.primary.main,
                   theme.palette.mode === 'dark' ? 0.22 : 0.11
                 ),
                 bgcolor: alpha(
                   theme.palette.background.paper,
-                  theme.palette.mode === 'dark' ? 0.76 : 0.72
+                  theme.palette.mode === 'dark' ? 0.82 : 0.86
                 ),
+                overflow: 'hidden',
               })}
             >
-              {contextPanel}
+              <MessagingConversationListPane
+                conversations={conversations}
+                selectedId={selectedId}
+                search={search}
+                filter={navigatorFilter}
+                searchInputRef={searchRef}
+                loading={conversationsQuery.isLoading}
+                loadError={conversationsQuery.isError}
+                labels={{
+                  search: t('workspace.search'),
+                  list: t('workspace.list'),
+                  loadError: t('workspace.loadError'),
+                  emptyTitle: t('workspace.emptyTitle'),
+                  emptyDescription: t('workspace.emptyDescription'),
+                  create: t('navigator.create'),
+                  loadMore: t('workspace.loadMore'),
+                  loadingMore: t('workspace.loadingMore'),
+                }}
+                hasMore={Boolean(conversationsQuery.hasNextPage)}
+                loadingMore={conversationsQuery.isFetchingNextPage}
+                onSearchChange={setSearch}
+                onFilterChange={setNavigatorFilter}
+                onSelect={selectConversation}
+                onCreate={() => setCreateDialogOpen(true)}
+                onLoadMore={() => conversationsQuery.fetchNextPage()}
+              />
             </Box>
-          ) : null}
+
+            <Box
+              sx={{
+                minWidth: 0,
+                minHeight: { xs: selectedId ? 'calc(100dvh - 150px)' : 0, lg: 0 },
+                display: { xs: selectedId ? 'grid' : 'none', lg: 'grid' },
+                gridTemplateColumns: 'minmax(0, 1fr)',
+                gridTemplateRows: 'auto minmax(0, 1fr) auto',
+                bgcolor: 'background.paper',
+                overflow: 'hidden',
+              }}
+            >
+              {!selectedId ? (
+                <Box sx={{ display: 'grid', placeItems: 'center', p: 3 }}>
+                  <GuidedEmptyState
+                    kind="empty"
+                    title={t('conversation.selectTitle')}
+                    description={t('conversation.selectDescription')}
+                  />
+                </Box>
+              ) : detailQuery.isLoading ? (
+                <Box sx={{ p: 2 }} aria-busy="true">
+                  <Skeleton variant="rounded" height={74} />
+                  <Skeleton variant="rounded" height={420} sx={{ mt: 2 }} />
+                </Box>
+              ) : detailQuery.isError || !detail ? (
+                <Alert
+                  severity="error"
+                  action={
+                    <ActionButton intent="quiet" onClick={() => detailQuery.refetch()}>
+                      {t('actions.retry')}
+                    </ActionButton>
+                  }
+                  sx={{ m: 2 }}
+                >
+                  {t('conversation.loadError')}
+                </Alert>
+              ) : (
+                <>
+                  <MessagingConversationHeader
+                    detail={detail}
+                    currentMember={currentMember}
+                    connectionState={realtimeConnection.state}
+                    labels={{
+                      back: t('actions.back'),
+                      members: t('members.action'),
+                      meeting: t('conversation.meetingAction'),
+                    }}
+                    onBack={clearSelection}
+                    onOpenMembers={() => setMembersDialogOpen(true)}
+                    onOpenMeeting={() => setMeetingDialogOpen(true)}
+                    contextExpanded={
+                      wideContext ? !contextCollapsed && !threadRootId : contextDialogOpen
+                    }
+                    onToggleContext={() => {
+                      if (wideContext) {
+                        if (threadRootId) setThreadRootId(null);
+                        setContextCollapsed(threadRootId ? false : !contextCollapsed);
+                      } else setContextDialogOpen(true);
+                    }}
+                  />
+                  <MessagingTimelinePane
+                    conversation={detail.conversation}
+                    messages={rootMessages}
+                    currentUserId={auth.user?.userId}
+                    replyCounts={fallbackReplyCounts}
+                    typingNames={typingNames}
+                    scrollRef={detailScrollRef}
+                    draft={draft}
+                    draftMentions={draftMentions}
+                    members={detail.members}
+                    allowMentionAll={
+                      currentMember?.memberRole === 'OWNER' ||
+                      currentMember?.memberRole === 'MODERATOR'
+                    }
+                    sending={sendPending}
+                    sendError={sendError}
+                    scheduleBusy={mainSchedulePending}
+                    scheduleError={mainScheduleError}
+                    draftPersistenceState={mainDraftPersistenceState}
+                    onResolveDraftConflict={resolveMainDraftConflict}
+                    attachmentQueue={mainAttachmentQueue}
+                    lastReadSequence={currentMember?.lastReadSequence}
+                    newMessageCount={newMessageCount}
+                    hasOlder={Boolean(messageHistoryQuery.hasNextPage)}
+                    loadingOlder={messageHistoryQuery.isFetchingNextPage}
+                    olderLoadError={messageHistoryQuery.isFetchNextPageError}
+                    labels={{
+                      timeline: t('conversation.timeline'),
+                      loadOlder: t('conversation.history.loadOlder'),
+                      loadingOlder: t('conversation.history.loading'),
+                      olderLoadError: t('conversation.history.loadError'),
+                      emptyTitle: t('conversation.noMessagesTitle'),
+                      emptyDescription: t('conversation.noMessagesDescription'),
+                      unread: t('conversation.unread'),
+                      newMessages: t('conversation.newMessages', { count: newMessageCount }),
+                      targetLoading: t('conversation.deepLink.loading'),
+                      targetNotFound: t('conversation.deepLink.notFound'),
+                      targetUnavailable: t('conversation.deepLink.unavailable'),
+                      targetRetry: t('conversation.deepLink.retry'),
+                      targetDismiss: t('conversation.deepLink.dismiss'),
+                    }}
+                    targetState={messageTargetState}
+                    highlightMessageId={messageTargetState === 'FOUND' ? requestedMessageId : null}
+                    onScroll={handleTimelineScroll}
+                    onLoadOlder={loadOlderMessages}
+                    onJumpToLatest={jumpToLatest}
+                    onDraftChange={(value) => {
+                      if (sendError) resetSendError();
+                      setDraft(value);
+                    }}
+                    onDraftMentionsChange={setDraftMentions}
+                    onOpenMeeting={() => setMeetingDialogOpen(true)}
+                    onSend={send}
+                    onRetrySend={retrySend}
+                    onSchedule={scheduleMainMessage}
+                    onReply={setThreadRootId}
+                    onReact={toggleReaction}
+                    onSave={saveMessage}
+                    onTrackAsTask={canTrackAsTask ? trackMessageAsTask : undefined}
+                    onEdit={openEditMessage}
+                    onDelete={setDeletingMessage}
+                    onRetryTarget={retryMessageTarget}
+                    onDismissTarget={clearMessageTarget}
+                  />
+                </>
+              )}
+            </Box>
+
+            {threadRootId ? (
+              <Box
+                sx={(theme) => ({
+                  display: { xs: 'contents', lg: 'block' },
+                  minWidth: 0,
+                  minHeight: 0,
+                  borderLeftStyle: 'solid',
+                  borderLeftWidth: { xs: 0, lg: 1 },
+                  borderColor: alpha(
+                    theme.palette.primary.main,
+                    theme.palette.mode === 'dark' ? 0.22 : 0.11
+                  ),
+                  bgcolor: 'background.paper',
+                  overflow: 'hidden',
+                })}
+              >
+                <MessagingThreadPanel
+                  open
+                  desktop={desktopSplitView}
+                  thread={thread}
+                  currentUserId={auth.user?.userId}
+                  conversation={detail?.conversation}
+                  draft={threadDraft}
+                  draftMentions={threadDraftMentions}
+                  members={detail?.members ?? []}
+                  allowMentionAll={
+                    currentMember?.memberRole === 'OWNER' ||
+                    currentMember?.memberRole === 'MODERATOR'
+                  }
+                  onDraftChange={(value) => {
+                    if (threadSendError) resetThreadSendError();
+                    setThreadDraft(value);
+                  }}
+                  onDraftMentionsChange={setThreadDraftMentions}
+                  onSend={sendThreadReply}
+                  onRetry={retryThreadReply}
+                  isSending={threadSendPending}
+                  hasError={threadSendError}
+                  scheduleBusy={threadSchedulePending}
+                  scheduleError={threadScheduleError}
+                  draftPersistenceState={threadDraftPersistenceState}
+                  onResolveDraftConflict={resolveThreadDraftConflict}
+                  onSchedule={scheduleThreadMessage}
+                  attachmentQueue={threadAttachmentQueue}
+                  onClose={() => setThreadRootId(null)}
+                  onReact={toggleReaction}
+                  onSave={saveMessage}
+                  onTrackAsTask={canTrackAsTask ? trackMessageAsTask : undefined}
+                  onEdit={openEditMessage}
+                  onDelete={setDeletingMessage}
+                  highlightMessageId={messageTargetState === 'FOUND' ? requestedMessageId : null}
+                  loading={threadQuery.isLoading}
+                  loadError={threadQuery.isError}
+                  onRetryLoad={() => threadQuery.refetch()}
+                />
+              </Box>
+            ) : wideContext && !contextCollapsed ? (
+              <Box
+                component="aside"
+                sx={(theme) => ({
+                  display: 'block',
+                  minWidth: 0,
+                  minHeight: 0,
+                  overflowY: 'auto',
+                  borderLeft: 1,
+                  borderColor: alpha(
+                    theme.palette.primary.main,
+                    theme.palette.mode === 'dark' ? 0.22 : 0.11
+                  ),
+                  bgcolor: alpha(
+                    theme.palette.background.paper,
+                    theme.palette.mode === 'dark' ? 0.76 : 0.72
+                  ),
+                })}
+              >
+                {contextPanel}
+              </Box>
+            ) : null}
+          </Box>
         </Box>
-      </Box>
 
-      {contextDialogOpen && !wideContext && selectedId ? (
-        <ContentDialog
-          open
-          title={t('context.panelTitle')}
-          closeLabel={t('actions.close')}
-          onClose={() => setContextDialogOpen(false)}
-          maxWidth="xs"
-          fullScreen={!desktopSplitView}
-        >
-          {contextPanel}
-        </ContentDialog>
-      ) : null}
+        {contextDialogOpen && !wideContext && selectedId ? (
+          <ContentDialog
+            open
+            title={t('context.panelTitle')}
+            closeLabel={t('actions.close')}
+            onClose={() => setContextDialogOpen(false)}
+            maxWidth="xs"
+            fullScreen={!desktopSplitView}
+          >
+            {contextPanel}
+          </ContentDialog>
+        ) : null}
 
-      {selectedId && detail && auth.user ? (
-        <MessagingMeetingHost
-          open={meetingDialogOpen}
-          conversationId={selectedId}
-          conversationName={detail.conversation.name ?? t('conversation.untitled')}
-          displayName={auth.user.displayName ?? auth.user.email}
-          currentUserId={auth.user.userId}
-          canModerateConversation={
-            currentMember?.memberRole === 'OWNER' || currentMember?.memberRole === 'MODERATOR'
-          }
-          labels={meetingLabels}
-          onClose={() => setMeetingDialogOpen(false)}
+        {selectedId && detail && auth.user ? (
+          <MessagingMeetingHost
+            open={meetingDialogOpen}
+            conversationId={selectedId}
+            conversationName={detail.conversation.name ?? t('conversation.untitled')}
+            displayName={auth.user.displayName ?? auth.user.email}
+            currentUserId={auth.user.userId}
+            canModerateConversation={
+              currentMember?.memberRole === 'OWNER' || currentMember?.memberRole === 'MODERATOR'
+            }
+            labels={meetingLabels}
+            onClose={() => setMeetingDialogOpen(false)}
+          />
+        ) : null}
+        {detail && membersDialogOpen ? (
+          <MessagingMembersDialog
+            open
+            conversation={detail.conversation}
+            onClose={() => setMembersDialogOpen(false)}
+            onLeft={() => {
+              setMembersDialogOpen(false);
+              clearSelection();
+            }}
+          />
+        ) : null}
+        <MessagingCreateConversationDialog
+          open={createDialogOpen}
+          onClose={() => setCreateDialogOpen(false)}
+          onCreated={conversationCreated}
         />
-      ) : null}
-      {detail && membersDialogOpen ? (
-        <MessagingMembersDialog
-          open
-          conversation={detail.conversation}
-          onClose={() => setMembersDialogOpen(false)}
-          onLeft={() => {
-            setMembersDialogOpen(false);
-            clearSelection();
+        <MessagingSearchPalette
+          open={searchPaletteOpen}
+          onClose={() => setSearchPaletteOpen(false)}
+          onOpenConversation={openConversation}
+        />
+        <MessagingMessageDialogs
+          editingMessage={editingMessage}
+          deletingMessage={deletingMessage}
+          editBody={editBody}
+          editBusy={editMutation.isPending}
+          deleteBusy={deleteMutation.isPending}
+          onEditBodyChange={setEditBody}
+          onCloseEdit={() => {
+            if (editMutation.isPending) return;
+            setEditingMessage(null);
+            setEditBody('');
           }}
+          onSubmitEdit={submitEditMessage}
+          onCloseDelete={() => {
+            if (!deleteMutation.isPending) setDeletingMessage(null);
+          }}
+          onConfirmDelete={confirmDeleteMessage}
         />
-      ) : null}
-      <MessagingCreateConversationDialog
-        open={createDialogOpen}
-        onClose={() => setCreateDialogOpen(false)}
-        onCreated={conversationCreated}
-      />
-      <MessagingSearchPalette
-        open={searchPaletteOpen}
-        onClose={() => setSearchPaletteOpen(false)}
-        onOpenConversation={openConversation}
-      />
-      <MessagingMessageDialogs
-        editingMessage={editingMessage}
-        deletingMessage={deletingMessage}
-        editBody={editBody}
-        editBusy={editMutation.isPending}
-        deleteBusy={deleteMutation.isPending}
-        onEditBodyChange={setEditBody}
-        onCloseEdit={() => {
-          if (editMutation.isPending) return;
-          setEditingMessage(null);
-          setEditBody('');
-        }}
-        onSubmitEdit={submitEditMessage}
-        onCloseDelete={() => {
-          if (!deleteMutation.isPending) setDeletingMessage(null);
-        }}
-        onConfirmDelete={confirmDeleteMessage}
-      />
-    </PageCanvas>
+      </PageCanvas>
+    </MessagingConnectionStateProvider>
   );
 }

@@ -3182,6 +3182,8 @@ export interface components {
             sourceRoute: string;
             /** State */
             state: string;
+            /** Statechangedat */
+            stateChangedAt?: string | null;
             /** Summary */
             summary: string;
             /** Title */
@@ -9829,6 +9831,16 @@ export interface components {
          */
         RunMeasurementStatus: "MEASURING" | "MEASURED" | "PARTIAL" | "NOT_AVAILABLE";
         /**
+         * RunRecoveryHint
+         * @enum {string}
+         */
+        RunRecoveryHint: "RETRY_LATER" | "REVIEW_CONFIGURATION" | "CHECK_SOURCE_CONNECTION" | "REVIEW_REQUEST" | "CONTACT_SUPPORT";
+        /**
+         * RunSafeErrorCode
+         * @enum {string}
+         */
+        RunSafeErrorCode: "AGENT_EXECUTION_FAILED" | "AGENT_SAFETY_CONFIGURATION_REQUIRED" | "ASK_RUNTIME_FAILED" | "CONTEXT_SOURCE_NOT_CONFIGURED" | "CONTEXT_SOURCE_UNAVAILABLE" | "MODEL_CALL_FAILED" | "MODEL_GROUNDING_CONTRACT_INVALID" | "MODEL_OUTPUT_CONTRACT_INVALID" | "MODEL_OUTPUT_MISSING" | "MODEL_PROVIDER_UNAVAILABLE" | "MODEL_RESPONSE_INVALID_JSON" | "MODEL_ROUTE_CONFIGURATION_INVALID" | "MODEL_ROUTE_CONFIGURATION_REQUIRED" | "NO_SCOPED_EVIDENCE";
+        /**
          * RunSourceHealthStatus
          * @enum {string}
          */
@@ -11154,6 +11166,7 @@ export interface components {
             policyOutcome: components["schemas"]["PolicyOutcome"];
             /** Progresspercent */
             progressPercent?: number | null;
+            recoveryHint?: components["schemas"]["RunRecoveryHint"] | null;
             riskTier: components["schemas"]["RiskTier"];
             /**
              * Runid
@@ -11161,12 +11174,15 @@ export interface components {
              */
             runId: string;
             runState: components["schemas"]["AgentRunState"];
+            safeErrorCode?: components["schemas"]["RunSafeErrorCode"] | null;
             /** Sourcecount */
             sourceCount: number;
             /** Sourcehealth */
             sourceHealth?: components["schemas"]["UserAgentRunSourceHealth"][];
             /** Stages */
             stages?: components["schemas"]["UserAgentRunStage"][];
+            /** Statechangedat */
+            stateChangedAt?: string | null;
             /** Statuscode */
             statusCode?: string | null;
         };

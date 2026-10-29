@@ -5,6 +5,7 @@ import {
   WORKPLACE_SAFETY_CONNECTOR_KINDS,
   WORKPLACE_SAFETY_CONNECTOR_STATES,
   WORKPLACE_SAFETY_DELIVERY_CHANNELS,
+  WORKPLACE_SAFETY_DISPATCH_REVIEW_STATES,
   WORKPLACE_SAFETY_DISPATCH_STATES,
   WORKPLACE_SAFETY_FRESHNESS_STATES,
   WORKPLACE_SAFETY_INCIDENT_STATES,
@@ -242,6 +243,12 @@ function dispatch(value: unknown, label: string): WorkplaceSafetyDispatchSummary
     channels: array(item.channels, `${label}.channels`, (entry, entryLabel) =>
       enumeration(entry, WORKPLACE_SAFETY_DELIVERY_CHANNELS, entryLabel)
     ),
+    reviewState: enumeration(
+      item.reviewState,
+      WORKPLACE_SAFETY_DISPATCH_REVIEW_STATES,
+      `${label}.reviewState`
+    ),
+    manualReviewCount: number(item.manualReviewCount, `${label}.manualReviewCount`),
     updatedAt: instant(item.updatedAt, `${label}.updatedAt`),
   };
 }

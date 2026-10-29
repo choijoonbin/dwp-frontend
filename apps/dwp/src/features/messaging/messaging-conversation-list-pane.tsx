@@ -1,5 +1,5 @@
 import { ChevronDown, Hash, MessageSquarePlus, Plus, Search, Star } from 'lucide-react';
-import { useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useQuery } from '@tanstack/react-query';
 import {
@@ -37,6 +37,7 @@ type MessagingConversationListPaneProps = {
   conversations: MessagingConversation[];
   selectedId: string | null;
   search: string;
+  filter: MessagingNavigatorFilter;
   searchInputRef: RefObject<HTMLInputElement | null>;
   loading: boolean;
   loadError: boolean;
@@ -53,6 +54,7 @@ type MessagingConversationListPaneProps = {
   hasMore: boolean;
   loadingMore: boolean;
   onSearchChange: (value: string) => void;
+  onFilterChange: (value: MessagingNavigatorFilter) => void;
   onSelect: (conversation: MessagingConversation) => void;
   onCreate: () => void;
   onLoadMore: () => void;
@@ -74,6 +76,7 @@ export function MessagingConversationListPane({
   conversations,
   selectedId,
   search,
+  filter,
   searchInputRef,
   loading,
   loadError,
@@ -81,12 +84,12 @@ export function MessagingConversationListPane({
   hasMore,
   loadingMore,
   onSearchChange,
+  onFilterChange,
   onSelect,
   onCreate,
   onLoadMore,
 }: MessagingConversationListPaneProps) {
   const { t } = useTranslation('messaging');
-  const [filter, setFilter] = useState<MessagingNavigatorFilter>('ALL');
   const displayQuery = useQuery({
     queryKey: MESSAGING_DISPLAY_QUERY_KEY,
     queryFn: getMessagingDisplayPreference,
@@ -156,7 +159,7 @@ export function MessagingConversationListPane({
         />
         <Tabs
           value={filter}
-          onChange={(_, value: MessagingNavigatorFilter) => setFilter(value)}
+          onChange={(_, value: MessagingNavigatorFilter) => onFilterChange(value)}
           aria-label={t('navigator.filterLabel')}
           variant="fullWidth"
           sx={{
@@ -241,14 +244,22 @@ export function MessagingConversationListPane({
                   </Typography>
                 </Stack>
                 {section.conversations.map((conversation) => (
-                  <MessagingConversationListItem
+                  <Box
                     key={conversation.conversationId}
-                    conversation={conversation}
-                    selected={selectedId === conversation.conversationId}
-                    compact
-                    showPreview={displayQuery.data?.messagePreview ?? true}
-                    onSelect={() => onSelect(conversation)}
-                  />
+                    sx={{
+                      contentVisibility:
+                        selectedId === conversation.conversationId ? 'visible' : 'auto',
+                      containIntrinsicSize: 'auto 68px',
+                    }}
+                  >
+                    <MessagingConversationListItem
+                      conversation={conversation}
+                      selected={selectedId === conversation.conversationId}
+                      compact
+                      showPreview={displayQuery.data?.messagePreview ?? true}
+                      onSelect={() => onSelect(conversation)}
+                    />
+                  </Box>
                 ))}
               </Box>
             );

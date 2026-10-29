@@ -1,5 +1,7 @@
 import { expect, test } from '@playwright/test';
 
+import type { Page } from '@playwright/test';
+
 import {
   detail,
   draftDetail,
@@ -8,6 +10,16 @@ import {
   mockMailMember,
   thread,
 } from './support/mail-fixtures';
+
+async function sendDraftThroughExternalRecipientReview(page: Page) {
+  await page.getByRole('button', { name: 'Send', exact: true }).click();
+  const confirm = page.getByRole('button', { name: 'Confirm and send' });
+  const reviewRequired = await confirm.waitFor({ state: 'visible', timeout: 500 }).then(
+    () => true,
+    () => false
+  );
+  if (reviewRequired) await confirm.click();
+}
 
 test('connected accounts expose actual account and synchronization states', async ({ page }) => {
   await mockMailMember(page);
@@ -273,7 +285,7 @@ test('a draft send conflict preserves input and requires a three-way review', as
 
   await page.goto(`/mail/drafts?thread=${threadId}`);
   await page.getByRole('textbox', { name: 'Message', exact: true }).fill('Local draft body');
-  await page.getByRole('button', { name: 'Send', exact: true }).click();
+  await sendDraftThroughExternalRecipientReview(page);
   const conflict = page.getByRole('alert').filter({ hasText: 'This draft changed on the server' });
   await expect(conflict).toBeVisible();
   await expect(conflict.getByText('Base draft body', { exact: true })).toBeVisible();
@@ -362,7 +374,7 @@ test('a draft retry after reload preserves the true base for conflict review', a
 
   await page.goto(`/mail/drafts?thread=${threadId}`);
   await page.getByRole('textbox', { name: 'Message', exact: true }).fill('Local retry body');
-  await page.getByRole('button', { name: 'Send', exact: true }).click();
+  await sendDraftThroughExternalRecipientReview(page);
   await expect.poll(() => updates.length).toBe(1);
   await expect(page.getByText(/previous result is unknown/i)).toBeVisible();
 
@@ -370,7 +382,7 @@ test('a draft retry after reload preserves the true base for conflict review', a
   await expect(page.getByRole('textbox', { name: 'Message', exact: true })).toHaveValue(
     'Local retry body'
   );
-  await page.getByRole('button', { name: 'Send', exact: true }).click();
+  await sendDraftThroughExternalRecipientReview(page);
 
   const conflict = page.getByRole('alert').filter({ hasText: 'This draft changed on the server' });
   await expect(conflict).toBeVisible();
@@ -431,7 +443,7 @@ test('keeping a local draft that already matches the server clears conflict cust
   await page
     .getByRole('textbox', { name: 'Message', exact: true })
     .fill('Matching local and server body');
-  await page.getByRole('button', { name: 'Send', exact: true }).click();
+  await sendDraftThroughExternalRecipientReview(page);
 
   const conflict = page.getByRole('alert').filter({ hasText: 'This draft changed on the server' });
   await expect(conflict).toBeVisible();

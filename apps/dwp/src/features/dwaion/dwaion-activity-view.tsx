@@ -516,8 +516,9 @@ function RunRow({
       : leaseExpired
         ? t('dwaionActivity.attentionSignals.leaseExpired')
         : t(`dwaionActivity.states.${run.runState}`);
+  const displayStateTimestamp = run.stateChangedAt ?? run.createdAt;
   const displayTimestamp = formatDate(
-    run.completedAt ?? run.createdAt,
+    displayStateTimestamp,
     { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' },
     locale
   );
@@ -649,7 +650,7 @@ function RunRow({
           </Typography>
           <Typography
             component="time"
-            dateTime={run.completedAt ?? run.createdAt}
+            dateTime={displayStateTimestamp}
             variant="caption"
             color="text.secondary"
           >
@@ -681,7 +682,7 @@ function RunRow({
           </Stack>
           <Typography
             component="time"
-            dateTime={run.completedAt ?? run.createdAt}
+            dateTime={displayStateTimestamp}
             variant="caption"
             color="text.secondary"
             sx={{ flex: '0 0 auto' }}

@@ -30,6 +30,7 @@ describe('activity source status', () => {
     const html = renderToStaticMarkup(
       <ActivitySourceStatus
         partial
+        onRetry={vi.fn()}
         sources={[
           { sourceScope: 'WORKSPACE', status: 'AVAILABLE' },
           { sourceScope: 'DWAI_ON', status: 'UNAVAILABLE' },
@@ -38,6 +39,7 @@ describe('activity source status', () => {
     );
     expect(html).toContain('role="status"');
     expect(html).toContain('activityFoundation.sources.partial');
+    expect(html).toContain('activityFoundation.sources.retry');
     expect(html).toContain('activityFoundation.sources.UNAVAILABLE');
   });
 

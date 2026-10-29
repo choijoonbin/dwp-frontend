@@ -47,9 +47,16 @@ async function mockAuthority(page: Page, elevated: boolean) {
   await page.unroute('**/api/auth/product-surface-contexts');
   await page.route('**/api/auth/product-surface-contexts', (route) =>
     fulfillSuccess(route, {
-      contractVersion: 'product-surfaces/v3',
+      contractVersion: '2',
       decisionRevision: `psr-${'e'.repeat(64)}`,
-      sourceRevisions: { auth: '23', policy: '23', productRelationship: '23' },
+      sourceRevisions: {
+        auth: '23',
+        policy: '23',
+        productRelationship: '23',
+        targetPopulation: '23',
+        support: null,
+        tenantControl: '23',
+      },
       activeAccessMode: elevated ? 'ELEVATED' : 'NORMAL',
       generatedAt: NOW,
       contexts: [],

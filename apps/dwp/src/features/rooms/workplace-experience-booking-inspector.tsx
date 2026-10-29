@@ -12,6 +12,7 @@ import {
   getWorkplaceExperienceBookingDetail,
   getWorkplaceFutureBookingImpact,
   HttpError,
+  useProductSurfaceAuthority,
 } from '@dwp-frontend/shared-utils';
 import Box from '@mui/material/Box';
 import Checkbox from '@mui/material/Checkbox';
@@ -22,6 +23,10 @@ import Typography from '@mui/material/Typography';
 import { useRoomsCapabilities } from './rooms-capabilities';
 import { retryRecoverableWorkplaceRead } from './workplace-authority-failure';
 import { WorkplaceExperiencePanel, WorkplaceExperienceQueryError } from './workplace-experience-ui';
+import {
+  canExecuteWorkplaceAdminBookingCommand,
+  WORKPLACE_ADMIN_BOOKING_COMMAND_OPTIONS,
+} from './workplace-admin-booking-command-authority';
 
 function WorkplaceExperienceFutureImpact({
   siteId,
@@ -164,8 +169,16 @@ export function WorkplaceExperienceBookingInspector({
   const { t } = useTranslation('rooms');
   const authorityKey = useWorkplaceExperienceAuthority();
   const capabilities = useRoomsCapabilities();
+  const productAuthority = useProductSurfaceAuthority();
+  const commandAuthorityKey = productAuthority.snapshot
+    ? `${productAuthority.snapshot.envelope.activeAccessMode}:${productAuthority.snapshot.envelope.decisionRevision}`
+    : 'unavailable';
+  const canExecuteBookingCommand = canExecuteWorkplaceAdminBookingCommand(
+    capabilities.canManageWorkplaceAdmin,
+    productAuthority.snapshot?.envelope.activeAccessMode
+  );
   const queryClient = useQueryClient();
-  const identity = `${authorityKey}:${siteId}:${bookingId}`;
+  const identity = `${authorityKey}:${commandAuthorityKey}:${siteId}:${bookingId}`;
   const activeIdentity = useRef(identity);
   activeIdentity.current = identity;
   const commandContext = useRef({ identity, generation: 0 });
@@ -203,7 +216,7 @@ export function WorkplaceExperienceBookingInspector({
   const mutable = Boolean(booking && ['RESERVED', 'CHECKED_IN'].includes(booking.status));
   const ready =
     mutable &&
-    capabilities.canManageWorkplaceAdmin &&
+    canExecuteBookingCommand &&
     !query.isFetching &&
     !query.isError &&
     !outcome &&
@@ -216,7 +229,12 @@ export function WorkplaceExperienceBookingInspector({
     mutationFn: async (command: CancellationCommand) => {
       if (!matchesCommand(command) || !ready || !booking || !capabilities.canViewWorkplaceAdmin)
         throw new Error('Booking decision is not current');
-      await forceCancelWorkplaceBooking(command.bookingId, command.version, command.reason);
+      await forceCancelWorkplaceBooking(
+        command.bookingId,
+        command.version,
+        command.reason,
+        WORKPLACE_ADMIN_BOOKING_COMMAND_OPTIONS
+      );
     },
     onSuccess: async (_result, command) => {
       if (!matchesCommand(command)) return;
@@ -259,7 +277,7 @@ export function WorkplaceExperienceBookingInspector({
       cancelLabel={t('actions.close')}
       submitLabel={t('workplace.admin.operations.forceCancel.submit')}
       submittingLabel={t('actions.cancelling')}
-      showSubmit={capabilities.canManageWorkplaceAdmin && mutable}
+      showSubmit={canExecuteBookingCommand && mutable}
       submitIntent="danger"
       submitDisabled={!ready}
       busy={mutation.isPending}
@@ -313,7 +331,7 @@ export function WorkplaceExperienceBookingInspector({
             to={impactRange.to}
             timeZone={timeZone}
           />
-          {capabilities.canManageWorkplaceAdmin && mutable ? (
+          {canExecuteBookingCommand && mutable ? (
             <>
               <InlineFeedback severity="warning">
                 {t('workplace.admin.operations.forceCancel.warning')}
@@ -343,7 +361,13 @@ export function WorkplaceExperienceBookingInspector({
               />
             </>
           ) : (
-            <InlineFeedback severity="info">{t('workplace.experience.readOnly')}</InlineFeedback>
+            <InlineFeedback severity="info">
+              {t(
+                capabilities.canManageWorkplaceAdmin && mutable
+                  ? 'workplace.admin.operations.elevationRequired'
+                  : 'workplace.experience.readOnly'
+              )}
+            </InlineFeedback>
           )}
           {outcome ? (
             <InlineFeedback

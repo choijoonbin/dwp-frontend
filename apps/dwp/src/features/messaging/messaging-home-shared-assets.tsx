@@ -15,6 +15,7 @@ import { alpha } from '@mui/material/styles';
 
 import { messagingRelativeTime } from './messaging-components';
 import { messagingVisualTokens } from './messaging-visual-model';
+import { messagingConversationHref } from './messaging-deep-link';
 
 import type { MessagingSharedAsset } from '@dwp-frontend/shared-utils';
 
@@ -74,13 +75,19 @@ export function MessagingHomeSharedAssets({
         >
           {items.map((item) => {
             const Icon = item.kind === 'FILE' ? FileText : LinkIcon;
+            const title = item.protectedContent
+              ? t('home.sharedAssets.protectedTitle')
+              : item.title;
             return (
               <Box
                 key={item.id}
                 component={RouterLink}
-                to={`/messages/inbox?conversation=${item.conversationId}`}
+                to={messagingConversationHref({
+                  conversationId: item.conversationId,
+                  messageId: item.messageId,
+                })}
                 aria-label={t('home.sharedAssets.openConversation', {
-                  title: item.title,
+                  title,
                   conversation: item.conversationName,
                 })}
                 sx={(theme) => ({
@@ -130,7 +137,7 @@ export function MessagingHomeSharedAssets({
                       overflowWrap: 'anywhere',
                     }}
                   >
-                    {item.title}
+                    {title}
                   </Typography>
                   <Typography
                     variant="caption"

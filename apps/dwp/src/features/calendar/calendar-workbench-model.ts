@@ -1,4 +1,5 @@
 import type { CalendarEvent, CalendarResponseStatus } from '@dwp-frontend/shared-utils';
+import { Temporal } from 'temporal-polyfill';
 
 export type CalendarInvitationFilter =
   'ALL' | 'NEEDS_ACTION' | 'ACCEPTED' | 'TENTATIVE' | 'DECLINED';
@@ -11,8 +12,21 @@ type CalendarPlanningEvents = Readonly<{
 export function calendarHorizon(
   now = new Date(),
   beforeDays = 0,
-  afterDays = 30
+  afterDays = 30,
+  timeZone?: string
 ): Readonly<{ from: string; to: string }> {
+  if (timeZone) {
+    try {
+      const from = Temporal.Instant.from(now.toISOString())
+        .toZonedDateTimeISO(timeZone)
+        .startOfDay()
+        .subtract({ days: beforeDays });
+      const to = from.add({ days: beforeDays + afterDays });
+      return { from: from.toInstant().toString(), to: to.toInstant().toString() };
+    } catch {
+      // Keep the existing local-day fallback when a runtime does not support the configured zone.
+    }
+  }
   const from = new Date(now);
   from.setHours(0, 0, 0, 0);
   from.setDate(from.getDate() - beforeDays);

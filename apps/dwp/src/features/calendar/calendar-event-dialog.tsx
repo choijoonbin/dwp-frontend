@@ -5,11 +5,12 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
   createCalendarEvent,
   getCalendars,
+  getCalendarPolicy,
   getCalendarResources,
   getCalendarSettings,
-  listPeople,
   resolveIdempotentMutationIntent,
   updateCalendarEvent,
+  useAuth,
   usePermissions,
   useToast,
 } from '@dwp-frontend/shared-utils';
@@ -39,7 +40,6 @@ import type {
   IdempotentMutationIntent,
   DwaionProposalHandoffBinding,
   MailProposalMutationBinding,
-  PersonSummary,
 } from '@dwp-frontend/shared-utils';
 
 import {
@@ -48,12 +48,24 @@ import {
   calendarEditorAttendees,
   calendarEventDraft,
   calendarEventInput,
+  calendarRecurrenceUntilIsValid,
+  patchCalendarEventDraft,
   protectWorkCalendarEventDraft,
   type CalendarEditorAttendee,
   type CalendarEventDraft,
+  type CalendarInitialAttendee,
 } from './calendar-event-editor-model';
 import { CalendarSchedulingAssistant } from './calendar-scheduling-assistant';
+import { calendarReplaceAttendeeType } from './calendar-attendee-picker-model';
+import {
+  CalendarSchedulingFinalCheckError,
+  calendarSchedulingActorIsOrganizerV2,
+  calendarSchedulingAssistedDraftFingerprintV2,
+  verifyCalendarSchedulingFinalV2,
+  type CalendarSchedulingVerificationReceiptV2,
+} from './calendar-scheduling-final-check';
 import { CalendarEventDialogDetails } from './calendar-event-dialog-details';
+import { CalendarEventRemindersEditor } from './calendar-event-reminders-editor';
 import {
   CalendarEventDialogStatus,
   calendarEventSaveErrorMessage,
@@ -86,8 +98,9 @@ type CalendarEventDialogProps = {
   initialCalendarId?: string | null;
   initialTimeZone?: string | null;
   initialImportance?: CalendarEventImportance;
-  initialAttendees?: PersonSummary[];
+  initialAttendees?: CalendarInitialAttendee[];
   initialAttendeeEmails?: string[];
+  initialSchedulingReceipt?: CalendarSchedulingVerificationReceiptV2 | null;
   fromDwaion?: boolean;
   proposalBinding?: MailProposalMutationBinding;
   dwaionProposalBinding?: DwaionProposalHandoffBinding | null;
@@ -147,6 +160,7 @@ export function CalendarEventDialog({
   initialImportance,
   initialAttendees = EMPTY_CALENDAR_EDITOR_PEOPLE,
   initialAttendeeEmails = EMPTY_CALENDAR_EDITOR_EMAILS,
+  initialSchedulingReceipt,
   fromDwaion = false,
   proposalBinding,
   dwaionProposalBinding,
@@ -161,7 +175,9 @@ export function CalendarEventDialog({
 }: CalendarEventDialogProps) {
   const { t, i18n } = useTranslation('calendar');
   const eventTypeLabelId = useId();
+  const auth = useAuth();
   const { hasPermission } = usePermissions();
+  const canViewPeople = hasPermission('APP.PEOPLE_DIRECTORY', 'VIEW');
   const initialRecoveryReceipt = calendarWorkHandoffRecoveryReceipt(workHandoff, workRecovery);
   const recoveryMode = Boolean(initialRecoveryReceipt);
   const canMutate = recoveryMode
@@ -177,6 +193,20 @@ export function CalendarEventDialog({
     staleTime: 60_000,
     retry: 1,
   });
+  const attendeePolicyQuery = useQuery({
+    queryKey: ['calendar', 'policy'],
+    queryFn: getCalendarPolicy,
+    enabled: open && canMutate,
+    staleTime: 5 * 60_000,
+    retry: 1,
+  });
+  const externalAttendeePolicyState = attendeePolicyQuery.isPending
+    ? ('LOADING' as const)
+    : attendeePolicyQuery.isError
+      ? ('UNAVAILABLE' as const)
+      : attendeePolicyQuery.data?.allowExternalAttendees
+        ? ('ALLOWED' as const)
+        : ('DENIED' as const);
   const workReference = useMemo(
     () => workHandoff ?? parseWorkCalendarEventHandoffDescription(event?.description),
     [event?.description, workHandoff]
@@ -186,6 +216,7 @@ export function CalendarEventDialog({
     [workReference]
   );
   const workProtected = Boolean(workDescription);
+  const actorOrganizedEvent = calendarSchedulingActorIsOrganizerV2(event, auth.user);
   const [form, setForm] = useState<CalendarEventDraft>(() => {
     const draft = creationDraftWithSettings(
       calendarEventDraft(event, {
@@ -216,6 +247,9 @@ export function CalendarEventDialog({
   );
   const [versionConflict, setVersionConflict] = useState(false);
   const [editScope, setEditScope] = useState<CalendarRecurrenceEditScope>('SERIES');
+  const [schedulingAssisted, setSchedulingAssisted] = useState(Boolean(initialSchedulingReceipt));
+  const [schedulingReceipt, setSchedulingReceipt] =
+    useState<CalendarSchedulingVerificationReceiptV2 | null>(initialSchedulingReceipt ?? null);
   const authorityNoticeShown = useRef(false);
   const createIntent = useRef<IdempotentMutationIntent | null>(
     initialRecoveryReceipt?.intent ?? null
@@ -283,6 +317,8 @@ export function CalendarEventDialog({
     setValidationVisible(false);
     setVersionConflict(false);
     setEditScope('SERIES');
+    setSchedulingAssisted(Boolean(initialSchedulingReceipt));
+    setSchedulingReceipt(initialSchedulingReceipt ?? null);
     occurrenceIntent.current = null;
     setAdditionalOptionsOpen(Boolean(event || initialDescription));
   }, [
@@ -298,6 +334,7 @@ export function CalendarEventDialog({
     initialVisibility,
     initialTimeZone,
     initialImportance,
+    initialSchedulingReceipt,
     initialType,
     open,
     settingsQuery.data,
@@ -306,13 +343,6 @@ export function CalendarEventDialog({
     workProtected,
   ]);
 
-  const peopleQuery = useQuery({
-    queryKey: ['calendar', 'people-options'],
-    queryFn: () => listPeople({ size: 100, surface: 'directory' }),
-    enabled: open && canMutate && form.type === 'MEETING' && !workProtected,
-    staleTime: 5 * 60_000,
-    retry: 1,
-  });
   const calendarsQuery = useQuery({
     queryKey: ['calendar', 'calendars'],
     queryFn: ({ signal }) => getCalendars(signal),
@@ -368,8 +398,49 @@ export function CalendarEventDialog({
     retry: 1,
   });
   const resources = resourcesQuery.data ?? EMPTY_CALENDAR_RESOURCES;
+  const selectedResource = useMemo(
+    () =>
+      resources.find((resource) => resource.resourceId === form.resourceId) ??
+      (event?.resource?.resourceId === form.resourceId ? event.resource : null),
+    [event?.resource, form.resourceId, resources]
+  );
+  const schedulingDraftFingerprint = useMemo(
+    () =>
+      calendarSchedulingAssistedDraftFingerprintV2({
+        startsAt: form.startsAt,
+        endsAt: form.endsAt,
+        timeZone: form.timeZone,
+        attendees,
+        resourceId: form.resourceId || null,
+      }),
+    [attendees, form.endsAt, form.resourceId, form.startsAt, form.timeZone]
+  );
+  useEffect(() => {
+    if (
+      !actorOrganizedEvent ||
+      form.type !== 'MEETING' ||
+      form.allDay ||
+      form.recurrence !== 'NONE'
+    ) {
+      setSchedulingAssisted(false);
+      setSchedulingReceipt(null);
+      return;
+    }
+    if (schedulingReceipt && schedulingReceipt.draftFingerprint !== schedulingDraftFingerprint) {
+      setSchedulingReceipt(null);
+    }
+  }, [
+    actorOrganizedEvent,
+    form.allDay,
+    form.recurrence,
+    form.type,
+    schedulingDraftFingerprint,
+    schedulingReceipt,
+  ]);
   const recurringEvent = event?.recurrence && event.recurrence !== 'NONE' ? event : null;
   const occurrenceOnly = Boolean(recurringEvent && editScope === 'THIS_OCCURRENCE');
+  const followingOccurrences = Boolean(recurringEvent && editScope === 'THIS_AND_FOLLOWING');
+  const participantResourceLocked = occurrenceOnly || followingOccurrences;
 
   const typeOptions = useMemo(
     () =>
@@ -381,20 +452,8 @@ export function CalendarEventDialog({
       ] as const,
     [t]
   );
-  const attendeeOptions = useMemo(
-    () =>
-      (peopleQuery.data?.items ?? [])
-        .filter((person) => Boolean(person.workEmail))
-        .map<CalendarEditorAttendee>((person) => ({
-          personId: person.personId,
-          displayName: person.displayName,
-          workEmail: person.workEmail,
-          type: 'REQUIRED',
-        })),
-    [peopleQuery.data?.items]
-  );
   const patchForm = useCallback((patch: Partial<CalendarEventDraft>) => {
-    setForm((current) => ({ ...current, ...patch }));
+    setForm((current) => patchCalendarEventDraft(current, patch));
   }, []);
   const changeResource = useCallback((resourceId: string, resourceName?: string) => {
     setForm((current) => ({
@@ -405,11 +464,7 @@ export function CalendarEventDialog({
   }, []);
   const replaceAttendees = useCallback(
     (type: CalendarEditorAttendee['type'], values: readonly CalendarEditorAttendee[]) => {
-      const selectedIds = new Set(values.map((person) => person.personId));
-      setAttendees((current) => [
-        ...current.filter((person) => person.type !== type && !selectedIds.has(person.personId)),
-        ...values.map((person) => ({ ...person, type })),
-      ]);
+      setAttendees((current) => calendarReplaceAttendeeType(current, type, values));
     },
     []
   );
@@ -420,7 +475,19 @@ export function CalendarEventDialog({
     form.type === 'MEETING' &&
     form.resourceId &&
     form.recurrence !== 'NONE' &&
-    !form.recurrenceUntil
+    form.recurrenceEndMode === 'NEVER'
+  );
+  const recurrenceEndError = Boolean(
+    form.recurrence !== 'NONE' &&
+    ((form.recurrenceEndMode === 'UNTIL' && !calendarRecurrenceUntilIsValid(form)) ||
+      (form.recurrenceEndMode === 'COUNT' &&
+        (!Number.isInteger(form.recurrenceCount) ||
+          form.recurrenceCount < 1 ||
+          form.recurrenceCount > 4_000)))
+  );
+  const externalAttendeeBlocked = Boolean(
+    attendees.some((attendee) => attendee.personId.startsWith('email:')) &&
+    externalAttendeePolicyState !== 'ALLOWED'
   );
   const valid = Boolean(
     form.title.trim() &&
@@ -428,7 +495,9 @@ export function CalendarEventDialog({
     form.calendarId &&
     (event || writableCalendars.some((calendar) => calendar.calendarId === form.calendarId)) &&
     !rangeError &&
-    !resourceRecurrenceError
+    !resourceRecurrenceError &&
+    !recurrenceEndError &&
+    !externalAttendeeBlocked
   );
 
   const mutation = useMutation({
@@ -445,31 +514,68 @@ export function CalendarEventDialog({
         return pending.event;
       }
       const input = calendarEventInput(form, attendees, { workReference });
+      const finalSchedulingBinding = async () => {
+        if (
+          !schedulingAssisted ||
+          !actorOrganizedEvent ||
+          input.type !== 'MEETING' ||
+          input.allDay ||
+          input.recurrence !== 'NONE'
+        )
+          return undefined;
+        try {
+          const receipt = await verifyCalendarSchedulingFinalV2({
+            startsAt: input.startsAt,
+            endsAt: input.endsAt,
+            timeZone: input.timeZone,
+            attendees,
+            resource: selectedResource,
+            resourceId: input.resourceId ?? null,
+          });
+          setSchedulingReceipt(receipt);
+          return { hardRecheckToken: receipt.hardRecheckToken };
+        } catch (error) {
+          if (error instanceof CalendarSchedulingFinalCheckError) {
+            throw new Error(t(`schedulingAssistant.finalCheckErrors.${error.reason}`));
+          }
+          throw new Error(t('schedulingAssistant.finalCheckFailed'));
+        }
+      };
       if (event) {
         const { calendarId: _calendarId, ...updateInput } = input;
-        if (occurrenceOnly) {
-          const occurrenceCommand = {
+        if (occurrenceOnly || followingOccurrences) {
+          const scopedCommand = {
             ...updateInput,
             version: event.version,
-            editScope: 'THIS_OCCURRENCE' as const,
+            editScope,
             originalStartsAt: event.recurrenceId ?? event.startsAt,
           };
           const intent = resolveIdempotentMutationIntent(
             occurrenceIntent.current,
-            occurrenceCommand,
+            scopedCommand,
             () => crypto.randomUUID()
           );
           occurrenceIntent.current = intent;
-          return updateCalendarEvent(event.eventId, {
-            ...occurrenceCommand,
-            idempotencyKey: intent.key,
-          });
+          const schedulingBinding = await finalSchedulingBinding();
+          return updateCalendarEvent(
+            event.eventId,
+            {
+              ...scopedCommand,
+              idempotencyKey: intent.key,
+            },
+            schedulingBinding
+          );
         }
-        return updateCalendarEvent(event.eventId, {
-          ...updateInput,
-          version: event.version,
-          editScope: 'SERIES',
-        });
+        const schedulingBinding = await finalSchedulingBinding();
+        return updateCalendarEvent(
+          event.eventId,
+          {
+            ...updateInput,
+            version: event.version,
+            editScope: 'SERIES',
+          },
+          schedulingBinding
+        );
       }
       const selectedCalendar = writableCalendars.find(
         (calendar) => calendar.calendarId === input.calendarId
@@ -490,11 +596,13 @@ export function CalendarEventDialog({
       };
       await onBeforeCreate?.();
       createIntent.current = intent;
+      const schedulingBinding = await finalSchedulingBinding();
       const saved = await createCalendarEvent(
         request,
         undefined,
         proposalBinding,
-        dwaionProposalBinding
+        dwaionProposalBinding,
+        schedulingBinding
       );
       if (workHandoff) {
         if (!isExactWorkHandoffEventReceipt(saved, request))
@@ -604,7 +712,6 @@ export function CalendarEventDialog({
             }
             versionConflict={versionConflict}
             calendarsError={calendarsQuery.isError}
-            peopleError={peopleQuery.isError}
             onKeepDraft={() => setVersionConflict(false)}
             onReloadCurrent={() => {
               queryClient.removeQueries({ queryKey: ['calendar'] });
@@ -612,11 +719,24 @@ export function CalendarEventDialog({
               onClose();
             }}
             onRetryCalendars={() => void calendarsQuery.refetch()}
-            onRetryPeople={() => void peopleQuery.refetch()}
           />
+          {schedulingAssisted ? (
+            <InlineFeedback severity={schedulingReceipt ? 'success' : 'info'}>
+              {t(
+                schedulingReceipt
+                  ? 'schedulingAssistant.assistedDraftVerified'
+                  : 'schedulingAssistant.assistedDraftNeedsFinalCheck'
+              )}
+            </InlineFeedback>
+          ) : null}
           {!event && settingsQuery.isError ? (
             <InlineFeedback severity="warning">
               {t('event.settingsDefaultsUnavailable')}
+            </InlineFeedback>
+          ) : null}
+          {externalAttendeeBlocked ? (
+            <InlineFeedback severity="warning">
+              {t('event.attendeePicker.externalSaveBlocked')}
             </InlineFeedback>
           ) : null}
           {recurringEvent ? (
@@ -633,7 +753,7 @@ export function CalendarEventDialog({
                   if (!value) return;
                   setEditScope(value);
                   occurrenceIntent.current = null;
-                  if (value === 'THIS_OCCURRENCE') {
+                  if (value !== 'SERIES') {
                     setForm((current) => ({
                       ...current,
                       type: recurringEvent.type,
@@ -641,6 +761,13 @@ export function CalendarEventDialog({
                       recurrence: recurringEvent.recurrence,
                       recurrenceInterval: recurringEvent.recurrenceInterval,
                       recurrenceUntil: recurringEvent.recurrenceUntil ?? '',
+                      recurrenceDays: recurringEvent.recurrenceDays ?? [],
+                      recurrenceCount: recurringEvent.recurrenceCount ?? 10,
+                      recurrenceEndMode: recurringEvent.recurrenceCount
+                        ? 'COUNT'
+                        : recurringEvent.recurrenceUntil
+                          ? 'UNTIL'
+                          : 'NEVER',
                       responseRequired: recurringEvent.responseRequired,
                       resourceId: recurringEvent.resource?.resourceId ?? '',
                     }));
@@ -659,6 +786,9 @@ export function CalendarEventDialog({
                 <ToggleButton value="THIS_OCCURRENCE" disabled={Boolean(recurringEvent.resource)}>
                   {t('event.recurrenceEditScopes.THIS_OCCURRENCE')}
                 </ToggleButton>
+                <ToggleButton value="THIS_AND_FOLLOWING">
+                  {t('event.recurrenceEditScopes.THIS_AND_FOLLOWING')}
+                </ToggleButton>
                 <ToggleButton value="SERIES">{t('event.recurrenceEditScopes.SERIES')}</ToggleButton>
               </ToggleButtonGroup>
               <Typography
@@ -666,11 +796,13 @@ export function CalendarEventDialog({
                 color="text.secondary"
                 sx={{ mt: 0.75, display: 'block' }}
               >
-                {recurringEvent.resource
-                  ? t('event.occurrenceResourceSeriesOnly')
+                {followingOccurrences
+                  ? t('event.followingFieldsHint')
                   : occurrenceOnly
                     ? t('event.occurrenceFieldsHint')
-                    : t('event.seriesFieldsHint')}
+                    : recurringEvent.resource
+                      ? t('event.occurrenceResourceScopeHint')
+                      : t('event.seriesFieldsHint')}
               </Typography>
             </Box>
           ) : null}
@@ -720,7 +852,7 @@ export function CalendarEventDialog({
                 <ToggleButtonGroup
                   exclusive
                   fullWidth
-                  disabled={workProtected || occurrenceOnly}
+                  disabled={workProtected || participantResourceLocked}
                   value={form.type}
                   onChange={(_, value: CalendarEventType | null) => {
                     if (!value) return;
@@ -787,7 +919,8 @@ export function CalendarEventDialog({
                   label={t('event.startLabel')}
                   value={form.startsAt}
                   onValueChange={(value) =>
-                    value && setForm((current) => ({ ...current, startsAt: value }))
+                    value &&
+                    setForm((current) => patchCalendarEventDraft(current, { startsAt: value }))
                   }
                 />
                 <DateTimePickerField
@@ -805,22 +938,23 @@ export function CalendarEventDialog({
                 expanded={additionalOptionsOpen}
                 form={form}
                 attendees={attendees}
-                attendeeOptions={attendeeOptions}
                 resources={resources}
-                peopleLoading={peopleQuery.isLoading}
+                externalAttendeePolicyState={externalAttendeePolicyState}
+                peopleDirectoryEnabled={canViewPeople}
                 workProtected={workProtected}
                 workReceiptLocked={workReceiptLocked}
                 occurrenceOnly={occurrenceOnly}
+                participantResourceLocked={participantResourceLocked}
                 validationVisible={validationVisible}
-                resourceRecurrenceError={resourceRecurrenceError}
                 eventResourceId={event?.resource?.resourceId}
                 onExpandedChange={setAdditionalOptionsOpen}
                 onFormPatch={patchForm}
                 onResourceChange={changeResource}
                 onReplaceAttendees={replaceAttendees}
               />
+              <CalendarEventRemindersEditor event={event} />
             </Stack>
-            {form.type === 'MEETING' && (
+            {actorOrganizedEvent && form.type === 'MEETING' && !form.allDay && (
               <Box
                 component="aside"
                 sx={{
@@ -838,22 +972,25 @@ export function CalendarEventDialog({
                       startsAt={form.startsAt}
                       endsAt={form.endsAt}
                       attendees={attendees}
-                      resources={resources}
-                      resourcesLoading={resourcesQuery.isLoading || resourcesQuery.isFetching}
-                      resourcesError={resourcesQuery.isError}
                       selectedResourceId={form.resourceId}
                       language={i18n.resolvedLanguage ?? i18n.language}
                       timeZone={form.timeZone}
-                      onApplyTime={(startsAt, endsAt) =>
-                        setForm((current) => ({ ...current, startsAt, endsAt }))
-                      }
-                      onApplyRoom={(resource) =>
+                      onApplyTime={(startsAt, endsAt, receipt) => {
+                        setSchedulingAssisted(true);
+                        setSchedulingReceipt(receipt);
+                        setForm((current) =>
+                          patchCalendarEventDraft(current, { startsAt, endsAt })
+                        );
+                      }}
+                      onApplyRoom={(resource, receipt) => {
+                        setSchedulingAssisted(true);
+                        setSchedulingReceipt(receipt);
                         setForm((current) => ({
                           ...current,
                           resourceId: resource.resourceId,
                           location: resource.name,
-                        }))
-                      }
+                        }));
+                      }}
                     />
                   ) : (
                     <InlineFeedback severity="info">

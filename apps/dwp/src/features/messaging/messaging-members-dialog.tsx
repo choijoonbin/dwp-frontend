@@ -21,7 +21,6 @@ import {
   SelectField,
 } from '@dwp-frontend/design-system';
 
-import Alert from '@mui/material/Alert';
 import Avatar from '@mui/material/Avatar';
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
@@ -40,6 +39,7 @@ import type {
 } from '@dwp-frontend/shared-utils';
 
 import { messagingInitials } from './messaging-components';
+import { MessagingReadErrorState } from './messaging-read-error-state';
 
 type PendingRemoval = MessagingManagedMember | 'LEAVE' | null;
 
@@ -201,9 +201,14 @@ export function MessagingMembersDialog({
             <Skeleton variant="rounded" height={260} />
           </Stack>
         ) : membershipQuery.isError || !membershipQuery.data ? (
-          <Alert severity="error" sx={{ m: 2 }}>
-            {t('members.loadError')}
-          </Alert>
+          <Box sx={{ m: 2 }}>
+            <MessagingReadErrorState
+              error={membershipQuery.error}
+              title={t('members.loadError')}
+              retrying={membershipQuery.isFetching}
+              onRetry={() => void membershipQuery.refetch()}
+            />
+          </Box>
         ) : (
           <Stack divider={<Divider flexItem />}>
             {canManage && (
@@ -249,6 +254,16 @@ export function MessagingMembersDialog({
                   >
                     {t('members.add')}
                   </ActionButton>
+                  {peopleQuery.isError ? (
+                    <Box sx={{ gridColumn: '1 / -1' }}>
+                      <MessagingReadErrorState
+                        error={peopleQuery.error}
+                        title={t('members.candidatesLoadError')}
+                        retrying={peopleQuery.isFetching}
+                        onRetry={() => void peopleQuery.refetch()}
+                      />
+                    </Box>
+                  ) : null}
                 </Box>
               </Box>
             )}

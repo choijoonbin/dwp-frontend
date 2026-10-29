@@ -85,15 +85,24 @@ export async function clickResponsiveMessageAction(page: Page, row: Locator, lab
 }
 
 export async function expectInsideViewport(locator: Locator, page: Page) {
-  await locator.scrollIntoViewIfNeeded();
-  const viewport = page.viewportSize();
-  const box = await locator.boundingBox();
-  expect(viewport).not.toBeNull();
-  expect(box).not.toBeNull();
-  expect(box!.x).toBeGreaterThanOrEqual(-1);
-  expect(box!.y).toBeGreaterThanOrEqual(-1);
-  expect(box!.x + box!.width).toBeLessThanOrEqual(viewport!.width + 1);
-  expect(box!.y + box!.height).toBeLessThanOrEqual(viewport!.height + 1);
+  await expect(locator).toBeVisible();
+  const geometry = await locator.evaluate((element) => {
+    element.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+    const rect = element.getBoundingClientRect();
+    return {
+      x: rect.x,
+      y: rect.y,
+      width: rect.width,
+      height: rect.height,
+      viewportWidth: window.innerWidth,
+      viewportHeight: window.innerHeight,
+    };
+  });
+  expect(page.viewportSize()).not.toBeNull();
+  expect(geometry.x).toBeGreaterThanOrEqual(-1);
+  expect(geometry.y).toBeGreaterThanOrEqual(-1);
+  expect(geometry.x + geometry.width).toBeLessThanOrEqual(geometry.viewportWidth + 1);
+  expect(geometry.y + geometry.height).toBeLessThanOrEqual(geometry.viewportHeight + 1);
 }
 
 export async function expectCompactComposer(locator: Locator, maxHeight = 160) {

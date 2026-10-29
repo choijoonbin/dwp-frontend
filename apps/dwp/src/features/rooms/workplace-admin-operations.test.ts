@@ -3,6 +3,7 @@
 import { describe, expect, it } from 'vitest';
 
 import { findRoomsNavigationItem } from './rooms-navigation';
+import { canExecuteWorkplaceAdminBookingCommand } from './workplace-admin-booking-command-authority';
 import {
   canForceCancelBooking,
   initialOperationsRange,
@@ -51,6 +52,14 @@ describe('Workplace administrator operations', () => {
     expect(canForceCancelBooking('NO_SHOW')).toBe(false);
     expect(canForceCancelBooking('RELEASED')).toBe(false);
     expect(canForceCancelBooking('CANCELLED')).toBe(false);
+  });
+
+  it('fails closed for sensitive booking commands until access is elevated', () => {
+    expect(canExecuteWorkplaceAdminBookingCommand(true, 'NORMAL')).toBe(false);
+    expect(canExecuteWorkplaceAdminBookingCommand(true, 'ELEVATED')).toBe(true);
+    expect(canExecuteWorkplaceAdminBookingCommand(true, 'PROVIDER_SUPPORT')).toBe(false);
+    expect(canExecuteWorkplaceAdminBookingCommand(true, undefined)).toBe(false);
+    expect(canExecuteWorkplaceAdminBookingCommand(false, 'ELEVATED')).toBe(false);
   });
 
   it('registers the operations route as a Workplace VIEW administration surface', () => {

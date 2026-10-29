@@ -50,6 +50,15 @@ describe('calendar workbench model', () => {
     expect(calendarEventMinutes(event())).toBe(60);
   });
 
+  it('anchors focus horizons to the effective calendar timezone across daylight saving', () => {
+    const range = calendarHorizon(new Date('2026-10-31T23:30:00Z'), 0, 2, 'America/New_York');
+
+    expect(range).toEqual({
+      from: '2026-10-31T04:00:00Z',
+      to: '2026-11-02T05:00:00Z',
+    });
+  });
+
   it('separates upcoming focus and task blocks while excluding cancelled and elapsed work', () => {
     const result = calendarPlanningEvents(
       [

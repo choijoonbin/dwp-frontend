@@ -38,8 +38,10 @@ export const WORKPLACE_SAFETY_ATTEMPT_STATES = [
   'DELIVERED',
   'DELIVERY_FAILED',
   'OFFLINE_QUEUED',
+  'MANUAL_REVIEW_REQUIRED',
   'RESULT_UNKNOWN',
 ] as const;
+export const WORKPLACE_SAFETY_DISPATCH_REVIEW_STATES = ['NONE', 'MANUAL_REVIEW_REQUIRED'] as const;
 export const WORKPLACE_SAFETY_RESPONSE_STATES = ['SAFE', 'NEEDS_HELP'] as const;
 export const WORKPLACE_SAFETY_MESSAGE_DIRECTIONS = [
   'USER_TO_COMMAND',
@@ -77,6 +79,8 @@ export type WorkplaceSafetyAvailabilityState =
 export type WorkplaceSafetyDeliveryChannel = (typeof WORKPLACE_SAFETY_DELIVERY_CHANNELS)[number];
 export type WorkplaceSafetyDispatchState = (typeof WORKPLACE_SAFETY_DISPATCH_STATES)[number];
 export type WorkplaceSafetyAttemptState = (typeof WORKPLACE_SAFETY_ATTEMPT_STATES)[number];
+export type WorkplaceSafetyDispatchReviewState =
+  (typeof WORKPLACE_SAFETY_DISPATCH_REVIEW_STATES)[number];
 export type WorkplaceSafetyResponseState = (typeof WORKPLACE_SAFETY_RESPONSE_STATES)[number];
 export type WorkplaceSafetyMessageDirection = (typeof WORKPLACE_SAFETY_MESSAGE_DIRECTIONS)[number];
 export type WorkplaceSafetyCommandState = (typeof WORKPLACE_SAFETY_COMMAND_STATES)[number];
@@ -143,6 +147,8 @@ export type WorkplaceSafetyDispatchSummary = Readonly<{
   failedCount: number;
   unknownCount: number;
   channels: readonly WorkplaceSafetyDeliveryChannel[];
+  reviewState: WorkplaceSafetyDispatchReviewState;
+  manualReviewCount: number;
   updatedAt: string;
 }>;
 

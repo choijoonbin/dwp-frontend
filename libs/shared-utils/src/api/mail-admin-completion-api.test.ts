@@ -1,6 +1,7 @@
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { axiosInstance } from '../axios-instance';
+import { registerMailGovernedRequestAuthority } from './mail-governed-transport';
 import {
   approveMailLegalHoldRelease,
   downloadMailDeliveryAuditExport,
@@ -12,6 +13,16 @@ import {
 const elevated = { headers: { 'X-DWP-Active-Access-Mode': 'ELEVATED' } };
 
 describe('mail administration completion API boundary', () => {
+  let releaseMailAuthority: (() => void) | undefined;
+
+  beforeEach(() => {
+    releaseMailAuthority = registerMailGovernedRequestAuthority({
+      mode: 'LEGACY_COMPATIBILITY',
+      rolloutState: '000',
+    });
+  });
+
+  afterEach(() => releaseMailAuthority?.());
   afterEach(() => vi.restoreAllMocks());
 
   it('keeps legal-hold release preview, approval, and execution as separate commands', async () => {

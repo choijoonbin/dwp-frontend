@@ -240,6 +240,9 @@ export async function getActivityExecutionSummary(
   );
   if (signal?.aborted) throw new HttpTransportError('ABORT');
   const available = results.flatMap((result) => (result.summary ? [result.summary] : []));
+  if (!available.length && results.every((result) => result.state.status === 'FORBIDDEN')) {
+    throw new HttpError('Current execution summary is unavailable.', 403);
+  }
   if (!available.length || results.some((result) => result.state.status === 'UNAVAILABLE')) {
     // Never display successful-source subtotal as an authoritative total when a source failed.
     throw new HttpError('Current execution summary is unavailable.', 503);
@@ -258,7 +261,11 @@ export async function getActivityExecutionSummary(
   const seenAttention = new Set<string>();
   const attentionItems = available
     .flatMap((summary) => summary.attentionItems ?? [])
-    .sort((left, right) => Date.parse(right.occurredAt) - Date.parse(left.occurredAt))
+    .sort(
+      (left, right) =>
+        Date.parse(right.stateChangedAt ?? right.occurredAt) -
+        Date.parse(left.stateChangedAt ?? left.occurredAt)
+    )
     .filter((item) => {
       if (seenAttention.has(item.id)) return false;
       seenAttention.add(item.id);

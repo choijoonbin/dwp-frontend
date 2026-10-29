@@ -61,6 +61,8 @@ const eventInput: CreateCalendarEventInput = {
   recurrence: 'NONE',
   recurrenceInterval: 1,
   recurrenceUntil: null,
+  recurrenceDays: [],
+  recurrenceCount: null,
   responseRequired: false,
   attendees: [],
   resourceId: null,
@@ -201,6 +203,12 @@ describe('Calendar Work handoff boundary', () => {
     expect(isExactWorkHandoffEventReceipt({ ...event, visibility: 'PUBLIC' }, eventInput)).toBe(
       false
     );
+    expect(
+      isExactWorkHandoffEventReceipt({ ...event, recurrenceDays: ['MONDAY'] }, eventInput)
+    ).toBe(false);
+    expect(
+      isExactWorkHandoffEventReceipt(event, { ...eventInput, recurrenceDays: undefined })
+    ).toBe(false);
     expect(
       isExactWorkHandoffEventReceipt(
         { ...event, location: 'Meeting room attached by server' },

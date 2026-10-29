@@ -1,4 +1,15 @@
+import { NATIVE_HOME_WIDGET_BINDINGS } from '../../apps/dwp/src/features/home/runtime/widget-registry-runtime';
+import type { HomeDeviceClass, HomeV2Widget } from '@dwp-frontend/shared-utils';
 import type { Page } from '@playwright/test';
+
+import {
+  createHomeWave4Model,
+  HOME_V2_BACKEND_BINDING_CATALOG_REVISION,
+  HOME_V2_ROUTE,
+  homeWave4ResponseBody,
+  homeWave4ResponseHeaders,
+  withHomeWave6Runtime,
+} from './home-wave4-runtime-fixtures';
 
 export const FIXED_NOW = new Date('2026-09-04T09:00:00.000Z');
 export const WORK_EVENT_ID = '21000000-0000-4000-8000-000000000001';
@@ -131,6 +142,7 @@ const runs = [
 ];
 
 export async function mockFlowExperience(page: Page) {
+  await routeActivityFlowRuntime(page);
   await page.route('**/api/platform/v1/home-experience', (route) =>
     route.fulfill({
       json: {
@@ -178,6 +190,93 @@ export async function mockFlowExperience(page: Page) {
       },
     })
   );
+}
+
+const HOME_DEVICE_CLASSES = new Set<HomeDeviceClass>([
+  'DESKTOP_WIDE',
+  'DESKTOP_STANDARD',
+  'MOBILE_STANDARD',
+  'MOBILE_COMPACT',
+]);
+
+async function routeActivityFlowRuntime(page: Page) {
+  const activityBinding = NATIVE_HOME_WIDGET_BINDINGS.find(
+    (candidate) => candidate.definitionKey === 'core.activity.activity'
+  );
+  if (!activityBinding) throw new Error('Missing native Activity home binding.');
+
+  await page.route(HOME_V2_ROUTE, (route) => {
+    const url = new URL(route.request().url());
+    if (url.pathname !== '/api/platform/v2/home') return route.fallback();
+    const deviceClass = url.searchParams.get('deviceClass') as HomeDeviceClass | null;
+    if (!deviceClass || !HOME_DEVICE_CLASSES.has(deviceClass)) {
+      return route.fulfill({ status: 400, contentType: 'application/json', body: '{}' });
+    }
+
+    const rolloutRevision = 'activity-flow-read-only-r1';
+    const base = createHomeWave4Model({
+      deviceClass,
+      marker: `activity-flow-${deviceClass.toLowerCase()}`,
+      mode: 'FLOW_V1',
+    });
+    const activityWidget: HomeV2Widget = {
+      instanceId: '00000000-0000-4000-8000-000000000098',
+      definitionKey: activityBinding.definitionKey,
+      definitionVersion: activityBinding.semanticVersion,
+      definitionManifestHash: activityBinding.expectedManifestHash,
+      rendererBindingRevision: HOME_V2_BACKEND_BINDING_CATALOG_REVISION,
+      rendererKey: activityBinding.rendererKey,
+      state: 'AVAILABLE',
+      source: {
+        sourceKey: 'DWP_ACTIVITY',
+        generatedAt: '2026-09-04T09:00:00.000Z',
+        expiresAt: '2026-09-04T09:01:00.000Z',
+        lastSuccessAt: '2026-09-04T09:00:00.000Z',
+        reasonCode: null,
+        retryable: false,
+        resultVersion: 'activity-flow-1',
+      },
+      payload: {
+        data: {
+          ...activityPage(workspaceEvents),
+          executionSummary: executionSummary({
+            total: 12,
+            running: 1,
+            needsInput: 2,
+            policyBlocked: 1,
+            completed: 8,
+          }),
+          executionSummaryStatus: 'AVAILABLE',
+        },
+      },
+      actions: [],
+      redactions: [],
+      governance: {
+        owner: 'core.activity',
+        sourceAppResourceKey: 'APP.ACTIVITY',
+        requiredAuthorities: ['APP.ACTIVITY:VIEW'],
+        classification: 'CONFIDENTIAL',
+        retention: 'NONE',
+        sourceRoute: '/activity/home',
+      },
+    };
+    const model = withHomeWave6Runtime(
+      { ...base, widgets: [...base.widgets, activityWidget] },
+      'READ_ONLY_ACTIVE',
+      { rolloutRevision, rolloutRing: 'INTERNAL' }
+    );
+    const etag = `"activity-flow-${deviceClass.toLowerCase()}"`;
+    return route.fulfill({
+      status: 200,
+      headers: homeWave4ResponseHeaders('ACTIVE', etag, {
+        rolloutRevision,
+        rolloutRing: 'INTERNAL',
+        runtimeState: 'READ_ONLY_ACTIVE',
+      }),
+      contentType: 'application/json',
+      body: homeWave4ResponseBody(model),
+    });
+  });
 }
 
 export async function mockActivityContracts(page: Page) {

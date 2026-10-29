@@ -1,43 +1,55 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Building2, CalendarCheck2, Clock3, Search, ShieldCheck, UsersRound } from 'lucide-react';
+import { Building2, Search, ShieldCheck, UsersRound } from 'lucide-react';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { Link, useSearchParams } from 'react-router-dom';
-import { resolveSystemTimeZone } from '@dwp-frontend/shared-i18n';
 import {
-  evaluateCalendarScheduling,
+  evaluateCalendarSchedulingV2,
+  getCalendarPolicy,
   getPerson,
-  listPeople,
+  hardRecheckCalendarSchedulingV2,
   useAuth,
   usePermissions,
 } from '@dwp-frontend/shared-utils';
 import {
   ActionButton,
-  AutocompleteMultiField,
   DateRangePickerField,
   GuidedEmptyState,
   SelectField,
 } from '@dwp-frontend/design-system';
 
 import Alert from '@mui/material/Alert';
-import Avatar from '@mui/material/Avatar';
 import Box from '@mui/material/Box';
-import Chip from '@mui/material/Chip';
-import Divider from '@mui/material/Divider';
 import Skeleton from '@mui/material/Skeleton';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import { alpha } from '@mui/material/styles';
 
 import { CalendarEventDialog } from './calendar-event-dialog';
-import { CalendarPageHeading, calendarDate, calendarTime } from './calendar-components';
+import { CalendarAttendeePicker } from './calendar-attendee-picker';
+import { calendarAvailabilityIsoRange } from './calendar-availability-range';
+import { CalendarAvailabilityResultsV2 } from './calendar-availability-results-v2';
+import { useCalendarEffectivePreferences } from './calendar-effective-preferences';
+import { CalendarPageHeading } from './calendar-components';
 import { CalendarCanvas, CalendarSectionHeader } from './calendar-experience';
 import {
-  CALENDAR_AVAILABILITY_ATTENDEE_LIMIT,
-  calendarSchedulingEvaluationState,
-} from './calendar-scheduling-assistant-model';
+  calendarSchedulingAssistedDraftFingerprintV2,
+  calendarSchedulingVerificationReceiptV2,
+  type CalendarSchedulingVerificationReceiptV2,
+} from './calendar-scheduling-final-check';
+import { CALENDAR_AVAILABILITY_ATTENDEE_LIMIT } from './calendar-scheduling-assistant-model';
+import {
+  calendarSchedulingEvaluationStateV2,
+  calendarSchedulingFingerprintV2,
+  calendarSchedulingParticipantsV2,
+} from './calendar-scheduling-v2-model';
 
-import type { CalendarAvailabilitySlot, PersonSummary } from '@dwp-frontend/shared-utils';
+import type {
+  CalendarSchedulingCandidateV2,
+  CalendarSchedulingEvaluationInputV2,
+  CalendarSchedulingEvaluationV2,
+} from '@dwp-frontend/shared-utils';
+import type { CalendarEditorAttendee } from './calendar-event-editor-model';
 import type { DateRangeValue } from '@dwp-frontend/design-system';
 
 function dateOnly(value: Date) {
@@ -54,13 +66,10 @@ function initialRange(): DateRangeValue {
   return { start: dateOnly(start), end: dateOnly(end) };
 }
 
-function isoRange(value: DateRangeValue) {
-  if (!value.start || !value.end) return null;
-  const from = new Date(`${value.start}T00:00:00`);
-  const to = new Date(`${value.end}T00:00:00`);
-  to.setDate(to.getDate() + 1);
-  return { from: from.toISOString(), to: to.toISOString() };
-}
+type SelectedSchedulingSlot = Readonly<{
+  candidate: CalendarSchedulingCandidateV2;
+  receipt: CalendarSchedulingVerificationReceiptV2;
+}>;
 
 function AvailabilityProgress({ step }: Readonly<{ step: 1 | 2 | 3 }>) {
   const { t } = useTranslation('calendar');
@@ -159,21 +168,30 @@ export function CalendarAvailability() {
     : hasPermission('APP.WORKPLACE', 'VIEW')
       ? '/workplace/find?v=1&types=ALL'
       : null;
-  const [people, setPeople] = useState<PersonSummary[]>([]);
-  const [searchedPeople, setSearchedPeople] = useState<PersonSummary[]>([]);
+  const [people, setPeople] = useState<CalendarEditorAttendee[]>([]);
+  const [searchedPeople, setSearchedPeople] = useState<CalendarEditorAttendee[]>([]);
   const [duration, setDuration] = useState(30);
   const [range, setRange] = useState<DateRangeValue>(initialRange);
-  const [selectedSlot, setSelectedSlot] = useState<CalendarAvailabilitySlot | null>(null);
+  const [selectedSlot, setSelectedSlot] = useState<SelectedSchedulingSlot | null>(null);
+  const [lastFingerprint, setLastFingerprint] = useState<string | null>(null);
+  const [hardRecheckFailed, setHardRecheckFailed] = useState(false);
   const [, setFreshnessTick] = useState(0);
   const language = i18n.resolvedLanguage ?? i18n.language;
-  const timeZone = resolveSystemTimeZone('Asia/Seoul');
-  const peopleQuery = useQuery({
-    queryKey: ['calendar', 'availability', 'people', auth.user?.tenantId, auth.user?.userId],
-    queryFn: () => listPeople({ size: 100, surface: 'directory' }),
-    enabled: canViewPeople,
+  const { preferences: calendarPreferences } = useCalendarEffectivePreferences();
+  const timeZone = calendarPreferences.timeZone;
+  const policyQuery = useQuery({
+    queryKey: ['calendar', 'policy'],
+    queryFn: getCalendarPolicy,
     staleTime: 5 * 60_000,
     retry: 1,
   });
+  const externalAttendeePolicyState = policyQuery.isPending
+    ? ('LOADING' as const)
+    : policyQuery.isError
+      ? ('UNAVAILABLE' as const)
+      : policyQuery.data?.allowExternalAttendees
+        ? ('ALLOWED' as const)
+        : ('DENIED' as const);
   const sharedPersonQuery = useQuery({
     queryKey: [
       'calendar',
@@ -189,39 +207,113 @@ export function CalendarAvailability() {
     retry: false,
     staleTime: 0,
   });
-  const availability = useMutation({
-    mutationFn: async () => {
-      const values = isoRange(range);
-      if (!values) throw new Error(t('availability.rangeRequired'));
-      return evaluateCalendarScheduling({
-        personIds: people.map((person) => person.personId),
-        from: values.from,
-        to: values.to,
-        roomStartsAt: values.from,
-        roomEndsAt: new Date(Date.parse(values.from) + duration * 60_000).toISOString(),
-        durationMinutes: duration,
-        timeZone,
-      });
-    },
+  const participantSelection = useMemo(
+    () => calendarSchedulingParticipantsV2(people, CALENDAR_AVAILABILITY_ATTENDEE_LIMIT),
+    [people]
+  );
+  const evaluationInput = useMemo<CalendarSchedulingEvaluationInputV2 | null>(() => {
+    const values = calendarAvailabilityIsoRange(range, timeZone);
+    if (!values) return null;
+    return {
+      participants: [...participantSelection.participants],
+      searchWindow: values,
+      candidateSlot: {
+        startsAt: values.from,
+        endsAt: new Date(Date.parse(values.from) + duration * 60_000).toISOString(),
+      },
+      durationMinutes: duration,
+      searchTimeZone: timeZone,
+      roomCriteria: {
+        minimumCapacity: people.length + 1,
+        requiredFeatures: [],
+        preferredFeatures: ['VIDEO'],
+        approvalPreference: 'PREFER_NO_APPROVAL',
+      },
+    };
+  }, [duration, participantSelection.participants, people.length, range, timeZone]);
+  const fingerprint = evaluationInput
+    ? calendarSchedulingFingerprintV2(evaluationInput)
+    : 'INVALID';
+  const fingerprintRef = useRef(fingerprint);
+  fingerprintRef.current = fingerprint;
+  const availability = useMutation<
+    CalendarSchedulingEvaluationV2,
+    Error,
+    Readonly<{ input: CalendarSchedulingEvaluationInputV2; fingerprint: string }>
+  >({
+    mutationFn: (request) => evaluateCalendarSchedulingV2(request.input),
+    onSuccess: (_evaluation, request) => setLastFingerprint(request.fingerprint),
   });
   const resetAvailability = availability.reset;
-  const evaluationState = calendarSchedulingEvaluationState(availability.data);
-  const evaluationVisible = evaluationState === 'COMPLETE' || evaluationState === 'PARTIAL';
-  const evaluationPartial = evaluationState === 'PARTIAL';
-  const result = evaluationVisible ? availability.data?.availability : undefined;
-  const participantLoadMax = Math.max(
-    1,
-    ...(result?.participants.map((participant) => participant.busyMinutes) ?? [])
-  );
-  const participantById = useMemo(
-    () => new Map(searchedPeople.map((person) => [person.personId, person])),
-    [searchedPeople]
-  );
+  const hardRecheck = useMutation({
+    mutationFn: ({
+      evaluation,
+      candidate,
+    }: Readonly<{
+      evaluation: CalendarSchedulingEvaluationV2;
+      candidate: CalendarSchedulingCandidateV2;
+      fingerprint: string;
+    }>) => {
+      if (!evaluation.challengeToken) throw new Error('A fresh scheduling challenge is required.');
+      return hardRecheckCalendarSchedulingV2(evaluation.evaluationId, {
+        challengeToken: evaluation.challengeToken,
+        criteriaHash: evaluation.criteriaHash,
+        selection: { startsAt: candidate.startsAt, endsAt: candidate.endsAt },
+        roomId: null,
+      });
+    },
+    onSuccess: (recheck, request) => {
+      const receipt = calendarSchedulingVerificationReceiptV2(
+        request.evaluation,
+        recheck,
+        { startsAt: request.candidate.startsAt, endsAt: request.candidate.endsAt },
+        null,
+        calendarSchedulingAssistedDraftFingerprintV2({
+          startsAt: request.candidate.startsAt,
+          endsAt: request.candidate.endsAt,
+          timeZone,
+          attendees: people.map((person) => ({ ...person, type: 'REQUIRED' })),
+          resourceId: null,
+        })
+      );
+      if (request.fingerprint === fingerprintRef.current && receipt) {
+        setSelectedSlot({ candidate: request.candidate, receipt });
+        return;
+      }
+      setHardRecheckFailed(true);
+    },
+    onError: () => setHardRecheckFailed(true),
+    onSettled: () => {
+      setLastFingerprint(null);
+      resetAvailability();
+    },
+  });
+  const resetHardRecheck = hardRecheck.reset;
+  const evaluationMatches = lastFingerprint === fingerprint;
+  const evaluationState = calendarSchedulingEvaluationStateV2(availability.data, evaluationMatches);
+  const evaluationVisible = Boolean(availability.data && evaluationMatches);
+  const search = () => {
+    if (!evaluationInput) return;
+    setHardRecheckFailed(false);
+    resetHardRecheck();
+    availability.mutate({ input: evaluationInput, fingerprint });
+  };
   const resetResults = () => {
-    availability.reset();
+    resetAvailability();
+    resetHardRecheck();
+    setLastFingerprint(null);
+    setHardRecheckFailed(false);
     setSearchedPeople([]);
     setSelectedSlot(null);
   };
+
+  useEffect(() => {
+    if (!lastFingerprint || lastFingerprint === fingerprint) return;
+    resetAvailability();
+    resetHardRecheck();
+    setLastFingerprint(null);
+    setHardRecheckFailed(false);
+  }, [fingerprint, lastFingerprint, resetAvailability, resetHardRecheck]);
 
   useEffect(() => {
     const person = sharedPersonQuery.data?.person;
@@ -235,11 +327,15 @@ export function CalendarAvailability() {
     if (!person || person.personId !== requestedPerson || !person.workEmail) return;
     consumedPerson.current = requestedPerson;
     resetAvailability();
-    setPeople([person]);
+    resetHardRecheck();
+    setLastFingerprint(null);
+    setHardRecheckFailed(false);
+    setPeople([{ ...person, type: 'REQUIRED' }]);
     setSearchedPeople([]);
     setSelectedSlot(null);
   }, [
     resetAvailability,
+    resetHardRecheck,
     requestedPerson,
     sharedPersonQuery.data,
     sharedPersonQuery.isError,
@@ -249,12 +345,25 @@ export function CalendarAvailability() {
   useEffect(() => {
     if (canViewPeople && !sharedPersonQuery.isError) return;
     resetAvailability();
+    resetHardRecheck();
+    setLastFingerprint(null);
+    setHardRecheckFailed(false);
     setPeople((current) =>
-      current.filter((person) => canViewPeople && person.personId !== requestedPerson)
+      current.filter(
+        (person) =>
+          person.personId.startsWith('email:') ||
+          (canViewPeople && person.personId !== requestedPerson)
+      )
     );
     setSearchedPeople([]);
     setSelectedSlot(null);
-  }, [canViewPeople, requestedPerson, resetAvailability, sharedPersonQuery.isError]);
+  }, [
+    canViewPeople,
+    requestedPerson,
+    resetAvailability,
+    resetHardRecheck,
+    sharedPersonQuery.isError,
+  ]);
 
   useEffect(() => {
     const validUntil = availability.data?.validUntil;
@@ -286,7 +395,7 @@ export function CalendarAvailability() {
         }
       />
 
-      <AvailabilityProgress step={selectedSlot ? 3 : result ? 2 : 1} />
+      <AvailabilityProgress step={selectedSlot ? 3 : evaluationVisible ? 2 : 1} />
 
       <Box
         component="section"
@@ -319,52 +428,20 @@ export function CalendarAvailability() {
                 {t('availability.sharedPersonUnavailable')}
               </Typography>
             ) : null}
-            {peopleQuery.isError && (
-              <Alert
-                severity="error"
-                action={
-                  <ActionButton intent="quiet" size="small" onClick={() => peopleQuery.refetch()}>
-                    {t('actions.retry')}
-                  </ActionButton>
-                }
-              >
-                {t('availability.peopleLoadError')}
-              </Alert>
-            )}
-            <AutocompleteMultiField
-              multiple
-              options={(peopleQuery.data?.items ?? []).filter((person) =>
-                Boolean(person.workEmail)
-              )}
+            <CalendarAttendeePicker
+              scope="availability"
+              type="REQUIRED"
               value={people}
-              onChange={(_, value) => {
+              externalPolicyState={externalAttendeePolicyState}
+              directoryEnabled={canViewPeople}
+              maxSelections={CALENDAR_AVAILABILITY_ATTENDEE_LIMIT}
+              onChange={(value) => {
                 resetResults();
-                setPeople(value.slice(0, CALENDAR_AVAILABILITY_ATTENDEE_LIMIT));
+                setPeople([...value].slice(0, CALENDAR_AVAILABILITY_ATTENDEE_LIMIT));
               }}
-              loading={peopleQuery.isLoading}
-              getOptionDisabled={(option) =>
-                people.length >= CALENDAR_AVAILABILITY_ATTENDEE_LIMIT &&
-                !people.some((person) => person.personId === option.personId)
-              }
-              getOptionLabel={(person) =>
-                `${person.displayName} · ${person.businessTitle ?? person.workEmail}`
-              }
-              isOptionEqualToValue={(option, value) => option.personId === value.personId}
-              renderTags={(values, getTagProps) =>
-                values.map((person, index) => (
-                  <Chip
-                    {...getTagProps({ index })}
-                    key={person.personId}
-                    avatar={<Avatar>{person.displayName.slice(0, 1)}</Avatar>}
-                    label={person.displayName}
-                  />
-                ))
-              }
               label={t('availability.peopleLabel')}
+              placeholder={t('availability.peoplePlaceholder')}
               supportingText={t('availability.peopleLimit')}
-              textFieldProps={{
-                placeholder: people.length ? undefined : t('availability.peoplePlaceholder'),
-              }}
             />
             <DateRangePickerField
               value={range}
@@ -397,7 +474,7 @@ export function CalendarAvailability() {
             loading={availability.isPending}
             onClick={() => {
               setSearchedPeople([...people]);
-              availability.mutate();
+              search();
             }}
             sx={{ minHeight: 48, px: 2.5 }}
           >
@@ -422,7 +499,7 @@ export function CalendarAvailability() {
           severity="error"
           sx={{ mt: 2 }}
           action={
-            <ActionButton intent="quiet" size="small" onClick={() => availability.mutate()}>
+            <ActionButton intent="quiet" size="small" onClick={search}>
               {t('actions.retry')}
             </ActionButton>
           }
@@ -443,268 +520,28 @@ export function CalendarAvailability() {
           <Skeleton variant="rounded" height={300} />
           <Skeleton variant="rounded" height={420} />
         </Box>
-      ) : availability.data && !evaluationVisible ? (
-        <Alert
-          severity="warning"
-          sx={{ mt: 2 }}
-          role="status"
-          action={
-            <ActionButton intent="quiet" size="small" onClick={() => availability.mutate()}>
-              {t('actions.retry')}
-            </ActionButton>
+      ) : evaluationVisible && availability.data ? (
+        <CalendarAvailabilityResultsV2
+          evaluation={availability.data}
+          state={evaluationState}
+          participantLabels={participantSelection.labels}
+          language={language}
+          timeZone={timeZone}
+          canApply={
+            canCreate &&
+            participantSelection.uncheckedCount === 0 &&
+            participantSelection.overflowCount === 0
           }
-        >
-          {t('schedulingAssistant.incompleteResults')}
-        </Alert>
-      ) : result ? (
-        <>
-          {evaluationPartial ? (
-            <Alert
-              severity="warning"
-              sx={{ mt: 2 }}
-              role="status"
-              action={
-                <ActionButton intent="quiet" size="small" onClick={() => availability.mutate()}>
-                  {t('actions.retry')}
-                </ActionButton>
-              }
-            >
-              <Typography variant="body2" fontWeight={700}>
-                {t('availability.partialTitle')}
-              </Typography>
-              <Typography variant="body2">
-                {t('availability.partialDescription', {
-                  sources:
-                    availability.data?.sources
-                      .filter((source) => source.status !== 'HEALTHY')
-                      .map((source) => source.sourceType)
-                      .join(', ') || t('availability.unknownSource'),
-                })}
-              </Typography>
-            </Alert>
-          ) : null}
-          <Box
-            sx={{
-              mt: 3,
-              display: 'grid',
-              gridTemplateColumns: { xs: '1fr', lg: '320px minmax(0, 1fr)' },
-              gap: 2,
-            }}
-          >
-            <Box
-              component="section"
-              sx={{
-                bgcolor: 'background.paper',
-                border: 1,
-                borderColor: 'divider',
-                borderRadius: 1,
-                overflow: 'hidden',
-              }}
-            >
-              <CalendarSectionHeader
-                icon={UsersRound}
-                title={t('availability.participants')}
-                description={t('availability.participantsDescription')}
-                meta={
-                  <Typography variant="caption" color="text.secondary" role="status">
-                    {t('schedulingAssistant.freshness', {
-                      time: calendarTime(result.generatedAt, language),
-                    })}
-                  </Typography>
-                }
-              />
-              <Divider />
-              <Stack divider={<Divider flexItem />}>
-                {result.participants.map((participant, index) => {
-                  const person = participantById.get(participant.personPublicId);
-                  return (
-                    <Stack
-                      key={participant.personPublicId}
-                      direction="row"
-                      spacing={1.25}
-                      alignItems="center"
-                      sx={{ p: 1.75 }}
-                    >
-                      <Avatar
-                        sx={{
-                          width: 34,
-                          height: 34,
-                          bgcolor: index === 0 && !person ? 'primary.main' : 'action.selected',
-                          color: index === 0 && !person ? 'primary.contrastText' : 'text.primary',
-                          fontSize: 13,
-                        }}
-                      >
-                        {person?.displayName.slice(0, 1) ?? t('availability.meShort')}
-                      </Avatar>
-                      <Box sx={{ flex: 1, minWidth: 0 }}>
-                        <Typography variant="body2" fontWeight={600} noWrap>
-                          {person?.displayName ?? t('availability.me')}
-                        </Typography>
-                        <Typography variant="caption" color="text.secondary">
-                          {t('availability.busyMinutes', { count: participant.busyMinutes })}
-                        </Typography>
-                        <Box
-                          role="meter"
-                          aria-valuemin={0}
-                          aria-valuemax={participantLoadMax}
-                          aria-valuenow={participant.busyMinutes}
-                          aria-label={t('availability.busyMinutes', {
-                            count: participant.busyMinutes,
-                          })}
-                          sx={(theme) => ({
-                            mt: 0.65,
-                            height: 5,
-                            borderRadius: 999,
-                            bgcolor: alpha(theme.palette.text.secondary, 0.1),
-                            overflow: 'hidden',
-                          })}
-                        >
-                          <Box
-                            aria-hidden="true"
-                            sx={{
-                              width: `${(participant.busyMinutes * 100) / participantLoadMax}%`,
-                              height: 1,
-                              borderRadius: 999,
-                              bgcolor: 'primary.main',
-                            }}
-                          />
-                        </Box>
-                      </Box>
-                    </Stack>
-                  );
-                })}
-              </Stack>
-            </Box>
-
-            <Box
-              component="section"
-              sx={{
-                bgcolor: 'background.paper',
-                border: 1,
-                borderColor: 'divider',
-                borderRadius: 1,
-                overflow: 'hidden',
-              }}
-            >
-              <CalendarSectionHeader
-                icon={CalendarCheck2}
-                title={t('availability.suggestions')}
-                description={t('availability.suggestionsDescription')}
-              />
-              <Divider />
-              {result.suggestions.length ? (
-                <Box
-                  component="ol"
-                  sx={{
-                    p: 0,
-                    m: 0,
-                    listStyle: 'none',
-                  }}
-                >
-                  {result.suggestions.map((slot, index) => (
-                    <Box
-                      component="li"
-                      key={slot.startsAt}
-                      sx={{ borderBottom: 1, borderColor: 'divider' }}
-                    >
-                      <Box
-                        component={canCreate && !evaluationPartial ? 'button' : 'div'}
-                        type={canCreate && !evaluationPartial ? 'button' : undefined}
-                        onClick={
-                          canCreate && !evaluationPartial ? () => setSelectedSlot(slot) : undefined
-                        }
-                        sx={(theme) => ({
-                          width: 1,
-                          minHeight: 92,
-                          display: 'grid',
-                          gridTemplateColumns: '36px minmax(0, 1fr) auto',
-                          gap: 1.25,
-                          alignItems: 'center',
-                          px: { xs: 1.75, sm: 2.25 },
-                          py: 1.5,
-                          border: 0,
-                          bgcolor: 'transparent',
-                          color: 'text.primary',
-                          textAlign: 'left',
-                          cursor: canCreate && !evaluationPartial ? 'pointer' : 'default',
-                          transition: theme.transitions.create('background-color'),
-                          '&:hover':
-                            canCreate && !evaluationPartial
-                              ? {
-                                  bgcolor: alpha(
-                                    theme.palette.success.main,
-                                    theme.palette.mode === 'dark' ? 0.12 : 0.045
-                                  ),
-                                }
-                              : undefined,
-                          '&:focus-visible': {
-                            outline: '2px solid',
-                            outlineColor: 'primary.main',
-                            outlineOffset: -2,
-                          },
-                          '@media (prefers-reduced-motion: reduce)': { transition: 'none' },
-                        })}
-                      >
-                        <Box
-                          aria-hidden="true"
-                          sx={(theme) => ({
-                            width: 32,
-                            height: 32,
-                            display: 'grid',
-                            placeItems: 'center',
-                            borderRadius: '50%',
-                            bgcolor: alpha(theme.palette.success.main, 0.12),
-                            color: 'success.dark',
-                            fontSize: 13,
-                            fontWeight: 700,
-                          })}
-                        >
-                          {index + 1}
-                        </Box>
-                        <Box sx={{ minWidth: 0 }}>
-                          <Typography fontWeight={600}>
-                            {calendarDate(slot.startsAt, language)}
-                          </Typography>
-                          <Stack
-                            direction="row"
-                            spacing={0.75}
-                            alignItems="center"
-                            color="text.secondary"
-                          >
-                            <Clock3 size={15} />
-                            <Typography variant="body2">
-                              {calendarTime(slot.startsAt, language)} –{' '}
-                              {calendarTime(slot.endsAt, language)}
-                            </Typography>
-                          </Stack>
-                          <Typography variant="caption" color="text.secondary">
-                            {slot.reason}
-                          </Typography>
-                        </Box>
-                        <Chip
-                          size="small"
-                          color={evaluationPartial ? 'warning' : 'success'}
-                          variant="outlined"
-                          label={
-                            evaluationPartial
-                              ? t('availability.reviewOnly')
-                              : t('availability.verifiedCandidate')
-                          }
-                        />
-                      </Box>
-                    </Box>
-                  ))}
-                </Box>
-              ) : (
-                <GuidedEmptyState
-                  kind="no-results"
-                  title={t('availability.noSlots')}
-                  description={t('availability.noSlotsDescription')}
-                />
-              )}
-            </Box>
-          </Box>
-        </>
+          applying={hardRecheck.isPending}
+          applyError={hardRecheckFailed}
+          onApply={(candidate) =>
+            hardRecheck.mutate({
+              evaluation: availability.data!,
+              candidate,
+              fingerprint,
+            })
+          }
+        />
       ) : (
         <Box
           sx={{
@@ -726,9 +563,11 @@ export function CalendarAvailability() {
       {canCreate && (
         <CalendarEventDialog
           open={Boolean(selectedSlot)}
-          initialStart={selectedSlot?.startsAt}
-          initialEnd={selectedSlot?.endsAt}
+          initialStart={selectedSlot?.candidate.startsAt}
+          initialEnd={selectedSlot?.candidate.endsAt}
+          initialTimeZone={timeZone}
           initialAttendees={searchedPeople}
+          initialSchedulingReceipt={selectedSlot?.receipt}
           onClose={() => setSelectedSlot(null)}
         />
       )}

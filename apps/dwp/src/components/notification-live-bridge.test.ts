@@ -3,12 +3,20 @@ import { describe, expect, it } from 'vitest';
 import {
   notificationLiveChannelName,
   notificationStreamUrl,
+  notificationStreamCoordinationMode,
   resolveNotificationStreamClientId,
+  createNotificationReconnectPolicy,
+  notificationRetryAfterDelay,
   newestNotificationCursor,
   isNotificationConnectionRequest,
   parseNotificationConnectionChannelMessage,
+  parseNotificationCursorChannelMessage,
   parseNotificationLiveChannelMessage,
   parseNotificationSyncResetChannelMessage,
+  runNotificationStreamCoordination,
+  shouldAttemptNotificationStream,
+  waitForNotificationOnline,
+  type NotificationExclusiveLockRequest,
 } from './notification-live-bridge';
 
 describe('notification live bridge boundary', () => {
@@ -49,6 +57,34 @@ describe('notification live bridge boundary', () => {
       })
     ).toBeNull();
     expect(parseNotificationLiveChannelMessage({ kind: 'other', signal: {} })).toBeNull();
+  });
+
+  it('relays and validates the connected cursor without notification content', () => {
+    expect(
+      parseNotificationCursorChannelMessage({
+        kind: 'notification.cursor',
+        changeVersion: '42',
+      })
+    ).toBe('42');
+    expect(
+      parseNotificationCursorChannelMessage({
+        kind: 'notification.cursor',
+        changeVersion: '-1',
+      })
+    ).toBeNull();
+    expect(
+      parseNotificationCursorChannelMessage({
+        kind: 'notification.cursor',
+        changeVersion: 42,
+      })
+    ).toBeNull();
+    expect(
+      parseNotificationCursorChannelMessage({
+        kind: 'notification.cursor',
+        changeVersion: '42',
+        title: 'must never cross tabs',
+      })
+    ).toBeNull();
   });
 
   it('relays a governed cursor reset without notification content', () => {
@@ -124,5 +160,179 @@ describe('notification live bridge boundary', () => {
     expect(() =>
       resolveNotificationStreamClientId('invalid-client-test', null, () => 'bad')
     ).toThrow('must be a UUID');
+  });
+
+  it('elects one profile leader only when locks and cross-tab messaging are both available', () => {
+    expect(notificationStreamCoordinationMode(true, true)).toBe('profile-leader');
+    expect(notificationStreamCoordinationMode(true, false)).toBe('per-tab');
+    expect(notificationStreamCoordinationMode(false, true)).toBe('per-tab');
+    expect(notificationStreamCoordinationMode(false, false)).toBe('per-tab');
+  });
+
+  it('keeps a hidden elected leader connected but gates attempts while offline', () => {
+    expect(shouldAttemptNotificationStream(true, 'visible')).toBe(true);
+    expect(shouldAttemptNotificationStream(true, 'hidden')).toBe(true);
+    expect(shouldAttemptNotificationStream(false, 'visible')).toBe(false);
+    expect(shouldAttemptNotificationStream(false, 'hidden')).toBe(false);
+  });
+
+  it('applies deterministic bounded reconnect backoff and resets only after a stable connection', () => {
+    const policy = createNotificationReconnectPolicy(() => 0.5);
+
+    expect(policy.nextDelay()).toBe(1_000);
+    expect(policy.nextDelay()).toBe(2_000);
+    expect(policy.nextDelay()).toBe(4_000);
+    expect(policy.currentBaseDelay()).toBe(8_000);
+
+    policy.markConnectionOpened(1_000);
+    policy.markConnectionClosed(1_100);
+    expect(policy.nextDelay()).toBe(8_000);
+
+    policy.markConnectionOpened(20_000);
+    policy.markConnectionClosed(30_000);
+    expect(policy.currentBaseDelay()).toBe(1_000);
+
+    for (let index = 0; index < 10; index += 1) policy.nextDelay();
+    expect(policy.currentBaseDelay()).toBe(30_000);
+    expect(policy.nextDelay()).toBe(30_000);
+
+    policy.markCursorReset();
+    expect(policy.nextDelay()).toBe(1_000);
+
+    const maximumJitter = createNotificationReconnectPolicy(() => 1);
+    for (let index = 0; index < 10; index += 1) maximumJitter.nextDelay();
+    expect(maximumJitter.nextDelay()).toBe(30_000);
+  });
+
+  it('prioritizes bounded Retry-After seconds and HTTP dates for 429 reconnects', () => {
+    const now = Date.parse('2026-10-28T10:00:00Z');
+    const retryError = (value: string, status = 429) => ({
+      status,
+      headers: new Headers({ 'Retry-After': value }),
+    });
+
+    expect(notificationRetryAfterDelay(retryError('17'), now)).toBe(17_000);
+    expect(notificationRetryAfterDelay(retryError('Wed, 28 Oct 2026 10:00:12 GMT'), now)).toBe(
+      12_000
+    );
+    expect(notificationRetryAfterDelay(retryError('120'), now)).toBe(120_000);
+    expect(notificationRetryAfterDelay(retryError('600'), now)).toBe(300_000);
+    expect(notificationRetryAfterDelay(retryError('Wed, 28 Oct 2026 09:59:59 GMT'), now)).toBe(
+      1_000
+    );
+    expect(notificationRetryAfterDelay(retryError('invalid'), now)).toBeNull();
+    expect(notificationRetryAfterDelay(retryError('17', 503), now)).toBeNull();
+
+    const policy = createNotificationReconnectPolicy(() => 0.5);
+    expect(policy.nextDelay(notificationRetryAfterDelay(retryError('17'), now))).toBe(17_000);
+    expect(policy.currentBaseDelay()).toBe(2_000);
+  });
+
+  it('hands the exclusive profile stream to the next tab after leader abort and release', async () => {
+    let previousOwner = Promise.resolve();
+    const requestExclusiveLock: NotificationExclusiveLockRequest = async (
+      _name,
+      _signal,
+      runOwner
+    ) => {
+      const acquire = previousOwner;
+      let release: () => void = () => undefined;
+      previousOwner = new Promise<void>((resolve) => {
+        release = resolve;
+      });
+      await acquire;
+      try {
+        await runOwner();
+      } finally {
+        release();
+      }
+    };
+    const order: string[] = [];
+    let peerCursor: string | null = null;
+    const runOwner = (tab: string, signal: AbortSignal) => async () => {
+      order.push(`${tab}:acquired`);
+      if (tab === 'first') {
+        const relayed = parseNotificationCursorChannelMessage({
+          kind: 'notification.cursor',
+          changeVersion: '42',
+        });
+        if (relayed) peerCursor = newestNotificationCursor(peerCursor, relayed);
+      } else {
+        order.push(`${tab}:cursor:${peerCursor}`);
+      }
+      await new Promise<void>((resolve) => {
+        const release = () => {
+          order.push(`${tab}:released`);
+          resolve();
+        };
+        if (signal.aborted) release();
+        else signal.addEventListener('abort', release, { once: true });
+      });
+    };
+    const first = new AbortController();
+    const second = new AbortController();
+
+    const firstRun = runNotificationStreamCoordination(
+      requestExclusiveLock,
+      true,
+      'notification-profile',
+      first.signal,
+      runOwner('first', first.signal)
+    );
+    const secondRun = runNotificationStreamCoordination(
+      requestExclusiveLock,
+      true,
+      'notification-profile',
+      second.signal,
+      runOwner('second', second.signal)
+    );
+    await Promise.resolve();
+    expect(order).toEqual(['first:acquired']);
+
+    first.abort();
+    await firstRun;
+    await Promise.resolve();
+    expect(order).toEqual([
+      'first:acquired',
+      'first:released',
+      'second:acquired',
+      'second:cursor:42',
+    ]);
+
+    second.abort();
+    await secondRun;
+    expect(order).toEqual([
+      'first:acquired',
+      'first:released',
+      'second:acquired',
+      'second:cursor:42',
+      'second:released',
+    ]);
+  });
+
+  it('waits without reconnect churn until online and releases promptly on abort', async () => {
+    const events = new EventTarget();
+    let online = false;
+    const controller = new AbortController();
+    let resolved = false;
+    const waiting = waitForNotificationOnline(controller.signal, () => online, events).then(() => {
+      resolved = true;
+    });
+
+    await Promise.resolve();
+    expect(resolved).toBe(false);
+    events.dispatchEvent(new Event('online'));
+    await Promise.resolve();
+    expect(resolved).toBe(false);
+
+    online = true;
+    events.dispatchEvent(new Event('online'));
+    await waiting;
+    expect(resolved).toBe(true);
+
+    const aborted = new AbortController();
+    const abortWaiting = waitForNotificationOnline(aborted.signal, () => false, events);
+    aborted.abort();
+    await expect(abortWaiting).resolves.toBeUndefined();
   });
 });

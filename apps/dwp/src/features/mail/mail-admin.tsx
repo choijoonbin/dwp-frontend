@@ -576,16 +576,20 @@ export function MailAdminPolicies({ onBack }: { onBack?: () => void } = {}) {
   const canManage = hasPermission('ADMIN.MAIL', 'POLICY_MANAGE');
   const commandKeys = useRef(new Map<string, string>());
   const activeCommandScope = useRef<string | null>(null);
-  const preservePolicyDraft = useRef<MailTenantPolicy | null>(null);
+  const policyDirty = useRef(false);
   const [policy, setPolicy] = useState<MailTenantPolicy | null>(null);
   useEffect(() => {
     if (!query.data?.policy) return;
-    const currentDraft = preservePolicyDraft.current;
-    preservePolicyDraft.current = null;
-    setPolicy(
-      currentDraft ? { ...currentDraft, version: query.data.policy.version } : query.data.policy
+    setPolicy((currentDraft) =>
+      policyDirty.current && currentDraft
+        ? { ...currentDraft, version: query.data.policy.version }
+        : query.data.policy
     );
   }, [query.data?.policy]);
+  const updatePolicyDraft = (changes: Partial<MailTenantPolicy>) => {
+    policyDirty.current = true;
+    setPolicy((current) => (current ? { ...current, ...changes } : current));
+  };
   const mutation = useMutation({
     mutationFn: () => {
       const input = {
@@ -604,9 +608,11 @@ export function MailAdminPolicies({ onBack }: { onBack?: () => void } = {}) {
         idempotencyKey: resolveMailAdminCommandKey(commandKeys.current, scope),
       });
     },
-    onSuccess: async () => {
+    onSuccess: async (savedPolicy) => {
       if (activeCommandScope.current) commandKeys.current.delete(activeCommandScope.current);
       activeCommandScope.current = null;
+      policyDirty.current = false;
+      setPolicy(savedPolicy);
       await queryClient.invalidateQueries({ queryKey: ['mail', 'admin'] });
       toast.success(t('admin.policies.saved'));
     },
@@ -614,9 +620,7 @@ export function MailAdminPolicies({ onBack }: { onBack?: () => void } = {}) {
       if (error instanceof HttpError && error.status === 409 && policy) {
         if (activeCommandScope.current) commandKeys.current.delete(activeCommandScope.current);
         activeCommandScope.current = null;
-        preservePolicyDraft.current = policy;
-        const result = await query.refetch();
-        if (!result.data?.policy) preservePolicyDraft.current = null;
+        await query.refetch();
         toast.error(t('admin.conflict'));
         return;
       }
@@ -686,7 +690,7 @@ export function MailAdminPolicies({ onBack }: { onBack?: () => void } = {}) {
                     checked={policy[key]}
                     disabled={!canManage}
                     slotProps={{ input: { 'aria-label': label } }}
-                    onChange={(_event, checked) => setPolicy({ ...policy, [key]: checked })}
+                    onChange={(_event, checked) => updatePolicyDraft({ [key]: checked })}
                   />
                 </Stack>
               </Box>
@@ -705,9 +709,7 @@ export function MailAdminPolicies({ onBack }: { onBack?: () => void } = {}) {
               value={policy.retentionDays}
               disabled={!canManage}
               inputProps={{ min: 30, max: 3650 }}
-              onChange={(event) =>
-                setPolicy({ ...policy, retentionDays: Number(event.target.value) })
-              }
+              onChange={(event) => updatePolicyDraft({ retentionDays: Number(event.target.value) })}
             />
             <FormField
               type="number"
@@ -716,14 +718,29 @@ export function MailAdminPolicies({ onBack }: { onBack?: () => void } = {}) {
               disabled={!canManage}
               inputProps={{ min: 1, max: 150 }}
               onChange={(event) =>
-                setPolicy({ ...policy, maximumAttachmentMb: Number(event.target.value) })
+                updatePolicyDraft({ maximumAttachmentMb: Number(event.target.value) })
               }
             />
           </Box>
           <Alert severity="info" icon={<ShieldCheck size={19} />}>
             {t('admin.policies.humanApproval')}
           </Alert>
-          <Stack direction="row" justifyContent="flex-end">
+          <Stack
+            direction="row"
+            justifyContent="flex-end"
+            sx={{
+              // Keep the primary action scrollable above both the fixed Mail navigation and an
+              // actionable conflict toast. The desktop footer is not fixed, so it needs no inset.
+              pb: {
+                xs: 'calc(var(--dwp-mobile-fixed-footer-offset, 0px) + 72px)',
+                lg: 0,
+              },
+              scrollMarginBottom: {
+                xs: 'calc(var(--dwp-mobile-fixed-footer-offset, 0px) + 72px)',
+                lg: 0,
+              },
+            }}
+          >
             <ActionButton
               intent="primary"
               disabled={!canManage || mutation.isPending}

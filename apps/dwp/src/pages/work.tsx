@@ -22,6 +22,7 @@ import {
   MailProposalOwnerHandoffNotice,
   useMailProposalOwnerHandoff,
 } from '../components/mail-proposal-owner-handoff';
+import { MailProposalOwnerAuthorityBoundary } from '../components/mail-proposal-owner-authority-boundary';
 import { AccessReviewWorkItem } from '../features/work/access-review-work-item';
 import { useWorkClock } from '../features/work/use-work-clock';
 import { useWorkHubActivityReturn } from '../features/work-hub/use-work-hub-activity-return';
@@ -98,6 +99,14 @@ import type { WorkLayoutContext } from '../layouts/work-layout';
 import type { PersonalWorkTask } from '@dwp-frontend/shared-utils/api/personal-work-contracts';
 
 export default function WorkPage() {
+  return (
+    <MailProposalOwnerAuthorityBoundary>
+      <WorkPageContent />
+    </MailProposalOwnerAuthorityBoundary>
+  );
+}
+
+function WorkPageContent() {
   const { t, i18n } = useTranslation(['work', 'common']);
   const now = useWorkClock();
   const { timeZone } = useDateTimePolicy();

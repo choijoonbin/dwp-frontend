@@ -1,12 +1,22 @@
-import { resolveSystemTimeZone } from '@dwp-frontend/shared-i18n';
+import {
+  resolveSystemTimeZone,
+  resolveZonedClock,
+  resolveZonedDateKey,
+} from '@dwp-frontend/shared-i18n';
 import {
   workCalendarEventHandoffDescription,
   type WorkCalendarEventHandoff,
 } from '@dwp-frontend/shared-utils/api/work-hub-calendar-api';
 
+import {
+  calendarDedupedAttendees,
+  calendarExternalAttendee,
+} from './calendar-attendee-picker-model';
+
 import type {
   CalendarAttendeeInput,
   CalendarAttendeeType,
+  CalendarDayOfWeek,
   CalendarEvent,
   CalendarEventImportance,
   CalendarEventType,
@@ -16,23 +26,51 @@ import type {
   PersonSummary,
 } from '@dwp-frontend/shared-utils';
 
-export type CalendarEventDraft = {
+export type CalendarRecurrenceEndMode = 'NEVER' | 'UNTIL' | 'COUNT';
+
+export type CalendarRecurrenceDraftState = {
+  startsAt: string;
+  timeZone: string;
+  recurrence: CalendarRecurrence;
+  recurrenceInterval: number;
+  recurrenceUntil: string;
+  recurrenceDays: CalendarDayOfWeek[];
+  recurrenceCount: number;
+  recurrenceEndMode: CalendarRecurrenceEndMode;
+};
+
+export const CALENDAR_RECURRENCE_DAYS: readonly CalendarDayOfWeek[] = [
+  'MONDAY',
+  'TUESDAY',
+  'WEDNESDAY',
+  'THURSDAY',
+  'FRIDAY',
+  'SATURDAY',
+  'SUNDAY',
+];
+
+const DAY_BY_NUMBER: Readonly<Record<number, CalendarDayOfWeek>> = {
+  1: 'MONDAY',
+  2: 'TUESDAY',
+  3: 'WEDNESDAY',
+  4: 'THURSDAY',
+  5: 'FRIDAY',
+  6: 'SATURDAY',
+  7: 'SUNDAY',
+};
+
+export type CalendarEventDraft = CalendarRecurrenceDraftState & {
   title: string;
   description: string;
   type: CalendarEventType;
-  startsAt: string;
   endsAt: string;
   allDay: boolean;
   location: string;
   conferenceUrl: string;
   visibility: CalendarVisibility;
   importance: CalendarEventImportance;
-  recurrence: CalendarRecurrence;
-  recurrenceInterval: number;
-  recurrenceUntil: string;
   responseRequired: boolean;
   resourceId: string;
-  timeZone: string;
   calendarId: string;
 };
 
@@ -62,6 +100,9 @@ export function protectWorkCalendarEventDraft(
     recurrence: 'NONE',
     recurrenceInterval: 1,
     recurrenceUntil: '',
+    recurrenceDays: [],
+    recurrenceCount: 10,
+    recurrenceEndMode: 'NEVER',
     responseRequired: false,
     resourceId: '',
   };
@@ -75,8 +116,81 @@ export type CalendarEditorAttendee = Pick<
   type: Exclude<CalendarAttendeeType, 'RESOURCE'>;
 };
 
+export type CalendarInitialAttendee = Pick<
+  PersonSummary,
+  'personId' | 'displayName' | 'workEmail'
+> &
+  Partial<PersonSummary> & {
+    userId?: number | null;
+    type?: Exclude<CalendarAttendeeType, 'RESOURCE'>;
+  };
+
 export function calendarSystemTimeZone() {
   return resolveSystemTimeZone('Asia/Seoul');
+}
+
+export function calendarRecurrenceAnchorDay(startsAt: string, timeZone: string): CalendarDayOfWeek {
+  const day = resolveZonedClock(startsAt, timeZone)?.day;
+  if (day && DAY_BY_NUMBER[day]) return DAY_BY_NUMBER[day];
+  const fallback = new Date(startsAt).getUTCDay();
+  return DAY_BY_NUMBER[fallback === 0 ? 7 : fallback] ?? 'MONDAY';
+}
+
+function sortedRecurrenceDays(days: readonly CalendarDayOfWeek[]) {
+  return CALENDAR_RECURRENCE_DAYS.filter((day) => days.includes(day));
+}
+
+export function calendarRecurrenceDaysForStart(
+  days: readonly CalendarDayOfWeek[],
+  startsAt: string,
+  timeZone: string
+): CalendarDayOfWeek[] {
+  return sortedRecurrenceDays([...days, calendarRecurrenceAnchorDay(startsAt, timeZone)]);
+}
+
+export function calendarRecurrenceUntilIsValid(state: CalendarRecurrenceDraftState): boolean {
+  if (state.recurrence === 'NONE' || state.recurrenceEndMode !== 'UNTIL') return true;
+  const localStart = resolveZonedDateKey(state.startsAt, state.timeZone);
+  return Boolean(
+    localStart &&
+    /^\d{4}-\d{2}-\d{2}$/u.test(state.recurrenceUntil) &&
+    state.recurrenceUntil >= localStart
+  );
+}
+
+export function patchCalendarEventDraft<T extends CalendarRecurrenceDraftState>(
+  current: T,
+  patch: Partial<T>
+): T {
+  const next = { ...current, ...patch } as T;
+  if (next.recurrence === 'NONE') {
+    return {
+      ...next,
+      recurrenceDays: [],
+      recurrenceEndMode: 'NEVER',
+      recurrenceUntil: '',
+    } as T;
+  }
+  if (next.recurrence !== 'WEEKLY') {
+    next.recurrenceDays = [];
+  } else {
+    const previousAnchor = calendarRecurrenceAnchorDay(current.startsAt, current.timeZone);
+    const nextAnchor = calendarRecurrenceAnchorDay(next.startsAt, next.timeZone);
+    const currentDays = sortedRecurrenceDays(next.recurrenceDays);
+    const adjustedDays =
+      (patch.startsAt !== undefined || patch.timeZone !== undefined) &&
+      currentDays.length === 1 &&
+      currentDays[0] === previousAnchor
+        ? [nextAnchor]
+        : currentDays;
+    next.recurrenceDays = calendarRecurrenceDaysForStart(
+      adjustedDays,
+      next.startsAt,
+      next.timeZone
+    );
+  }
+  if (next.recurrenceEndMode !== 'UNTIL') next.recurrenceUntil = '';
+  return next;
 }
 
 function roundToHalfHour(value = new Date()) {
@@ -107,7 +221,7 @@ export function calendarEventDraft(
   const end = options.initialEnd
     ? new Date(options.initialEnd)
     : new Date(start.getTime() + (initialType === 'FOCUS' ? 90 : 30) * 60_000);
-  return {
+  const draft: CalendarEventDraft = {
     title: event?.title ?? options.initialTitle ?? '',
     description: event?.description ?? options.initialDescription ?? '',
     type: event?.type ?? initialType,
@@ -121,38 +235,49 @@ export function calendarEventDraft(
     recurrence: event?.recurrence ?? 'NONE',
     recurrenceInterval: event?.recurrenceInterval ?? 1,
     recurrenceUntil: event?.recurrenceUntil ?? '',
+    recurrenceDays: event?.recurrenceDays ?? [],
+    recurrenceCount: event?.recurrenceCount ?? 10,
+    recurrenceEndMode: event?.recurrenceCount
+      ? 'COUNT'
+      : event?.recurrenceUntil
+        ? 'UNTIL'
+        : 'NEVER',
     responseRequired: event?.responseRequired ?? true,
     resourceId: event?.resource?.resourceId ?? options.initialResourceId ?? '',
     timeZone: event?.timeZone ?? options.fallbackTimeZone ?? calendarSystemTimeZone(),
     calendarId: event?.calendarId ?? options.initialCalendarId ?? '',
   };
+  return patchCalendarEventDraft(draft, {});
 }
 
 export function calendarEditorAttendees(
   event: CalendarEvent | null | undefined,
-  initialAttendees: readonly PersonSummary[],
+  initialAttendees: readonly CalendarInitialAttendee[],
   initialAttendeeEmails: readonly string[]
 ): CalendarEditorAttendee[] {
   if (event) {
-    return event.attendees.map((attendee) => ({
-      personId:
-        attendee.personPublicId ??
-        (attendee.userId ? `user:${attendee.userId}` : `email:${attendee.email}`),
-      displayName: attendee.name,
-      workEmail: attendee.email,
-      userId: attendee.userId,
-      type: attendee.type === 'OPTIONAL' ? 'OPTIONAL' : 'REQUIRED',
-    }));
+    return calendarDedupedAttendees(
+      event.attendees.map((attendee) => ({
+        personId:
+          attendee.personPublicId ??
+          (attendee.userId ? `user:${attendee.userId}` : `email:${attendee.email}`),
+        displayName: attendee.name,
+        workEmail: attendee.email,
+        userId: attendee.userId,
+        type: attendee.type === 'OPTIONAL' ? 'OPTIONAL' : 'REQUIRED',
+      }))
+    );
   }
-  return [
-    ...initialAttendees.map((attendee) => ({ ...attendee, type: 'REQUIRED' as const })),
-    ...initialAttendeeEmails.map((email) => ({
-      personId: `email:${email}`,
-      displayName: email,
-      workEmail: email,
-      type: 'REQUIRED' as const,
+  return calendarDedupedAttendees([
+    ...initialAttendees.map((attendee) => ({
+      ...attendee,
+      type: attendee.type ?? ('REQUIRED' as const),
     })),
-  ];
+    ...initialAttendeeEmails.flatMap((email) => {
+      const attendee = calendarExternalAttendee(email, 'REQUIRED');
+      return attendee ? [attendee] : [];
+    }),
+  ]);
 }
 
 function attendeeInput(attendees: readonly CalendarEditorAttendee[]): CalendarAttendeeInput[] {
@@ -197,7 +322,17 @@ export function calendarEventInput(
     recurrence: workDescription ? 'NONE' : draft.recurrence,
     recurrenceInterval: workDescription ? 1 : draft.recurrenceInterval,
     recurrenceUntil:
-      workDescription || draft.recurrence === 'NONE' ? null : draft.recurrenceUntil || null,
+      workDescription || draft.recurrence === 'NONE' || draft.recurrenceEndMode !== 'UNTIL'
+        ? null
+        : draft.recurrenceUntil || null,
+    recurrenceDays:
+      workDescription || draft.recurrence !== 'WEEKLY'
+        ? []
+        : calendarRecurrenceDaysForStart(draft.recurrenceDays, draft.startsAt, draft.timeZone),
+    recurrenceCount:
+      workDescription || draft.recurrence === 'NONE' || draft.recurrenceEndMode !== 'COUNT'
+        ? null
+        : draft.recurrenceCount,
     responseRequired: meeting && draft.responseRequired,
     attendees: meeting ? attendeeInput(attendees) : [],
     resourceId: meeting ? draft.resourceId || null : null,

@@ -829,6 +829,80 @@ test('열린 알림 패널은 새 이벤트를 버퍼링하고 현재 포커스�
   await expect(glance.getByRole('button', { name: /보호된 업무 알림/ })).toHaveCount(1);
 });
 
+test('헤더 알림 요약 5xx는 0건으로 오인시키지 않고 확인 불가 상태를 알린다', async ({ page }) => {
+  await mockShellSession(page, ['WORKSPACE_MEMBER'], {
+    locale: 'ko',
+    permissions: NOTIFICATION_PERMISSION,
+  });
+  await mockNotificationCenter(page);
+  await page.route('**/api/notifications/v1/summary**', (route) => {
+    if (!new URL(route.request().url()).pathname.endsWith('/summary')) return route.fallback();
+    return route.fulfill({
+      status: 503,
+      contentType: 'application/json',
+      body: JSON.stringify({ status: 'ERROR', message: 'Temporarily unavailable' }),
+    });
+  });
+
+  await page.goto('/notifications/center');
+  const control = page.getByTestId('shell-notification-control').locator('button');
+  await control.click();
+  const glance = page.getByRole('dialog', { name: '최근 알림' });
+  await expect(glance).toBeVisible({ timeout: 15_000 });
+  await expect(control).toHaveAttribute('aria-label', '알림 개수를 확인할 수 없음', {
+    timeout: 15_000,
+  });
+  await expect(
+    glance.getByText('알림 개수를 확인할 수 없습니다. 최근 알림은 계속 표시합니다.')
+  ).toBeVisible();
+  await expect(glance.getByText(/전체 새 알림 0/)).toHaveCount(0);
+});
+
+test('헤더의 표시 알림 읽음 처리는 부분 실패 항목을 명확히 남긴다', async ({ page }) => {
+  const unreadNotification = { ...notification, readAt: null };
+  let requestedAction: string | null = null;
+  await mockShellSession(page, ['WORKSPACE_MEMBER'], {
+    locale: 'ko',
+    permissions: NOTIFICATION_PERMISSION,
+  });
+  await mockNotificationCenter(page, { inboxItems: () => [unreadNotification] });
+  await page.route('**/api/notifications/v1/inbox/bulk-actions', (route) => {
+    requestedAction = (route.request().postDataJSON() as { action: string }).action;
+    return fulfillSuccess(route, {
+      results: [
+        {
+          notificationId: unreadNotification.notificationId,
+          outcome: 'CONFLICT',
+          item: unreadNotification,
+          message: 'Changed concurrently',
+        },
+      ],
+      changeVersion: '2',
+      summary: {
+        partial: false,
+        unavailableSources: [],
+        actionableUnread: 1,
+        totalUnread: 1,
+        viewCounts: { PRIORITY: 1, ALL: 1, MENTIONS: 0, SAVED: 0, SNOOZED: 0, DONE: 0 },
+        changeVersion: '2',
+        counterVersion: '2',
+        generatedAt: '2026-08-19T07:01:00Z',
+      },
+      undoToken: null,
+      undoExpiresAt: null,
+    });
+  });
+
+  await page.goto('/notifications/center');
+  const { glance } = await openHeaderNotificationGlance(page);
+  await glance.getByRole('button', { name: '표시된 알림을 모두 읽음으로 표시' }).click();
+
+  await expect.poll(() => requestedAction).toBe('READ');
+  await expect(
+    page.getByText('표시된 알림 중 1개를 읽음으로 표시하지 못해 안 읽음 상태로 유지했습니다.')
+  ).toBeVisible();
+});
+
 test('20건 알림 burst는 한 번의 집계 안내로 버퍼링하고 열린 목록을 밀지 않는다', async ({
   page,
 }, testInfo) => {

@@ -3,11 +3,13 @@ import {
   ArrowRight,
   CheckCircle2,
   CircleAlert,
+  CirclePause,
   Clock3,
   Inbox,
+  MailPlus,
   MessageCircleReply,
   Sparkles,
-  TriangleAlert,
+  TimerOff,
 } from 'lucide-react';
 import { ActionButton, foundationTokens } from '@dwp-frontend/design-system';
 import { formatDate, resolveSupportedLocale } from '@dwp-frontend/shared-i18n';
@@ -19,6 +21,12 @@ import Typography from '@mui/material/Typography';
 import { alpha, useTheme } from '@mui/material/styles';
 
 import type { MailHome } from '@dwp-frontend/shared-utils';
+
+import {
+  MAIL_HOME_STALE_AFTER_MS,
+  mailHomeHealthActionPath,
+  resolveMailHomeHealth,
+} from './mail-home-health';
 
 const COMPACT_RADIUS = `${foundationTokens.radius.compact}px`;
 
@@ -73,9 +81,40 @@ export function MailDailyFlow({
   const attentionPath = metrics.needsReply
     ? '/mail/inbox?lane=NEEDS_REPLY'
     : '/mail/inbox?importance=URGENT';
-  const unhealthyAccounts = accounts.filter(
-    (account) => account.connectionState !== 'ACTIVE' || account.synchronizationState === 'DEGRADED'
-  ).length;
+  const health = resolveMailHomeHealth(accounts);
+  const healthPresentation = {
+    NO_ACCOUNT: {
+      icon: MailPlus,
+      color: 'warning' as const,
+    },
+    ACTION_REQUIRED: {
+      icon: CircleAlert,
+      color: 'error' as const,
+    },
+    PAUSED: {
+      icon: CirclePause,
+      color: 'warning' as const,
+    },
+    STALE: {
+      icon: TimerOff,
+      color: 'warning' as const,
+    },
+    HEALTHY: {
+      icon: CheckCircle2,
+      color: 'success' as const,
+    },
+  }[health.state];
+  const healthActionPath = mailHomeHealthActionPath(
+    health.state,
+    attention ? attentionPath : '/mail/inbox'
+  );
+  const HealthIcon = healthPresentation.icon;
+  const healthAction =
+    health.state === 'HEALTHY'
+      ? attention
+        ? t('home.journey.start')
+        : t('home.journey.openInbox')
+      : t(`home.journey.health.${health.state}.action`);
 
   return (
     <Box component="section" aria-labelledby="mail-daily-flow-title" sx={{ minWidth: 0 }}>
@@ -114,143 +153,167 @@ export function MailDailyFlow({
               variant="subtitle2"
               fontWeight="fontWeightBold"
             >
-              {attention
-                ? t('home.journey.attentionTitle', { count: attention })
-                : t('home.journey.clearTitle')}
+              {health.state === 'NO_ACCOUNT'
+                ? t('home.journey.noAccountTitle')
+                : attention
+                  ? t('home.journey.attentionTitle', { count: attention })
+                  : t('home.journey.clearTitle')}
             </Typography>
             <Chip
               size="small"
-              icon={unhealthyAccounts ? <TriangleAlert size={13} /> : <CheckCircle2 size={13} />}
-              color={unhealthyAccounts ? 'warning' : 'success'}
+              icon={<HealthIcon size={13} />}
+              color={healthPresentation.color}
               variant="outlined"
-              label={
-                unhealthyAccounts
-                  ? t('home.journey.accountWarning', { count: unhealthyAccounts })
-                  : t('home.journey.accountHealthy')
-              }
+              label={t(`home.journey.health.${health.state}.label`, {
+                count: health.affectedAccountCount,
+              })}
             />
           </Stack>
           <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mt: 0.35 }}>
-            {t('home.journey.description')}{' '}
-            <Box component="span" sx={{ whiteSpace: 'nowrap' }}>
-              ·{' '}
-              {t('home.journey.updatedAt', {
-                value: formatDate(
-                  generatedAt,
-                  { dateStyle: 'medium', timeStyle: 'short' },
-                  resolveSupportedLocale(i18n.resolvedLanguage ?? i18n.language)
-                ),
-              })}
-            </Box>
+            {health.state === 'NO_ACCOUNT' ? (
+              t('home.journey.noAccountDescription')
+            ) : (
+              <>
+                {t('home.journey.description')}{' '}
+                <Box component="span" sx={{ whiteSpace: 'nowrap' }}>
+                  ·{' '}
+                  {t('home.journey.updatedAt', {
+                    value: formatDate(
+                      generatedAt,
+                      { dateStyle: 'medium', timeStyle: 'short' },
+                      resolveSupportedLocale(i18n.resolvedLanguage ?? i18n.language)
+                    ),
+                  })}
+                </Box>
+                {' · '}
+                {t('home.journey.freshnessBasis', {
+                  minutes: MAIL_HOME_STALE_AFTER_MS / 60_000,
+                })}
+                {' · '}
+                {health.oldestSuccessfulSyncAt
+                  ? t('home.journey.oldestSuccessfulSync', {
+                      value: formatDate(
+                        health.oldestSuccessfulSyncAt,
+                        { dateStyle: 'medium', timeStyle: 'short' },
+                        resolveSupportedLocale(i18n.resolvedLanguage ?? i18n.language)
+                      ),
+                    })
+                  : t('home.journey.noSuccessfulSync')}
+              </>
+            )}
           </Typography>
         </Box>
         <ActionButton
           intent="primary"
           size="small"
           endIcon={<ArrowRight size={15} />}
-          onClick={() => onNavigate(attention ? attentionPath : '/mail/inbox')}
+          onClick={() => onNavigate(healthActionPath)}
         >
-          {attention ? t('home.journey.start') : t('home.journey.openInbox')}
+          {healthAction}
         </ActionButton>
       </Box>
 
-      <Box
-        aria-label={t('home.signalSummary')}
-        sx={{
-          mt: 1,
-          display: 'grid',
-          gridTemplateColumns: { xs: '1fr', md: 'repeat(5, minmax(0, 1fr))' },
-          gap: 0.75,
-          '@media (min-width: 390px) and (max-width: 899.95px)': {
-            gridTemplateColumns: 'repeat(2, minmax(0, 1fr))',
-          },
-        }}
-      >
-        {items.map((item, index) => {
-          const Icon = item.icon;
-          const proposal = item.key === 'assistant';
-          const palette = theme.palette[FLOW_TONES[index]];
-          const tone = theme.palette.mode === 'dark' ? palette.light : palette.dark;
-          return (
-            <Box
-              key={item.key}
-              component="button"
-              type="button"
-              onClick={() => onNavigate(item.path)}
-              sx={(theme) => ({
-                appearance: 'none',
-                border: 1,
-                borderColor: proposal ? alpha(theme.palette.primary.main, 0.22) : alpha(tone, 0.16),
-                borderRadius: COMPACT_RADIUS,
-                bgcolor: proposal
-                  ? alpha(theme.palette.primary.main, 0.055)
-                  : theme.palette.background.paper,
-                color: 'text.primary',
-                textAlign: 'left',
-                px: 1.35,
-                py: 1.05,
-                minHeight: 64,
-                minWidth: 0,
-                cursor: 'pointer',
-                boxShadow: 'none',
-                transition: theme.transitions.create([
-                  'background-color',
-                  'border-color',
-                  'box-shadow',
-                ]),
-                '&:hover': {
+      {health.state !== 'NO_ACCOUNT' ? (
+        <Box
+          aria-label={t('home.signalSummary')}
+          sx={{
+            mt: 1,
+            display: 'grid',
+            gridTemplateColumns: { xs: '1fr', md: 'repeat(5, minmax(0, 1fr))' },
+            gap: 0.75,
+            '@media (min-width: 390px) and (max-width: 899.95px)': {
+              gridTemplateColumns: 'repeat(2, minmax(0, 1fr))',
+            },
+          }}
+        >
+          {items.map((item, index) => {
+            const Icon = item.icon;
+            const proposal = item.key === 'assistant';
+            const palette = theme.palette[FLOW_TONES[index]];
+            const tone = theme.palette.mode === 'dark' ? palette.light : palette.dark;
+            return (
+              <Box
+                key={item.key}
+                component="button"
+                type="button"
+                onClick={() => onNavigate(item.path)}
+                sx={(theme) => ({
+                  appearance: 'none',
+                  border: 1,
+                  borderColor: proposal
+                    ? alpha(theme.palette.primary.main, 0.22)
+                    : alpha(tone, 0.16),
+                  borderRadius: COMPACT_RADIUS,
                   bgcolor: proposal
-                    ? alpha(theme.palette.primary.main, 0.085)
-                    : theme.palette.action.hover,
-                  borderColor: proposal ? theme.palette.primary.main : alpha(tone, 0.34),
+                    ? alpha(theme.palette.primary.main, 0.055)
+                    : theme.palette.background.paper,
+                  color: 'text.primary',
+                  textAlign: 'left',
+                  px: 1.35,
+                  py: 1.05,
+                  minHeight: 64,
+                  minWidth: 0,
+                  cursor: 'pointer',
                   boxShadow: 'none',
-                },
-                '&:focus-visible': {
-                  outline: '2px solid',
-                  outlineColor: 'primary.main',
-                  outlineOffset: 2,
-                },
-                '@media (min-width: 390px) and (max-width: 899.95px)': {
-                  gridColumn: index === items.length - 1 ? '1 / -1' : 'auto',
-                },
-              })}
-            >
-              {proposal ? (
-                <Stack direction="row" spacing={1} alignItems="center" sx={{ minWidth: 0 }}>
-                  <Box
-                    sx={{
-                      width: 32,
-                      height: 32,
-                      display: 'grid',
-                      placeItems: 'center',
-                      borderRadius: COMPACT_RADIUS,
-                      bgcolor: 'primary.main',
-                      color: 'primary.contrastText',
-                      flexShrink: 0,
-                    }}
-                  >
-                    <Icon size={17} />
-                  </Box>
+                  transition: theme.transitions.create([
+                    'background-color',
+                    'border-color',
+                    'box-shadow',
+                  ]),
+                  '&:hover': {
+                    bgcolor: proposal
+                      ? alpha(theme.palette.primary.main, 0.085)
+                      : theme.palette.action.hover,
+                    borderColor: proposal ? theme.palette.primary.main : alpha(tone, 0.34),
+                    boxShadow: 'none',
+                  },
+                  '&:focus-visible': {
+                    outline: '2px solid',
+                    outlineColor: 'primary.main',
+                    outlineOffset: 2,
+                  },
+                  '@media (min-width: 390px) and (max-width: 899.95px)': {
+                    gridColumn: index === items.length - 1 ? '1 / -1' : 'auto',
+                  },
+                })}
+              >
+                {proposal ? (
+                  <Stack direction="row" spacing={1} alignItems="center" sx={{ minWidth: 0 }}>
+                    <Box
+                      sx={{
+                        width: 32,
+                        height: 32,
+                        display: 'grid',
+                        placeItems: 'center',
+                        borderRadius: COMPACT_RADIUS,
+                        bgcolor: 'primary.main',
+                        color: 'primary.contrastText',
+                        flexShrink: 0,
+                      }}
+                    >
+                      <Icon size={17} />
+                    </Box>
+                    <SignalContent
+                      eyebrow={t(`home.metricEyebrows.${item.key}`)}
+                      label={t(`home.metrics.${item.key}`)}
+                      value={item.value}
+                      tone={tone}
+                    />
+                  </Stack>
+                ) : (
                   <SignalContent
                     eyebrow={t(`home.metricEyebrows.${item.key}`)}
                     label={t(`home.metrics.${item.key}`)}
                     value={item.value}
                     tone={tone}
+                    dot
                   />
-                </Stack>
-              ) : (
-                <SignalContent
-                  eyebrow={t(`home.metricEyebrows.${item.key}`)}
-                  label={t(`home.metrics.${item.key}`)}
-                  value={item.value}
-                  tone={tone}
-                  dot
-                />
-              )}
-            </Box>
-          );
-        })}
-      </Box>
+                )}
+              </Box>
+            );
+          })}
+        </Box>
+      ) : null}
     </Box>
   );
 }

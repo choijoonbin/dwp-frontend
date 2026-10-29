@@ -22,8 +22,16 @@ import {
   useMessagingPresenceHeartbeat,
 } from './use-messaging-presence-heartbeat';
 
-function Harness({ enabled = true }: { enabled?: boolean }) {
-  useMessagingPresenceHeartbeat(enabled);
+function Harness({
+  enabled = true,
+  tenantId = 7,
+  userId = 42,
+}: {
+  enabled?: boolean;
+  tenantId?: number;
+  userId?: number;
+}) {
+  useMessagingPresenceHeartbeat(enabled, { tenantId, userId });
   return null;
 }
 
@@ -36,6 +44,7 @@ describe('messaging presence heartbeat', () => {
 
   beforeEach(() => {
     Object.assign(globalThis, { IS_REACT_ACT_ENVIRONMENT: true });
+    localStorage.clear();
     vi.useFakeTimers();
     visible = true;
     online = true;
@@ -54,6 +63,7 @@ describe('messaging presence heartbeat', () => {
   afterEach(async () => {
     if (mounted) await act(async () => root.unmount());
     host.remove();
+    localStorage.clear();
     vi.useRealTimers();
     vi.restoreAllMocks();
   });
@@ -152,6 +162,28 @@ describe('messaging presence heartbeat', () => {
     expect(mocks.refreshMessagingPresence).toHaveBeenCalledTimes(2);
   });
 
+  it('does not reuse a pending request or lease timing after an identity switch', async () => {
+    let resolveFirstIdentity: ((timing: typeof mocks.defaultTiming) => void) | undefined;
+    mocks.refreshMessagingPresence
+      .mockImplementationOnce(() => new Promise((resolve) => (resolveFirstIdentity = resolve)))
+      .mockResolvedValueOnce({ leaseTtlSeconds: 60, refreshAfterSeconds: 15 });
+
+    await act(async () => root.render(<Harness tenantId={7} userId={42} />));
+    expect(mocks.refreshMessagingPresence).toHaveBeenCalledTimes(1);
+
+    await act(async () => {
+      root.render(<Harness tenantId={8} userId={43} />);
+      await Promise.resolve();
+    });
+    expect(mocks.refreshMessagingPresence).toHaveBeenCalledTimes(2);
+
+    await act(async () => resolveFirstIdentity?.(mocks.defaultTiming));
+    await act(async () => vi.advanceTimersByTimeAsync(14_999));
+    expect(mocks.refreshMessagingPresence).toHaveBeenCalledTimes(2);
+    await act(async () => vi.advanceTimersByTimeAsync(1));
+    expect(mocks.refreshMessagingPresence).toHaveBeenCalledTimes(3);
+  });
+
   it('does not double-count a pending failure across visibility changes', async () => {
     let rejectHeartbeat: ((reason: Error) => void) | undefined;
     mocks.refreshMessagingPresence.mockImplementationOnce(
@@ -178,6 +210,23 @@ describe('messaging presence heartbeat', () => {
     );
 
     expect(mocks.refreshMessagingPresence).not.toHaveBeenCalled();
+  });
+
+  it('elects one publisher per identity without blocking another tenant or user', async () => {
+    const secondHost = document.createElement('div');
+    document.body.append(secondHost);
+    const secondRoot = createRoot(secondHost);
+    await act(async () => {
+      root.render(<Harness tenantId={7} userId={42} />);
+      secondRoot.render(<Harness tenantId={7} userId={42} />);
+    });
+    expect(mocks.refreshMessagingPresence).toHaveBeenCalledTimes(1);
+
+    await act(async () => secondRoot.render(<Harness tenantId={8} userId={43} />));
+    expect(mocks.refreshMessagingPresence).toHaveBeenCalledTimes(2);
+
+    await act(async () => secondRoot.unmount());
+    secondHost.remove();
   });
 
   it('backs off after a failure and returns to the normal interval after recovery', async () => {

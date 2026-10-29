@@ -25,6 +25,19 @@ function query(
 }
 
 describe('Activity integrity evidence', () => {
+  const verifiedEvidence: WorkspaceActivityEvidence = {
+    eventId: 'aaaaaaaa-0000-5000-8000-000000000101',
+    auditRecordId: 'aaaaaaaa-0000-5000-8000-000000000102',
+    linkStatus: 'LINKED',
+    auditAccess: 'AVAILABLE',
+    recordHash: 'a'.repeat(64),
+    hashAlgorithm: 'SHA-256',
+    integrityStatus: 'VERIFIED',
+    integrityScope: 'DAILY_CHECKPOINT_REPORTED',
+    verifiedAt: '2026-09-07T09:00:00Z',
+    observedAt: '2026-09-07T09:01:00Z',
+  };
+
   it('shows a loading state without implying a link or integrity result', () => {
     const markup = renderToStaticMarkup(
       createElement(ActivityIntegrityEvidence, {
@@ -44,18 +57,7 @@ describe('Activity integrity evidence', () => {
   it('keeps reference linkage separate from daily-checkpoint integrity', () => {
     const markup = renderToStaticMarkup(
       createElement(ActivityIntegrityEvidence, {
-        query: query({
-          eventId: 'aaaaaaaa-0000-5000-8000-000000000101',
-          auditRecordId: 'aaaaaaaa-0000-5000-8000-000000000102',
-          linkStatus: 'LINKED',
-          auditAccess: 'AVAILABLE',
-          recordHash: 'a'.repeat(64),
-          hashAlgorithm: 'SHA-256',
-          integrityStatus: 'VERIFIED',
-          integrityScope: 'DAILY_CHECKPOINT_REPORTED',
-          verifiedAt: '2026-09-07T09:00:00Z',
-          observedAt: '2026-09-07T09:01:00Z',
-        }),
+        query: query(verifiedEvidence),
       })
     );
 
@@ -64,6 +66,24 @@ describe('Activity integrity evidence', () => {
     expect(markup).toContain('activityFoundation.detail.integrity.status.VERIFIED');
     expect(markup).toContain('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa');
     expect(markup).toContain('activityFoundation.detail.integrity.scopeNotice');
+  });
+
+  it('retains verified evidence after a transient refresh failure but hides it after denial', () => {
+    const transient = renderToStaticMarkup(
+      createElement(ActivityIntegrityEvidence, {
+        query: query(verifiedEvidence, new HttpError('temporarily unavailable', 503)),
+      })
+    );
+    expect(transient).toContain('data-integrity-status="VERIFIED"');
+    expect(transient).toContain('activityFoundation.cachedEvidence.title');
+
+    const denied = renderToStaticMarkup(
+      createElement(ActivityIntegrityEvidence, {
+        query: query(verifiedEvidence, new HttpError('access revoked', 403)),
+      })
+    );
+    expect(denied).not.toContain('data-integrity-status="VERIFIED"');
+    expect(denied).toContain('activityFoundation.detail.integrity.errors.RESTRICTED.title');
   });
 
   it('does not expose a hash or infer verification for restricted evidence', () => {

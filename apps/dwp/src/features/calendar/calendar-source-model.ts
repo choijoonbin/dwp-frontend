@@ -1,6 +1,7 @@
 import type { CalendarEvent, CalendarSummary } from '@dwp-frontend/shared-utils';
 
-export type CalendarSourceGroupKey = 'favorites' | 'company' | 'mine' | 'shared' | 'team';
+export type CalendarSourceGroupKey =
+  'favorites' | 'company' | 'mine' | 'shared' | 'team' | 'external';
 
 type CalendarSourceGroup = Readonly<{
   key: CalendarSourceGroupKey;
@@ -13,6 +14,7 @@ const GROUP_ORDER: readonly CalendarSourceGroupKey[] = [
   'mine',
   'shared',
   'team',
+  'external',
 ];
 
 export function calendarIsRequired(calendar: CalendarSummary): boolean {
@@ -20,6 +22,7 @@ export function calendarIsRequired(calendar: CalendarSummary): boolean {
 }
 
 function sourceGroup(calendar: CalendarSummary): Exclude<CalendarSourceGroupKey, 'favorites'> {
+  if (calendar.externalProvider) return 'external';
   if (calendar.sourceKind === 'COMPANY') return 'company';
   if (calendar.sourceKind === 'SHARED') return 'shared';
   if (calendar.sourceKind === 'TEAM' || calendar.sourceKind === 'RESOURCE') return 'team';

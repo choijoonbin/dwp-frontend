@@ -10,13 +10,19 @@ import {
   discardMessagingAttachment,
   getMessagingMessage,
   getMessagingConversationMembers,
+  getMessagingConversations,
   getMessagingMessages,
+  getMessagingPeoplePage,
+  getMessagingScheduledMessages,
   getMessagingThread,
   leaveMessagingConversation,
+  messagingRealtimeResumeEndpoint,
   parseMessagingRealtimeSignal,
   refreshMessagingPresence,
   removeMessagingConversationMember,
+  saveMessagingDraft,
   saveMessagingMessage,
+  scheduleMessagingMessage,
   searchMessaging,
   sendMessagingMessage,
   setMessagingTyping,
@@ -70,6 +76,122 @@ describe('messaging API boundary', () => {
       idempotencyKey: 'idempotency-1',
       attachmentIds: ['attachment-1'],
       mentionedUserIds: [202, 303],
+    });
+  });
+
+  it('preserves the opaque scheduled-message cursor and additive page evidence', async () => {
+    const page = { items: [], limit: 20, hasMore: true, nextCursor: 'cursor-next' };
+    const fetchMock = vi.fn().mockResolvedValueOnce(jsonResponse(page));
+    vi.stubGlobal('fetch', fetchMock);
+
+    await expect(
+      getMessagingScheduledMessages({ status: 'PENDING', cursor: 'cursor-current', limit: 20 })
+    ).resolves.toEqual(page);
+
+    const requested = new URL(String(fetchMock.mock.calls[0]?.[0]), 'https://dwp.example');
+    expect(requested.pathname).toBe('/api/messaging/v1/scheduled-messages');
+    expect(Object.fromEntries(requested.searchParams)).toEqual({
+      limit: '20',
+      status: 'PENDING',
+      cursor: 'cursor-current',
+    });
+  });
+
+  it('preserves the opaque conversation cursor with offset compatibility fields', async () => {
+    const page = {
+      items: [],
+      total: 61,
+      page: 0,
+      pageSize: 30,
+      hasMore: true,
+      nextCursor: 'v1.opaque-next',
+      nextPage: null,
+    };
+    const fetchMock = vi.fn().mockResolvedValueOnce(jsonResponse(page));
+    vi.stubGlobal('fetch', fetchMock);
+
+    await expect(
+      getMessagingConversations({
+        scope: 'CHANNELS',
+        query: 'risk',
+        page: 0,
+        pageSize: 30,
+        cursor: 'v1.opaque-current',
+      })
+    ).resolves.toEqual(page);
+
+    const requested = new URL(String(fetchMock.mock.calls[0]?.[0]), 'https://dwp.example');
+    expect(requested.pathname).toBe('/api/messaging/v1/conversations');
+    expect(Object.fromEntries(requested.searchParams)).toEqual({
+      scope: 'CHANNELS',
+      q: 'risk',
+      page: '0',
+      pageSize: '30',
+      cursor: 'v1.opaque-current',
+    });
+  });
+
+  it('persists versioned server drafts and schedules a UTC delivery command', async () => {
+    const mentionedPersonPublicId = '018f2f67-02c7-7f21-9c11-9a7b67519b2d';
+    const draft = {
+      conversationId: 'conversation-1',
+      threadRootMessageId: 'root-1',
+      body: 'Draft @Kim',
+      mentionedPersonPublicIds: [mentionedPersonPublicId],
+      version: 4,
+    };
+    const scheduled = {
+      scheduledMessageId: 'scheduled-1',
+      conversationId: 'conversation-1',
+      status: 'PENDING',
+      scheduledFor: '2026-12-01T00:00:00.000Z',
+    };
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValueOnce(jsonResponse({ token: 'csrf-token', headerName: 'X-XSRF-TOKEN' }))
+      .mockResolvedValueOnce(jsonResponse(draft))
+      .mockResolvedValueOnce(jsonResponse(scheduled));
+    vi.stubGlobal('fetch', fetchMock);
+
+    await expect(
+      saveMessagingDraft({
+        conversationId: 'conversation-1',
+        threadRootMessageId: 'root-1',
+        body: 'Draft @Kim',
+        mentionedPersonPublicIds: [mentionedPersonPublicId],
+        expectedVersion: 3,
+      })
+    ).resolves.toEqual(draft);
+    await expect(
+      scheduleMessagingMessage({
+        conversationId: 'conversation-1',
+        body: 'Draft @Kim',
+        idempotencyKey: 'schedule-command-1',
+        attachmentIds: [],
+        mentionedPersonPublicIds: [mentionedPersonPublicId],
+        scheduledFor: '2026-12-01T00:00:00.000Z',
+        displayTimeZone: 'Asia/Seoul',
+      })
+    ).resolves.toEqual(scheduled);
+
+    expect(fetchMock.mock.calls[1]?.[0]).toBe(
+      '/api/messaging/v1/conversations/conversation-1/draft?threadRootMessageId=root-1'
+    );
+    expect(JSON.parse(String((fetchMock.mock.calls[1]?.[1] as RequestInit).body))).toEqual({
+      body: 'Draft @Kim',
+      mentionedPersonPublicIds: [mentionedPersonPublicId],
+      expectedVersion: 3,
+    });
+    expect(fetchMock.mock.calls[2]?.[0]).toBe(
+      '/api/messaging/v1/conversations/conversation-1/scheduled-messages'
+    );
+    expect(JSON.parse(String((fetchMock.mock.calls[2]?.[1] as RequestInit).body))).toEqual({
+      body: 'Draft @Kim',
+      idempotencyKey: 'schedule-command-1',
+      attachmentIds: [],
+      mentionedPersonPublicIds: [mentionedPersonPublicId],
+      scheduledFor: '2026-12-01T00:00:00.000Z',
+      displayTimeZone: 'Asia/Seoul',
     });
   });
 
@@ -215,6 +337,47 @@ describe('messaging API boundary', () => {
     expect(request.signal).toBeInstanceOf(AbortSignal);
   });
 
+  it('requests cursor-first people pages with durable and presence filters', async () => {
+    const page = {
+      items: [],
+      total: 61,
+      hasMore: true,
+      nextCursor: 'cursor-2',
+      nextOffset: null,
+      presence: {
+        authority: 'LIVE',
+        evaluatedAt: '2026-10-27T07:00:00Z',
+        leaseTtlSeconds: 75,
+        refreshAfterSeconds: 20,
+      },
+    };
+    const fetchMock = vi.fn().mockResolvedValueOnce(jsonResponse(page));
+    vi.stubGlobal('fetch', fetchMock);
+
+    await expect(
+      getMessagingPeoplePage({
+        query: 'Kim & Lee',
+        organization: 'Risk Ops',
+        jobTitle: 'Analyst/Lead',
+        presence: 'AVAILABLE',
+        cursor: 'opaque.cursor',
+        offset: 90,
+        limit: 500,
+      })
+    ).resolves.toEqual(page);
+
+    const requested = new URL(String(fetchMock.mock.calls[0]?.[0]), 'https://dwp.example');
+    expect(requested.pathname).toBe('/api/messaging/v1/people/page');
+    expect(Object.fromEntries(requested.searchParams)).toEqual({
+      q: 'Kim & Lee',
+      organization: 'Risk Ops',
+      jobTitle: 'Analyst/Lead',
+      presence: 'AVAILABLE',
+      cursor: 'opaque.cursor',
+      limit: '50',
+    });
+  });
+
   it('uses authoritative presence lease timing response headers', async () => {
     const fetchMock = vi
       .fn()
@@ -292,6 +455,18 @@ describe('messaging API boundary', () => {
     expect(fetchMock.mock.calls[0]?.[0]).toBe(
       '/api/messaging/v1/conversations/conversation%201/messages?limit=50&beforeSequence=92'
     );
+  });
+
+  it('resumes the governed realtime stream with a validated durable cursor', () => {
+    expect(messagingRealtimeResumeEndpoint('/api/messaging/v1/stream', '42')).toBe(
+      '/api/messaging/v1/stream?after=42'
+    );
+    expect(messagingRealtimeResumeEndpoint('/api/messaging/v1/stream?mode=sse', '42')).toBe(
+      '/api/messaging/v1/stream?mode=sse&after=42'
+    );
+    expect(() =>
+      messagingRealtimeResumeEndpoint('/api/messaging/v1/stream', '9223372036854775808')
+    ).toThrow('non-negative 64-bit integer');
   });
 
   it('loads one exact message so deep links can resolve roots and replies', async () => {

@@ -1,6 +1,7 @@
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { axiosInstance } from '../axios-instance';
+import { registerMailGovernedRequestAuthority } from './mail-governed-transport';
 import {
   createMailContact,
   getMailAddressBook,
@@ -10,6 +11,16 @@ import {
 } from './mail-address-book-api';
 
 describe('mail address book API boundary', () => {
+  let releaseMailAuthority: (() => void) | undefined;
+
+  beforeEach(() => {
+    releaseMailAuthority = registerMailGovernedRequestAuthority({
+      mode: 'LEGACY_COMPATIBILITY',
+      rolloutState: '000',
+    });
+  });
+
+  afterEach(() => releaseMailAuthority?.());
   afterEach(() => vi.restoreAllMocks());
 
   it('encodes contact search only in the read URL', async () => {

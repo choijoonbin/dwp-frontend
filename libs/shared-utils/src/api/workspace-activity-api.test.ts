@@ -14,6 +14,7 @@ const UUID_FOR_OTHER_TASK = 'e5555555-5555-4555-8555-555555555555';
 const event: RawWorkspaceActivityEvent = {
   id: 'event-old',
   occurredAt: '2026-09-01T09:00:00Z',
+  stateChangedAt: '2026-09-01T09:01:00Z',
   actor: 'PERSON',
   actorName: 'Member',
   state: 'COMPLETED',
@@ -80,6 +81,7 @@ describe('workspace activity API foundation', () => {
     expect(result.events[0]).toMatchObject({
       actor: 'person',
       state: 'completed',
+      stateChangedAt: '2026-09-01T09:01:00Z',
       objectId: 'work-1',
     });
     expect(result.nextCursor).toBe('next');
@@ -225,6 +227,7 @@ describe('workspace activity API foundation', () => {
     { label: 'missing title', value: { ...event, title: '' } },
     { label: 'unknown actor', value: { ...event, actor: 'ROBOT' } },
     { label: 'out-of-range progress', value: { ...event, progress: 101 } },
+    { label: 'invalid state change timestamp', value: { ...event, stateChangedAt: 'yesterday' } },
     { label: 'invented verified audit', value: { ...event, auditStatus: 'VERIFIED' } },
     { label: 'unexpected sensitive field', value: { ...event, prompt: 'private question' } },
   ])('rejects a malformed $label event before it reaches the UI', ({ value }) => {

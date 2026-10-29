@@ -155,18 +155,26 @@ describe('activity federated API boundary', () => {
     expect(result.sourceStates).toContainEqual({ sourceScope: 'DWAI_ON', status: 'FORBIDDEN' });
   });
 
+  it('preserves an authoritative denial when every summary source is forbidden', async () => {
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue(response(null, 403)));
+
+    await expect(getActivityExecutionSummary()).rejects.toMatchObject({ status: 403 });
+  });
+
   it('merges current attention records by observation time and namespaces Agent IDs', async () => {
     const workspaceId = 'bbbbbbbb-0000-4000-8000-000000000002';
     const workspaceAttention = {
       ...workspaceEvent,
       id: workspaceId,
       occurredAt: '2026-09-04T00:58:00Z',
+      stateChangedAt: '2026-09-04T01:05:00Z',
       state: 'NEEDS_INPUT' as const,
       eventKind: 'EXECUTION' as const,
     };
     const agentAttention = {
       id: RUN,
       occurredAt: NOW,
+      stateChangedAt: '2026-09-04T00:55:00Z',
       actor: 'AGENT' as const,
       actorName: 'DWAI·ON',
       state: 'POLICY_BLOCKED' as const,
@@ -212,7 +220,7 @@ describe('activity federated API boundary', () => {
       )
     );
     const result = await getActivityExecutionSummary();
-    expect(result.attentionItems?.map(({ id }) => id)).toEqual([`dwaion:${RUN}`, workspaceId]);
+    expect(result.attentionItems?.map(({ id }) => id)).toEqual([workspaceId, `dwaion:${RUN}`]);
   });
 
   it('preserves source cursor rejection instead of silently restarting that source', async () => {

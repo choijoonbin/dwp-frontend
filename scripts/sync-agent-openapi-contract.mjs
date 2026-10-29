@@ -17,6 +17,7 @@ if (!['--sync', '--check'].includes(mode)) {
 const contractRoot = path.join(root, 'libs/api-contracts');
 const snapshot = path.join(contractRoot, 'openapi/agent-public.json');
 const generatedTarget = path.join(contractRoot, 'src/agent-public.ts');
+const gatewaySnapshot = path.join(contractRoot, 'openapi/gateway-public.json');
 const agentSource = path.resolve(
   process.env.DWP_AGENT_OPENAPI ??
     path.join(root, '../dwp_agent/contracts/openapi/agent-public.json')
@@ -48,6 +49,52 @@ if (mode === '--sync') {
 if (!fs.existsSync(snapshot)) {
   console.error(`Frontend Agent contract snapshot is missing: ${snapshot}`);
   process.exit(1);
+}
+
+const activitySchemaNames = [
+  'ActivityCoverage',
+  'ActivityEvent',
+  'ActivityEventEnvelope',
+  'ActivityPage',
+  'ActivityPageEnvelope',
+  'AgentRunState',
+  'RunRecoveryHint',
+  'UserAgentRunSummary',
+];
+if (!fs.existsSync(gatewaySnapshot)) {
+  console.error(`Frontend Gateway contract snapshot is missing: ${gatewaySnapshot}`);
+  process.exit(1);
+}
+const agentDocument = JSON.parse(fs.readFileSync(snapshot, 'utf8'));
+const gatewayDocument = JSON.parse(fs.readFileSync(gatewaySnapshot, 'utf8'));
+const gatewayAgentShape = (value) => {
+  if (Array.isArray(value)) return value.map(gatewayAgentShape);
+  if (value !== null && typeof value === 'object') {
+    return Object.fromEntries(
+      Object.entries(value).map(([key, nestedValue]) => [
+        key,
+        key === '$ref' && typeof nestedValue === 'string'
+          ? nestedValue.replace('#/components/schemas/', '#/components/schemas/agent_')
+          : gatewayAgentShape(nestedValue),
+      ])
+    );
+  }
+  return value;
+};
+for (const schemaName of activitySchemaNames) {
+  const agentSchema = agentDocument.components?.schemas?.[schemaName];
+  const gatewaySchema = gatewayDocument.components?.schemas?.[`agent_${schemaName}`];
+  if (
+    agentSchema === undefined ||
+    gatewaySchema === undefined ||
+    JSON.stringify(canonicalizeJson(gatewayAgentShape(agentSchema))) !==
+      JSON.stringify(canonicalizeJson(gatewaySchema))
+  ) {
+    console.error(
+      `Agent Activity schema ${schemaName} differs from its Gateway agent_ projection.`
+    );
+    process.exit(1);
+  }
 }
 if (mode === '--check' && fs.existsSync(agentSource)) {
   if (readCanonicalJson(agentSource) !== readCanonicalJson(snapshot)) {

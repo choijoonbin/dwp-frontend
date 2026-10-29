@@ -776,6 +776,38 @@ describe('Mail administrative evidence surfaces', () => {
     });
   });
 
+  it('keeps purge preview fail-closed when the retention source is unavailable', async () => {
+    const onPreview = vi.fn();
+    await act(async () =>
+      root.render(
+        <MailAdminOperationsContent
+          surface="retention"
+          overview={overview}
+          canManage={false}
+          canPreviewPurge
+          now={NOW}
+          purgeEvidence={{
+            purgeApiAvailable: true,
+            legalHoldState: 'CLEAR',
+            candidateSnapshotId: null,
+            policyVersion: 3,
+            distinctApproverCount: 0,
+            authorizationCurrent: true,
+          }}
+          onPreviewPurge={onPreview}
+        />
+      )
+    );
+
+    const preview = [...host.querySelectorAll('button')].find(
+      (button) => button.textContent === 'Preview purge'
+    );
+    expect(preview?.disabled).toBe(true);
+    expect(host.textContent).toContain('PURGE_API_UNAVAILABLE');
+    await act(async () => preview?.click());
+    expect(onPreview).not.toHaveBeenCalled();
+  });
+
   it('uses the member version when confirming shared-inbox access revocation', async () => {
     const onRemove = vi.fn();
     const sharedOverview: MailAdminOverview = {

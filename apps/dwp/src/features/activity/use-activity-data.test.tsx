@@ -3,6 +3,7 @@ import { act, createElement } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { HttpError } from '@dwp-frontend/shared-utils';
 import type * as SharedUtils from '@dwp-frontend/shared-utils';
 import type { WorkspaceActivityFilters } from '@dwp-frontend/shared-utils';
 
@@ -35,7 +36,19 @@ vi.mock('@dwp-frontend/shared-utils', async (importOriginal) => ({
   getWorkspaceActivitySourceStatuses: runtime.sources,
 }));
 
-import { useActivityData } from './use-activity-data';
+import {
+  ACTIVITY_FEED_REFRESH_INTERVAL_MS,
+  ACTIVITY_RUNNING_REFRESH_INTERVAL_MS,
+  ACTIVITY_SOURCE_REFRESH_INTERVAL_MS,
+  activityDetailRefetchOnWindowFocus,
+  activityDetailRefreshInterval,
+  activityDetailStaleTime,
+  activityEvidenceRefreshInterval,
+  activityRunRefetchOnWindowFocus,
+  activityRunRefreshInterval,
+  activityRunStaleTime,
+  useActivityData,
+} from './use-activity-data';
 
 let root: Root;
 let container: HTMLDivElement;
@@ -106,6 +119,77 @@ describe('Activity query access, refresh and cache isolation', () => {
         .getAll()
         .every((query) => query.meta?.accessSensitive)
     ).toBe(true);
+  });
+
+  it('treats integrity evidence as immutable until an explicit refetch', async () => {
+    await render();
+    await waitForSuccess();
+    await vi.waitFor(() => expect(result.evidence.isSuccess).toBe(true));
+    const evidenceQuery = client
+      .getQueryCache()
+      .getAll()
+      .find(
+        (query) => query.queryKey.includes('evidence') && query.queryKey.at(-1) === 'private-event'
+      );
+
+    expect(evidenceQuery?.options.staleTime).toBe(Infinity);
+    expect(evidenceQuery?.options.refetchInterval).toBe(false);
+    expect(evidenceQuery?.options.refetchOnWindowFocus).toBe(false);
+    expect(evidenceQuery?.options.retry).toBe(false);
+  });
+
+  it('uses bounded polling intervals for feeds, sources, active runs and terminal evidence', () => {
+    expect(ACTIVITY_FEED_REFRESH_INTERVAL_MS).toBe(60_000);
+    expect(ACTIVITY_SOURCE_REFRESH_INTERVAL_MS).toBe(300_000);
+    expect(activityDetailRefreshInterval({ state: 'running' })).toBe(
+      ACTIVITY_RUNNING_REFRESH_INTERVAL_MS
+    );
+    expect(activityDetailRefreshInterval({ state: 'completed' })).toBe(false);
+    expect(activityRunRefreshInterval({ runState: 'RUNNING' })).toBe(
+      ACTIVITY_RUNNING_REFRESH_INTERVAL_MS
+    );
+    expect(activityRunRefreshInterval({ runState: 'COMPLETED' })).toBe(false);
+    expect(activityEvidenceRefreshInterval({ integrityStatus: 'PENDING' })).toBe(false);
+    expect(activityEvidenceRefreshInterval({ integrityStatus: 'UNAVAILABLE' })).toBe(false);
+    expect(activityEvidenceRefreshInterval({ integrityStatus: 'VERIFIED' })).toBe(false);
+    expect(activityDetailStaleTime({ state: 'running' })).toBe(15_000);
+    expect(activityDetailRefetchOnWindowFocus({ state: 'running' })).toBe(true);
+    expect(activityDetailStaleTime({ state: 'completed' })).toBe(Infinity);
+    expect(activityDetailRefetchOnWindowFocus({ state: 'completed' })).toBe(false);
+    expect(activityRunStaleTime({ runState: 'RUNNING' })).toBe(15_000);
+    expect(activityRunRefetchOnWindowFocus({ runState: 'RUNNING' })).toBe(true);
+    expect(activityRunStaleTime({ runState: 'COMPLETED' })).toBe(Infinity);
+    expect(activityRunRefetchOnWindowFocus({ runState: 'COMPLETED' })).toBe(false);
+  });
+
+  it.each(['feed', 'summary', 'sources'] as const)(
+    'gates every root cache when only %s returns an authoritative denial',
+    async (deniedQuery) => {
+      await render();
+      await waitForSuccess();
+      runtime[deniedQuery].mockRejectedValueOnce(new HttpError('access revoked', 403));
+
+      await act(async () => {
+        await result[deniedQuery].refetch();
+      });
+      await vi.waitFor(() => expect(result.rootDenied).toBe(true));
+
+      expect(result.feed.data).toBeDefined();
+      expect(result.summary.data).toBeDefined();
+      expect(result.sources.data).toBeDefined();
+    }
+  );
+
+  it('does not escalate a route-local detail 404 into a root denial', async () => {
+    await render();
+    await waitForSuccess();
+    runtime.detail.mockRejectedValueOnce(new HttpError('event removed', 404));
+
+    await act(async () => {
+      await result.detail.refetch();
+    });
+    await vi.waitFor(() => expect(result.detail.isError).toBe(true));
+    expect(result.rootDenied).toBe(false);
   });
 
   it.each(['session', 'permissions-loading', 'activity-denied'])(

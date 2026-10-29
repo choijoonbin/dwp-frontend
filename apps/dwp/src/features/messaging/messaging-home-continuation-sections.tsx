@@ -26,6 +26,7 @@ import { MessagingPersonLine, messagingRelativeTime } from './messaging-componen
 import { selectAvailableMessagingPeople } from './messaging-home-model';
 import { messagingPlainTextPreview } from './messaging-message-body';
 import { messagingVisualTokens } from './messaging-visual-model';
+import { messagingConversationHref } from './messaging-deep-link';
 
 import type {
   MessagingConversation,
@@ -311,7 +312,10 @@ function SavedItemLink({ item }: { item: MessagingSavedItem }) {
   return (
     <Box
       component={RouterLink}
-      to={`/messages/inbox?conversation=${item.message.conversationId}`}
+      to={messagingConversationHref({
+        conversationId: item.message.conversationId,
+        messageId: item.message.messageId,
+      })}
       sx={(theme) => ({
         px: 1.1,
         py: 1.35,
@@ -352,9 +356,11 @@ function SavedItemLink({ item }: { item: MessagingSavedItem }) {
             overflowWrap: 'anywhere',
           }}
         >
-          {item.message.deletedAt
-            ? t('message.deleted')
-            : messagingPlainTextPreview(item.message.body)}
+          {item.protectedContent
+            ? t('home.continue.protectedPreview')
+            : item.message.deletedAt
+              ? t('message.deleted')
+              : messagingPlainTextPreview(item.message.body)}
         </Typography>
       </Box>
       <Typography

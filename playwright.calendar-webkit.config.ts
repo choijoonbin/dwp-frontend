@@ -1,0 +1,36 @@
+import { defineConfig, devices } from '@playwright/test';
+
+const BASE_URL = process.env.E2E_BASE_URL || 'http://localhost:4200';
+const REUSE_EXISTING_SERVER = process.env.E2E_REUSE_EXISTING_SERVER === 'true';
+const HTML_REPORT_OUTPUT =
+  process.env.PLAYWRIGHT_HTML_OUTPUT_DIR || 'playwright-report-calendar-webkit';
+const TEST_OUTPUT = process.env.PLAYWRIGHT_OUTPUT_DIR || 'test-results/calendar-webkit';
+
+export default defineConfig({
+  testDir: './e2e',
+  fullyParallel: false,
+  forbidOnly: Boolean(process.env.CI),
+  retries: process.env.CI ? 2 : 0,
+  failOnFlakyTests: Boolean(process.env.CI),
+  workers: 1,
+  reporter: process.env.CI
+    ? [['line'], ['html', { open: 'never', outputFolder: HTML_REPORT_OUTPUT }]]
+    : 'line',
+  outputDir: TEST_OUTPUT,
+  use: {
+    baseURL: BASE_URL,
+    trace: 'on-first-retry',
+    screenshot: 'only-on-failure',
+  },
+  projects: [
+    { name: 'webkit', use: { ...devices['Desktop Safari'] } },
+    { name: 'webkit-mobile', use: { ...devices['iPhone 13'] } },
+  ],
+  webServer: {
+    command:
+      'VITE_HOME_PERSONALIZATION_V2_ENABLED=true VITE_HOME_WIDGET_LIBRARY_ENABLED=true VITE_WEB_VITALS_ENDPOINT=/api/platform/v1/observability/web-vitals corepack yarn dev --mode test --host 127.0.0.1',
+    url: BASE_URL,
+    reuseExistingServer: REUSE_EXISTING_SERVER,
+    timeout: 120 * 1000,
+  },
+});

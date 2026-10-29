@@ -23,5 +23,21 @@ describe('mail secondary workspace model', () => {
       labelFallback: 'Accepted by provider',
     });
     expect(mailDeliveryPresentation('FAILED').retryAllowed).toBe(false);
+    expect(mailDeliveryPresentation('PROVIDER_ACCEPTED')).toMatchObject({
+      confirmedDelivered: false,
+      retryAllowed: false,
+      labelFallback: 'Accepted by provider (recipient delivery unconfirmed)',
+    });
+    expect(mailDeliveryPresentation('RESULT_UNKNOWN')).toMatchObject({
+      confirmedDelivered: false,
+      retryAllowed: false,
+      severity: 'warning',
+      labelFallback: 'Result needs verification',
+    });
+    expect(mailDeliveryPresentation('DELIVERED')).toMatchObject({
+      confirmedDelivered: true,
+      retryAllowed: false,
+      severity: 'success',
+    });
   });
 });

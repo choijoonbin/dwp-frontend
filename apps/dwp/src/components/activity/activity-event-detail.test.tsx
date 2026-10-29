@@ -3,12 +3,17 @@ import { act, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { MemoryRouter } from 'react-router-dom';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { HttpError } from '@dwp-frontend/shared-utils';
 
 import { ActivityEventDetail } from './activity-event-detail';
 
 import type { Root } from 'react-dom/client';
 import type { UseQueryResult } from '@tanstack/react-query';
-import type { WorkspaceActivityEvent } from '@dwp-frontend/shared-utils';
+import type {
+  DwaionUserRun,
+  WorkspaceActivityEvent,
+  WorkspaceActivityEvidence,
+} from '@dwp-frontend/shared-utils';
 import type * as ReactRouterModule from 'react-router-dom';
 
 const navigate = vi.hoisted(() => vi.fn());
@@ -62,6 +67,17 @@ function queryFor(
     isError: false,
     isFetching: false,
     refetch,
+  } as unknown as UseQueryResult<WorkspaceActivityEvent, Error>;
+}
+
+function failedQueryFor(value: WorkspaceActivityEvent, status: number) {
+  return {
+    data: value,
+    isLoading: false,
+    isError: true,
+    isFetching: false,
+    error: new HttpError('refresh failed', status),
+    refetch: vi.fn(),
   } as unknown as UseQueryResult<WorkspaceActivityEvent, Error>;
 }
 
@@ -137,6 +153,36 @@ describe('ActivityEventDetail inspector contract', () => {
     expect(detail).not.toBeNull();
     expect(detail!.textContent).toContain(expected);
     expect(detail!.textContent).not.toContain('AGENT_RUN');
+  });
+
+  it('keeps a previous detail for transient refresh failure but hides it after access denial', async () => {
+    await act(async () => {
+      root.render(
+        <MemoryRouter>
+          <ActivityEventDetail
+            eventId={event.id}
+            query={failedQueryFor(event, 503)}
+            showSourceAction={false}
+          />
+        </MemoryRouter>
+      );
+    });
+    expect(document.body.textContent).toContain(event.title);
+    expect(document.body.textContent).toContain('activityFoundation.cachedDetail.title');
+
+    await act(async () => {
+      root.render(
+        <MemoryRouter>
+          <ActivityEventDetail
+            eventId={event.id}
+            query={failedQueryFor(event, 403)}
+            showSourceAction={false}
+          />
+        </MemoryRouter>
+      );
+    });
+    expect(document.body.textContent).not.toContain(event.title);
+    expect(document.body.textContent).toContain('activityFoundation.unavailableTitle');
   });
 
   afterEach(async () => {
@@ -259,7 +305,11 @@ describe('ActivityEventDetail inspector contract', () => {
           <ActivityEventDetail
             eventId={event.id}
             query={
-              { ...queryFor(event), isError: true } as UseQueryResult<WorkspaceActivityEvent, Error>
+              {
+                ...queryFor(event),
+                isError: true,
+                error: new HttpError('access revoked', 403),
+              } as UseQueryResult<WorkspaceActivityEvent, Error>
             }
             variant="inline"
             onClose={() => undefined}
@@ -274,6 +324,74 @@ describe('ActivityEventDetail inspector contract', () => {
       'activityFoundation.detail.kind.EXECUTION_SNAPSHOT.label'
     );
   });
+
+  it.each(['feed', 'sources'])(
+    'hides cached detail, run and evidence when the root %s access check is denied',
+    async () => {
+      const cachedRun: DwaionUserRun = {
+        runId: 'aaaaaaaa-0000-4000-8000-000000000101',
+        agentKey: 'DWP_ASSISTANT',
+        agentRevision: 1,
+        runState: 'COMPLETED',
+        answerState: 'COMPLETED',
+        riskTier: 'L0',
+        policyOutcome: 'ALLOW',
+        statusCode: null,
+        sourceCount: 1,
+        latencyMs: 10,
+        conversationId: null,
+        createdAt: '2026-09-04T01:00:00Z',
+        completedAt: '2026-09-04T01:00:01Z',
+        activityTitle: 'Cached execution secret',
+      };
+      const cachedEvidence: WorkspaceActivityEvidence = {
+        eventId: event.id,
+        auditRecordId: 'aaaaaaaa-0000-5000-8000-000000000102',
+        linkStatus: 'LINKED',
+        auditAccess: 'AVAILABLE',
+        recordHash: 'c'.repeat(64),
+        hashAlgorithm: 'SHA-256',
+        integrityStatus: 'VERIFIED',
+        integrityScope: 'DAILY_CHECKPOINT_REPORTED',
+        verifiedAt: '2026-09-04T01:02:00Z',
+        observedAt: '2026-09-04T01:03:00Z',
+      };
+      const retryRoot = vi.fn();
+
+      await act(async () => {
+        root.render(
+          <MemoryRouter>
+            <ActivityEventDetail
+              eventId={event.id}
+              query={queryFor(event)}
+              executionRun={cachedRun}
+              evidenceQuery={
+                {
+                  data: cachedEvidence,
+                  isLoading: false,
+                  isError: false,
+                  isFetching: false,
+                } as UseQueryResult<WorkspaceActivityEvidence, Error>
+              }
+              accessDenied
+              onAccessRetry={retryRoot}
+              showSourceAction={false}
+            />
+          </MemoryRouter>
+        );
+      });
+
+      expect(document.body.textContent).toContain('activityFoundation.unavailableTitle');
+      expect(document.body.textContent).not.toContain(event.title);
+      expect(document.body.textContent).not.toContain('Cached execution secret');
+      expect(document.body.textContent).not.toContain(cachedEvidence.recordHash);
+      const retry = Array.from(document.querySelectorAll('button')).find((button) =>
+        button.textContent?.includes('activityPage.retry')
+      );
+      await act(async () => retry?.click());
+      expect(retryRoot).toHaveBeenCalledOnce();
+    }
+  );
 
   it('does not follow a source link after its permission is revoked during revalidation', async () => {
     const sourceEvent: WorkspaceActivityEvent = {

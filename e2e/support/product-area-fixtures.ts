@@ -5,7 +5,9 @@ import type {
   CalendarEvent,
   CalendarHome,
   CalendarResource,
+  CalendarReminderSet,
   CalendarShare,
+  CalendarSchedulingEvaluationV2,
   CalendarSummary,
   CalendarTrashedEvent,
   CompanyCalendar,
@@ -469,7 +471,7 @@ export const hrDomainOperationsFixture = (domain: HrDomainOperations['domain']) 
   }) satisfies HrDomainOperations;
 
 export const CALENDAR_EVENT_FIXTURE = {
-  eventId: 'calendar-event-operating-review',
+  eventId: '00ba0853-02a8-7499-b6d8-009251e6a464',
   calendarId: 'calendar-personal',
   calendarName: 'My calendar',
   calendarColor: '#2764C4',
@@ -523,7 +525,7 @@ export const CALENDAR_EVENT_FIXTURE = {
 
 export const CALENDAR_FOCUS_FIXTURE = {
   ...CALENDAR_EVENT_FIXTURE,
-  eventId: 'calendar-event-focus',
+  eventId: '11ba0853-02a8-7499-b6d8-009251e6a465',
   title: 'Protected focus time',
   type: 'FOCUS',
   startsAt: '2026-08-11T05:00:00Z',
@@ -544,6 +546,23 @@ export const CALENDAR_FOCUS_FIXTURE = {
   },
   restrictionReason: null,
 } as const satisfies CalendarEvent;
+
+export const CALENDAR_REMINDER_SET_FIXTURE = {
+  eventId: CALENDAR_EVENT_FIXTURE.eventId,
+  eventVersion: CALENDAR_EVENT_FIXTURE.version,
+  version: 2,
+  state: 'ACTIVE',
+  reminders: [
+    {
+      reminderId: 'calendar-reminder-operating-review',
+      offsetMinutes: 15,
+      channel: 'IN_APP',
+      nextOccurrenceStartsAt: '2026-08-18T01:00:00Z',
+      nextDueAt: '2026-08-18T00:45:00Z',
+    },
+  ],
+  updatedAt: '2026-08-11T00:20:00Z',
+} satisfies CalendarReminderSet;
 
 export const CALENDAR_RESOURCES_FIXTURE = [
   {
@@ -871,3 +890,71 @@ export const CALENDAR_AVAILABILITY_FIXTURE = {
   ],
   generatedAt: '2026-08-11T00:20:00Z',
 } satisfies CalendarAvailability;
+
+export const CALENDAR_SCHEDULING_EVALUATION_V2_FIXTURE = {
+  evaluationId: '019a3d6e-4be8-779c-8a6d-893fe39b74ca',
+  criteriaHash: 'calendar-scheduling-criteria-2026-08-11',
+  challengeToken: 'calendar-scheduling-challenge-2026-08-11',
+  completeness: 'COMPLETE',
+  participants: [
+    {
+      clientRef: 'organizer',
+      personPublicId: null,
+      role: 'ORGANIZER',
+      coverage: 'COMPLETE',
+      workingSchedule: {
+        timeZone: 'Asia/Seoul',
+        days: [
+          {
+            dayOfWeek: 'TUESDAY',
+            windows: [{ startsAt: '09:00', endsAt: '18:00' }],
+          },
+        ],
+        source: 'USER_SETTINGS',
+        version: 4,
+        observedAt: '2026-08-11T00:20:00Z',
+      },
+      intervals: [],
+    },
+  ],
+  suggestions: [
+    {
+      candidateId: 'candidate-2026-08-11-0700',
+      startsAt: '2026-08-11T07:00:00Z',
+      endsAt: '2026-08-11T07:30:00Z',
+      completeness: 'COMPLETE',
+      score: 96,
+      reasonCodes: ['ALL_REQUIRED_AVAILABLE'],
+      requiredConflictRefs: [],
+      optionalConflictRefs: [],
+      hardRecheckRequired: true,
+    },
+  ],
+  sources: [
+    {
+      sourceType: 'DWP_NATIVE',
+      status: 'HEALTHY',
+      coverageFrom: '2026-08-11T00:00:00Z',
+      coverageTo: '2026-08-12T00:00:00Z',
+      lastSuccessfulSyncAt: '2026-08-11T00:20:00Z',
+      observedAt: '2026-08-11T00:20:00Z',
+      reasonCode: null,
+      affectedParticipantRefs: [],
+    },
+  ],
+  rooms: [
+    {
+      room: CALENDAR_RESOURCES_FIXTURE[0],
+      rank: 1,
+      score: 98,
+      eligible: true,
+      eligibilityReason: 'POLICY_ELIGIBLE',
+      reasonCodes: ['CAPACITY_MATCH', 'NO_APPROVAL_REQUIRED'],
+      resourceVersion: CALENDAR_RESOURCES_FIXTURE[0].version,
+      policyVersion: CALENDAR_ADMIN_FIXTURE.policy.version,
+      hardRecheckRequired: true,
+    },
+  ],
+  generatedAt: '2026-08-11T00:20:00Z',
+  validUntil: '2026-08-11T00:20:30Z',
+} satisfies CalendarSchedulingEvaluationV2;

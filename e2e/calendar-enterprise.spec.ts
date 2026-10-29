@@ -2,7 +2,7 @@ import AxeBuilder from '@axe-core/playwright';
 import { expect, test } from '@playwright/test';
 
 import { mockCalendarShellSession as mockShellSession } from './support/calendar-shell-session';
-import { CALENDAR_EVENT_FIXTURE } from './support/product-area-fixtures';
+import { CALENDAR_EVENT_FIXTURE, CALENDAR_FOCUS_FIXTURE } from './support/product-area-fixtures';
 import { FULL_PRODUCT_PERMISSIONS } from './support/shell-session';
 
 test('calendar supports governed range creation and drag rescheduling', async ({ page }) => {
@@ -14,11 +14,14 @@ test('calendar supports governed range creation and drag rescheduling', async ({
   const moveGate = new Promise<void>((resolve) => {
     releaseMove = resolve;
   });
-  await page.route('**/api/platform/v1/calendar/events/calendar-event-focus', async (route) => {
-    if (route.request().method() !== 'PUT') return route.fallback();
-    await moveGate;
-    return route.fallback();
-  });
+  await page.route(
+    `**/api/platform/v1/calendar/events/${CALENDAR_FOCUS_FIXTURE.eventId}`,
+    async (route) => {
+      if (route.request().method() !== 'PUT') return route.fallback();
+      await moveGate;
+      return route.fallback();
+    }
+  );
   await page.clock.setFixedTime(new Date('2026-08-18T01:00:00Z'));
   await page.setViewportSize({ width: 1440, height: 1000 });
   await page.goto('/calendar/schedule');
@@ -57,7 +60,7 @@ test('calendar supports governed range creation and drag rescheduling', async ({
   const updateRequest = page.waitForRequest(
     (request) =>
       request.method() === 'PUT' &&
-      request.url().includes('/api/platform/v1/calendar/events/calendar-event-focus')
+      request.url().includes(`/api/platform/v1/calendar/events/${CALENDAR_FOCUS_FIXTURE.eventId}`)
   );
   await page.mouse.move(eventBox!.x + eventBox!.width / 2, eventBox!.y + eventBox!.height / 2);
   await page.mouse.down();
@@ -106,7 +109,7 @@ test('calendar edits one recurring occurrence with an explicit stable command', 
   const originalStartsAt = CALENDAR_EVENT_FIXTURE.startsAt;
   const recurringEvent = {
     ...CALENDAR_EVENT_FIXTURE,
-    eventId: 'calendar-event-editable-series',
+    eventId: '22ba0853-02a8-7499-b6d8-009251e6a466',
     title: 'Editable recurring review',
     recurrenceId: originalStartsAt,
     capabilities: { ...CALENDAR_EVENT_FIXTURE.capabilities, canEdit: true },
@@ -121,7 +124,7 @@ test('calendar edits one recurring occurrence with an explicit stable command', 
     });
   });
   await page.route(
-    '**/api/platform/v1/calendar/events/calendar-event-editable-series',
+    `**/api/platform/v1/calendar/events/${recurringEvent.eventId}`,
     async (route) => {
       if (route.request().method() !== 'PUT') return route.fallback();
       const body = route.request().postDataJSON() as Record<string, unknown>;
@@ -154,6 +157,57 @@ test('calendar edits one recurring occurrence with an explicit stable command', 
     version: CALENDAR_EVENT_FIXTURE.version,
   });
   expect(updates[0]?.idempotencyKey).toEqual(expect.any(String));
+});
+
+test('calendar edits saved-event reminders with a keyboard-safe mobile layout', async ({
+  page,
+}) => {
+  await mockShellSession(page, ['CALENDAR_ADMIN'], {
+    locale: 'en',
+    permissions: FULL_PRODUCT_PERMISSIONS,
+  });
+  await page.emulateMedia({ colorScheme: 'dark', reducedMotion: 'reduce' });
+  await page.clock.setFixedTime(new Date('2026-08-11T00:20:00Z'));
+  await page.setViewportSize({ width: 320, height: 800 });
+  await page.goto('/calendar/schedule?view=week&date=2026-08-11');
+
+  await page.getByRole('button', { name: /Protected focus time/u }).click();
+  const inspector = page.getByRole('dialog', { name: 'Protected focus time' });
+  await inspector.getByRole('button', { name: 'Edit', exact: true }).click();
+  const composer = page.getByRole('dialog', { name: 'Edit event' });
+  await expect(composer.getByRole('heading', { name: 'Notifications' })).toBeVisible();
+  await expect(composer.getByText('No notifications are configured.')).toBeVisible();
+  await expect(composer.getByText(/Email delivery is unavailable/u)).toBeVisible();
+
+  const add = composer.getByRole('button', { name: 'Add notification', exact: true });
+  await add.focus();
+  await expect(add).toBeFocused();
+  await add.press('Enter');
+  await expect(add).toBeFocused();
+
+  const updateRequest = page.waitForRequest(
+    (request) =>
+      request.method() === 'PUT' &&
+      request
+        .url()
+        .includes(`/api/platform/v1/calendar/events/${CALENDAR_FOCUS_FIXTURE.eventId}/reminders`)
+  );
+  await composer.getByRole('button', { name: 'Save notifications', exact: true }).click();
+  expect((await updateRequest).postDataJSON()).toEqual({
+    version: 2,
+    reminders: [{ offsetMinutes: 10, channel: 'IN_APP' }],
+  });
+  await expect(composer.getByText('Notifications saved.')).toBeVisible();
+
+  expect(
+    await composer.evaluate((element) => element.scrollWidth - element.clientWidth)
+  ).toBeLessThanOrEqual(1);
+  const accessibility = await new AxeBuilder({ page }).include('[role="dialog"]').analyze();
+  expect(
+    accessibility.violations.filter(
+      (violation) => violation.impact === 'critical' || violation.impact === 'serious'
+    )
+  ).toEqual([]);
 });
 
 test('calendar isolates transient briefing failures but purges every surface on authority denial', async ({
@@ -453,51 +507,56 @@ test('calendar coordinates attendee time, room choice, and durable schedule stat
   const assistant = dialog.getByTestId('calendar-scheduling-assistant');
   await expect(assistant).toBeVisible();
   await expect(assistant.getByText('Free/busy: 1 person')).toBeVisible();
+  await dialog
+    .getByRole('textbox', { name: 'Title', exact: true })
+    .fill('Verified planning review');
 
   const availabilityRequest = page.waitForRequest(
     (request) =>
       request.method() === 'POST' &&
-      request.url().includes('/api/platform/v1/calendar/scheduling/evaluations')
+      request.url().includes('/api/platform/v2/calendar/scheduling/evaluations') &&
+      !request.url().includes('/hard-recheck')
   );
   await assistant.getByRole('button', { name: 'Check availability', exact: true }).click();
   const request = await availabilityRequest;
   const requestUrl = new URL(request.url());
   const evaluationInput = request.postDataJSON() as {
     durationMinutes: number;
-    timeZone: string;
-    personIds: string[];
+    searchTimeZone: string;
+    participants: unknown[];
+    candidateSlot: { startsAt: string; endsAt: string };
   };
   expect(requestUrl.search).toBe('');
   expect(evaluationInput.durationMinutes).toBe(50);
-  expect(evaluationInput.timeZone).toBeTruthy();
-  expect(evaluationInput.personIds).toEqual([]);
+  expect(evaluationInput.searchTimeZone).toBeTruthy();
+  expect(evaluationInput.participants).toEqual([]);
+  expect(evaluationInput.candidateSlot.startsAt).toBeTruthy();
   await expect(
-    assistant.getByText('All checked required attendees are available within working hours.')
+    assistant.getByText('All required attendees are available within working hours.')
   ).toBeVisible();
+  await expect(
+    assistant.getByRole('table', { name: 'Attendee availability matrix' })
+  ).toBeVisible();
+  await expect(assistant.getByText('DWP Calendar')).toBeVisible();
+  await expect(assistant.getByRole('button', { name: 'Apply room Focus 08' })).toBeVisible();
 
-  const refreshedEvaluation = page.waitForRequest(
+  const hardRecheckRequest = page.waitForRequest(
     (candidate) =>
       candidate.method() === 'POST' &&
-      candidate.url().includes('/api/platform/v1/calendar/scheduling/evaluations')
+      candidate.url().includes('/api/platform/v2/calendar/scheduling/evaluations/') &&
+      candidate.url().endsWith('/hard-recheck')
   );
   await assistant
     .getByRole('button')
-    .filter({ hasText: 'All checked required attendees are available within working hours.' })
+    .filter({ hasText: 'All required attendees are available within working hours.' })
     .click();
-  const refreshedRequest = await refreshedEvaluation;
-  const refreshedInput = refreshedRequest.postDataJSON() as {
-    roomStartsAt: string;
-    roomEndsAt: string;
+  const hardRequest = await hardRecheckRequest;
+  const hardInput = hardRequest.postDataJSON() as {
+    selection: { startsAt: string; endsAt: string };
   };
-  expect(refreshedInput.roomStartsAt).toBe('2026-08-11T07:00:00Z');
-  expect(refreshedInput.roomEndsAt).toBe('2026-08-11T07:30:00Z');
+  expect(hardInput.selection.startsAt).toBe('2026-08-11T07:00:00Z');
+  expect(hardInput.selection.endsAt).toBe('2026-08-11T07:30:00Z');
   await expect(assistant.getByText(/recommended time was applied/iu)).toBeVisible();
-
-  await assistant.getByRole('button', { name: /Focus 08/u }).click();
-  await expect(assistant.getByRole('button', { name: /Focus 08/u })).toHaveAttribute(
-    'aria-pressed',
-    'true'
-  );
 
   const accessibility = await new AxeBuilder({ page }).include('[role="dialog"]').analyze();
   expect(
@@ -505,6 +564,28 @@ test('calendar coordinates attendee time, room choice, and durable schedule stat
       (violation) => violation.impact === 'critical' || violation.impact === 'serious'
     )
   ).toEqual([]);
+
+  const finalEvaluationRequest = page.waitForRequest(
+    (candidate) =>
+      candidate.method() === 'POST' &&
+      candidate.url().includes('/api/platform/v2/calendar/scheduling/evaluations') &&
+      !candidate.url().includes('/hard-recheck')
+  );
+  const finalHardRecheckRequest = page.waitForRequest(
+    (candidate) => candidate.method() === 'POST' && candidate.url().endsWith('/hard-recheck')
+  );
+  const createRequest = page.waitForRequest(
+    (candidate) =>
+      candidate.method() === 'POST' &&
+      new URL(candidate.url()).pathname === '/api/platform/v1/calendar/events'
+  );
+  await dialog.getByRole('button', { name: 'Create', exact: true }).click();
+  await finalEvaluationRequest;
+  await finalHardRecheckRequest;
+  const atomicCreate = await createRequest;
+  expect(atomicCreate.headers()['x-dwp-calendar-hard-recheck-token']).toBe(
+    'calendar-hard-recheck-token-2026-08-11'
+  );
 });
 
 test('calendar exposes planning and invitation workbenches', async ({ page }) => {
@@ -544,7 +625,7 @@ test('calendar exposes planning and invitation workbenches', async ({ page }) =>
       request.method() === 'POST' &&
       request
         .url()
-        .includes('/api/platform/v1/calendar/events/calendar-event-operating-review/response')
+        .includes(`/api/platform/v1/calendar/events/${CALENDAR_EVENT_FIXTURE.eventId}/response`)
   );
   await responseDialog.getByRole('button', { name: 'Tentative', exact: true }).click();
   expect((await responseRequest).postDataJSON()).toEqual({
@@ -638,8 +719,29 @@ test('calendar meeting composer becomes a full-screen, overflow-safe mobile work
   expect(bounds!.width).toBeGreaterThanOrEqual(319);
   await dialog.getByRole('button', { name: /People, place, and more options/u }).click();
   await expect(dialog.getByLabel('Event time zone')).toBeVisible();
-  await expect(dialog.getByLabel('Required attendees')).toBeVisible();
+  const requiredAttendees = dialog.getByLabel('Required attendees');
+  await expect(requiredAttendees).toBeVisible();
   await expect(dialog.getByLabel('Optional attendees')).toBeVisible();
+  await expect(dialog.getByText(/External email is allowed/u).first()).toBeVisible();
+
+  await requiredAttendees.fill('Guest+Planning@Example.com');
+  await requiredAttendees.press('Enter');
+  await expect(
+    dialog.getByText('guest+planning@example.com · External · Unverified', { exact: true })
+  ).toBeVisible();
+
+  const directoryRequest = page.waitForRequest(
+    (request) =>
+      request.method() === 'GET' &&
+      request.url().includes('/api/people/v1/people?') &&
+      new URL(request.url()).searchParams.get('query') === 'Tenant'
+  );
+  await requiredAttendees.fill('Tenant');
+  const requestedPage = new URL((await directoryRequest).url());
+  expect(requestedPage.searchParams.get('size')).toBe('50');
+  await expect(
+    dialog.getByText('guest+planning@example.com · External · Unverified', { exact: true })
+  ).toBeVisible();
 
   const assistant = dialog.getByTestId('calendar-scheduling-assistant');
   await assistant.scrollIntoViewIfNeeded();
@@ -876,7 +978,8 @@ test('calendar remains read-only when Home deep-links a viewer without mutation 
   page.on('request', (request) => {
     if (
       request.method() === 'POST' &&
-      request.url().includes('/api/platform/v1/calendar/scheduling/evaluations')
+      request.url().includes('/api/platform/v2/calendar/scheduling/evaluations') &&
+      !request.url().includes('/hard-recheck')
     ) {
       evaluationRequests.push(`${request.method()} ${request.url()}`);
       return;
@@ -927,11 +1030,11 @@ test('calendar remains read-only when Home deep-links a viewer without mutation 
   await page.goto('/calendar/availability');
   await page.getByRole('button', { name: 'Find available time', exact: true }).click();
   await expect(
-    page.getByText('All participants are available and focus time is preserved.')
+    page.getByText('All required attendees are available within working hours.')
   ).toBeVisible();
   await expect(
     page.getByRole('button', {
-      name: /All participants are available and focus time is preserved\./,
+      name: /All required attendees are available within working hours\./,
     })
   ).toHaveCount(0);
   await expect(page.getByRole('dialog')).toHaveCount(0);

@@ -5,6 +5,7 @@ import {
   Gauge,
   House,
   Inbox,
+  ListChecks,
   Settings2,
   Trash2,
   UsersRound,
@@ -18,8 +19,10 @@ type CalendarView =
   | 'schedule'
   | 'focus'
   | 'invitations'
+  | 'bookings'
   | 'trash'
   | 'availability'
+  | 'polls'
   | 'insights'
   | 'settings'
   | 'admin-overview'
@@ -72,6 +75,18 @@ export const CALENDAR_NAVIGATION: readonly CalendarNavigationGroup[] = [
         view: 'availability',
         path: '/calendar/availability',
         icon: UsersRound,
+      },
+      {
+        section: 'coordinate',
+        view: 'polls',
+        path: '/calendar/polls',
+        icon: ListChecks,
+      },
+      {
+        section: 'coordinate',
+        view: 'bookings',
+        path: '/calendar/bookings',
+        icon: CalendarDays,
       },
     ],
   },

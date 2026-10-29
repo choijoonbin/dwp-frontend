@@ -20,6 +20,9 @@ const run = {
 
 const observableRun = {
   ...run,
+  stateChangedAt: '2026-08-27T01:00:00.240Z',
+  safeErrorCode: null,
+  recoveryHint: null,
   activityTitle: 'Policy-grounded answer execution',
   attempt: 2,
   lease: { status: 'RELEASED', expiresAt: null },
@@ -161,6 +164,47 @@ describe('Agent run API', () => {
     await expect(getDwaionUserRunPage()).resolves.toMatchObject({ runs: [observableRun] });
   });
 
+  it('accepts canonical attachment health and a nullable generated state transition time', async () => {
+    const attachmentRun = {
+      ...observableRun,
+      stateChangedAt: null,
+      sourceHealth: [
+        {
+          ...observableRun.sourceHealth[0],
+          sourceType: 'ATTACHMENT',
+        },
+      ],
+    };
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockResolvedValue(response({ success: true, data: [attachmentRun] }))
+    );
+
+    await expect(getDwaionUserRunPage()).resolves.toMatchObject({ runs: [attachmentRun] });
+  });
+
+  it('preserves the last successful source time when a newer attempt fails', async () => {
+    const unavailableAfterSuccess = {
+      ...observableRun,
+      sourceHealth: [
+        {
+          ...observableRun.sourceHealth[0],
+          status: 'UNAVAILABLE',
+          lastAttemptAt: '2026-08-27T01:00:00.200Z',
+          lastSuccessAt: '2026-08-27T01:00:00.100Z',
+        },
+      ],
+    };
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockResolvedValue(response({ success: true, data: [unavailableAfterSuccess] }))
+    );
+
+    await expect(getDwaionUserRunPage()).resolves.toMatchObject({
+      runs: [unavailableAfterSuccess],
+    });
+  });
+
   it('accepts the canonical 160-character title and opaque bounded audit ID', async () => {
     const boundaryRun = {
       ...observableRun,
@@ -177,6 +221,11 @@ describe('Agent run API', () => {
 
   it.each([
     { progressPercent: 101 },
+    { stateChangedAt: 'not-a-date' },
+    { safeErrorCode: 'unsafe lowercase code' },
+    { safeErrorCode: 'A'.repeat(121) },
+    { safeErrorCode: 'UNKNOWN_PUBLIC_CODE' },
+    { recoveryHint: 'RESTART_EVERYTHING' },
     { activityTitle: 'a'.repeat(161) },
     { statusCode: 's'.repeat(129) },
     { stages: [{ ...observableRun.stages[0], sequence: 9 }] },
@@ -213,7 +262,14 @@ describe('Agent run API', () => {
       ],
     },
     {
-      sourceHealth: [{ ...observableRun.sourceHealth[0], status: 'UNAVAILABLE' }],
+      sourceHealth: [
+        {
+          ...observableRun.sourceHealth[0],
+          status: 'UNAVAILABLE',
+          lastAttemptAt: '2026-08-27T01:00:00.100Z',
+          lastSuccessAt: '2026-08-27T01:00:00.200Z',
+        },
+      ],
     },
     { prompt: 'must never enter the Activity cache' },
   ])('fails closed for malformed measured evidence %#', async (override) => {

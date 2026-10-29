@@ -1,5 +1,5 @@
 // @vitest-environment jsdom
-import { act, useState } from 'react';
+import { act, useRef, useState } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
 import { fireEvent, getByRole } from '@testing-library/dom';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
@@ -17,18 +17,39 @@ import type {
 } from '@dwp-frontend/shared-utils/api/notification-api';
 import type { NotificationCenterPresentation } from './notification-saved-view-model';
 
+const notificationActionCardRender = vi.hoisted(() => vi.fn());
+
 vi.mock('./notification-action-card', () => ({
   NotificationActionCard: ({
     item,
     density,
+    active,
+    tabIndex,
+    rowRef,
+    onFocus,
   }: {
     item: NotificationItem;
     density: 'standard' | 'compact';
-  }) => (
-    <button type="button" data-testid="notification-card" data-density={density}>
-      {item.title}
-    </button>
-  ),
+    active: boolean;
+    tabIndex: number;
+    rowRef: (element: HTMLButtonElement | null) => void;
+    onFocus: () => void;
+  }) => {
+    notificationActionCardRender(item.notificationId);
+    return (
+      <button
+        ref={rowRef}
+        type="button"
+        tabIndex={tabIndex}
+        data-testid="notification-card"
+        data-density={density}
+        data-active={active}
+        onFocus={onFocus}
+      >
+        {item.title}
+      </button>
+    );
+  },
 }));
 
 const notification = (
@@ -70,6 +91,34 @@ function PresentationControlHarness() {
   );
 }
 
+function PerformancePresentationHarness({ items }: { items: NotificationItem[] }) {
+  const [selectedId, setSelectedId] = useState(items[0]?.notificationId ?? null);
+  const rowRefs = useRef<Array<HTMLButtonElement | null>>([]);
+  return (
+    <NotificationCenterPresentationList
+      items={items}
+      presentation={DEFAULT_NOTIFICATION_CENTER_PRESENTATION}
+      listLabel="Notifications"
+      profile={profile}
+      protectedTitle="Protected notification"
+      now={Date.parse('2026-09-16T02:00:00Z')}
+      selectedId={selectedId}
+      selectedIds={new Set()}
+      detailItemId={null}
+      detailOpen={false}
+      compactDetail={false}
+      busy={false}
+      rowRefs={rowRefs}
+      onKeyDown={() => undefined}
+      onFocusItem={(item) => setSelectedId(item.notificationId)}
+      onToggleChecked={() => undefined}
+      onOpenDetails={() => undefined}
+      onTriage={() => undefined}
+      onQuickReply={() => Promise.resolve()}
+    />
+  );
+}
+
 describe('notification center presentation', () => {
   let container: HTMLDivElement;
   let root: Root;
@@ -79,6 +128,7 @@ describe('notification center presentation', () => {
     container = document.createElement('div');
     document.body.append(container);
     root = createRoot(container);
+    notificationActionCardRender.mockClear();
   });
 
   afterEach(async () => {
@@ -175,5 +225,25 @@ describe('notification center presentation', () => {
       root.render(renderList({ ...DEFAULT_NOTIFICATION_CENTER_PRESENTATION, grouping: 'CONTEXT' }))
     );
     expect(container.querySelectorAll('[data-density="standard"]')).toHaveLength(3);
+  });
+
+  it('keeps a 1000-row keyboard selection update bounded to the old and new rows', async () => {
+    const items = Array.from({ length: 1_000 }, (_, index) =>
+      notification(`performance-${index + 1}`, `performance:${index + 1}`)
+    );
+    await act(async () => {
+      root.render(
+        <ThemeProvider theme={createTheme()}>
+          <PerformancePresentationHarness items={items} />
+        </ThemeProvider>
+      );
+    });
+    expect(notificationActionCardRender).toHaveBeenCalledTimes(1_000);
+
+    const second = getByRole(container, 'button', { name: 'Review performance-2' });
+    await act(async () => second.focus());
+
+    expect(second.getAttribute('data-active')).toBe('true');
+    expect(notificationActionCardRender).toHaveBeenCalledTimes(1_002);
   });
 });

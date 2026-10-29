@@ -21,10 +21,69 @@ import Typography from '@mui/material/Typography';
 import { alpha } from '@mui/material/styles';
 
 import type {
+  DwaionRunRecoveryHint,
+  DwaionSafeErrorCode,
   DwaionRunSourceHealth,
+  DwaionRunSourceType,
   DwaionRunStage,
   DwaionUserRun,
 } from '@dwp-frontend/shared-utils';
+
+const SAFE_ERROR_CODE_MEMBERS = {
+  AGENT_EXECUTION_FAILED: true,
+  AGENT_SAFETY_CONFIGURATION_REQUIRED: true,
+  ASK_RUNTIME_FAILED: true,
+  CONTEXT_SOURCE_NOT_CONFIGURED: true,
+  CONTEXT_SOURCE_UNAVAILABLE: true,
+  MODEL_CALL_FAILED: true,
+  MODEL_GROUNDING_CONTRACT_INVALID: true,
+  MODEL_OUTPUT_CONTRACT_INVALID: true,
+  MODEL_OUTPUT_MISSING: true,
+  MODEL_PROVIDER_UNAVAILABLE: true,
+  MODEL_RESPONSE_INVALID_JSON: true,
+  MODEL_ROUTE_CONFIGURATION_INVALID: true,
+  MODEL_ROUTE_CONFIGURATION_REQUIRED: true,
+  NO_SCOPED_EVIDENCE: true,
+} satisfies Record<DwaionSafeErrorCode, true>;
+const SAFE_ERROR_CODES = new Set<DwaionSafeErrorCode>(
+  Object.keys(SAFE_ERROR_CODE_MEMBERS) as DwaionSafeErrorCode[]
+);
+const RECOVERY_HINT_MEMBERS = {
+  RETRY_LATER: true,
+  REVIEW_CONFIGURATION: true,
+  CHECK_SOURCE_CONNECTION: true,
+  REVIEW_REQUEST: true,
+  CONTACT_SUPPORT: true,
+} satisfies Record<DwaionRunRecoveryHint, true>;
+const RECOVERY_HINTS = new Set<DwaionRunRecoveryHint>(
+  Object.keys(RECOVERY_HINT_MEMBERS) as DwaionRunRecoveryHint[]
+);
+const SOURCE_TYPE_LABEL_KEYS = {
+  WORK_ITEM: 'dwaionAsk.sourceTypes.WORK_ITEM',
+  MAIL: 'dwaionAsk.sourceTypes.MAIL',
+  CALENDAR: 'dwaionAsk.sourceTypes.CALENDAR',
+  APPROVAL_TASK: 'dwaionAsk.sourceTypes.APPROVAL_TASK',
+  APPROVAL_REQUEST: 'dwaionAsk.sourceTypes.APPROVAL_REQUEST',
+  APPROVAL_FORM: 'dwaionAsk.sourceTypes.APPROVAL_FORM',
+  APPROVAL_OPERATION: 'dwaionAsk.sourceTypes.APPROVAL_OPERATION',
+  ATTACHMENT: 'dwaionAsk.sourceTypes.ATTACHMENT',
+} satisfies Record<DwaionRunSourceType, string>;
+
+export function activityRunFailurePresentation(
+  run: Pick<DwaionUserRun, 'runState' | 'safeErrorCode' | 'recoveryHint'>
+): { code: DwaionSafeErrorCode | 'GENERIC'; recovery: DwaionRunRecoveryHint | 'GENERIC' } | null {
+  if (run.runState !== 'FAILED') return null;
+  return {
+    code:
+      typeof run.safeErrorCode === 'string' && SAFE_ERROR_CODES.has(run.safeErrorCode)
+        ? (run.safeErrorCode as DwaionSafeErrorCode)
+        : 'GENERIC',
+    recovery:
+      typeof run.recoveryHint === 'string' && RECOVERY_HINTS.has(run.recoveryHint)
+        ? (run.recoveryHint as DwaionRunRecoveryHint)
+        : 'GENERIC',
+  };
+}
 
 export function ActivityRunObservability({
   run,
@@ -42,11 +101,28 @@ export function ActivityRunObservability({
     run.measurementStatus !== undefined ||
     run.stages !== undefined ||
     run.progressPercent !== undefined;
+  const failure = activityRunFailurePresentation(run);
   return (
     <Stack gap={density === 'compact' ? 1.25 : 2.5} data-run-provenance={run.dataProvenance}>
       {run.dataProvenance === 'SAMPLE' && (
         <InlineFeedback severity="warning" title={t('dwaionActivity.observability.sample.title')}>
           {t('dwaionActivity.observability.sample.description')}
+        </InlineFeedback>
+      )}
+      {failure && (
+        <InlineFeedback
+          severity="error"
+          title={t(`dwaionActivity.observability.failure.codes.${failure.code}.title`)}
+        >
+          <Stack gap={0.75}>
+            <Typography component="span" variant="body2">
+              {t(`dwaionActivity.observability.failure.codes.${failure.code}.description`)}
+            </Typography>
+            <Typography component="span" variant="body2" fontWeight="fontWeightMedium">
+              {t('dwaionActivity.observability.failure.recoveryLabel')}{' '}
+              {t(`dwaionActivity.observability.failure.recovery.${failure.recovery}`)}
+            </Typography>
+          </Stack>
         </InlineFeedback>
       )}
       {hasExecutionEvidence && (
@@ -405,7 +481,7 @@ function RunSourceHealth({
                   fontWeight="fontWeightMedium"
                   sx={{ overflowWrap: 'anywhere' }}
                 >
-                  {source.sourceType}
+                  {t(SOURCE_TYPE_LABEL_KEYS[source.sourceType])}
                 </Typography>
                 <Chip
                   size="small"

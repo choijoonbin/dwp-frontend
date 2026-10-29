@@ -72,12 +72,15 @@ function successWithStatus(route: Route, data: unknown, status: number) {
 async function mockAccessMode(page: Page, elevated: boolean) {
   await page.route('**/api/auth/product-surface-contexts', (route) =>
     fulfillSuccess(route, {
-      contractVersion: 'product-surfaces/v3',
+      contractVersion: '2',
       decisionRevision: `connector-operations-${elevated ? 'elevated' : 'normal'}`,
       sourceRevisions: {
         auth: 'auth-connector-operations',
         policy: 'policy-connector-operations',
         productRelationship: 'relationship-connector-operations',
+        targetPopulation: 'target-population-connector-operations',
+        support: null,
+        tenantControl: 'tenant-control-connector-operations',
       },
       activeAccessMode: elevated ? 'ELEVATED' : 'NORMAL',
       generatedAt: evaluatedAt,

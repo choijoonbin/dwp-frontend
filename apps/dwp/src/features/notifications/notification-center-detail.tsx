@@ -4,7 +4,6 @@ import { ArrowLeft, Inbox } from 'lucide-react';
 import { ActionIconButton } from '@dwp-frontend/design-system/components/actions/action-icon-button';
 import {
   EmptyState,
-  ErrorState,
   LoadingState,
 } from '@dwp-frontend/design-system/components/states/state-panels';
 import { foundationTokens } from '@dwp-frontend/design-system/foundation/tokens';
@@ -14,6 +13,7 @@ import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
 import { NotificationDetailPane } from './notification-detail-pane';
+import { NotificationErrorState } from './notification-error-support';
 
 import type {
   NotificationItem,
@@ -79,6 +79,7 @@ export function NotificationCenterDetail({
   mode,
   loading,
   error,
+  errorValue,
   fetching,
   busy,
   onBack,
@@ -92,6 +93,7 @@ export function NotificationCenterDetail({
   mode: 'desktop' | 'mobile';
   loading: boolean;
   error: boolean;
+  errorValue?: unknown | readonly unknown[];
   fetching: boolean;
   busy: boolean;
   onBack: () => void;
@@ -142,7 +144,8 @@ export function NotificationCenterDetail({
   }
   if (open && error) {
     const state = (
-      <ErrorState
+      <NotificationErrorState
+        error={errorValue}
         title={t('states.detailErrorTitle')}
         description={t('states.detailErrorDescription')}
         retryLabel={t('actions.retry')}

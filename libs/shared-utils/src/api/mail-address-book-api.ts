@@ -1,4 +1,4 @@
-import { axiosInstance } from '../axios-instance';
+import { mailGovernedHttp as axiosInstance } from './mail-governed-transport';
 
 import type { ApiResponse } from '../types';
 import type { MailClassification, MailThreadDetail } from './mail-api';

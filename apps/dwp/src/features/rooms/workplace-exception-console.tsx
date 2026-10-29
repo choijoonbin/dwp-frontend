@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useSearchParams } from 'react-router-dom';
@@ -57,6 +57,12 @@ const FILTERS: readonly Filter[] = [
   'SAFETY',
   'BOOKING',
   'CONNECTOR',
+  'DEVICE_COMMAND',
+  'SERVICE_ORDER',
+  'SERVICE_PROVIDER',
+  'SERVICE_REFUND',
+  'VISIT_PROVIDER',
+  'ACCESS_PASS',
 ];
 
 function parseFilter(value: string | null): Filter {
@@ -67,6 +73,13 @@ const severityColor = {
   CRITICAL: 'error',
   ERROR: 'error',
   WARNING: 'warning',
+} as const;
+
+const statusColor = {
+  ACTIVE: 'error',
+  RECOVERING: 'warning',
+  MANUAL_REVIEW: 'error',
+  RESOLVED: 'success',
 } as const;
 
 function download(blob: Blob) {
@@ -128,13 +141,17 @@ export function WorkplaceExceptionConsole() {
       ),
     [filter, query.data?.exceptions]
   );
-  const selected =
-    query.data?.exceptions.find((item) => item.exceptionId === selectedId) ?? items[0] ?? null;
+  const selected = items.find((item) => item.exceptionId === selectedId) ?? items[0] ?? null;
+  const selectedItemRef = useRef<WorkplaceExceptionItem | null>(selected);
+  selectedItemRef.current = selected;
   const selectedBatchItems = (query.data?.exceptions ?? []).filter((item) =>
     selectedBatchIds.includes(item.exceptionId)
   );
 
   const select = (item: WorkplaceExceptionItem) => {
+    // Keep the command target bound to the latest explicit row selection even when a user
+    // activates the owner action before the URL-backed selection has rendered.
+    selectedItemRef.current = item;
     const next = new URLSearchParams(params);
     next.set('exception', item.exceptionId);
     setParams(next, { replace: true });
@@ -320,6 +337,14 @@ export function WorkplaceExceptionConsole() {
           {t('screen22.loadError')}
         </Alert>
       ) : null}
+      {query.data?.summary.truncated ? (
+        <Alert severity="warning" data-testid="workplace-exception-coverage-warning">
+          {t('screen22.truncated', {
+            unresolved: query.data.summary.unresolvedCount,
+            returned: query.data.summary.returnedCount,
+          })}
+        </Alert>
+      ) : null}
       {capabilities.canManageWorkplaceAdmin && !elevated ? (
         <Alert severity="info">{t('screen22.stepUpRequired')}</Alert>
       ) : null}
@@ -346,11 +371,16 @@ export function WorkplaceExceptionConsole() {
           >
             <Metric
               label={t('screen22.metrics.active')}
-              value={String(query.data.summary.active)}
-              detail={t('screen22.metrics.severity', {
-                critical: query.data.summary.critical,
-                warning: query.data.summary.warning,
-              })}
+              value={String(query.data.summary.unresolvedCount)}
+              detail={t(
+                query.data.summary.truncated
+                  ? 'screen22.metrics.visibleSeverity'
+                  : 'screen22.metrics.severity',
+                {
+                  critical: query.data.summary.critical,
+                  warning: query.data.summary.warning,
+                }
+              )}
             />
             <Metric
               label={t('screen22.metrics.sla')}
@@ -466,6 +496,12 @@ export function WorkplaceExceptionConsole() {
                               color={severityColor[item.severity]}
                               label={item.severity}
                             />
+                            <Chip
+                              size="small"
+                              variant="outlined"
+                              color={statusColor[item.status]}
+                              label={t(`screen22.status.${item.status}`)}
+                            />
                             <Typography variant="caption" fontFamily="monospace">
                               {item.exceptionId}
                             </Typography>
@@ -519,6 +555,9 @@ export function WorkplaceExceptionConsole() {
                       {selected.impact}
                     </Typography>
                   </Box>
+                  {selected.status === 'MANUAL_REVIEW' ? (
+                    <Alert severity="error">{t('screen22.manualReviewRequired')}</Alert>
+                  ) : null}
                   <Box>
                     <Typography variant="overline">{t('screen22.rootCause')}</Typography>
                     <Typography variant="body2" fontFamily="monospace">
@@ -543,26 +582,33 @@ export function WorkplaceExceptionConsole() {
                       required
                     />
                   ) : null}
-                  <ActionButton
-                    intent={selected.action === 'REPLAY_CONNECTOR' ? 'primary' : 'secondary'}
-                    startIcon={
-                      selected.action === 'REPLAY_CONNECTOR' ? (
-                        <RotateCcw size={16} />
-                      ) : (
-                        <ExternalLink size={16} />
-                      )
-                    }
-                    disabled={
-                      selected.action === 'REPLAY_CONNECTOR' &&
-                      (!capabilities.canManageWorkplaceAdmin || !elevated || !reason.trim())
-                    }
-                    loading={previewMutation.isPending}
-                    onClick={() => openOwner(selected)}
-                  >
-                    {selected.action === 'REPLAY_CONNECTOR'
-                      ? t('screen22.previewRecovery')
-                      : t('screen22.openOwner')}
-                  </ActionButton>
+                  {selected.action !== 'REPLAY_CONNECTOR' && !selected.actionHref ? (
+                    <Alert severity="warning">{t('screen22.ownerUnavailable')}</Alert>
+                  ) : (
+                    <ActionButton
+                      intent={selected.action === 'REPLAY_CONNECTOR' ? 'primary' : 'secondary'}
+                      startIcon={
+                        selected.action === 'REPLAY_CONNECTOR' ? (
+                          <RotateCcw size={16} />
+                        ) : (
+                          <ExternalLink size={16} />
+                        )
+                      }
+                      disabled={
+                        selected.action === 'REPLAY_CONNECTOR' &&
+                        (!capabilities.canManageWorkplaceAdmin || !elevated || !reason.trim())
+                      }
+                      loading={previewMutation.isPending}
+                      onClick={() => {
+                        const current = selectedItemRef.current;
+                        if (current) openOwner(current);
+                      }}
+                    >
+                      {selected.action === 'REPLAY_CONNECTOR'
+                        ? t('screen22.previewRecovery')
+                        : t('screen22.openOwner')}
+                    </ActionButton>
+                  )}
                   {recoveryReceipt ? (
                     <Alert severity="success">
                       {t('screen22.receipt', { receipt: recoveryReceipt })}

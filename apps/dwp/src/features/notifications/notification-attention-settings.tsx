@@ -479,6 +479,7 @@ export function NotificationAttentionSettings({ sectionId }: { sectionId?: strin
         summary={attentionRuleSummary(rules)}
         rules={visibleRules}
         state={state}
+        error={rulesQuery.error}
         ruleLimit={rulesQuery.data ? attentionRuleLimit(rulesQuery.data) : null}
         selectedKind={selectedKind}
         searchQuery={searchQuery}

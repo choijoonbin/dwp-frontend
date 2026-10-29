@@ -264,6 +264,30 @@ describe('calendar today model', () => {
     ).toBe('UNKNOWN');
   });
 
+  it('does not invent focus windows on a configured non-working day or incomplete fallback', () => {
+    const weekendOptions = {
+      date: '2026-09-06',
+      timeZone: 'Asia/Seoul',
+      workingDays: ['MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY'] as const,
+      workingDayStart: '09:00',
+      workingDayEnd: '18:00',
+    };
+
+    expect(calendarWorkdayPhase('2026-09-06T03:00:00Z', weekendOptions)).toBe('UNKNOWN');
+    expect(
+      calendarTodayStream([event()], '2026-09-06T03:00:00Z', weekendOptions).filter(
+        (item) => item.kind === 'open-window'
+      )
+    ).toEqual([]);
+    expect(
+      calendarTodayStream([event()], '2026-09-03T03:00:00Z', {
+        ...weekendOptions,
+        date: '2026-09-03',
+        workingDayEnd: null,
+      }).filter((item) => item.kind === 'open-window')
+    ).toEqual([]);
+  });
+
   it('expires old successful snapshots and rejects malformed or future clock evidence', () => {
     expect(calendarHomeSnapshotIsFresh('2026-08-11T00:20:00Z', '2026-08-11T00:21:59Z')).toBe(true);
     expect(calendarHomeSnapshotIsFresh('2026-08-11T00:20:00Z', '2026-08-11T00:22:01Z')).toBe(false);

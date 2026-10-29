@@ -20,7 +20,6 @@ import {
   EmptyState,
   GlyphSurface,
   LoadingState,
-  LocalErrorState,
 } from '@dwp-frontend/design-system';
 
 import Box from '@mui/material/Box';
@@ -30,6 +29,7 @@ import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
 import { notificationCenterPath } from './notification-navigation';
+import { NotificationErrorState } from './notification-error-support';
 
 import type {
   AppNotificationCounter,
@@ -56,6 +56,7 @@ export function NotificationHomeInsights({
   apps,
   appsLoading,
   appsError,
+  appsErrorValue,
   appsRefreshing,
   profile,
   deliveryStatus,
@@ -65,6 +66,7 @@ export function NotificationHomeInsights({
   apps: AppNotificationCounter[];
   appsLoading: boolean;
   appsError: boolean;
+  appsErrorValue?: unknown;
   appsRefreshing: boolean;
   profile: NotificationDeliveryProfile;
   deliveryStatus: NotificationDeliveryStatus;
@@ -106,7 +108,8 @@ export function NotificationHomeInsights({
           {appsLoading ? (
             <LoadingState label={t('states.loadingAppSettings')} size="compact" />
           ) : appsError ? (
-            <LocalErrorState
+            <NotificationErrorState
+              error={appsErrorValue}
               title={t('states.loadErrorTitle')}
               description={t('states.loadErrorDescription')}
               retryLabel={t('actions.retry')}

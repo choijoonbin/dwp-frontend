@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useSearchParams } from 'react-router-dom';
@@ -13,6 +13,7 @@ import {
   markMessagingConversationRead,
   removeMessagingReaction,
   saveMessagingMessage,
+  scheduleMessagingMessage,
   updateMessagingMessage,
   HttpError,
   useAuth,
@@ -22,6 +23,10 @@ import {
 import useMediaQuery from '@mui/material/useMediaQuery';
 
 import { useMessagingMeetingLabels } from './meeting';
+import {
+  messagingAdaptivePollingInterval,
+  useDocumentVisibleState,
+} from './messaging-adaptive-polling';
 import type { MessagingMentionDraft } from './messaging-composer-model';
 import {
   mergeMessagingMessages,
@@ -30,14 +35,33 @@ import {
   messagingThread,
   upsertMessagingMessage,
 } from './messaging-model';
+import {
+  messagingConversationPageRequest,
+  nextMessagingConversationPageParam,
+  type MessagingConversationPageParam,
+} from './messaging-conversation-pagination';
+import {
+  mergeMessagingNavigatorUrlState,
+  readMessagingNavigatorUrlState,
+} from './messaging-navigator-model';
+import {
+  captureMessagingTimelineScrollAnchor,
+  stabilizeMessagingTimelineScrollAnchor,
+  type MessagingTimelineScrollAnchor,
+} from './messaging-history-scroll-anchor';
 import { maskMessagingPresence, useBrowserOnlineState } from './messaging-presence-freshness';
 import {
   resolveMessagingTransport,
   useMessagingRealtime,
   useMessagingTypingPublisher,
+  type MessagingConnectionState,
 } from './use-messaging-realtime';
 import { useMessagingAttachmentQueue } from './use-messaging-attachment-queue';
 import { useMessagingSendController } from './use-messaging-send-controller';
+import {
+  messagingMentionPersonPublicIds,
+  useMessagingDraftContinuity,
+} from './use-messaging-draft-continuity';
 
 import type { Theme } from '@mui/material/styles';
 import type {
@@ -47,14 +71,18 @@ import type {
 } from '@dwp-frontend/shared-utils';
 import type { MessagingReactionMutationInput, MessagingScope } from './messaging-workspace-types';
 
-type MessagingHistoryScrollAnchor = {
-  target: 'timeline' | 'document';
-  height: number;
-};
+type MessagingHistoryScrollAnchor =
+  | { target: 'timeline'; anchor: MessagingTimelineScrollAnchor }
+  | { target: 'document'; height: number };
 
 type MessagingDraftSnapshot = {
   body: string;
   mentions: MessagingMentionDraft[];
+};
+
+type MessagingScheduleAttempt = {
+  fingerprint: string;
+  idempotencyKey: string;
 };
 
 export type MessagingMessageTargetState =
@@ -68,10 +96,25 @@ export function useMessagingWorkspaceController(scope: MessagingScope) {
   const toast = useToast();
   const queryClient = useQueryClient();
   const browserOnline = useBrowserOnlineState();
+  const documentVisible = useDocumentVisibleState();
   const [params, setParams] = useSearchParams();
   const activeScope: MessagingScope =
     scope === 'ALL' && params.get('attention')?.toLowerCase() === 'mentions' ? 'MENTIONS' : scope;
-  const [search, setSearch] = useState('');
+  const navigatorUrlState = useMemo(() => readMessagingNavigatorUrlState(params), [params]);
+  const search = navigatorUrlState.query;
+  const navigatorFilter = navigatorUrlState.filter;
+  const setSearch = useCallback(
+    (value: string) => {
+      setParams(mergeMessagingNavigatorUrlState(params, { query: value }), { replace: true });
+    },
+    [params, setParams]
+  );
+  const setNavigatorFilter = useCallback(
+    (value: typeof navigatorFilter) => {
+      setParams(mergeMessagingNavigatorUrlState(params, { filter: value }), { replace: true });
+    },
+    [params, setParams]
+  );
   const [debouncedSearch, setDebouncedSearch] = useState('');
   const [draft, setDraftState] = useState('');
   const [draftMentions, setDraftMentionsState] = useState<MessagingMentionDraft[]>([]);
@@ -96,9 +139,12 @@ export function useMessagingWorkspaceController(scope: MessagingScope) {
   const threadDraftMentionsRef = useRef<MessagingMentionDraft[]>([]);
   const conversationDraftsRef = useRef(new Map<string, MessagingDraftSnapshot>());
   const previousConversationRef = useRef<string | null>(null);
+  const mainScheduleAttemptRef = useRef<MessagingScheduleAttempt | null>(null);
+  const threadScheduleAttemptRef = useRef<MessagingScheduleAttempt | null>(null);
   const nearTimelineBottomRef = useRef(true);
   const timelineConversationRef = useRef<string | null>(null);
   const latestMessageRef = useRef<string | null>(null);
+  const realtimeStateRef = useRef<MessagingConnectionState>('connecting');
   const setDraft = useCallback((value: string) => {
     draftRef.current = value;
     setDraftState(value);
@@ -160,14 +206,19 @@ export function useMessagingWorkspaceController(scope: MessagingScope) {
       getMessagingConversations({
         scope: activeScope,
         query: debouncedSearch,
-        page: pageParam,
         pageSize: 30,
+        ...messagingConversationPageRequest(pageParam),
       }),
-    initialPageParam: 0,
-    getNextPageParam: (lastPage) =>
-      (lastPage.page + 1) * lastPage.pageSize < lastPage.total ? lastPage.page + 1 : undefined,
+    initialPageParam: 0 as MessagingConversationPageParam,
+    getNextPageParam: nextMessagingConversationPageParam,
     staleTime: 15_000,
-    refetchInterval: 15_000,
+    refetchInterval: () =>
+      messagingAdaptivePollingInterval({
+        state: selectedId ? realtimeStateRef.current : 'polling',
+        online: browserOnline,
+        visible: documentVisible,
+        activeIntervalMs: 30_000,
+      }),
     retry: 1,
   });
   const detailQuery = useQuery({
@@ -176,7 +227,15 @@ export function useMessagingWorkspaceController(scope: MessagingScope) {
     enabled: Boolean(selectedId),
     staleTime: 8_000,
     refetchInterval: (query) =>
-      resolveMessagingTransport(query.state.data?.realtime) === 'polling' ? 12_000 : 15_000,
+      messagingAdaptivePollingInterval({
+        state:
+          resolveMessagingTransport(query.state.data?.realtime) === 'polling'
+            ? 'polling'
+            : realtimeStateRef.current,
+        online: browserOnline,
+        visible: documentVisible,
+        activeIntervalMs: 12_000,
+      }),
     retry: 1,
   });
   const messageHistoryQuery = useInfiniteQuery({
@@ -375,7 +434,10 @@ export function useMessagingWorkspaceController(scope: MessagingScope) {
     conversationId: selectedId,
     realtime: detail?.realtime,
     enabled: Boolean(detail),
+    tenantId: auth.user?.tenantId,
+    userId: auth.user?.userId,
   });
+  realtimeStateRef.current = realtimeConnection.state;
   useMessagingTypingPublisher({
     conversationId: selectedId,
     drafting: Boolean(draft.trim() || threadDraft.trim()),
@@ -427,6 +489,8 @@ export function useMessagingWorkspaceController(scope: MessagingScope) {
     setDraft(nextDraft?.body ?? '');
     setDraftMentions(nextDraft?.mentions ?? []);
     previousConversationRef.current = selectedId;
+    mainScheduleAttemptRef.current = null;
+    threadScheduleAttemptRef.current = null;
     setThreadRootId(null);
     setThreadDraft('');
     setThreadDraftMentions([]);
@@ -436,28 +500,188 @@ export function useMessagingWorkspaceController(scope: MessagingScope) {
     historyScrollAnchorRef.current = null;
   }, [selectedId, setDraft, setDraftMentions, setThreadDraft, setThreadDraftMentions]);
 
+  const mainDraftContinuity = useMessagingDraftContinuity({
+    conversationId: selectedId,
+    enabled: Boolean(selectedId),
+    value: draft,
+    mentions: draftMentions,
+    valueRef: draftRef,
+    mentionsRef: draftMentionsRef,
+    members: detail?.members ?? [],
+    membersReady: Boolean(detail),
+    setValue: setDraft,
+    setMentions: setDraftMentions,
+  });
+  const threadDraftContinuity = useMessagingDraftContinuity({
+    conversationId: selectedId,
+    threadRootMessageId: threadRootId,
+    enabled: Boolean(selectedId && threadRootId),
+    value: threadDraft,
+    mentions: threadDraftMentions,
+    valueRef: threadDraftRef,
+    mentionsRef: threadDraftMentionsRef,
+    members: detail?.members ?? [],
+    membersReady: Boolean(detail),
+    setValue: setThreadDraft,
+    setMentions: setThreadDraftMentions,
+  });
+  const mainDraftPersistenceState = mainDraftContinuity.state;
+  const threadDraftPersistenceState = threadDraftContinuity.state;
+
+  const mainScheduleMutation = useMutation({
+    mutationFn: scheduleMessagingMessage,
+    onSuccess: async (scheduled, input) => {
+      if (selectedId === input.conversationId && draftRef.current.trim() === input.body) {
+        setDraft('');
+        setDraftMentions([]);
+      }
+      mainScheduleAttemptRef.current = null;
+      toast.success(t('schedule.success'));
+      await queryClient.invalidateQueries({ queryKey: ['messaging', 'scheduled-messages'] });
+      return scheduled;
+    },
+    onError: () => toast.error(t('schedule.error')),
+  });
+  const threadScheduleMutation = useMutation({
+    mutationFn: scheduleMessagingMessage,
+    onSuccess: async (scheduled, input) => {
+      if (
+        selectedId === input.conversationId &&
+        threadRootId === input.replyToMessageId &&
+        threadDraftRef.current.trim() === input.body
+      ) {
+        setThreadDraft('');
+        setThreadDraftMentions([]);
+      }
+      threadScheduleAttemptRef.current = null;
+      toast.success(t('schedule.success'));
+      await queryClient.invalidateQueries({ queryKey: ['messaging', 'scheduled-messages'] });
+      return scheduled;
+    },
+    onError: () => toast.error(t('schedule.error')),
+  });
+
+  const scheduleMainMessage = useCallback(
+    async (timing: { scheduledFor: string; displayTimeZone: string }) => {
+      const body = draftRef.current.trim();
+      if (!selectedId || !body || mainAttachmentQueue.items.length > 0) return false;
+      const mentionedPersonPublicIds = messagingMentionPersonPublicIds(
+        draftMentionsRef.current,
+        detail?.members ?? []
+      );
+      if (mentionedPersonPublicIds === null) {
+        toast.error(t('schedule.error'));
+        return false;
+      }
+      const fingerprint = JSON.stringify([
+        selectedId,
+        body,
+        mentionedPersonPublicIds,
+        timing.scheduledFor,
+        timing.displayTimeZone,
+      ]);
+      if (mainScheduleAttemptRef.current?.fingerprint !== fingerprint) {
+        mainScheduleAttemptRef.current = { fingerprint, idempotencyKey: crypto.randomUUID() };
+      }
+      try {
+        await mainScheduleMutation.mutateAsync({
+          conversationId: selectedId,
+          body,
+          idempotencyKey: mainScheduleAttemptRef.current.idempotencyKey,
+          attachmentIds: [],
+          mentionedPersonPublicIds,
+          ...timing,
+        });
+        return true;
+      } catch {
+        return false;
+      }
+    },
+    [
+      detail?.members,
+      draftMentionsRef,
+      draftRef,
+      mainAttachmentQueue.items.length,
+      mainScheduleMutation,
+      selectedId,
+      t,
+      toast,
+    ]
+  );
+
+  const scheduleThreadMessage = useCallback(
+    async (timing: { scheduledFor: string; displayTimeZone: string }) => {
+      const body = threadDraftRef.current.trim();
+      if (!selectedId || !threadRootId || !body || threadAttachmentQueue.items.length > 0) {
+        return false;
+      }
+      const mentionedPersonPublicIds = messagingMentionPersonPublicIds(
+        threadDraftMentionsRef.current,
+        detail?.members ?? []
+      );
+      if (mentionedPersonPublicIds === null) {
+        toast.error(t('schedule.error'));
+        return false;
+      }
+      const fingerprint = JSON.stringify([
+        selectedId,
+        threadRootId,
+        body,
+        mentionedPersonPublicIds,
+        timing.scheduledFor,
+        timing.displayTimeZone,
+      ]);
+      if (threadScheduleAttemptRef.current?.fingerprint !== fingerprint) {
+        threadScheduleAttemptRef.current = { fingerprint, idempotencyKey: crypto.randomUUID() };
+      }
+      try {
+        await threadScheduleMutation.mutateAsync({
+          conversationId: selectedId,
+          body,
+          replyToMessageId: threadRootId,
+          idempotencyKey: threadScheduleAttemptRef.current.idempotencyKey,
+          attachmentIds: [],
+          mentionedPersonPublicIds,
+          ...timing,
+        });
+        return true;
+      } catch {
+        return false;
+      }
+    },
+    [
+      detail?.members,
+      selectedId,
+      t,
+      threadAttachmentQueue.items.length,
+      threadDraftMentionsRef,
+      threadDraftRef,
+      threadRootId,
+      threadScheduleMutation,
+      toast,
+    ]
+  );
+
   useEffect(() => {
     const rootId = targetedMessage?.replyToMessageId;
     if (!requestedMessageId || !rootId) return;
     setThreadRootId((current) => (current === rootId ? current : rootId));
   }, [requestedMessageId, targetedMessage?.replyToMessageId]);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const anchor = historyScrollAnchorRef.current;
     if (!anchor) return;
     historyScrollAnchorRef.current = null;
-    requestAnimationFrame(() => {
-      const scroller = detailScrollRef.current;
-      if (!scroller) return;
-      if (anchor.target === 'timeline') {
-        scroller.scrollTop += scroller.scrollHeight - anchor.height;
-        return;
-      }
-      window.scrollBy({
-        top: document.documentElement.scrollHeight - anchor.height,
-        behavior: 'instant',
-      });
+    const scroller = detailScrollRef.current;
+    if (!scroller) return;
+    if (anchor.target === 'timeline') {
+      return stabilizeMessagingTimelineScrollAnchor(scroller, anchor.anchor);
+    }
+    window.scrollBy({
+      top: document.documentElement.scrollHeight - anchor.height,
+      behavior: 'instant',
     });
+    return undefined;
   }, [messageHistoryQuery.data?.pages.length]);
 
   useEffect(() => {
@@ -545,10 +769,11 @@ export function useMessagingWorkspaceController(scope: MessagingScope) {
   }, [markVisibleMessagesRead]);
 
   const openConversation = useCallback(
-    (conversationId: string) => {
+    (conversationId: string, messageId?: string) => {
       const next = new URLSearchParams(params);
       next.set('conversation', conversationId);
-      next.delete('message');
+      if (messageId) next.set('message', messageId);
+      else next.delete('message');
       setParams(next, { replace: true });
     },
     [params, setParams]
@@ -602,7 +827,7 @@ export function useMessagingWorkspaceController(scope: MessagingScope) {
       return;
     const timelineScrolls = scroller.scrollHeight > scroller.clientHeight + 1;
     historyScrollAnchorRef.current = timelineScrolls
-      ? { target: 'timeline', height: scroller.scrollHeight }
+      ? { target: 'timeline', anchor: captureMessagingTimelineScrollAnchor(scroller) }
       : { target: 'document', height: document.documentElement.scrollHeight };
     void messageHistoryQuery.fetchNextPage();
   };
@@ -631,6 +856,8 @@ export function useMessagingWorkspaceController(scope: MessagingScope) {
     selectedConversation,
     search,
     setSearch,
+    navigatorFilter,
+    setNavigatorFilter,
     searchRef,
     detailScrollRef,
     conversationsQuery,
@@ -642,6 +869,7 @@ export function useMessagingWorkspaceController(scope: MessagingScope) {
     rootMessages,
     fallbackReplyCounts,
     thread,
+    threadRootId,
     currentMember,
     meetingLabels,
     realtimeConnection,
@@ -673,8 +901,16 @@ export function useMessagingWorkspaceController(scope: MessagingScope) {
     setEditBody,
     sendPending,
     sendError,
+    mainSchedulePending: mainScheduleMutation.isPending,
+    mainScheduleError: mainScheduleMutation.isError,
+    mainDraftPersistenceState,
+    resolveMainDraftConflict: mainDraftContinuity.resolveConflict,
     threadSendPending,
     threadSendError,
+    threadSchedulePending: threadScheduleMutation.isPending,
+    threadScheduleError: threadScheduleMutation.isError,
+    threadDraftPersistenceState,
+    resolveThreadDraftConflict: threadDraftContinuity.resolveConflict,
     resetSendError,
     resetThreadSendError,
     editMutation,
@@ -687,8 +923,10 @@ export function useMessagingWorkspaceController(scope: MessagingScope) {
     openConversation,
     send,
     retrySend,
+    scheduleMainMessage,
     sendThreadReply,
     retryThreadReply,
+    scheduleThreadMessage,
     toggleReaction,
     saveMessage,
     openEditMessage,

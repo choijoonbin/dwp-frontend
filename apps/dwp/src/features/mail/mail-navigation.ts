@@ -166,6 +166,31 @@ export const MAIL_NAVIGATION: readonly MailNavigationGroup[] = [
   },
 ];
 
+const ACCOUNT_REQUIRED_MAIL_VIEWS = new Set<MailView>([
+  'inbox',
+  'search',
+  'follow-up',
+  'delivery',
+  'sent',
+  'drafts',
+  'archive',
+  'spam',
+  'trash',
+  'folders',
+  'shared',
+  'actions',
+]);
+
+export function mailNavigationForAccountAvailability(
+  hasAccounts: boolean
+): readonly MailNavigationGroup[] {
+  if (hasAccounts) return MAIL_NAVIGATION;
+  return MAIL_NAVIGATION.map((group) => ({
+    ...group,
+    items: group.items.filter((item) => !ACCOUNT_REQUIRED_MAIL_VIEWS.has(item.view)),
+  })).filter((group) => group.items.length > 0);
+}
+
 export function findMailNavigationItem(pathname: string): MailNavigationItem | undefined {
   const normalized = pathname.length > 1 ? pathname.replace(/\/+$/u, '') : pathname;
   return MAIL_NAVIGATION.flatMap((group) => group.items).find((item) => item.path === normalized);

@@ -10,6 +10,8 @@ const calendarViews = [
   'calendar-focus-planner',
   'calendar-invitations',
   'calendar-availability',
+  'calendar-scheduling-poll-workspace',
+  'booking/calendar-booking-workspace',
   'calendar-trash',
   'calendar-insights',
   'calendar-settings',

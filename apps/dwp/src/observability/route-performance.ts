@@ -15,6 +15,14 @@ export type RoutePerformanceDetail = {
 let pendingIntent: NavigationIntent | null = null;
 
 export function classifyRouteGroup(pathname: string): string {
+  if (pathname === '/workplace' || pathname.startsWith('/workplace/')) {
+    if (pathname.startsWith('/workplace/admin')) return 'workplace-management';
+    if (pathname.startsWith('/workplace/find')) return 'workplace-discovery';
+    if (pathname.startsWith('/workplace/planner')) return 'workplace-planner';
+    if (pathname.startsWith('/workplace/reservations')) return 'workplace-reservations';
+    if (pathname.startsWith('/workplace/navigation')) return 'workplace-navigation';
+    return 'workplace';
+  }
   const shell = resolveShellKey(pathname);
   if (shell) return shell;
   if (pathname.startsWith('/sign-in') || pathname.startsWith('/auth/')) return 'authentication';

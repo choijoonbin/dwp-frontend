@@ -2,6 +2,7 @@ import { useTranslation } from 'react-i18next';
 import {
   ArrowLeft,
   CalendarDays,
+  CalendarSearch,
   CalendarPlus,
   Command,
   Focus,
@@ -24,6 +25,7 @@ export function CalendarScheduleChrome({
   canCreate,
   sourcesAvailable,
   commandPaletteOpen,
+  eventSearchOpen,
   desktopSources,
   sourcesCollapsed,
   hasExplicitScheduleState,
@@ -31,6 +33,7 @@ export function CalendarScheduleChrome({
   savedViewConfiguration,
   returnTarget,
   onOpenCommands,
+  onOpenEventSearch,
   onCreate,
   onToggleSources,
   onOpenSources,
@@ -40,6 +43,7 @@ export function CalendarScheduleChrome({
   canCreate: boolean;
   sourcesAvailable: boolean;
   commandPaletteOpen: boolean;
+  eventSearchOpen: boolean;
   desktopSources: boolean;
   sourcesCollapsed: boolean;
   hasExplicitScheduleState: boolean;
@@ -47,6 +51,7 @@ export function CalendarScheduleChrome({
   savedViewConfiguration: Record<string, unknown>;
   returnTarget: string | null;
   onOpenCommands: () => void;
+  onOpenEventSearch: () => void;
   onCreate: (type: 'MEETING' | 'FOCUS') => void;
   onToggleSources: () => void;
   onOpenSources: () => void;
@@ -103,6 +108,17 @@ export function CalendarScheduleChrome({
       {t('command.trigger')}
     </ActionButton>
   );
+  const searchControl = (
+    <ActionButton
+      intent="secondary"
+      startIcon={<CalendarSearch size={17} />}
+      aria-haspopup="dialog"
+      aria-expanded={eventSearchOpen}
+      onClick={onOpenEventSearch}
+    >
+      {t('eventSearch.open')}
+    </ActionButton>
+  );
   const createControl = canCreate ? (
     <ActionButton
       intent="primary"
@@ -128,6 +144,7 @@ export function CalendarScheduleChrome({
         actions={
           <>
             {returnControl}
+            {searchControl}
             {commandControl}
             {createControl}
           </>

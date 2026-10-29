@@ -11,7 +11,7 @@ import { resolveRequestLocale } from './locale-preference';
 type AxiosLikeResponse<T> = { data: T; headers?: Headers };
 type TransportResponse<T> = AxiosLikeResponse<T> & { status: number };
 export type SessionEffect = 'authoritative' | 'neutral';
-type RequestConfig = {
+export type RequestConfig = {
   headers?: Record<string, string>;
   responseType?: 'json' | 'blob';
   timeoutMs?: number;
@@ -30,6 +30,8 @@ export type ConditionalGetConfig = Pick<
 export type EventStreamMessage = {
   event: string;
   data: unknown;
+  /** Durable SSE cursor from the frame's `id:` field, when supplied by the server. */
+  id?: string;
 };
 
 export type EventStreamConfig = {
@@ -38,6 +40,7 @@ export type EventStreamConfig = {
   headers?: Record<string, string>;
   contextScopeKey?: string;
   sessionEffect?: SessionEffect;
+  beforeDispatch?: () => void;
   onOpen?: () => void;
   onMessage: (message: EventStreamMessage) => void;
 };
@@ -321,12 +324,18 @@ async function loadCsrfToken(keepalive = false): Promise<CsrfTokenData> {
         throw new HttpError(
           'CSRF token request failed: ' + response.status,
           response.status,
-          payload
+          payload,
+          response.headers
         );
       }
       const data = (payload as { data?: Partial<CsrfTokenData> } | null)?.data;
       if (!data || typeof data.token !== 'string' || typeof data.headerName !== 'string') {
-        throw new HttpError('CSRF token response is invalid.', response.status, payload);
+        throw new HttpError(
+          'CSRF token response is invalid.',
+          response.status,
+          payload,
+          response.headers
+        );
       }
       if (controller.signal.aborted) throw controller.signal.reason;
       csrfToken = { token: data.token, headerName: data.headerName };
@@ -485,7 +494,7 @@ async function request<T>(
       (typeof record?.message === 'string' && record.message) ||
       (typeof record?.error === 'string' && record.error) ||
       'Request failed: ' + response.status;
-    throw new HttpError(message, response.status, payload);
+    throw new HttpError(message, response.status, payload, response.headers);
   }
 
   return { data: payload as T, headers: response.headers, status: response.status };
@@ -606,6 +615,7 @@ async function streamRequest<B>(
       : undefined;
 
   try {
+    config.beforeDispatch?.();
     if (isMutation(method)) {
       try {
         const csrf = await waitForAbort(loadCsrfToken(), controller.signal);
@@ -619,6 +629,7 @@ async function streamRequest<B>(
         );
       }
     }
+    config.beforeDispatch?.();
     const response = await fetch(API_URL + scopedUrl, {
       method,
       headers,
@@ -659,7 +670,8 @@ async function streamRequest<B>(
       throw new HttpError(
         `Event stream request failed: ${response.status}`,
         response.status,
-        payload
+        payload,
+        response.headers
       );
     }
     if (!response.body) throw new HttpError('Event stream response body is missing.', 502);
@@ -690,14 +702,23 @@ async function streamRequest<B>(
 
 function parseEventFrame(frame: string): EventStreamMessage {
   let event = 'message';
+  let id: string | undefined;
   const data: string[] = [];
   for (const line of frame.split('\n')) {
     if (line.startsWith('event:')) event = line.slice(6).trim();
+    if (line.startsWith('id:')) {
+      const candidate = line.slice(3).trimStart();
+      if (!candidate.includes('\0')) id = candidate;
+    }
     if (line.startsWith('data:')) data.push(line.slice(5).trimStart());
   }
   const raw = data.join('\n');
   try {
-    return { event, data: raw ? JSON.parse(raw) : null };
+    return {
+      event,
+      data: raw ? JSON.parse(raw) : null,
+      ...(id !== undefined ? { id } : {}),
+    };
   } catch {
     throw new HttpError('Event stream payload is invalid.', 502, raw);
   }

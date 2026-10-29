@@ -16,6 +16,8 @@ describe('calendar product navigation', () => {
       'focus',
       'invitations',
       'availability',
+      'polls',
+      'bookings',
       'insights',
       'settings',
       'trash',
@@ -34,6 +36,8 @@ describe('calendar product navigation', () => {
     expect(CALENDAR_DEFAULT_PATH).toBe('/calendar/home');
     expect(findCalendarNavigationItem('/calendar/schedule/')?.view).toBe('schedule');
     expect(findCalendarNavigationItem('/calendar/focus/')?.view).toBe('focus');
+    expect(findCalendarNavigationItem('/calendar/polls/')?.view).toBe('polls');
+    expect(findCalendarNavigationItem('/calendar/bookings/')?.view).toBe('bookings');
     expect(findCalendarNavigationItem('/calendar/settings/')?.view).toBe('settings');
     expect(findCalendarNavigationItem('/calendar/not-a-view')).toBeUndefined();
   });

@@ -1,10 +1,12 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
+import { resolveSystemTimeZone } from '@dwp-frontend/shared-i18n';
 import {
   cancelCalendarEvent,
-  getCalendarEvents,
+  getCalendarExternalProjection,
+  getCalendarEventsV2,
   getCalendarPolicy,
   getCalendars,
   respondToCalendarEvent,
@@ -32,7 +34,15 @@ import {
   MailProposalOwnerHandoffNotice,
   useMailProposalOwnerHandoff,
 } from '../../components/mail-proposal-owner-handoff';
+import { MailProposalOwnerAuthorityBoundary } from '../../components/mail-proposal-owner-authority-boundary';
 import { CalendarEventDialog } from './calendar-event-dialog';
+import { CalendarEventSearchDialog } from './calendar-event-search-dialog';
+import {
+  calendarExternalCalendars,
+  calendarExternalEvents,
+} from './calendar-external-projection-model';
+import { CalendarExternalSourceNotice } from './calendar-external-source-notice';
+import { useCalendarEffectivePreferences } from './calendar-effective-preferences';
 import { CalendarCanvas } from './calendar-experience';
 import { CalendarInteractiveGrid, type CalendarRange } from './calendar-interactive-grid';
 import { CalendarMobileNavigation } from './calendar-mobile-navigation';
@@ -84,10 +94,13 @@ import type {
   CalendarResponseStatus,
   CalendarSummary,
 } from '@dwp-frontend/shared-utils';
-
 const CALENDAR_SURFACE_RADIUS = `${foundationTokens.radius.surface}px`;
-
-export function CalendarSchedule() {
+export const CalendarSchedule = () => (
+  <MailProposalOwnerAuthorityBoundary>
+    <CalendarScheduleContent />
+  </MailProposalOwnerAuthorityBoundary>
+);
+function CalendarScheduleContent() {
   const { t, i18n } = useTranslation('calendar');
   const { hasPermission, permissions, isLoaded: permissionsLoaded } = usePermissions();
   const toast = useToast();
@@ -95,10 +108,10 @@ export function CalendarSchedule() {
   const proposalOwnerHandoff = useMailProposalOwnerHandoff('CALENDAR');
   const proposalDomainCompletedRef = useRef(false);
   const proposalReturnStartedRef = useRef(false);
+  const knownExternalCalendarIdsRef = useRef(new Set<string>());
   const mobile = useMediaQuery('(max-width:767.95px)', { noSsr: true });
   const tablet = useMediaQuery('(min-width:768px) and (max-width:1279.95px)', { noSsr: true });
   const compact = useMediaQuery('(max-width:1279.95px)', { noSsr: true });
-  const mobileSourcePicker = mobile;
   const desktopSources = useMediaQuery('(min-width:1280px)', { noSsr: true });
   const location = useLocation();
   const navigate = useNavigate();
@@ -124,6 +137,7 @@ export function CalendarSchedule() {
   const [sourcePickerOpen, setSourcePickerOpen] = useState(false);
   const [sourcesCollapsed, setSourcesCollapsed] = useState(false);
   const [commandPaletteOpen, setCommandPaletteOpen] = useState(false);
+  const [eventSearchOpen, setEventSearchOpen] = useState(false);
   const [sharingCalendar, setSharingCalendar] = useState<CalendarSummary | null>(null);
   const requestedEventId = routeSearchParams.get('event');
   const requestedReturnTarget = routeSearchParams.get('returnTo');
@@ -140,12 +154,44 @@ export function CalendarSchedule() {
     ? calendarScheduleDate(routeSearchParams.get('date'), navigateDateState)
     : navigateDateState;
   const language = i18n.resolvedLanguage ?? i18n.language;
+  const scheduleTimeZone = resolveSystemTimeZone('Asia/Seoul');
   const canCreateGranted = hasPermission('APP.CALENDAR', 'CREATE');
   const canUpdateGranted = hasPermission('APP.CALENDAR', 'UPDATE');
 
-  const eventsQuery = useQuery({
-    queryKey: ['calendar', 'events', range.from, range.to],
-    queryFn: () => getCalendarEvents(range.from, range.to),
+  const eventsQuery = useInfiniteQuery({
+    queryKey: ['calendar', 'events-v2', range.from, range.to, scheduleTimeZone, language],
+    queryFn: ({ pageParam, signal }) =>
+      getCalendarEventsV2(
+        {
+          from: range.from,
+          to: range.to,
+          timeZone: scheduleTimeZone,
+          limit: 200,
+          cursor: pageParam,
+        },
+        signal
+      ),
+    initialPageParam: null as string | null,
+    getNextPageParam: (lastPage) =>
+      lastPage.hasMore ? (lastPage.nextCursor ?? undefined) : undefined,
+    staleTime: 20_000,
+    retry: retryRecoverableCalendarRead,
+  });
+  const {
+    fetchNextPage: fetchNextEventPage,
+    hasNextPage: hasNextEventPage,
+    isError: eventPagesFailed,
+    isFetchingNextPage,
+  } = eventsQuery;
+  useEffect(() => {
+    if (!hasNextEventPage || isFetchingNextPage || eventPagesFailed) {
+      return;
+    }
+    void fetchNextEventPage();
+  }, [eventPagesFailed, fetchNextEventPage, hasNextEventPage, isFetchingNextPage]);
+  const externalEventsQuery = useQuery({
+    queryKey: ['calendar', 'external-events', range.from, range.to],
+    queryFn: ({ signal }) => getCalendarExternalProjection(range.from, range.to, signal),
     staleTime: 20_000,
     retry: retryRecoverableCalendarRead,
   });
@@ -186,16 +232,36 @@ export function CalendarSchedule() {
     isPending: policyQuery.isPending,
   });
   const coreReadState = combineCalendarReadSourceStates([eventsState, calendarsState, policyState]);
-  const authorityDenied = coreReadState === 'DENIED';
   const readState = coreReadState;
-  const eventsData =
+  const eventPages =
     readState === 'DENIED' ? undefined : calendarReadSourceData(eventsState, eventsQuery.data);
+  const eventsData = useMemo(
+    () => eventPages?.pages.flatMap((page) => page.items),
+    [eventPages?.pages]
+  );
   const calendarsData =
     readState === 'DENIED'
       ? undefined
       : calendarReadSourceData(calendarsState, calendarsQuery.data);
   const policyData =
     readState === 'DENIED' ? undefined : calendarReadSourceData(policyState, policyQuery.data);
+  const externalCalendarsData = useMemo(
+    () => calendarExternalCalendars(externalEventsQuery.data),
+    [externalEventsQuery.data]
+  );
+  const externalEventsData = useMemo(
+    () => calendarExternalEvents(externalEventsQuery.data),
+    [externalEventsQuery.data]
+  );
+  const calendarSourcesData = useMemo(
+    () => (calendarsData ? [...calendarsData, ...externalCalendarsData] : undefined),
+    [calendarsData, externalCalendarsData]
+  );
+  const scheduleEventsData = useMemo(
+    () => (eventsData ? [...eventsData, ...externalEventsData] : undefined),
+    [eventsData, externalEventsData]
+  );
+  const { preferences: calendarPreferences } = useCalendarEffectivePreferences(policyData);
   const scheduleWritable = readState === 'READY';
   const canCreate = canCreateGranted && scheduleWritable;
   const canUpdate = canUpdateGranted && scheduleWritable;
@@ -221,19 +287,40 @@ export function CalendarSchedule() {
     permissions
   );
   const selectedCalendars = useMemo(() => {
-    if (!calendarsData) return [];
+    if (!calendarSourcesData) return [];
     const configured = routeSearchParams.has('calendars')
       ? (calendarScheduleCalendarIds(routeSearchParams.get('calendars')) ?? [])
       : selectedCalendarsState;
-    return normalizeCalendarSelection(calendarsData, configured);
-  }, [calendarsData, routeSearchParams, selectedCalendarsState]);
+    return normalizeCalendarSelection(calendarSourcesData, configured);
+  }, [calendarSourcesData, routeSearchParams, selectedCalendarsState]);
 
   useEffect(() => {
-    if (calendarSelectionInitialized || !calendarsData) return;
+    if (calendarSelectionInitialized || !calendarSourcesData) return;
     const configured = calendarScheduleCalendarIds(routeSearchParams.get('calendars'));
-    setSelectedCalendars(normalizeCalendarSelection(calendarsData, configured));
+    setSelectedCalendars(normalizeCalendarSelection(calendarSourcesData, configured));
     setCalendarSelectionInitialized(true);
-  }, [calendarSelectionInitialized, calendarsData, routeSearchParams]);
+  }, [calendarSelectionInitialized, calendarSourcesData, routeSearchParams]);
+
+  useEffect(() => {
+    const unseen = externalCalendarsData.filter(
+      (calendar) => !knownExternalCalendarIdsRef.current.has(calendar.calendarId)
+    );
+    unseen.forEach((calendar) => knownExternalCalendarIdsRef.current.add(calendar.calendarId));
+    if (
+      unseen.length === 0 ||
+      !calendarSelectionInitialized ||
+      !calendarSourcesData ||
+      routeSearchParams.has('calendars')
+    ) {
+      return;
+    }
+    setSelectedCalendars((current) =>
+      normalizeCalendarSelection(calendarSourcesData, [
+        ...current,
+        ...unseen.filter((calendar) => calendar.selected).map((calendar) => calendar.calendarId),
+      ])
+    );
+  }, [calendarSelectionInitialized, calendarSourcesData, externalCalendarsData, routeSearchParams]);
 
   useEffect(() => {
     const requestedView = routeSearchParams.get('view');
@@ -256,48 +343,51 @@ export function CalendarSchedule() {
     }
 
     const requestedCalendars = routeSearchParams.get('calendars');
-    if (requestedCalendars === null || !calendarSelectionInitialized || !calendarsData) {
+    if (requestedCalendars === null || !calendarSelectionInitialized || !calendarSourcesData) {
       return;
     }
     const configured = calendarScheduleCalendarIds(requestedCalendars);
     if (configured === null) return;
-    const nextCalendars = normalizeCalendarSelection(calendarsData, configured);
+    const nextCalendars = normalizeCalendarSelection(calendarSourcesData, configured);
     setSelectedCalendars((current) =>
       sameCalendarSelection(current, nextCalendars) ? current : nextCalendars
     );
-  }, [calendarSelectionInitialized, calendarsData, mobile, routeSearchParams, tablet]);
+  }, [calendarSelectionInitialized, calendarSourcesData, mobile, routeSearchParams, tablet]);
 
   useEffect(() => {
-    if (!requestedEventId || !eventsData) return;
-    const requested = eventsData.find((event) => event.eventId === requestedEventId);
+    if (!requestedEventId || !scheduleEventsData) return;
+    const requested = scheduleEventsData.find((event) => event.eventId === requestedEventId);
     if (requested) setSelected(requested);
-  }, [eventsData, requestedEventId]);
+  }, [requestedEventId, scheduleEventsData]);
 
   useEffect(() => {
-    if (eventsState !== 'READY' || !eventsQuery.data) return;
-    const authorizedIds = new Set(eventsQuery.data.map((event) => event.eventId));
+    if (eventsState !== 'READY' || !scheduleEventsData || hasNextEventPage || isFetchingNextPage) {
+      return;
+    }
+    const authorizedIds = new Set(scheduleEventsData.map((event) => event.eventId));
     setSelected((event) => calendarScheduleAuthorizedEvent(event, authorizedIds));
     setEditing((event) => calendarScheduleAuthorizedEvent(event, authorizedIds));
     setCancelling((event) => calendarScheduleAuthorizedEvent(event, authorizedIds));
     setTrashing((event) => calendarScheduleAuthorizedEvent(event, authorizedIds));
-  }, [eventsQuery.data, eventsState]);
+  }, [eventsState, hasNextEventPage, isFetchingNextPage, scheduleEventsData]);
 
   useEffect(() => {
     // A reload starts with all authoritative sources in LOADING. Keep a verified Work-link
     // receipt dormant until those sources settle; clearing it here would force a second Calendar
     // POST even though the first event was already confirmed.
     if (scheduleWritable || readState === 'LOADING') return;
-    if (authorityDenied) closeCreateState();
+    if (readState === 'DENIED') closeCreateState();
     else closeUnavailableCreateState();
     setEditing(null);
     setCancelling(null);
     setTrashing(null);
-    if (!authorityDenied) return;
+    if (readState !== 'DENIED') return;
     setSelected(null);
     setSourcePickerOpen(false);
     setSharingCalendar(null);
     setCommandPaletteOpen(false);
-  }, [authorityDenied, closeCreateState, closeUnavailableCreateState, readState, scheduleWritable]);
+    setEventSearchOpen(false);
+  }, [closeCreateState, closeUnavailableCreateState, readState, scheduleWritable]);
 
   useEffect(() => {
     const openCommands = (event: KeyboardEvent) => {
@@ -425,12 +515,12 @@ export function CalendarSchedule() {
     [canManage, moveMutation.isPending]
   );
   const events = useMemo(() => {
-    const source = eventsData ?? [];
-    if (!calendarSelectionInitialized || !calendarsData) {
+    const source = scheduleEventsData ?? [];
+    if (!calendarSelectionInitialized || !calendarSourcesData) {
       return [];
     }
     return source.filter((event) => selectedCalendars.includes(event.calendarId));
-  }, [calendarSelectionInitialized, calendarsData, eventsData, selectedCalendars]);
+  }, [calendarSelectionInitialized, calendarSourcesData, scheduleEventsData, selectedCalendars]);
   const syncScheduleState = useCallback(
     (next: Readonly<{ view: CalendarScheduleView; date: Date; calendarIds: readonly string[] }>) =>
       setSearchParams(calendarScheduleSearchParams(new URLSearchParams(location.search), next)),
@@ -486,13 +576,13 @@ export function CalendarSchedule() {
   );
   const selectCalendars = useCallback(
     (nextCalendarIds: string[]) => {
-      const normalized = calendarsData
-        ? normalizeCalendarSelection(calendarsData, nextCalendarIds)
+      const normalized = calendarSourcesData
+        ? normalizeCalendarSelection(calendarSourcesData, nextCalendarIds)
         : [];
       setSelectedCalendars(normalized);
       syncScheduleState({ view, date: navigateDate, calendarIds: normalized });
     },
-    [calendarsData, navigateDate, syncScheduleState, view]
+    [calendarSourcesData, navigateDate, syncScheduleState, view]
   );
   const subscriptionMutation = useMutation({
     mutationFn: ({
@@ -535,12 +625,16 @@ export function CalendarSchedule() {
   });
   const changeCalendarSelection = useCallback(
     (calendar: CalendarSummary, nextSelected: boolean) => {
-      if (subscriptionMutation.isPending || !scheduleWritable) return;
       if (!calendarCanChangeSelection(calendar, nextSelected)) return;
       const nextCalendarIds = nextSelected
         ? [...selectedCalendars, calendar.calendarId]
         : selectedCalendars.filter((calendarId) => calendarId !== calendar.calendarId);
       const previousCalendarIds = [...selectedCalendars];
+      if (calendar.externalProvider) {
+        selectCalendars(nextCalendarIds);
+        return;
+      }
+      if (subscriptionMutation.isPending || !scheduleWritable) return;
       selectCalendars(nextCalendarIds);
       subscriptionMutation.mutate({
         calendar,
@@ -553,7 +647,7 @@ export function CalendarSchedule() {
   );
   const changeCalendarFavorite = useCallback(
     (calendar: CalendarSummary, favorite: boolean) => {
-      if (subscriptionMutation.isPending || !scheduleWritable) return;
+      if (calendar.externalProvider || subscriptionMutation.isPending || !scheduleWritable) return;
       subscriptionMutation.mutate({
         calendar,
         selected: selectedCalendars.includes(calendar.calendarId),
@@ -581,14 +675,14 @@ export function CalendarSchedule() {
       });
       const next = {
         ...state,
-        calendarIds: normalizeCalendarSelection(calendarsData ?? [], state.calendarIds),
+        calendarIds: normalizeCalendarSelection(calendarSourcesData ?? [], state.calendarIds),
       };
       setView(next.view);
       setNavigateDate(next.date);
       setSelectedCalendars(next.calendarIds);
       syncScheduleState(next);
     },
-    [calendarsData, navigateDate, selectedCalendars, syncScheduleState, view]
+    [calendarSourcesData, navigateDate, selectedCalendars, syncScheduleState, view]
   );
   const initialWritableCalendarId = useMemo(
     () =>
@@ -623,8 +717,9 @@ export function CalendarSchedule() {
     <CalendarCanvas archetype="temporal">
       <CalendarScheduleChrome
         canCreate={canCreate}
-        sourcesAvailable={Boolean(calendarsData)}
+        sourcesAvailable={Boolean(calendarSourcesData)}
         commandPaletteOpen={commandPaletteOpen}
+        eventSearchOpen={eventSearchOpen}
         desktopSources={desktopSources}
         sourcesCollapsed={sourcesCollapsed}
         hasExplicitScheduleState={hasExplicitScheduleState}
@@ -632,6 +727,7 @@ export function CalendarSchedule() {
         savedViewConfiguration={savedViewConfiguration}
         returnTarget={returnTarget}
         onOpenCommands={() => setCommandPaletteOpen(true)}
+        onOpenEventSearch={() => setEventSearchOpen(true)}
         onCreate={openNow}
         onToggleSources={() => setSourcesCollapsed((current) => !current)}
         onOpenSources={() => setSourcePickerOpen(true)}
@@ -642,6 +738,13 @@ export function CalendarSchedule() {
       />
 
       <MailProposalOwnerHandoffNotice handoff={proposalOwnerHandoff} />
+
+      <CalendarExternalSourceNotice
+        projection={externalEventsQuery.data}
+        error={externalEventsQuery.isError}
+        retrying={externalEventsQuery.isFetching}
+        onRetry={() => void externalEventsQuery.refetch()}
+      />
 
       {(readState === 'STALE' || readState === 'DENIED' || readState === 'UNAVAILABLE') && (
         <Box
@@ -704,9 +807,10 @@ export function CalendarSchedule() {
           },
         })}
       >
-        {(eventsQuery.isFetching || calendarsQuery.isFetching || moveMutation.isPending) && (
-          <LinearProgress aria-label={t('schedule.loading')} />
-        )}
+        {(eventsQuery.isFetching ||
+          externalEventsQuery.isFetching ||
+          calendarsQuery.isFetching ||
+          moveMutation.isPending) && <LinearProgress aria-label={t('schedule.loading')} />}
         {!calendarsData && calendarsState !== 'LOADING' ? (
           <Alert
             severity="error"
@@ -744,7 +848,7 @@ export function CalendarSchedule() {
               }}
             >
               <CalendarSourcePanel
-                calendars={calendarsData ?? []}
+                calendars={calendarSourcesData ?? []}
                 selectedCalendarIds={selectedCalendars}
                 date={navigateDate}
                 loading={calendarsQuery.isLoading}
@@ -785,9 +889,10 @@ export function CalendarSchedule() {
                   loading={eventsQuery.isLoading || calendarsQuery.isLoading}
                   view={view}
                   navigateDate={navigateDate}
-                  weekStart={policyData?.weekStart ?? 1}
-                  workingDayStart={policyData?.workingDayStart ?? '08:00'}
-                  workingDayEnd={policyData?.workingDayEnd ?? '19:00'}
+                  weekStart={calendarPreferences.weekStartNumber}
+                  workingDays={calendarPreferences.workingDayNumbers}
+                  workingDayStart={calendarPreferences.workingDayStart ?? '08:00'}
+                  workingDayEnd={calendarPreferences.workingDayEnd ?? '19:00'}
                   canCreate={canCreate}
                   interactionLocked={moveMutation.isPending}
                   canMove={canMove}
@@ -840,10 +945,19 @@ export function CalendarSchedule() {
         }
       />
 
+      <CalendarEventSearchDialog
+        open={eventSearchOpen}
+        from={range.from}
+        to={range.to}
+        timeZone={scheduleTimeZone}
+        onClose={() => setEventSearchOpen(false)}
+        onSelect={setSelected}
+      />
+
       <CalendarSourcePicker
         open={sourcePickerOpen}
-        mobile={mobileSourcePicker}
-        calendars={calendarsData ?? []}
+        mobile={mobile}
+        calendars={calendarSourcesData ?? []}
         selectedCalendarIds={selectedCalendars}
         date={navigateDate}
         loading={calendarsQuery.isLoading}
@@ -881,7 +995,7 @@ export function CalendarSchedule() {
                 ? initialPersonalWritableCalendarId
                 : initialWritableCalendarId)
             }
-            initialTimeZone={createState?.timeZone}
+            initialTimeZone={createState?.timeZone ?? calendarPreferences.timeZone}
             initialVisibility={createState?.visibility}
             initialImportance={createState?.importance}
             fromDwaion={createState?.fromDwaion}

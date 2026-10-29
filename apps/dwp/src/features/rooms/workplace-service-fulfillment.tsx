@@ -7,7 +7,13 @@ import {
   getWorkplaceServiceFulfillmentOrder,
   getWorkplaceServiceFulfillmentQueue,
 } from '@dwp-frontend/shared-utils';
-import { ActionButton, EmptyState, InlineFeedback, SelectField } from '@dwp-frontend/design-system';
+import {
+  ActionButton,
+  EmptyState,
+  InlineFeedback,
+  LoadingState,
+  SelectField,
+} from '@dwp-frontend/design-system';
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
@@ -34,6 +40,7 @@ export default function WorkplaceServiceFulfillmentPage() {
   const openerRef = useRef<HTMLElement | null>(null);
   const [params, setParams] = useSearchParams();
   const selectedId = params.get('order');
+  const requestedAdjustmentId = params.get('adjustment')?.trim() || null;
   const state = parseWorkplaceServiceFulfillmentState(params.get('state'));
   const operationsQuery = parseWorkplaceServiceFulfillmentQuery(params.get('q'));
   const operationsSort = parseWorkplaceServiceFulfillmentSort(params.get('sort'));
@@ -58,13 +65,28 @@ export default function WorkplaceServiceFulfillmentPage() {
     () => orders.find((order) => order.serviceOrderId === selectedId) ?? null,
     [orders, selectedId]
   );
+  const trustedSelectedFromQueue = queueQuery.isError ? null : selectedFromQueue;
   const detailQuery = useQuery({
     queryKey: ['workplace', 'services', 'fulfillment', 'detail', selectedId],
     queryFn: () => getWorkplaceServiceFulfillmentOrder(selectedId!),
-    enabled: capabilities.canViewWorkplaceAdmin && Boolean(selectedId) && !selectedFromQueue,
-    initialData: selectedFromQueue ?? undefined,
+    enabled:
+      capabilities.isLoaded &&
+      capabilities.canViewWorkplaceAdmin &&
+      Boolean(selectedId) &&
+      !trustedSelectedFromQueue,
+    initialData: trustedSelectedFromQueue ?? undefined,
+    retry: false,
   });
-  const selected = selectedFromQueue ?? detailQuery.data ?? null;
+  const detailMatchesTarget = Boolean(
+    selectedId && detailQuery.data?.serviceOrderId === selectedId
+  );
+  const selected =
+    trustedSelectedFromQueue ?? (detailMatchesTarget ? (detailQuery.data ?? null) : null);
+  const detailTargetUnavailable = Boolean(
+    selectedId &&
+    !trustedSelectedFromQueue &&
+    (detailQuery.isError || (detailQuery.isSuccess && !detailMatchesTarget))
+  );
 
   return (
     <Box
@@ -125,7 +147,7 @@ export default function WorkplaceServiceFulfillmentPage() {
         <Typography color="text.secondary">{t('workplace.services.loading')}</Typography>
       ) : !capabilities.canViewWorkplaceAdmin ? (
         <InlineFeedback severity="warning">{t('workplace.services.adminDenied')}</InlineFeedback>
-      ) : queueQuery.isError ? (
+      ) : queueQuery.isError && !selectedId ? (
         <InlineFeedback
           severity="error"
           action={
@@ -140,10 +162,26 @@ export default function WorkplaceServiceFulfillmentPage() {
         >
           {t('workplace.services.fulfillmentError')}
         </InlineFeedback>
-      ) : !orders.length ? (
+      ) : !orders.length && !selectedId ? (
         <EmptyState title={t('workplace.services.fulfillmentEmpty')} />
       ) : (
         <Stack spacing={1.5}>
+          {queueQuery.isError ? (
+            <InlineFeedback
+              severity="warning"
+              action={
+                <ActionButton
+                  intent="quiet"
+                  startIcon={<RefreshCw size={16} />}
+                  onClick={() => void queueQuery.refetch()}
+                >
+                  {t('actions.retry')}
+                </ActionButton>
+              }
+            >
+              {t('workplace.services.fulfillmentQueueDegraded')}
+            </InlineFeedback>
+          ) : null}
           <Box
             sx={{
               display: 'grid',
@@ -188,6 +226,7 @@ export default function WorkplaceServiceFulfillmentPage() {
                       setParams(
                         updateWorkplaceServiceFulfillmentSearch(params, {
                           orderId: order.serviceOrderId,
+                          adjustmentId: null,
                         })
                       );
                     }}
@@ -204,7 +243,17 @@ export default function WorkplaceServiceFulfillmentPage() {
                 </ActionButton>
               ) : null}
             </Stack>
-            {selected ? (
+            {selectedId && !trustedSelectedFromQueue && detailQuery.isLoading ? (
+              <Box component="aside" sx={(theme) => ({ ...workplaceMemberCard(theme), p: 2 })}>
+                <LoadingState embedded label={t('workplace.services.loading')} />
+              </Box>
+            ) : detailTargetUnavailable ? (
+              <Box component="aside" sx={(theme) => ({ ...workplaceMemberCard(theme), p: 2 })}>
+                <InlineFeedback severity="error">
+                  {t('workplace.services.fulfillmentTargetError')}
+                </InlineFeedback>
+              </Box>
+            ) : selected ? (
               <WorkplaceMobileReservationInspector
                 closeLabel={t('actions.close')}
                 label={t('workplace.services.fulfillmentInspectorLabel')}
@@ -217,7 +266,8 @@ export default function WorkplaceServiceFulfillmentPage() {
                 <Box sx={{ p: { xs: 1.5, md: 2 } }}>
                   <FulfillmentInspector
                     order={selected}
-                    canManage={capabilities.canManageWorkplaceAdmin}
+                    canManage={capabilities.canManageWorkplaceAdmin && !queueQuery.isError}
+                    requestedAdjustmentId={requestedAdjustmentId}
                   />
                 </Box>
               </WorkplaceMobileReservationInspector>

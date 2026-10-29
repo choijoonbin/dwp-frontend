@@ -1,58 +1,81 @@
-import { useEffect, useId, useMemo, useState } from 'react';
+import { useEffect, useId, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Building2, CalendarSearch, Check, LockKeyhole, UsersRound } from 'lucide-react';
+import { CalendarSearch, Check, LockKeyhole, UsersRound } from 'lucide-react';
 import { useMutation } from '@tanstack/react-query';
 import { ActionButton } from '@dwp-frontend/design-system';
-import { evaluateCalendarScheduling } from '@dwp-frontend/shared-utils';
+import {
+  evaluateCalendarSchedulingV2,
+  hardRecheckCalendarSchedulingV2,
+} from '@dwp-frontend/shared-utils';
 
 import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
 import CircularProgress from '@mui/material/CircularProgress';
-import Divider from '@mui/material/Divider';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
 import { calendarDate, calendarTime } from './calendar-components';
+import { CalendarSchedulingEvidence } from './calendar-scheduling-evidence';
 import {
-  applyCalendarAvailabilitySlot,
+  calendarSchedulingAssistedDraftFingerprintV2,
+  calendarSchedulingVerificationReceiptV2,
+  type CalendarSchedulingVerificationReceiptV2,
+} from './calendar-scheduling-final-check';
+import { CalendarSchedulingMatrix } from './calendar-scheduling-matrix';
+import {
   calendarAvailabilityWindow,
   calendarMeetingDurationMinutes,
-  calendarSchedulingEvaluationState,
-  calendarSchedulingFingerprint,
-  calendarSchedulingParticipants,
-  rankCalendarRooms,
 } from './calendar-scheduling-assistant-model';
+import {
+  calendarSchedulingCandidateDecisionV2,
+  calendarSchedulingCurrentCandidateV2,
+  calendarSchedulingEvaluationStateV2,
+  calendarSchedulingFingerprintV2,
+  calendarSchedulingParticipantsV2,
+} from './calendar-scheduling-v2-model';
 
 import type {
-  CalendarAvailabilitySlot,
   CalendarResource,
-  CalendarSchedulingEvaluation,
+  CalendarSchedulingCandidateV2,
+  CalendarSchedulingEvaluationInputV2,
+  CalendarSchedulingEvaluationV2,
+  CalendarSchedulingRoomRecommendationV2,
 } from '@dwp-frontend/shared-utils';
 
 type CalendarSchedulingAssistantProps = {
   open: boolean;
   startsAt: string;
   endsAt: string;
-  attendees: readonly Readonly<{ personId: string }>[];
-  resources: readonly CalendarResource[];
-  resourcesLoading: boolean;
-  resourcesError: boolean;
+  attendees: readonly Readonly<{
+    personId: string;
+    displayName?: string | null;
+    type?: string;
+  }>[];
   selectedResourceId: string;
   language: string;
   timeZone: string;
-  onApplyTime: (startsAt: string, endsAt: string) => void;
-  onApplyRoom: (resource: CalendarResource) => void;
+  onApplyTime: (
+    startsAt: string,
+    endsAt: string,
+    receipt: CalendarSchedulingVerificationReceiptV2
+  ) => void;
+  onApplyRoom: (
+    resource: CalendarResource,
+    receipt: CalendarSchedulingVerificationReceiptV2
+  ) => void;
 };
 
-type AvailabilityRequest = Readonly<{
-  personIds: readonly string[];
-  from: string;
-  to: string;
-  roomStartsAt: string;
-  roomEndsAt: string;
-  durationMinutes: number;
-  timeZone: string;
+type EvaluationRequest = Readonly<{
+  input: CalendarSchedulingEvaluationInputV2;
+  fingerprint: string;
+}>;
+
+type ApplyRequest = Readonly<{
+  evaluation: CalendarSchedulingEvaluationV2;
+  candidate: CalendarSchedulingCandidateV2;
+  room: CalendarSchedulingRoomRecommendationV2 | null;
+  action: 'TIME' | 'ROOM';
   fingerprint: string;
 }>;
 
@@ -65,382 +88,360 @@ export function CalendarSchedulingAssistant({
   startsAt,
   endsAt,
   attendees,
-  resources,
-  resourcesLoading,
-  resourcesError,
   selectedResourceId,
   language,
   timeZone,
   onApplyTime,
   onApplyRoom,
 }: CalendarSchedulingAssistantProps) {
-  const { t } = useTranslation('calendar');
+  const { t, i18n } = useTranslation('calendar');
   const titleId = useId();
   const [lastFingerprint, setLastFingerprint] = useState<string | null>(null);
-  const [appliedFingerprint, setAppliedFingerprint] = useState<string | null>(null);
+  const [recheckFailure, setRecheckFailure] = useState<'BLOCKED' | 'ERROR' | null>(null);
+  const [appliedSelection, setAppliedSelection] = useState<string | null>(null);
+  const [appliedRoomId, setAppliedRoomId] = useState<string | null>(null);
   const [, setFreshnessTick] = useState(0);
   const durationMinutes = calendarMeetingDurationMinutes(startsAt, endsAt);
   const availabilityWindow = calendarAvailabilityWindow(startsAt, timeZone);
-  const participants = useMemo(() => calendarSchedulingParticipants(attendees), [attendees]);
-  const fingerprint = calendarSchedulingFingerprint({
-    personIds: participants.personIds,
-    startsAt,
+  const participants = useMemo(() => calendarSchedulingParticipantsV2(attendees), [attendees]);
+  const input = useMemo<CalendarSchedulingEvaluationInputV2 | null>(() => {
+    if (!durationMinutes || !availabilityWindow) return null;
+    return {
+      participants: [...participants.participants],
+      searchWindow: availabilityWindow,
+      candidateSlot: { startsAt, endsAt },
+      durationMinutes,
+      searchTimeZone: timeZone,
+      roomCriteria: {
+        minimumCapacity: attendees.length + 1,
+        requiredFeatures: [],
+        preferredFeatures: ['VIDEO'],
+        approvalPreference: 'PREFER_NO_APPROVAL',
+      },
+    };
+  }, [
+    attendees.length,
+    availabilityWindow,
+    durationMinutes,
     endsAt,
+    participants,
+    startsAt,
     timeZone,
-  });
-  const availabilityMutation = useMutation<
-    CalendarSchedulingEvaluation,
-    Error,
-    AvailabilityRequest
-  >({
-    mutationFn: (request) =>
-      evaluateCalendarScheduling({
-        personIds: [...request.personIds],
-        from: request.from,
-        to: request.to,
-        roomStartsAt: request.roomStartsAt,
-        roomEndsAt: request.roomEndsAt,
-        durationMinutes: request.durationMinutes,
-        timeZone: request.timeZone,
-      }),
-    onSuccess: (_data, request) => {
+  ]);
+  const fingerprint = input
+    ? `${calendarSchedulingFingerprintV2(input)}:${selectedResourceId}`
+    : 'INVALID';
+  const fingerprintRef = useRef(fingerprint);
+  fingerprintRef.current = fingerprint;
+
+  const evaluationMutation = useMutation<CalendarSchedulingEvaluationV2, Error, EvaluationRequest>({
+    mutationFn: (request) => evaluateCalendarSchedulingV2(request.input),
+    onSuccess: (_evaluation, request) => {
       setLastFingerprint(request.fingerprint);
-      setAppliedFingerprint((current) => (current === request.fingerprint ? current : null));
+      setRecheckFailure(null);
     },
   });
-  const resetAvailability = availabilityMutation.reset;
-  const evaluationState = calendarSchedulingEvaluationState(availabilityMutation.data);
-  const evaluationMatches = lastFingerprint === fingerprint;
-  const evaluationComplete = evaluationState === 'COMPLETE' && evaluationMatches;
-  const evaluationPartial = evaluationState === 'PARTIAL' && evaluationMatches;
-  const evaluationVisible = evaluationComplete || evaluationPartial;
-  const rooms = useMemo(
-    () =>
-      rankCalendarRooms(
-        availabilityMutation.data
-          ? evaluationComplete
-            ? availabilityMutation.data.rooms
-            : []
-          : resources,
-        attendees.length
-      ),
-    [attendees.length, availabilityMutation.data, evaluationComplete, resources]
-  );
+  const resetEvaluation = evaluationMutation.reset;
+  const recheckMutation = useMutation({
+    mutationFn: (request: ApplyRequest) => {
+      const challengeToken = request.evaluation.challengeToken;
+      if (!challengeToken) throw new Error('A fresh scheduling challenge is required.');
+      return hardRecheckCalendarSchedulingV2(request.evaluation.evaluationId, {
+        challengeToken,
+        criteriaHash: request.evaluation.criteriaHash,
+        selection: {
+          startsAt: request.candidate.startsAt,
+          endsAt: request.candidate.endsAt,
+        },
+        roomId: (request.room?.room.resourceId ?? selectedResourceId) || null,
+      });
+    },
+    onSuccess: (recheck, request) => {
+      const current = request.fingerprint === fingerprintRef.current;
+      const roomId = (request.room?.room.resourceId ?? selectedResourceId) || null;
+      const draftFingerprint = calendarSchedulingAssistedDraftFingerprintV2({
+        startsAt: request.candidate.startsAt,
+        endsAt: request.candidate.endsAt,
+        timeZone,
+        attendees,
+        resourceId: roomId,
+      });
+      const receipt = calendarSchedulingVerificationReceiptV2(
+        request.evaluation,
+        recheck,
+        { startsAt: request.candidate.startsAt, endsAt: request.candidate.endsAt },
+        roomId,
+        draftFingerprint
+      );
+      if (!current || !receipt) {
+        setRecheckFailure('BLOCKED');
+        return;
+      }
+      if (request.action === 'TIME') {
+        setAppliedSelection(`${request.candidate.startsAt}:${request.candidate.endsAt}`);
+        onApplyTime(request.candidate.startsAt, request.candidate.endsAt, receipt);
+      } else if (request.room) {
+        setAppliedRoomId(request.room.room.resourceId);
+        onApplyRoom(request.room.room, receipt);
+      }
+    },
+    onError: () => setRecheckFailure('ERROR'),
+    onSettled: () => {
+      setLastFingerprint(null);
+      resetEvaluation();
+    },
+  });
+  const resetRecheck = recheckMutation.reset;
 
   useEffect(() => {
-    if (open) return;
-    resetAvailability();
+    if (!open) {
+      resetEvaluation();
+      resetRecheck();
+      setLastFingerprint(null);
+      setRecheckFailure(null);
+    }
+  }, [open, resetEvaluation, resetRecheck]);
+
+  useEffect(() => {
+    if (!lastFingerprint || lastFingerprint === fingerprint) return;
+    resetEvaluation();
+    resetRecheck();
     setLastFingerprint(null);
-    setAppliedFingerprint(null);
-  }, [open, resetAvailability]);
+    setRecheckFailure(null);
+  }, [fingerprint, lastFingerprint, resetEvaluation, resetRecheck]);
 
   useEffect(() => {
-    const validUntil = availabilityMutation.data?.validUntil;
+    const validUntil = evaluationMutation.data?.validUntil;
     if (!validUntil) return;
     const delay = Date.parse(validUntil) - Date.now();
     if (!Number.isFinite(delay) || delay <= 0) return;
     const timer = window.setTimeout(() => setFreshnessTick((current) => current + 1), delay + 25);
     return () => window.clearTimeout(timer);
-  }, [availabilityMutation.data?.validUntil]);
+  }, [evaluationMutation.data?.validUntil]);
 
-  const resultsStale = Boolean(
-    availabilityMutation.data && (evaluationState === 'STALE' || !evaluationMatches)
+  const evaluationMatches = lastFingerprint === fingerprint;
+  const evaluationState = calendarSchedulingEvaluationStateV2(
+    evaluationMutation.data,
+    evaluationMatches
   );
-  const canSearch = Boolean(durationMinutes && availabilityWindow);
+  const evaluationVisible = Boolean(evaluationMutation.data && evaluationMatches);
+  const participantsVerified =
+    participants.uncheckedCount === 0 && participants.overflowCount === 0;
   const search = () => {
-    if (!durationMinutes || !availabilityWindow) return;
-    availabilityMutation.mutate({
-      personIds: participants.personIds,
-      from: availabilityWindow.from,
-      to: availabilityWindow.to,
-      roomStartsAt: startsAt,
-      roomEndsAt: endsAt,
-      durationMinutes,
-      timeZone,
-      fingerprint,
-    });
+    if (!input) return;
+    resetRecheck();
+    setRecheckFailure(null);
+    evaluationMutation.mutate({ input, fingerprint });
   };
-  const applySlot = (slot: CalendarAvailabilitySlot) => {
-    const next = applyCalendarAvailabilitySlot(slot);
-    const nextWindow = calendarAvailabilityWindow(next.startsAt, timeZone);
-    const nextFingerprint = calendarSchedulingFingerprint({
-      personIds: participants.personIds,
-      startsAt: next.startsAt,
-      endsAt: next.endsAt,
-      timeZone,
-    });
-    onApplyTime(next.startsAt, next.endsAt);
-    setLastFingerprint(null);
-    setAppliedFingerprint(nextFingerprint);
-    if (!nextWindow || !durationMinutes) {
-      resetAvailability();
-      return;
-    }
-    availabilityMutation.mutate({
-      personIds: participants.personIds,
-      from: nextWindow.from,
-      to: nextWindow.to,
-      roomStartsAt: next.startsAt,
-      roomEndsAt: next.endsAt,
-      durationMinutes,
-      timeZone,
-      fingerprint: nextFingerprint,
-    });
-  };
+  const apply = (
+    evaluation: CalendarSchedulingEvaluationV2,
+    candidate: CalendarSchedulingCandidateV2,
+    action: ApplyRequest['action'],
+    room: CalendarSchedulingRoomRecommendationV2 | null = null
+  ) => recheckMutation.mutate({ evaluation, candidate, room, action, fingerprint });
+  const currentCandidate = evaluationMutation.data
+    ? calendarSchedulingCurrentCandidateV2(evaluationMutation.data, startsAt, endsAt)
+    : null;
+  const currentDecision =
+    evaluationMutation.data && currentCandidate
+      ? calendarSchedulingCandidateDecisionV2(
+          evaluationMutation.data,
+          currentCandidate,
+          evaluationMatches
+        )
+      : null;
+  const applied =
+    appliedSelection === `${startsAt}:${endsAt}` || appliedRoomId === selectedResourceId;
 
   return (
     <Box
       component="section"
       aria-labelledby={titleId}
       data-testid="calendar-scheduling-assistant"
-      sx={{
-        border: 1,
-        borderColor: 'divider',
-        borderRadius: 1,
-        overflow: 'hidden',
-        bgcolor: 'background.paper',
-      }}
+      sx={{ border: 1, borderColor: 'divider', borderRadius: 1, overflow: 'hidden', p: 2 }}
     >
-      <Box sx={{ p: { xs: 1.5, sm: 2 } }}>
-        <Stack
-          direction={{ xs: 'column', sm: 'row' }}
-          spacing={1.5}
-          alignItems={{ xs: 'stretch', sm: 'center' }}
-          justifyContent="space-between"
+      <Stack
+        direction={{ xs: 'column', sm: 'row' }}
+        spacing={1.5}
+        alignItems={{ xs: 'stretch', sm: 'center' }}
+        justifyContent="space-between"
+      >
+        <Box>
+          <Typography id={titleId} variant="subtitle1" fontWeight={800}>
+            {t('schedulingAssistant.title')}
+          </Typography>
+          <Typography variant="body2" color="text.secondary">
+            {t('schedulingAssistant.description')}
+          </Typography>
+        </Box>
+        <ActionButton
+          intent="primary"
+          size="small"
+          startIcon={<CalendarSearch size={17} />}
+          loading={evaluationMutation.isPending}
+          loadingLabel={t('schedulingAssistant.checking')}
+          disabled={!input || recheckMutation.isPending}
+          onClick={search}
         >
-          <Stack direction="row" spacing={1.25} alignItems="flex-start">
-            <Box
-              sx={{
-                width: 34,
-                height: 34,
-                display: 'grid',
-                placeItems: 'center',
-                borderRadius: 1,
-                bgcolor: 'primary.main',
-                color: 'primary.contrastText',
-                flex: '0 0 auto',
-              }}
-            >
-              <CalendarSearch size={18} aria-hidden="true" />
-            </Box>
-            <Box sx={{ minWidth: 0 }}>
-              <Typography id={titleId} variant="subtitle1" fontWeight={800}>
-                {t('schedulingAssistant.title')}
-              </Typography>
-              <Typography variant="body2" color="text.secondary">
-                {t('schedulingAssistant.description')}
-              </Typography>
-            </Box>
-          </Stack>
-          <ActionButton
-            intent="primary"
-            size="small"
-            startIcon={<CalendarSearch size={17} />}
-            loading={availabilityMutation.isPending}
-            loadingLabel={t('schedulingAssistant.checking')}
-            disabled={!canSearch}
-            onClick={search}
-          >
-            {t('schedulingAssistant.check')}
-          </ActionButton>
-        </Stack>
+          {t('schedulingAssistant.check')}
+        </ActionButton>
+      </Stack>
 
-        <Stack direction="row" spacing={0.75} useFlexGap flexWrap="wrap" sx={{ mt: 1.5 }}>
-          <Chip
-            size="small"
-            icon={<UsersRound size={14} />}
-            label={t('schedulingAssistant.participantSummary', {
-              count: participants.personIds.length + 1,
-            })}
-          />
-          <Chip
-            size="small"
-            label={t('schedulingAssistant.durationSummary', { count: durationMinutes ?? 0 })}
-          />
-          <Chip size="small" label={timeZone} />
-        </Stack>
+      <Stack direction="row" spacing={0.75} useFlexGap flexWrap="wrap" sx={{ mt: 1.5 }}>
+        <Chip
+          size="small"
+          icon={<UsersRound size={14} />}
+          label={t('schedulingAssistant.participantSummary', {
+            count: participants.participants.length + 1,
+          })}
+        />
+        <Chip
+          size="small"
+          label={t('schedulingAssistant.durationSummary', { count: durationMinutes ?? 0 })}
+        />
+        <Chip size="small" label={timeZone} />
+      </Stack>
 
-        {(participants.uncheckedCount > 0 || participants.overflowCount > 0) && (
-          <Alert severity="info" sx={{ mt: 1.5 }}>
-            {participants.uncheckedCount > 0 &&
-              t('schedulingAssistant.uncheckedParticipants', {
-                count: participants.uncheckedCount,
-              })}
-            {participants.uncheckedCount > 0 && participants.overflowCount > 0 ? ' ' : ''}
-            {participants.overflowCount > 0 &&
-              t('schedulingAssistant.participantOverflow', {
-                count: participants.overflowCount,
-              })}
-          </Alert>
-        )}
-        {!canSearch && (
-          <Alert severity="warning" sx={{ mt: 1.5 }}>
-            {t('schedulingAssistant.invalidRange')}
-          </Alert>
-        )}
-        {availabilityMutation.isError && (
-          <Alert severity="error" sx={{ mt: 1.5 }}>
-            {requestError(availabilityMutation.error, t('schedulingAssistant.loadError'))}
-          </Alert>
-        )}
-        {resultsStale && (
-          <Alert severity="info" sx={{ mt: 1.5 }}>
-            {t('schedulingAssistant.staleResults')}
-          </Alert>
-        )}
-        {appliedFingerprint === fingerprint && (
-          <Alert severity="success" icon={<Check size={18} />} sx={{ mt: 1.5 }}>
-            {t('schedulingAssistant.timeApplied')}
-          </Alert>
-        )}
-
-        {availabilityMutation.isPending && (
-          <Stack direction="row" spacing={1} alignItems="center" sx={{ mt: 2 }}>
-            <CircularProgress size={18} aria-hidden="true" />
-            <Typography variant="body2" color="text.secondary" role="status">
-              {t('schedulingAssistant.checkingDescription')}
-            </Typography>
-          </Stack>
-        )}
-
-        {availabilityMutation.data && evaluationState === 'UNAVAILABLE' && !resultsStale && (
-          <Alert severity="warning" sx={{ mt: 1.5 }} role="status">
-            {t('schedulingAssistant.incompleteResults')}
-          </Alert>
-        )}
-
-        {availabilityMutation.data && evaluationPartial && !resultsStale && (
-          <Alert severity="warning" sx={{ mt: 1.5 }} role="status">
-            {t('schedulingAssistant.partialResults', {
-              sources:
-                availabilityMutation.data.sources
-                  .filter((source) => source.status !== 'HEALTHY')
-                  .map((source) => source.sourceType)
-                  .join(', ') || t('availability.unknownSource'),
-            })}
-          </Alert>
-        )}
-
-        {availabilityMutation.data && evaluationVisible && (
-          <Box sx={{ mt: 2 }}>
-            <Stack direction="row" spacing={1} alignItems="center" justifyContent="space-between">
-              <Typography variant="overline" color="text.secondary">
-                {t('schedulingAssistant.suggestedTimes')}
-              </Typography>
-              <Typography variant="caption" color="text.secondary" role="status">
-                {t('schedulingAssistant.freshness', {
-                  time: calendarTime(availabilityMutation.data.generatedAt, language),
-                })}
-              </Typography>
-            </Stack>
-            {availabilityMutation.data.availability.suggestions.length ? (
-              <Box
-                sx={{
-                  display: 'grid',
-                  gridTemplateColumns: 'repeat(auto-fit, minmax(min(220px, 100%), 1fr))',
-                  gap: 1,
-                  mt: 0.75,
-                }}
-              >
-                {availabilityMutation.data.availability.suggestions.slice(0, 4).map((slot) => {
-                  const label = `${calendarDate(slot.startsAt, language)} · ${calendarTime(
-                    slot.startsAt,
-                    language
-                  )}–${calendarTime(slot.endsAt, language)}`;
-                  return (
-                    <ActionButton
-                      key={`${slot.startsAt}:${slot.endsAt}`}
-                      intent="secondary"
-                      disabled={evaluationPartial}
-                      aria-label={t('schedulingAssistant.applyTimeLabel', { label })}
-                      onClick={() => applySlot(slot)}
-                      sx={{
-                        minHeight: 58,
-                        justifyContent: 'flex-start',
-                        textAlign: 'left',
-                        px: 1.25,
-                      }}
-                    >
-                      <Box component="span" sx={{ display: 'block', minWidth: 0 }}>
-                        <Typography
-                          component="span"
-                          variant="body2"
-                          fontWeight={800}
-                          display="block"
-                        >
-                          {label}
-                        </Typography>
-                        <Typography
-                          component="span"
-                          variant="caption"
-                          color="text.secondary"
-                          display="block"
-                          noWrap
-                        >
-                          {slot.reasonCode === 'ALL_REQUIRED_AVAILABLE_WITHIN_WORKING_HOURS'
-                            ? t('schedulingAssistant.reasons.allRequiredAvailable')
-                            : slot.reason}
-                        </Typography>
-                      </Box>
-                    </ActionButton>
-                  );
-                })}
-              </Box>
-            ) : (
-              <Typography variant="body2" color="text.secondary" sx={{ mt: 0.75 }}>
-                {t('schedulingAssistant.noTimes')}
-              </Typography>
-            )}
-          </Box>
-        )}
-      </Box>
-
-      <Divider />
-      <Box sx={{ p: { xs: 1.5, sm: 2 }, bgcolor: 'background.paper' }}>
-        <Stack direction="row" spacing={1} alignItems="center" justifyContent="space-between">
-          <Stack direction="row" spacing={0.75} alignItems="center">
-            <Building2 size={16} aria-hidden="true" />
-            <Typography variant="overline" color="text.secondary">
-              {t('schedulingAssistant.recommendedRooms')}
-            </Typography>
-          </Stack>
-          {resourcesLoading && (
-            <CircularProgress size={16} aria-label={t('schedulingAssistant.roomsLoading')} />
+      {(participants.uncheckedCount > 0 || participants.overflowCount > 0) && (
+        <Alert severity="info" sx={{ mt: 1.5 }}>
+          {t('schedulingAssistant.uncheckedOrOverflow', {
+            unchecked: participants.uncheckedCount,
+            overflow: participants.overflowCount,
+          })}
+        </Alert>
+      )}
+      {!input && (
+        <Alert severity="warning" sx={{ mt: 1.5 }}>
+          {t('schedulingAssistant.invalidRange')}
+        </Alert>
+      )}
+      {evaluationMutation.isError && (
+        <Alert severity="error" sx={{ mt: 1.5 }}>
+          {requestError(evaluationMutation.error, t('schedulingAssistant.loadError'))}
+        </Alert>
+      )}
+      {evaluationState === 'STALE' || evaluationState === 'MISMATCH' ? (
+        <Alert severity="info" sx={{ mt: 1.5 }}>
+          {t('schedulingAssistant.staleResults')}
+        </Alert>
+      ) : null}
+      {evaluationState === 'PARTIAL' || evaluationState === 'UNKNOWN' ? (
+        <Alert severity="warning" sx={{ mt: 1.5 }}>
+          {t(
+            evaluationState === 'PARTIAL'
+              ? 'schedulingAssistant.partialBlocked'
+              : 'schedulingAssistant.unknownBlocked'
           )}
+        </Alert>
+      ) : null}
+      {recheckFailure && (
+        <Alert severity="error" sx={{ mt: 1.5 }}>
+          {t(
+            recheckFailure === 'ERROR'
+              ? 'schedulingAssistant.hardRecheckFailed'
+              : 'schedulingAssistant.hardRecheckBlocked'
+          )}
+        </Alert>
+      )}
+      {applied && (
+        <Alert severity="success" icon={<Check size={18} />} sx={{ mt: 1.5 }}>
+          {t('schedulingAssistant.timeApplied')}
+        </Alert>
+      )}
+      {recheckMutation.isPending && (
+        <Stack direction="row" spacing={1} alignItems="center" sx={{ mt: 1.5 }} role="status">
+          <CircularProgress size={18} aria-hidden="true" />
+          <Typography variant="body2">{t('schedulingAssistant.hardRechecking')}</Typography>
         </Stack>
-        {resourcesError ? (
-          <Typography variant="body2" color="error" sx={{ mt: 0.75 }}>
-            {t('schedulingAssistant.roomsError')}
-          </Typography>
-        ) : rooms.length ? (
-          <Stack direction="row" spacing={1} useFlexGap flexWrap="wrap" sx={{ mt: 0.75 }}>
-            {rooms.slice(0, 3).map((room) => (
-              <ActionButton
-                key={room.resourceId}
-                intent={room.resourceId === selectedResourceId ? 'primary' : 'secondary'}
-                size="small"
-                aria-pressed={room.resourceId === selectedResourceId}
-                onClick={() => onApplyRoom(room)}
-              >
-                {room.name} · {t('resources.capacity', { count: room.capacity })}
-                {room.approvalRequired ? ` · ${t('resources.approvalRequired')}` : ''}
-              </ActionButton>
-            ))}
-          </Stack>
-        ) : (
-          !resourcesLoading && (
-            <Typography variant="body2" color="text.secondary" sx={{ mt: 0.75 }}>
-              {t('schedulingAssistant.noRooms')}
+      )}
+
+      {evaluationVisible && evaluationMutation.data ? (
+        <>
+          <CalendarSchedulingMatrix
+            evaluation={evaluationMutation.data}
+            participantLabels={participants.labels}
+            language={language}
+            timeZone={timeZone}
+          />
+          <Box sx={{ mt: 2 }}>
+            <Typography variant="overline" color="text.secondary">
+              {t('schedulingAssistant.suggestedTimes')}
             </Typography>
-          )
-        )}
-        <Stack direction="row" spacing={0.75} alignItems="flex-start" sx={{ mt: 1.5 }}>
-          <LockKeyhole size={14} aria-hidden="true" />
-          <Typography variant="caption" color="text.secondary">
-            {t('schedulingAssistant.privacy')}
-          </Typography>
-        </Stack>
-      </Box>
+            <Stack spacing={1} sx={{ mt: 0.75 }}>
+              {evaluationMutation.data.suggestions.map((candidate) => {
+                const decision = calendarSchedulingCandidateDecisionV2(
+                  evaluationMutation.data!,
+                  candidate,
+                  evaluationMatches
+                );
+                const label = `${calendarDate(candidate.startsAt, language, true, timeZone)} · ${calendarTime(
+                  candidate.startsAt,
+                  language,
+                  timeZone
+                )}–${calendarTime(candidate.endsAt, language, timeZone)}`;
+                const reasonCode = candidate.reasonCodes[0] ?? 'ALL_REQUIRED_AVAILABLE';
+                const reasonKey = `schedulingAssistant.reasons.${reasonCode}`;
+                return (
+                  <ActionButton
+                    key={candidate.candidateId}
+                    intent="secondary"
+                    disabled={
+                      !participantsVerified || !decision.canApply || recheckMutation.isPending
+                    }
+                    aria-label={t('schedulingAssistant.applyTimeLabel', { label })}
+                    onClick={() => apply(evaluationMutation.data!, candidate, 'TIME')}
+                    sx={{ minHeight: 58, justifyContent: 'flex-start', textAlign: 'left' }}
+                  >
+                    <Box component="span" sx={{ display: 'block' }}>
+                      <Typography component="span" variant="body2" fontWeight={800} display="block">
+                        {label}
+                      </Typography>
+                      <Typography component="span" variant="caption" color="text.secondary">
+                        {i18n.exists(reasonKey, { ns: 'calendar' })
+                          ? t(reasonKey)
+                          : t('schedulingAssistant.reasonFallback')}
+                        {decision.optionalConflictCount
+                          ? ` · ${t('schedulingAssistant.optionalConflictWarning', {
+                              count: decision.optionalConflictCount,
+                            })}`
+                          : ''}
+                      </Typography>
+                    </Box>
+                  </ActionButton>
+                );
+              })}
+              {!evaluationMutation.data.suggestions.length ? (
+                <Typography variant="body2" color="text.secondary">
+                  {t('schedulingAssistant.noTimes')}
+                </Typography>
+              ) : null}
+            </Stack>
+          </Box>
+          <CalendarSchedulingEvidence
+            sources={evaluationMutation.data.sources}
+            rooms={evaluationMutation.data.rooms}
+            selectedResourceId={selectedResourceId}
+            applyingResourceId={
+              recheckMutation.isPending && recheckMutation.variables?.room
+                ? recheckMutation.variables.room.room.resourceId
+                : null
+            }
+            roomActionsDisabled={
+              !participantsVerified || !currentDecision?.canApply || recheckMutation.isPending
+            }
+            onApplyRoom={(room) =>
+              currentCandidate && apply(evaluationMutation.data!, currentCandidate, 'ROOM', room)
+            }
+          />
+        </>
+      ) : null}
+
+      <Stack direction="row" spacing={0.75} alignItems="flex-start" sx={{ mt: 1.5 }}>
+        <LockKeyhole size={14} aria-hidden="true" />
+        <Typography variant="caption" color="text.secondary">
+          {t('schedulingAssistant.privacy')}
+        </Typography>
+      </Stack>
     </Box>
   );
 }

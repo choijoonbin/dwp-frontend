@@ -8,11 +8,6 @@ vi.mock('react-i18next', () => ({
   useTranslation: () => ({ t: (key: string) => key }),
 }));
 
-vi.mock('./notification-admin', () => ({
-  NotificationAdminOverviewPage: () => null,
-  NotificationDeliveryOperationsPage: () => null,
-  NotificationTypeCatalogPage: () => null,
-}));
 vi.mock('./notification-preferences', () => ({ NotificationPreferences: () => null }));
 vi.mock('./notification-policy-studio', () => ({
   NotificationPolicyStudio: () => createElement('section', { 'data-testid': 'policy-studio' }),
@@ -36,7 +31,7 @@ vi.mock('./notification-ui', () => ({
   NotificationPageHeading: () => createElement('h1', null, 'Policies'),
 }));
 
-import { NotificationAdminPolicies } from './notification-product-pages';
+import NotificationAdminPolicies from './notification-admin-policies-route';
 
 describe('NotificationAdminPolicies', () => {
   it('mounts tenant attention governance below the existing policy studio in one page frame', () => {

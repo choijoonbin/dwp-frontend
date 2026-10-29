@@ -107,7 +107,10 @@ export function RetentionSurface({
   const [purgeBefore, setPurgeBefore] = useState(() => new Date(now).toISOString().slice(0, 10));
   const candidate =
     canPreviewPurge || canAuthorizePurge || canExecutePurge ? retention?.candidate : undefined;
-  const gate = fallbackEvidence ?? buildMailPurgeGateEvidence(retention, true, now);
+  const retentionSourceAvailable = Boolean(retention);
+  const gate = retentionSourceAvailable
+    ? (fallbackEvidence ?? buildMailPurgeGateEvidence(retention, true, now))
+    : buildMailPurgeGateEvidence(undefined, true, now);
   const availability = getMailPurgeAvailability(gate);
   const candidateExpiresAt = candidate ? Date.parse(candidate.expiresAt) : Number.NaN;
   const candidateExpired = Boolean(
@@ -872,7 +875,14 @@ export function RetentionSurface({
           </ActionButton>
           <ActionButton
             intent="primary"
-            disabled={!purgeScope || !purgeBefore || !purgeResourceTypes.length || !onPreview}
+            disabled={
+              !retentionSourceAvailable ||
+              !availability.previewEnabled ||
+              !purgeScope ||
+              !purgeBefore ||
+              !purgeResourceTypes.length ||
+              !onPreview
+            }
             loading={busyAction === 'preview-purge'}
             onClick={() => {
               if (!purgeScope || !onPreview) return;

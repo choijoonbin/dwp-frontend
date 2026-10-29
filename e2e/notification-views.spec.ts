@@ -552,8 +552,8 @@ test('390px 저장 보기 편집기는 하단 시트로 열리고 실제 조건�
   await expect(editor).toBeVisible();
   await expect(editor.getByLabel('안 읽음')).toBeChecked();
   await expect(editor.getByLabel('표시 밀도')).toBeVisible();
-  await expect(editor.getByRole('button', { name: 'BELL' })).toBeVisible();
-  await expect(editor.getByRole('button', { name: 'BLUE' })).toBeVisible();
+  await expect(editor.getByRole('button', { name: '종' })).toBeVisible();
+  await expect(editor.getByRole('button', { name: '파랑' })).toBeVisible();
   await expect(editor.getByRole('combobox', { name: '포함 알림 유형' })).toBeVisible();
   await expect(editor.getByText('저장 시 6건의 알림이 포함됩니다.')).toBeVisible();
   await expectNoHorizontalOverflow(page);
@@ -683,9 +683,23 @@ for (const width of [390, 320]) {
     await expect(dialog).toBeVisible();
     await dialog.getByRole('combobox', { name: '읽음 상태 필터' }).click();
     await page.getByRole('option', { name: '안 읽음', exact: true }).click();
+    await expect(page).not.toHaveURL(/read=unread/);
     await dialog.getByRole('button', { name: '필터 닫기' }).click();
     await expect(page.getByRole('button', { name: '상세 필터', exact: true })).toBeFocused();
+    await expect(page).not.toHaveURL(/read=unread/);
+
+    await page.getByRole('button', { name: '상세 필터', exact: true }).click();
+    await page
+      .getByRole('dialog', { name: '상세 필터' })
+      .getByRole('combobox', { name: '읽음 상태 필터' })
+      .click();
+    await page.getByRole('option', { name: '안 읽음', exact: true }).click();
+    await page
+      .getByRole('dialog', { name: '상세 필터' })
+      .getByRole('button', { name: '결과 보기' })
+      .click();
     await expect(page).toHaveURL(/view=mentions&read=unread/);
+    await expect(page.getByRole('button', { name: '상세 필터 (1)' })).toBeVisible();
     await expectNoHorizontalOverflow(page);
     const violations = (
       await new AxeBuilder({ page }).include('main').withTags(['wcag2a', 'wcag2aa']).analyze()

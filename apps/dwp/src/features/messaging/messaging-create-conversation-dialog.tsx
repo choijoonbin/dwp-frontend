@@ -19,6 +19,8 @@ import Typography from '@mui/material/Typography';
 
 import type { MessagingPerson } from '@dwp-frontend/shared-utils';
 
+import { MessagingReadErrorState } from './messaging-read-error-state';
+
 type ConversationType = 'GROUP' | 'CHANNEL';
 
 export function MessagingCreateConversationDialog({
@@ -177,6 +179,14 @@ export function MessagingCreateConversationDialog({
             supportingText={t('create.membersDescription')}
             textFieldProps={{ placeholder: t('create.membersPlaceholder') }}
           />
+          {people.isError ? (
+            <MessagingReadErrorState
+              error={people.error}
+              title={t('create.membersLoadError')}
+              retrying={people.isFetching}
+              onRetry={() => void people.refetch()}
+            />
+          ) : null}
 
           {mutation.isError && <Alert severity="error">{t('create.error')}</Alert>}
 

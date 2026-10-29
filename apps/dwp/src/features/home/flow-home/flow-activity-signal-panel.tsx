@@ -28,6 +28,7 @@ import type { FlowSignal } from './flow-home-model';
 
 const CONTROL_RADIUS = `${foundationTokens.radius.control}px`;
 const SURFACE_RADIUS = `${foundationTokens.radius.surface}px`;
+export const FLOW_ACTIVITY_SIGNAL_DIALOG_TEST_ID = 'flow-activity-signal-dialog';
 
 export function FlowActivityDistribution({
   summary,
@@ -110,8 +111,10 @@ export function FlowActivitySignalPanel({
       description={t('flow.signals.execution.scope')}
       closeLabel={t('flow.signals.execution.close')}
       onClose={onClose}
+      disableRestoreFocus
       fullScreen={mobile}
       maxWidth="lg"
+      testId={FLOW_ACTIVITY_SIGNAL_DIALOG_TEST_ID}
       titleStart={<Activity size={22} aria-hidden="true" />}
       contentDividers
       contentSx={{ p: { xs: 1.5, sm: 2.5 }, bgcolor: 'background.default' }}

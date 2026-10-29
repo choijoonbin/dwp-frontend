@@ -27,6 +27,14 @@ const CALENDAR_WORK_NAVIGATION = projectProductSurfaceNavigation(CALENDAR_NAVIGA
     taskKind: 'work',
     access: { type: 'policy', accessPolicyKey: 'calendar.work-access.v1' },
   },
+  polls: {
+    taskKind: 'work',
+    access: { type: 'policy', accessPolicyKey: 'calendar.work-access.v1' },
+  },
+  bookings: {
+    taskKind: 'work',
+    access: { type: 'policy', accessPolicyKey: 'calendar.work-access.v1' },
+  },
   insights: {
     taskKind: 'work',
     access: { type: 'policy', accessPolicyKey: 'calendar.work-access.v1' },

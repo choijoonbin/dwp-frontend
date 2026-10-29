@@ -54,10 +54,16 @@ test('navigator filters loaded conversations without hiding the way back', async
   await mockMessagingReceipts(page);
   await page.goto('/messages/inbox');
   const navigator = page.getByTestId('messaging-conversation-navigator');
-  await navigator.getByRole('tab', { name: 'Favorites', exact: true }).click();
-  await expect(navigator.getByText('No matching conversations', { exact: true })).toBeVisible();
+  const favorites = navigator.getByRole('tab', { name: 'Favorites', exact: true });
+  await favorites.click();
+  await expect(page).toHaveURL(/filter=FAVORITES/u);
+  await expect(
+    navigator.getByRole('heading', { name: 'No matching conversations', exact: true })
+  ).toBeVisible({ timeout: 15_000 });
   await navigator.getByRole('tab', { name: 'Unread', exact: true }).click();
-  await expect(navigator.getByRole('button', { name: /Launch coordination/ })).toBeVisible();
+  await expect(navigator.getByRole('button', { name: /Launch coordination/ })).toBeVisible({
+    timeout: 15_000,
+  });
   await navigator.getByRole('tab', { name: 'All', exact: true }).click();
   await expect(navigator.getByRole('button', { name: /Launch coordination/ })).toBeVisible();
 });

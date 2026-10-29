@@ -18,10 +18,7 @@ import {
 } from '@dwp-frontend/shared-utils/api/notification-api';
 import { ActionButton } from '@dwp-frontend/design-system/components/actions/action-button';
 import { ActionIconButton } from '@dwp-frontend/design-system/components/actions/action-icon-button';
-import {
-  ErrorState,
-  LoadingState,
-} from '@dwp-frontend/design-system/components/states/state-panels';
+import { LoadingState } from '@dwp-frontend/design-system/components/states/state-panels';
 import { foundationTokens } from '@dwp-frontend/design-system/foundation/tokens';
 import { formatDate } from '@dwp-frontend/shared-i18n';
 
@@ -35,6 +32,7 @@ import Typography from '@mui/material/Typography';
 import { notificationQueryKeys } from './integration-contract';
 import { NotificationAttentionDetailRuntime } from './notification-attention-detail-runtime';
 import { NotificationDetailReply } from './notification-detail-reply';
+import { NotificationErrorState } from './notification-error-support';
 import {
   displayNotificationActorLabel,
   resolveMessagingReplyTarget,
@@ -284,7 +282,8 @@ export function NotificationDetailPane({
         {detailQuery.isLoading ? (
           <LoadingState label={t('states.loadingDetail')} variant="skeleton" skeletonRows={5} />
         ) : detailQuery.isError || !detail ? (
-          <ErrorState
+          <NotificationErrorState
+            error={detailQuery.error}
             title={t('states.detailErrorTitle')}
             description={t('states.detailErrorDescription')}
             retryLabel={t('actions.retry')}

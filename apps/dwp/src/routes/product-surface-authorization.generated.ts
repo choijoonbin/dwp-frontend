@@ -14,9 +14,9 @@ export type ProductAuthorizationRouteProjection = Readonly<{
 
 export const PRODUCT_AUTHORIZATION_REGISTRY_REVISION = {
   bundleKey: 'product-surfaces',
-  version: 61,
-  checksum: 'f7cf92a97f2fabf86f257010064a3183acf58f86cc2c9d7692a1555cab55aa24',
-  indexChecksum: '383db99274809a32bebb7ce65b0762cb10525204ef457c1a8c7602edc58b9d19',
+  version: 62,
+  checksum: 'cb370fd02a896452a64187fca8afb8bb3e3d281e490fba02e76f7a3c0d7f9770',
+  indexChecksum: '6335d20480114daca37f2a73fb6c31eaf0092ded9cd347717a89508e47d15c81',
 } as const;
 
 export const PRODUCT_SURFACE_ROLLOUT_INVENTORY_REVISION = {
@@ -3653,6 +3653,22 @@ export const PRODUCT_AUTHORIZATION_ROUTE_PROJECTIONS = [
       {
         method: 'GET',
         path: '/api/approvals/v1/home',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.approvals.work.hris-separation-waiver-task-approve.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'approvals.work',
+    subjectType: 'PRODUCT',
+    productId: 'approvals',
+    surfaceId: 'approvals.work',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/approvals/v1/hris/separation-waiver-tasks/{taskId}/approve',
       },
     ],
   },

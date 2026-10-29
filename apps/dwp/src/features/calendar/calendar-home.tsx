@@ -30,6 +30,10 @@ import useMediaQuery from '@mui/material/useMediaQuery';
 
 import { CalendarEventDialog } from './calendar-event-dialog';
 import { CalendarEventDrawer, calendarDate } from './calendar-components';
+import {
+  calendarEffectivePreferences,
+  useCalendarEffectivePreferences,
+} from './calendar-effective-preferences';
 import { CalendarHomeHeader } from './calendar-home-header';
 import { calendarReconcileHomeEvent } from './calendar-home-selection';
 import { CalendarCanvas } from './calendar-experience';
@@ -123,7 +127,9 @@ export function CalendarHome() {
   const [createState, setCreateState] = useState<CalendarHomeCreateState | null>(null);
   const language = i18n.resolvedLanguage ?? i18n.language;
   const currentSearch = useMemo(() => new URLSearchParams(location.search), [location.search]);
-  const summary = useCalendarWorkspaceSummary(true, language);
+  const { preferences: baseCalendarPreferences, query: settingsQuery } =
+    useCalendarEffectivePreferences();
+  const summary = useCalendarWorkspaceSummary(true, language, baseCalendarPreferences.timeZone);
   const policyQuery = useQuery({
     queryKey: ['calendar', 'policy'],
     queryFn: getCalendarPolicy,
@@ -140,6 +146,12 @@ export function CalendarHome() {
     isPending: policyQuery.isPending,
   });
   const policyData = policyState === 'READY' ? policyQuery.data : undefined;
+  const calendarPreferences = calendarEffectivePreferences(settingsQuery.data, {
+    timeZone: baseCalendarPreferences.timeZone,
+    workingDayStart: policyData?.workingDayStart,
+    workingDayEnd: policyData?.workingDayEnd,
+    weekStart: policyData?.weekStart,
+  });
   const currentTime = useCalendarLiveClock(summary.data?.generatedAt);
   const canCreateGranted = hasPermission('APP.CALENDAR', 'CREATE');
   const canUpdateGranted = hasPermission('APP.CALENDAR', 'UPDATE');
@@ -356,8 +368,9 @@ export function CalendarHome() {
     ? calendarWorkdayPhase(currentTime, {
         date: summary.data.date,
         timeZone: summary.data.timeZone,
-        workingDayStart: policyData?.workingDayStart,
-        workingDayEnd: policyData?.workingDayEnd,
+        workingDays: calendarPreferences.workingDays,
+        workingDayStart: calendarPreferences.workingDayStart,
+        workingDayEnd: calendarPreferences.workingDayEnd,
       })
     : 'UNKNOWN';
   const afterWorkWithoutCurrentEvent = Boolean(
@@ -477,8 +490,9 @@ export function CalendarHome() {
         <CalendarTodayWorkspace
           data={summary.data}
           currentTime={currentTime}
-          workingDayStart={policyData?.workingDayStart}
-          workingDayEnd={policyData?.workingDayEnd}
+          workingDays={calendarPreferences.workingDays}
+          workingDayStart={calendarPreferences.workingDayStart}
+          workingDayEnd={calendarPreferences.workingDayEnd}
           railState={summary.state}
           railFetching={summary.isFetching}
           language={language}

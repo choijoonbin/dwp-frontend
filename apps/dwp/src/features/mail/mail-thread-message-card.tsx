@@ -219,14 +219,22 @@ export function MailThreadMessageCard({
             color={delivery.severity}
             label={t(delivery.labelKey, { defaultValue: delivery.labelFallback })}
           />
-          {message.deliveryState === 'SENT' && (
+          {(message.deliveryState === 'SENT' || message.deliveryState === 'PROVIDER_ACCEPTED') && (
             <Typography variant="caption" color="text.secondary">
-              {t('secondary.delivery.recipientDeliveryUnconfirmed', {
-                defaultValue: 'Recipient delivery has not been confirmed.',
-              })}
+              {t(
+                message.deliveryState === 'PROVIDER_ACCEPTED'
+                  ? 'secondary.delivery.providerAcceptedDescription'
+                  : 'secondary.delivery.recipientDeliveryUnconfirmed',
+                {
+                  defaultValue:
+                    message.deliveryState === 'PROVIDER_ACCEPTED'
+                      ? 'The provider accepted the message, but recipient delivery has not been confirmed.'
+                      : 'Recipient delivery has not been confirmed.',
+                }
+              )}
             </Typography>
           )}
-          {message.deliveryState === 'FAILED' && (
+          {(message.deliveryState === 'FAILED' || message.deliveryState === 'RESULT_UNKNOWN') && (
             <Stack spacing={0.35} alignItems="flex-end">
               <ActionButton
                 intent="quiet"
@@ -241,7 +249,11 @@ export function MailThreadMessageCard({
                 color="text.secondary"
                 sx={{ maxWidth: 360, textAlign: 'right' }}
               >
-                {t('secondary.delivery.retryBlockedDescription')}
+                {t(
+                  message.deliveryState === 'RESULT_UNKNOWN'
+                    ? 'secondary.delivery.resultUnknownDescription'
+                    : 'secondary.delivery.retryBlockedDescription'
+                )}
               </Typography>
             </Stack>
           )}

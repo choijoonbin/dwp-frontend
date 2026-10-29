@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import {
@@ -55,6 +55,8 @@ type WorkplaceWayfindingProps = Readonly<{
   locale?: WorkplaceNavigationLocale;
   initialOriginPoiId?: string;
   initialDestinationPoiId?: string;
+  initialAccessible?: boolean;
+  initialAvoidStairs?: boolean;
   defaultDestinationResourceId?: string;
   siteOptions?: readonly Readonly<{ siteId: string; name: string }>[];
   onSiteChange?: (siteId: string) => void;
@@ -78,6 +80,8 @@ export function WorkplaceWayfinding({
   locale = 'ko',
   initialOriginPoiId = '',
   initialDestinationPoiId = '',
+  initialAccessible = false,
+  initialAvoidStairs = false,
   defaultDestinationResourceId = '',
   siteOptions = [],
   onSiteChange,
@@ -88,10 +92,10 @@ export function WorkplaceWayfinding({
   const copy = workplaceNavigationCopy(locale);
   const [originPoiId, setOriginPoiId] = useState(initialOriginPoiId);
   const [destinationPoiId, setDestinationPoiId] = useState(initialDestinationPoiId);
-  const [accessible, setAccessible] = useState(false);
-  const [avoidStairs, setAvoidStairs] = useState(false);
+  const [accessible, setAccessible] = useState(initialAccessible);
+  const [avoidStairs, setAvoidStairs] = useState(initialAvoidStairs);
   const [invalidDeepLink, setInvalidDeepLink] = useState(false);
-  const autoRoutedSite = useRef('');
+  const autoRoutedRequest = useRef('');
   const poisQuery = useQuery({
     queryKey: ['workplace', 'navigation', 'pois', siteId],
     queryFn: () => getWorkplaceNavigationPois(siteId),
@@ -99,27 +103,65 @@ export function WorkplaceWayfinding({
     retry: false,
   });
   const routeMutation = useMutation({
-    mutationFn: () =>
-      getWorkplaceNavigationRoute({
-        siteId,
-        originPoiId,
-        destinationPoiId,
-        accessible,
-        avoidStairs,
-      }),
+    mutationFn: async (request: {
+      requestKey: string;
+      siteId: string;
+      originPoiId: string;
+      destinationPoiId: string;
+      accessible: boolean;
+      avoidStairs: boolean;
+    }) => ({
+      requestKey: request.requestKey,
+      route: await getWorkplaceNavigationRoute(request),
+    }),
   });
   const pois = useMemo(() => poisQuery.data ?? [], [poisQuery.data]);
   const effectiveOriginPoiId = pois.some((poi) => poi.poiId === originPoiId) ? originPoiId : '';
   const effectiveDestinationPoiId = pois.some((poi) => poi.poiId === destinationPoiId)
     ? destinationPoiId
     : '';
-  const route = routeMutation.data ?? null;
-  const guided = route ? workplaceNavigationCanRenderGuidedRoute(route) : false;
-  const breadcrumb = route ? workplaceNavigationFallbackBreadcrumb(route) : [];
   const canSearch =
     Boolean(effectiveOriginPoiId && effectiveDestinationPoiId) &&
     effectiveOriginPoiId !== effectiveDestinationPoiId &&
     !routeMutation.isPending;
+  const routeRequestKey = [
+    siteId,
+    effectiveOriginPoiId,
+    effectiveDestinationPoiId,
+    accessible,
+    avoidStairs,
+  ].join(':');
+  const route =
+    routeMutation.data?.requestKey === routeRequestKey ? routeMutation.data.route : null;
+  const guided = route ? workplaceNavigationCanRenderGuidedRoute(route) : false;
+  const breadcrumb = route ? workplaceNavigationFallbackBreadcrumb(route) : [];
+  const findRoute = useCallback(
+    () =>
+      routeMutation.mutate({
+        requestKey: routeRequestKey,
+        siteId,
+        originPoiId: effectiveOriginPoiId,
+        destinationPoiId: effectiveDestinationPoiId,
+        accessible,
+        avoidStairs,
+      }),
+    [
+      accessible,
+      avoidStairs,
+      effectiveDestinationPoiId,
+      effectiveOriginPoiId,
+      routeMutation,
+      routeRequestKey,
+      siteId,
+    ]
+  );
+
+  useEffect(() => {
+    setOriginPoiId(initialOriginPoiId);
+    setDestinationPoiId(initialDestinationPoiId);
+    setAccessible(initialAccessible);
+    setAvoidStairs(initialAvoidStairs);
+  }, [initialAccessible, initialAvoidStairs, initialDestinationPoiId, initialOriginPoiId, siteId]);
 
   useEffect(() => {
     if (!pois.length) return;
@@ -164,15 +206,20 @@ export function WorkplaceWayfinding({
 
   useEffect(() => {
     routeMutation.reset();
-    autoRoutedSite.current = '';
-    // The selected POIs are validated against the next site's published graph when it loads.
-  }, [siteId]); // eslint-disable-line react-hooks/exhaustive-deps
+    // A rendered route and its share link must always describe the currently selected criteria.
+  }, [routeRequestKey]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
-    if (!canSearch || route || routeMutation.isPending || autoRoutedSite.current === siteId) return;
-    autoRoutedSite.current = siteId;
-    routeMutation.mutate();
-  }, [canSearch, route, routeMutation, siteId]);
+    if (
+      !canSearch ||
+      route ||
+      routeMutation.isPending ||
+      autoRoutedRequest.current === routeRequestKey
+    )
+      return;
+    autoRoutedRequest.current = routeRequestKey;
+    findRoute();
+  }, [canSearch, findRoute, route, routeMutation.isPending, routeRequestKey]);
 
   const selectedDestination = pois.find((poi) => poi.poiId === destinationPoiId) ?? null;
 
@@ -324,7 +371,7 @@ export function WorkplaceWayfinding({
                 startIcon={<Navigation size={17} />}
                 disabled={!canSearch}
                 loading={routeMutation.isPending}
-                onClick={() => routeMutation.mutate()}
+                onClick={findRoute}
               >
                 {copy.findRoute}
               </ActionButton>

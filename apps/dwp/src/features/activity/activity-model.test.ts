@@ -1,14 +1,33 @@
 import { describe, expect, it } from 'vitest';
 import {
+  activityCompositeRefreshState,
+  activityEmptyStateKind,
   activityQueryKeys,
   activityRefreshState,
   activitySavedConfiguration,
   applyActivitySavedConfiguration,
   readActivityFilters,
+  validActivitySearchQuery,
   validActivityTimeRange,
 } from './activity-model';
 
 describe('activity navigation and server-query model', () => {
+  it('accepts empty, 3+ character, and exact UUID searches but rejects 1-2 characters', () => {
+    expect(validActivitySearchQuery('')).toBe(true);
+    expect(validActivitySearchQuery('ab')).toBe(false);
+    expect(validActivitySearchQuery(' abc ')).toBe(true);
+    expect(validActivitySearchQuery('😀😀')).toBe(false);
+    expect(validActivitySearchQuery('😀😀😀')).toBe(true);
+    expect(validActivitySearchQuery('aaaaaaaa-0000-4000-8000-000000000001')).toBe(true);
+    expect(readActivityFilters(new URLSearchParams('q=ab')).query).toBeUndefined();
+    expect(readActivityFilters(new URLSearchParams('q=%20abc%20')).query).toBe('abc');
+  });
+
+  it('distinguishes a genuinely empty ledger from an empty filtered result', () => {
+    expect(activityEmptyStateKind(0)).toBe('empty');
+    expect(activityEmptyStateKind(1)).toBe('filtered');
+  });
+
   it('preserves legacy URL filters while adding source/object/time and cursor scope', () => {
     const filters = readActivityFilters(
       new URLSearchParams(
@@ -102,6 +121,24 @@ describe('activity navigation and server-query model', () => {
         60
       )
     ).toBe('degraded');
+  });
+
+  it('uses the least healthy independent query as the composite page freshness', () => {
+    expect(activityCompositeRefreshState(['live', 'syncing', 'live'])).toBe('syncing');
+    expect(activityCompositeRefreshState(['live', 'stale', 'live'])).toBe('stale');
+    expect(activityCompositeRefreshState(['live', 'stale', 'syncing'])).toBe('stale');
+    expect(activityCompositeRefreshState(['live', 'degraded', 'syncing'])).toBe('degraded');
+    expect(activityCompositeRefreshState(['live', 'live', 'live'])).toBe('live');
+  });
+
+  it('supports a slower freshness window for low-frequency source ledgers', () => {
+    expect(
+      activityRefreshState(
+        { isError: false, isFetching: false, dataUpdatedAt: 1 },
+        240_000,
+        300_000
+      )
+    ).toBe('live');
   });
 
   it('requires explicit timezones and an ordered half-open interval', () => {

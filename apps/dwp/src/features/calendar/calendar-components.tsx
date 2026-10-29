@@ -50,24 +50,31 @@ export const CALENDAR_EVENT_TONES: Record<
   REMINDER: { main: '#475569', soft: '#EEF1F4', icon: Clock3 },
 };
 
-export function calendarTime(value: string, language: string) {
+export function calendarTime(value: string, language: string, timeZone?: string) {
   return formatDate(
     value,
     {
       hour: '2-digit',
       minute: '2-digit',
+      ...(timeZone ? { timeZone, timeZoneName: 'shortOffset' as const } : {}),
     },
     resolveSupportedLocale(language)
   );
 }
 
-export function calendarDate(value: string | Date, language: string, includeWeekday = true) {
+export function calendarDate(
+  value: string | Date,
+  language: string,
+  includeWeekday = true,
+  timeZone?: string
+) {
   return formatDate(
-    calendarDisplayDateValue(value),
+    calendarDisplayDateValue(value, timeZone),
     {
       month: 'long',
       day: 'numeric',
       weekday: includeWeekday ? 'long' : undefined,
+      ...(timeZone ? { timeZone } : {}),
     },
     resolveSupportedLocale(language)
   );
@@ -390,6 +397,21 @@ export function CalendarEventDrawer({
                 {t(`event.restrictions.${event.restrictionReason}`, {
                   defaultValue: t('event.restrictionFallback'),
                 })}
+              </Alert>
+            )}
+            {event.externalProvider && event.externalSourceUrl && (
+              <Alert severity="info" variant="outlined">
+                <Link
+                  href={event.externalSourceUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  sx={{ fontWeight: 700 }}
+                >
+                  {t('external.openSource')}
+                </Link>
+                <Typography variant="body2" sx={{ mt: 0.5 }}>
+                  {t('external.readOnly')}
+                </Typography>
               </Alert>
             )}
             <Stack direction="row" spacing={1.5}>

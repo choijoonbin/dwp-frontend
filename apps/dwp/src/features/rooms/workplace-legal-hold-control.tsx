@@ -6,11 +6,13 @@ import { updateWorkplaceBookingLegalHold, useToast } from '@dwp-frontend/shared-
 
 import Alert from '@mui/material/Alert';
 
+import { WORKPLACE_ADMIN_BOOKING_COMMAND_OPTIONS } from './workplace-admin-booking-command-authority';
+
 import type { WorkplaceAdminBooking, WorkplaceAdminBookingPage } from '@dwp-frontend/shared-utils';
 
 type LegalHoldTarget = { booking: WorkplaceAdminBooking; nextState: boolean };
 
-export function useWorkplaceLegalHoldControl(canManage: boolean) {
+export function useWorkplaceLegalHoldControl(canExecute: boolean) {
   const { t } = useTranslation('rooms');
   const toast = useToast();
   const queryClient = useQueryClient();
@@ -18,12 +20,13 @@ export function useWorkplaceLegalHoldControl(canManage: boolean) {
   const [reason, setReason] = useState('');
   const mutation = useMutation({
     mutationFn: ({ booking, nextState, holdReason }: LegalHoldTarget & { holdReason: string }) => {
-      if (!canManage) throw new Error('Manage permission required');
+      if (!canExecute) throw new Error('Elevated Workplace management authority required');
       return updateWorkplaceBookingLegalHold(
         booking.bookingId,
         booking.version,
         nextState,
-        holdReason
+        holdReason,
+        WORKPLACE_ADMIN_BOOKING_COMMAND_OPTIONS
       );
     },
     onSuccess: (saved) => {
@@ -63,11 +66,12 @@ export function useWorkplaceLegalHoldControl(canManage: boolean) {
     setReason('');
   };
   const open = (booking: WorkplaceAdminBooking) => {
+    if (!canExecute) return;
     setTarget({ booking, nextState: !booking.legalHold });
     setReason('');
   };
   const submit = () => {
-    if (target && reason.trim()) {
+    if (canExecute && target && reason.trim()) {
       mutation.mutate({ ...target, holdReason: reason.trim() });
     }
   };
@@ -76,10 +80,10 @@ export function useWorkplaceLegalHoldControl(canManage: boolean) {
 
 export function WorkplaceLegalHoldDialog({
   control,
-  canManage,
+  canExecute,
 }: {
   control: ReturnType<typeof useWorkplaceLegalHoldControl>;
-  canManage: boolean;
+  canExecute: boolean;
 }) {
   const { t } = useTranslation('rooms');
   const { target, reason, setReason, close, submit, pending } = control;
@@ -106,7 +110,7 @@ export function WorkplaceLegalHoldDialog({
           : 'workplace.admin.operations.legalHold.release'
       )}
       busy={pending}
-      submitDisabled={!canManage || !reason.trim()}
+      submitDisabled={!canExecute || !reason.trim()}
       onClose={close}
       onSubmit={submit}
     >

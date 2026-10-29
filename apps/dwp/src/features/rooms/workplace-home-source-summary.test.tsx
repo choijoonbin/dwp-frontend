@@ -75,4 +75,19 @@ describe('WorkplaceHomeSourceSummary', () => {
       'workplace.home.sources.externalDegradedDescription:DWP_LOCAL_VERIFICATION'
     );
   });
+
+  it('does not present a pending source as verified or duplicate the page loading message', async () => {
+    await act(async () => {
+      root.render(
+        <WorkplaceHomeSourceSummary
+          workspaceState="READY"
+          calendarState="LOADING"
+          externalPresenceState="LOADING"
+        />
+      );
+    });
+
+    expect(host.textContent).toContain('workplace.home.sources.unverified');
+    expect(host.textContent).not.toContain('workplace.home.loading');
+  });
 });

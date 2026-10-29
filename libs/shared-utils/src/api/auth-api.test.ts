@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import { resetCsrfToken } from '../axios-instance';
+import { axiosInstance, resetCsrfToken } from '../axios-instance';
 import { HttpError } from '../http-error';
 import { setTenantId } from '../tenant-util';
 import {
@@ -16,6 +16,7 @@ import {
   PRODUCT_SURFACE_CONTEXTS_ENDPOINT,
   PRODUCT_SURFACE_EVALUATION_ENDPOINT,
   PRODUCT_SURFACE_STEP_UP_CHALLENGE_ENDPOINT,
+  rotateBrowserSession,
 } from './auth-api';
 
 function jsonResponse(payload: unknown, headers: Record<string, string> = {}): Response {
@@ -52,6 +53,58 @@ describe('auth login API', () => {
       tenantId: 'default',
     });
     expect(String(request.body)).not.toContain('username');
+  });
+
+  it('discards the pre-authentication CSRF token after a successful login', async () => {
+    setTenantId('default');
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValueOnce(
+        jsonResponse({ data: { token: 'pre-auth-token', headerName: 'X-XSRF-TOKEN' } })
+      )
+      .mockResolvedValueOnce(jsonResponse({ data: { userId: '1', tenantId: '1' } }))
+      .mockResolvedValueOnce(
+        jsonResponse({ data: { token: 'authenticated-token', headerName: 'X-XSRF-TOKEN' } })
+      )
+      .mockResolvedValueOnce(jsonResponse({ data: { updated: true } }));
+    vi.stubGlobal('fetch', fetchMock);
+
+    await login({ email: 'employee@example.com', password: 'Valid-password-1!' });
+    await axiosInstance.post('/api/example', { value: 'after-login' });
+
+    expect(fetchMock).toHaveBeenCalledTimes(4);
+    expect(fetchMock.mock.calls[2]?.[0]).toBe('/api/auth/csrf');
+    expect(fetchMock.mock.calls[3]?.[1]).toEqual(
+      expect.objectContaining({
+        headers: expect.objectContaining({ 'X-XSRF-TOKEN': 'authenticated-token' }),
+      })
+    );
+  });
+
+  it('discards the CSRF token after rotating the browser session', async () => {
+    setTenantId('11');
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValueOnce(
+        jsonResponse({ data: { token: 'rotation-token', headerName: 'X-XSRF-TOKEN' } })
+      )
+      .mockResolvedValueOnce(jsonResponse({ data: { rotated: true } }))
+      .mockResolvedValueOnce(
+        jsonResponse({ data: { token: 'post-rotation-token', headerName: 'X-XSRF-TOKEN' } })
+      )
+      .mockResolvedValueOnce(jsonResponse({ data: { updated: true } }));
+    vi.stubGlobal('fetch', fetchMock);
+
+    await rotateBrowserSession();
+    await axiosInstance.post('/api/example', { value: 'after-rotation' });
+
+    expect(fetchMock).toHaveBeenCalledTimes(4);
+    expect(fetchMock.mock.calls[2]?.[0]).toBe('/api/auth/csrf');
+    expect(fetchMock.mock.calls[3]?.[1]).toEqual(
+      expect.objectContaining({
+        headers: expect.objectContaining({ 'X-XSRF-TOKEN': 'post-rotation-token' }),
+      })
+    );
   });
 
   it('starts tenant-routed OIDC without exposing the server-selected provider key', () => {
@@ -391,5 +444,34 @@ describe('auth login API', () => {
     await expect(getOidcCallback({ code: 'code-3', state: 'state-3' })).rejects.toMatchObject({
       status: 502,
     });
+  });
+
+  it('discards a cached CSRF token after an OIDC session callback', async () => {
+    setTenantId('11');
+    const callback = { status: 'OK', message: 'ok', data: { userId: '1' } };
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValueOnce(
+        jsonResponse({ data: { token: 'pre-oidc-token', headerName: 'X-XSRF-TOKEN' } })
+      )
+      .mockResolvedValueOnce(jsonResponse({ data: { warmed: true } }))
+      .mockResolvedValueOnce(jsonResponse(callback))
+      .mockResolvedValueOnce(
+        jsonResponse({ data: { token: 'post-oidc-token', headerName: 'X-XSRF-TOKEN' } })
+      )
+      .mockResolvedValueOnce(jsonResponse({ data: { updated: true } }));
+    vi.stubGlobal('fetch', fetchMock);
+
+    await axiosInstance.post('/api/bootstrap', { value: 'before-oidc' });
+    await getOidcCallback({ code: 'code-1', state: 'state-1' });
+    await axiosInstance.post('/api/example', { value: 'after-oidc' });
+
+    expect(fetchMock).toHaveBeenCalledTimes(5);
+    expect(fetchMock.mock.calls[3]?.[0]).toBe('/api/auth/csrf');
+    expect(fetchMock.mock.calls[4]?.[1]).toEqual(
+      expect.objectContaining({
+        headers: expect.objectContaining({ 'X-XSRF-TOKEN': 'post-oidc-token' }),
+      })
+    );
   });
 });

@@ -1,9 +1,10 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { AlertTriangle, Clock3, ShieldCheck } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import {
   createWorkplaceIdempotencyKey,
+  getWorkplaceServiceLineAdjustment,
   resolveIdempotentMutationIntent,
   updateWorkplaceServiceFulfillment,
   useProductSurfaceAuthority,
@@ -31,6 +32,7 @@ import {
   providerAllowsFulfillmentWrite,
   requireWorkplaceServiceWrite,
   workplaceServiceAllowedFulfillmentStates,
+  workplaceServiceAdjustmentMatchesTarget,
   workplaceServiceFulfillmentQuantityIsValid,
   workplaceServiceResultUnknownAdjustments,
   workplaceServiceReference,
@@ -444,20 +446,58 @@ function FulfillmentEditor({
 export function FulfillmentInspector({
   order,
   canManage,
+  requestedAdjustmentId = null,
 }: {
   order: WorkplaceServiceOrder;
   canManage: boolean;
+  requestedAdjustmentId?: string | null;
 }) {
   const { t } = useTranslation('rooms');
   const display = useDisplayDictionary();
   const authority = useProductSurfaceAuthority();
   const elevated = authority.snapshot?.envelope.activeAccessMode === 'ELEVATED';
   const eventsQuery = useWorkplaceServiceOrderEventPages(order.serviceOrderId, true);
+  const requestedAdjustmentQuery = useQuery({
+    queryKey: [
+      'workplace',
+      'services',
+      'admin',
+      order.serviceOrderId,
+      'line-adjustment',
+      requestedAdjustmentId,
+    ],
+    queryFn: () =>
+      getWorkplaceServiceLineAdjustment(order.serviceOrderId, requestedAdjustmentId!, true),
+    enabled: Boolean(requestedAdjustmentId),
+    retry: false,
+  });
+  const requestedAdjustment = workplaceServiceAdjustmentMatchesTarget(
+    requestedAdjustmentQuery.data,
+    order.serviceOrderId,
+    requestedAdjustmentId ?? ''
+  )
+    ? (requestedAdjustmentQuery.data ?? null)
+    : null;
+  const requestedAdjustmentInvalid = Boolean(
+    requestedAdjustmentId &&
+    (requestedAdjustmentQuery.isError ||
+      (requestedAdjustmentQuery.isSuccess && requestedAdjustment === null))
+  );
   const events = useMemo(
     () => eventsQuery.data?.pages.flatMap((page) => page.items) ?? [],
     [eventsQuery.data]
   );
-  const recoveries = useMemo(() => workplaceServiceResultUnknownAdjustments(events), [events]);
+  const recoveries = useMemo(() => {
+    if (!requestedAdjustmentId) return workplaceServiceResultUnknownAdjustments(events);
+    return requestedAdjustment
+      ? [
+          {
+            lineAdjustmentId: requestedAdjustment.lineAdjustmentId,
+            serviceOrderLineId: requestedAdjustment.serviceOrderLineId,
+          },
+        ]
+      : [];
+  }, [events, requestedAdjustment, requestedAdjustmentId]);
   return (
     <Stack spacing={2} data-testid="workplace-service-fulfillment-inspector">
       <Typography component="h2" variant="subtitle1" fontWeight="fontWeightBold">
@@ -509,6 +549,16 @@ export function FulfillmentInspector({
           ) : null}
         </Box>
       ))}
+      {requestedAdjustmentId && requestedAdjustmentQuery.isLoading ? (
+        <InlineFeedback severity="info">
+          {t('workplace.services.lineRecovery.targetLoading')}
+        </InlineFeedback>
+      ) : null}
+      {requestedAdjustmentInvalid ? (
+        <InlineFeedback severity="error">
+          {t('workplace.services.lineRecovery.targetError')}
+        </InlineFeedback>
+      ) : null}
       {recoveries.map((recovery) => (
         <WorkplaceServiceLineAdjustmentRecovery
           key={recovery.lineAdjustmentId}
@@ -517,6 +567,7 @@ export function FulfillmentInspector({
           administrator
           canWrite={canManage}
           elevated={elevated}
+          targeted={recovery.lineAdjustmentId === requestedAdjustmentId}
         />
       ))}
       <WorkplaceServiceOrderCollaboration

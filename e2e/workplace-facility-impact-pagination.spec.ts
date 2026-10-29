@@ -164,12 +164,15 @@ async function setup(page: Page, allowClosureCreation = false) {
   if (allowClosureCreation) {
     await page.route('**/api/auth/product-surface-contexts', (route) =>
       fulfillSuccess(route, {
-        contractVersion: 'product-surfaces/v3',
+        contractVersion: '2',
         decisionRevision: 'facility-pagination-elevated',
         sourceRevisions: {
           auth: 'auth-facility-pagination',
           policy: 'policy-facility-pagination',
           productRelationship: 'relationship-facility-pagination',
+          targetPopulation: 'target-population-facility-pagination',
+          support: null,
+          tenantControl: 'tenant-control-facility-pagination',
         },
         activeAccessMode: 'ELEVATED',
         generatedAt,

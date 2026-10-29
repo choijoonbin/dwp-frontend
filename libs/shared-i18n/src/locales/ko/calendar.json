@@ -27,6 +27,8 @@
         "focus": { "label": "집중 계획" },
         "invitations": { "label": "초대" },
         "availability": { "label": "시간 찾기" },
+        "polls": { "label": "일정 투표" },
+        "bookings": { "label": "예약 일정" },
         "settings": { "label": "캘린더 설정" },
         "trash": { "label": "휴지통" },
         "insights": { "label": "시간 인사이트" },
@@ -44,10 +46,12 @@
     "details": "상세 보기",
     "done": "완료",
     "edit": "편집",
+    "loadMore": "더 보기",
     "newEvent": "새 일정",
     "next": "다음",
     "openCalendar": "전체 일정",
     "previous": "이전",
+    "remove": "삭제",
     "returnToWork": "업무로 돌아가기",
     "retry": "다시 시도",
     "save": "저장",
@@ -72,6 +76,169 @@
       "open-insights": "시간 인사이트 열기"
     }
   },
+  "eventSearch": {
+    "open": "일정 검색",
+    "title": "일정 검색",
+    "description": "현재 캘린더에 보이는 기간의 일정만 검색합니다.",
+    "queryLabel": "검색어",
+    "queryPlaceholder": "제목, 사람, 장소 또는 설명",
+    "submit": "검색",
+    "validation": {
+      "TOO_SHORT": "2자 이상 입력해 주세요.",
+      "TOO_LONG": "120자 이하로 입력해 주세요."
+    },
+    "loading": "일정을 검색하는 중입니다…",
+    "loadError": "일정을 검색하지 못했습니다.",
+    "emptyTitle": "일치하는 일정이 없습니다",
+    "emptyDescription": "다른 검색어를 입력하거나 캘린더의 표시 기간을 변경해 보세요.",
+    "resultCount_one": "결과 {{count}}개",
+    "resultCount_other": "결과 {{count}}개",
+    "resultLabel": "{{title}}, {{date}} {{time}}, {{calendar}}",
+    "loadMore": "더 보기",
+    "loadingMore": "더 불러오는 중입니다…",
+    "idle": "이 기간을 검색하려면 2자 이상 입력해 주세요."
+  },
+  "polls": {
+    "dateUnavailable": "날짜 정보 없음",
+    "expired": "이 투표는 만료되어 읽기 전용입니다.",
+    "expiresAt": "투표 마감",
+    "candidateLabel": "후보 {{count}}",
+    "candidateRange": "{{start}} – {{end}}",
+    "states": {
+      "DRAFT": "초안",
+      "OPEN": "투표 중",
+      "AGREEMENT_REACHED": "합의 도달",
+      "CONFIRMED": "확정됨",
+      "CANCELLED": "취소됨",
+      "EXPIRED": "만료됨"
+    },
+    "availability": {
+      "AVAILABLE": "가능",
+      "ROOM_UNAVAILABLE": "회의실 사용 불가",
+      "HOLD_EXPIRED": "가용성 확인 만료",
+      "UNAVAILABLE": "사용 불가"
+    },
+    "votes": {
+      "YES": "가능",
+      "IF_NEEDED": "필요 시 가능",
+      "NO": "불가",
+      "YESCount": "가능 {{count}}명",
+      "IF_NEEDEDCount": "필요 시 가능 {{count}}명",
+      "NOCount": "불가 {{count}}명"
+    },
+    "creator": {
+      "title": "일정 투표 만들기",
+      "description": "사내 워크스페이스 구성원에게 제한된 시간 후보를 제안합니다.",
+      "titleLabel": "투표 제목",
+      "descriptionLabel": "설명",
+      "timeZoneLabel": "시간대",
+      "expiresAtLabel": "투표 마감 시각",
+      "candidatesLabel": "시간 후보",
+      "candidateStart": "후보 {{count}} 시작",
+      "candidateEnd": "후보 {{count}} 종료",
+      "resourceId": "후보 {{count}} 회의실 또는 리소스 ID",
+      "resourceIdHint": "선택 입력 UUID입니다. 확정 전에 가용성을 다시 확인합니다.",
+      "addCandidate": "시간 후보 추가",
+      "removeCandidate": "후보 {{count}} 삭제",
+      "participantsLabel": "참여자",
+      "requiredParticipants": "필수 참여자",
+      "requiredParticipantsHint": "합의에 도달하려면 모든 필수 참여자가 투표해야 합니다.",
+      "optionalParticipants": "선택 참여자",
+      "optionalParticipantsHint": "선택 참여자는 합의를 막지 않고 투표할 수 있습니다.",
+      "searchInternalPeople": "사내 구성원 검색",
+      "externalUnsupported": "외부 이메일 참여자는 비활성화되어 있습니다. 확인된 사내 구성원만 투표에 참여할 수 있습니다.",
+      "validationTitle": "투표를 만들기 전에 다음 항목을 수정해 주세요:",
+      "creating": "투표 만드는 중…",
+      "submit": "투표 만들기",
+      "organizerFallback": "주최자"
+    },
+    "organizer": {
+      "description": "투표 근거를 검토하고 확정 가능한 후보 하나를 선택하세요.",
+      "notOrganizer": "투표 주최자만 이 작업을 수행할 수 있습니다.",
+      "confirmed": "이 투표가 확정되어 선택한 캘린더에 일정이 생성되었습니다.",
+      "candidates": "시간 후보 및 합의 근거",
+      "calendarLabel": "확정 일정을 만들 캘린더",
+      "agreementEligible": "확정 가능",
+      "opening": "투표 여는 중…",
+      "open": "투표 열기",
+      "reopen": "투표 다시 열기",
+      "confirming": "후보 확정 중…",
+      "confirm": "선택 후보 확정",
+      "cancelling": "투표 취소 중…",
+      "cancel": "투표 취소"
+    },
+    "participant": {
+      "description": "모든 후보에 한 번씩 응답하세요. 투표가 열린 동안 선택을 변경할 수 있습니다.",
+      "notParticipant": "이 투표의 참여자가 아닙니다.",
+      "saved": "선택을 저장했습니다.",
+      "comment": "의견",
+      "commentHint": "주최자에게 전달할 선택 의견이며 최대 1,000자입니다.",
+      "submitting": "투표 저장 중…",
+      "submit": "투표 저장",
+      "completeAll": "저장하기 전에 모든 후보에 응답해 주세요.",
+      "readOnly": {
+        "DRAFT": "아직 투표가 열리지 않았습니다.",
+        "OPEN": "현재 이 참여자는 투표할 수 없습니다.",
+        "AGREEMENT_REACHED": "합의에 도달했습니다. 주최자가 후보를 확정할 수 있습니다.",
+        "CONFIRMED": "주최자가 이 투표를 확정했습니다.",
+        "CANCELLED": "주최자가 이 투표를 취소했습니다.",
+        "EXPIRED": "확정 전에 투표가 만료되었습니다."
+      }
+    },
+    "workspace": {
+      "loadingIdentity": "캘린더 사용자 정보를 확인하는 중…",
+      "denied": "투표 접근 권한이 변경되어 이전에 불러온 비공개 투표 정보를 모두 비웠습니다.",
+      "title": "일정 투표",
+      "description": "사내 가용성을 모아 합의하고 최종 캘린더 일정을 만드세요.",
+      "createSection": "일정 투표 만들기",
+      "createTitle": "여러 시간을 제안하세요",
+      "createReady": "선택한 일정 범위로 투표를 만들 준비가 되었습니다.",
+      "createFromSchedule": "시간 후보와 사내 참여자를 추가해 투표를 시작하세요.",
+      "create": "투표 만들기",
+      "loading": "일정 투표를 불러오는 중…",
+      "unavailable": "일정 투표를 일시적으로 불러올 수 없습니다.",
+      "stale": "연결이 복구될 때까지 마지막 투표 목록을 읽기 전용으로 표시합니다.",
+      "versionConflict": "투표가 변경되었습니다. 최신 정보를 불러왔으니 검토 후 다시 시도해 주세요.",
+      "commandError": "투표를 변경하지 못했습니다. 최신 정보를 검토한 뒤 다시 시도해 주세요.",
+      "listLabel": "일정 투표 목록",
+      "listTitle": "내 투표",
+      "loadingMore": "투표 더 불러오는 중…",
+      "loadMoreError": "투표를 더 불러오지 못했습니다. 다시 시도해 주세요.",
+      "invalidCursor": "서비스가 잘못되거나 반복된 커서를 반환해 페이지 로딩을 중단했습니다.",
+      "empty": "아직 일정 투표가 없습니다.",
+      "detailLabel": "선택한 일정 투표",
+      "selectPoll": "최신 상태를 확인할 투표를 선택하세요.",
+      "loadingDetail": "투표 상세를 불러오는 중…",
+      "detailUnavailable": "이 투표를 불러오지 못했습니다.",
+      "detailStale": "연결이 복구될 때까지 마지막 투표 상세를 읽기 전용으로 표시합니다.",
+      "calendarsUnavailable": "캘린더를 불러오지 못해 확정 기능을 일시적으로 사용할 수 없습니다.",
+      "detailDenied": "이 투표의 주최자 또는 참여자가 아닙니다.",
+      "updatedAt": "업데이트 {{value}}"
+    },
+    "validation": {
+      "TITLE_REQUIRED": "투표 제목을 입력해 주세요.",
+      "TITLE_TOO_LONG": "제목은 240자 이하로 입력해 주세요.",
+      "DESCRIPTION_TOO_LONG": "설명은 2,000자 이하로 입력해 주세요.",
+      "TIME_ZONE_INVALID": "지원되는 IANA 시간대를 선택해 주세요.",
+      "CANDIDATE_COUNT": "시간 후보를 1개 이상 20개 이하로 추가해 주세요.",
+      "CANDIDATE_ID_INVALID": "시간 후보의 식별자가 올바르지 않습니다.",
+      "CANDIDATE_DUPLICATE": "각 시간 후보에는 고유한 식별자가 필요합니다.",
+      "CANDIDATE_RANGE_INVALID": "각 후보의 시작과 종료 시각을 올바르게 입력해 주세요.",
+      "CANDIDATE_RANGE_DUPLICATE": "중복된 시간 범위를 삭제해 주세요.",
+      "CANDIDATE_NOT_FUTURE": "모든 후보는 미래에 시작해야 합니다.",
+      "CANDIDATE_TOO_FAR": "시간 후보는 1년 이내여야 합니다.",
+      "CANDIDATE_DURATION": "각 후보는 5분 이상 8시간 이하여야 합니다.",
+      "RESOURCE_ID_INVALID": "올바른 리소스 UUID를 입력하거나 비워 두세요.",
+      "PARTICIPANT_COUNT": "사내 참여자를 1명 이상 100명 이하로 추가해 주세요.",
+      "PARTICIPANT_ID_INVALID": "참여자의 사내 식별자가 올바르지 않습니다.",
+      "PARTICIPANT_DUPLICATE": "중복된 참여자를 삭제해 주세요.",
+      "PARTICIPANT_NAME_REQUIRED": "모든 참여자에게 표시 이름이 필요합니다.",
+      "PARTICIPANT_NAME_TOO_LONG": "참여자 이름은 160자 이하로 입력해 주세요.",
+      "REQUIRED_PARTICIPANT_MISSING": "필수 참여자를 한 명 이상 추가해 주세요.",
+      "EXPIRES_AT_INVALID": "올바른 투표 마감 시각을 입력해 주세요.",
+      "EXPIRES_AT_RANGE": "마감 시각은 현재 이후이면서 가장 이른 후보 시각보다 늦지 않아야 합니다."
+    }
+  },
   "error": {
     "description": "일정 서비스 연결과 접근 권한을 확인한 뒤 다시 시도해 주세요."
   },
@@ -86,6 +253,111 @@
     "minute": "분",
     "minutes_one": "{{count}}분",
     "minutes_other": "{{count}}분"
+  },
+  "booking": {
+    "eyebrow": "일정 예약 · 인증 사용자",
+    "title": "예약 일정",
+    "description": "공개된 예약 페이지에서 가능한 시간을 잡고, 비공개 접근 토큰을 노출하지 않은 채 내 예약을 관리하세요.",
+    "states": {
+      "loading": "예약 가능 시간을 불러오는 중입니다…",
+      "empty": "아직 표시할 항목이 없습니다.",
+      "unavailable": "예약 정보를 일시적으로 불러올 수 없습니다. 연결이 복구되면 다시 시도해 주세요.",
+      "denied": "예약 접근 권한이 변경되어 이전에 불러온 비공개 정보를 모두 비웠습니다.",
+      "disabled": "이 워크스페이스에서는 인증 사용자 예약 기능을 사용할 수 없습니다.",
+      "stale": "마지막으로 확인한 예약 정보를 읽기 전용으로 표시합니다. 변경하기 전에 새로고침해 주세요.",
+      "partial": "제한된 일부 결과만 표시합니다. 변경하기 전에 검색 범위를 좁혀 주세요."
+    },
+    "capabilities": {
+      "externalDisabled": "공개 및 외부 예약은 비활성화되어 있습니다. 로그인한 워크스페이스 구성원만 예약할 수 있습니다.",
+      "externalDisabledReason": "외부 예약을 활성화하려면 봇 방지, 이메일 확인, 요청 제한, 보안 승인이 먼저 마련되어야 합니다.",
+      "externalEnabled": "이 워크스페이스에서 외부 예약을 사용할 수 있습니다."
+    },
+    "pages": {
+      "searchLabel": "예약 페이지 검색",
+      "searchPlaceholder": "제목 또는 설명으로 검색",
+      "listLabel": "예약 가능한 페이지",
+      "noSearchResults": "검색 조건과 일치하는 예약 페이지가 없습니다.",
+      "showMore": "예약 페이지 더 보기",
+      "select": "{{title}} 선택",
+      "selectPrompt": "예약 페이지를 선택해 최신 상세 정보와 가능한 시간을 확인하세요.",
+      "detailHeading": "예약 페이지 상세",
+      "timeZone": "시간대: {{value}}",
+      "dailyLimit_one": "하루 예약 한도: {{count}}개",
+      "dailyLimit_other": "하루 예약 한도: {{count}}개",
+      "notice": "최소 사전 예약 시간: {{minutes}}분",
+      "advanceWindow": "예약 가능 기간: 앞으로 {{days}}일",
+      "buffers": "일정 여유 시간: 시작 전 {{before}}분, 종료 후 {{after}}분",
+      "availabilityRuleCount_one": "가능 시간 규칙 {{count}}개",
+      "availabilityRuleCount_other": "가능 시간 규칙 {{count}}개",
+      "questionCount_one": "예약 질문 {{count}}개",
+      "questionCount_other": "예약 질문 {{count}}개"
+    },
+    "pageStates": {
+      "DRAFT": "초안",
+      "PUBLISHED": "게시됨",
+      "PAUSED": "일시 중지",
+      "ARCHIVED": "보관됨"
+    },
+    "meetingModes": {
+      "IN_PERSON": "대면",
+      "VIDEO": "화상 회의",
+      "PHONE": "전화"
+    },
+    "bookable": {
+      "heading": "일정 예약",
+      "slotsLabel": "예약 가능한 시간",
+      "noSlots": "앞으로 14일 동안 예약 가능한 시간이 없습니다.",
+      "showMoreSlots": "예약 가능한 시간 더 보기",
+      "selectSlot": "{{value}} 선택",
+      "createHold": "이 시간 임시 확보",
+      "releaseHold": "확보한 시간 해제",
+      "holdExpired": "임시 확보 시간이 만료되었습니다. 가능한 시간을 다시 선택해 주세요.",
+      "versionChanged": "시간을 선택한 뒤 예약 페이지가 변경되었습니다. 새로고침 후 다시 선택해 주세요.",
+      "accessInfoMissing": "필수 장소, 안전한 화상 회의 링크 또는 전화 안내가 없습니다. 예약을 진행할 수 없습니다.",
+      "accessInformation": "참여 방법",
+      "openVideo": "안전한 화상 회의 링크 열기",
+      "confirm": "예약 확정",
+      "confirmReschedule": "새 시간 확정"
+    },
+    "questions": {
+      "heading": "예약 질문",
+      "required": "필수",
+      "answerRequired": "확정하기 전에 답변을 입력해 주세요.",
+      "invalidAnswer": "목록의 항목을 선택하거나 답변을 더 짧게 입력해 주세요."
+    },
+    "appointments": {
+      "heading": "내 예약",
+      "listLabel": "내 예약 목록",
+      "select": "{{value}} 예약 열기",
+      "detail": "예약 상세",
+      "page": "예약 페이지",
+      "time": "시간",
+      "reschedule": "새 시간 선택",
+      "cancelReason": "취소 사유(선택)",
+      "cancel": "예약 취소",
+      "actionsUnavailable": "이 예약은 변경할 수 없거나, 실시간 권한 및 버전 확인이 아직 준비되지 않았습니다."
+    },
+    "appointmentStates": {
+      "CONFIRMED": "확정",
+      "RESCHEDULED": "일정 변경됨",
+      "CANCELLED": "취소됨"
+    },
+    "token": {
+      "heading": "일회용 접근 토큰",
+      "publicDescription": "공개 링크 토큰은 지금 한 번만 표시됩니다. URL, 브라우저 저장소, 로그, 쿼리 캐시에 저장하지 않습니다.",
+      "managementDescription": "예약 관리 토큰은 지금 한 번만 표시됩니다. URL, 브라우저 저장소, 로그, 쿼리 캐시에 저장하지 않습니다.",
+      "dismiss": "토큰 닫기"
+    },
+    "toast": {
+      "holdCreated": "선택한 시간을 잠시 확보했습니다.",
+      "confirmed": "예약을 확정했습니다.",
+      "rescheduled": "예약 시간을 변경했습니다.",
+      "cancelled": "예약을 취소했습니다.",
+      "reschedulePageLocked": "예약 시간 변경은 기존 예약 페이지에서만 진행할 수 있습니다.",
+      "denied": "예약 접근 권한이 변경되어 비공개 정보를 모두 비웠습니다.",
+      "versionChanged": "예약 정보가 변경되어 최신 정보를 다시 불러옵니다.",
+      "actionError": "예약 작업을 완료하지 못했습니다."
+    }
   },
   "home": {
     "today": "오늘",
@@ -281,7 +553,8 @@
     "restrictionFallback": "캘린더 소유자의 공유 정책에 따라 일부 일정 정보가 숨겨져 있습니다.",
     "restrictions": {
       "FREE_BUSY_ONLY": "이 캘린더는 바쁨 여부만 공유됩니다. 제목, 주최자, 참석자와 메모는 비공개로 유지됩니다.",
-      "RECURRING_EVENT_SERIES": "이 일정은 반복 일정에 속합니다. 일부 변경은 반복 일정 시리즈에서 해야 합니다."
+      "RECURRING_EVENT_SERIES": "이 일정은 반복 일정에 속합니다. 일부 변경은 반복 일정 시리즈에서 해야 합니다.",
+      "EXTERNAL_READ_ONLY": "외부 캘린더에서 가져온 일정으로 여기서는 읽기 전용입니다."
     },
     "typeLabel": "일정 유형",
     "additionalOptions": "참석자, 공간 및 추가 옵션",
@@ -311,6 +584,61 @@
     "requiredAttendeesPlaceholder": "가용 시간이 반드시 필요한 구성원 검색",
     "optionalAttendeesLabel": "선택 참석자",
     "optionalAttendeesPlaceholder": "가능하면 함께할 구성원 추가",
+    "attendeePicker": {
+      "searchPrompt": "회사 구성원 검색",
+      "noResults": "일치하는 회사 구성원이 없습니다",
+      "loadError": "회사 참석자를 불러오지 못했습니다. 이미 선택한 참석자는 초안에 유지됩니다.",
+      "loadMore": "구성원 더 보기",
+      "loadingMore": "구성원 더 불러오는 중",
+      "retryMore": "구성원 더 보기 다시 시도",
+      "externalUnverified": "외부 · 일정 검증 불가",
+      "externalChip": "{{email}} · 외부 · 미확인",
+      "invalidExternalEmail": "올바른 외부 이메일 주소를 입력해 주세요.",
+      "externalSaveBlocked": "테넌트 정책을 확인할 수 있고 외부 참석자를 명시적으로 허용하기 전에는 외부 참석자를 저장할 수 없습니다.",
+      "externalPolicy": {
+        "ALLOWED": "외부 이메일을 추가할 수 있지만 일정 검증은 불가능하므로 검증된 시간 적용이 차단됩니다.",
+        "DENIED": "테넌트 정책에 따라 회사 구성원만 참석자로 추가할 수 있습니다.",
+        "LOADING": "외부 참석자 정책을 확인하는 동안 외부 이메일 입력을 사용할 수 없습니다.",
+        "UNAVAILABLE": "외부 참석자 정책을 확인할 수 없어 외부 이메일 입력을 사용할 수 없습니다."
+      }
+    },
+    "reminders": {
+      "title": "알림",
+      "description": "저장된 일정에 앱 또는 이메일 알림을 최대 5개 설정합니다.",
+      "saveFirst": "먼저 일정을 만든 뒤 다시 열어 알림을 설정해 주세요.",
+      "loading": "알림 불러오는 중",
+      "loadError": "알림을 불러오지 못했습니다.",
+      "invalidated": "일정 시간 또는 반복 규칙이 변경되었습니다. 최신 일정과 알림 정의를 검토한 뒤 다시 적용해 주세요.",
+      "reviewAndReapply": "검토 후 다시 적용",
+      "refreshing": "최신 일정과 알림 불러오는 중",
+      "recoveryReview": "최신 정의를 불러왔습니다. 내용을 검토한 뒤 ‘알림 다시 적용’을 선택하면 현재 일정 버전에 활성화됩니다.",
+      "cancelRecovery": "검토 취소",
+      "reapply": "알림 다시 적용",
+      "saveError": "알림을 저장하지 못했습니다. 입력한 내용은 이 화면에 유지됩니다.",
+      "versionConflict": "다른 곳에서 알림이 변경되었습니다. 최신 버전을 불러왔습니다. 최신 내용을 사용하거나 입력한 변경을 유지해 다시 검토하세요.",
+      "useLatest": "최신 내용 사용",
+      "keepEdits": "내 변경 유지",
+      "saved": "알림을 저장했습니다.",
+      "validationError": "중복되거나 올바르지 않은 알림 설정을 수정한 뒤 저장해 주세요.",
+      "duplicateError": "알림 시점과 채널 조합을 서로 다르게 선택해 주세요.",
+      "offsetRangeError": "알림 시점은 0~40,320분 범위의 정수여야 합니다.",
+      "emailChecking": "이메일 전송 기능을 확인하고 있습니다. 앱 알림은 계속 사용할 수 있습니다.",
+      "emailUnavailable": "이메일 전송을 사용할 수 없습니다. 기존 이메일 값은 보존되지만 새로 선택하거나 다시 활성화할 수 없습니다.",
+      "emailUnavailableRow": "이메일 전송을 사용할 수 없습니다. 이 알림 세트를 저장하거나 다시 적용하려면 앱 알림을 선택하세요.",
+      "empty": "설정된 알림이 없습니다.",
+      "offsetLabel": "알림 {{count}} 시점",
+      "channelLabel": "알림 {{count}} 채널",
+      "atStart": "일정 시작 시",
+      "minutesBefore_one": "{{count}}분 전",
+      "minutesBefore_other": "{{count}}분 전",
+      "channels": {
+        "IN_APP": "앱 알림",
+        "EMAIL": "이메일"
+      },
+      "remove": "알림 {{count}} 삭제",
+      "add": "알림 추가",
+      "save": "알림 저장"
+    },
     "locationLabel": "장소",
     "resourceLabel": "회의실 또는 자원",
     "noResource": "자원 예약 안 함",
@@ -321,7 +649,8 @@
       "NONE": "반복 안 함",
       "DAILY": "매일",
       "WEEKLY": "매주",
-      "MONTHLY": "매월"
+      "MONTHLY": "매월",
+      "YEARLY": "매년"
     },
     "recurrenceIntervalLabel": "반복 간격",
     "recurrenceIntervals": {
@@ -330,18 +659,34 @@
       "WEEKLY_one": "매주",
       "WEEKLY_other": "{{count}}주마다",
       "MONTHLY_one": "매월",
-      "MONTHLY_other": "{{count}}개월마다"
+      "MONTHLY_other": "{{count}}개월마다",
+      "YEARLY_one": "매년",
+      "YEARLY_other": "{{count}}년마다"
+    },
+    "recurrenceDaysLabel": "반복 요일",
+    "recurrenceAnchorHint": "시작 요일({{day}})은 항상 포함됩니다.",
+    "recurrenceEndLabel": "반복 종료",
+    "recurrenceEnd": {
+      "NEVER": "종료 없음",
+      "UNTIL": "날짜 지정",
+      "COUNT": "횟수 지정"
     },
     "recurrenceUntilLabel": "반복 종료일",
+    "recurrenceUntilRequired": "마지막 반복 날짜를 선택해 주세요.",
+    "recurrenceUntilBeforeStart": "반복 종료일은 첫 일정 날짜보다 빠를 수 없습니다.",
+    "recurrenceCountLabel": "반복 횟수",
+    "recurrenceCountError": "반복 횟수는 1~4,000 사이로 입력해 주세요.",
     "recurrenceEditScopeLabel": "변경 범위",
     "recurrenceEditScopes": {
       "THIS_OCCURRENCE": "이번 일정만",
+      "THIS_AND_FOLLOWING": "이번 및 향후 일정",
       "SERIES": "전체 반복 일정"
     },
     "occurrenceFieldsHint": "이번 일정에서는 제목·시간·설명·장소·공개 범위·중요도만 변경할 수 있습니다. 참석자와 반복 규칙은 전체 일정에서 관리합니다.",
+    "followingFieldsHint": "이번 일정부터 새 시리즈를 만듭니다. 참석자와 자원은 유지하고 향후 시간과 반복 규칙을 조정할 수 있습니다.",
     "seriesFieldsHint": "반복 규칙과 참석자를 포함해 전체 반복 일정에 변경사항을 적용합니다.",
-    "occurrenceResourceSeriesOnly": "회의실·좌석·장비가 연결된 반복 일정은 예약 정합성을 위해 전체 일정 단위로 변경합니다.",
-    "resourceRecurrenceUntilRequired": "반복 자원 예약에는 종료일이 필요합니다.",
+    "occurrenceResourceScopeHint": "자원이 연결된 개별 일정만 변경할 수 없습니다. 예약 정합성을 위해 이번 및 향후 일정이나 전체 시리즈를 변경해 주세요.",
+    "resourceRecurrenceBoundRequired": "반복 자원 예약에는 종료일 또는 반복 횟수가 필요합니다.",
     "visibilityLabel": "공개 범위",
     "visibility": {
       "DEFAULT": "회사 기본 정책",
@@ -381,25 +726,105 @@
     "uncheckedParticipants_other": "외부 또는 식별되지 않은 참석자 {{count}}명은 가용 시간 비교에 포함되지 않습니다.",
     "participantOverflow_one": "개인정보 보호형 비교 한도 20명을 초과한 내부 참석자 {{count}}명은 확인하지 않습니다.",
     "participantOverflow_other": "개인정보 보호형 비교 한도 20명을 초과한 내부 참석자 {{count}}명은 확인하지 않습니다.",
+    "uncheckedOrOverflow": "검증된 적용을 할 수 없습니다. 식별되지 않은 참석자 {{unchecked}}명, 비교 한도 초과 {{overflow}}명입니다.",
     "invalidRange": "가용 시간을 확인하려면 올바른 시작·종료 시간을 선택해 주세요.",
     "loadError": "참석자 가용 시간을 확인하지 못했습니다.",
     "staleResults": "시간 또는 참석자가 변경되었습니다. 현재 조건으로 다시 확인해 주세요.",
     "incompleteResults": "확인 가능한 최신 캘린더가 없어 후보 시간을 표시하지 않습니다. 연결 상태를 갱신한 뒤 다시 확인해 주세요.",
     "partialResults": "{{sources}} 연결을 확인하지 못했습니다. 정상 소스의 후보는 비교용으로 유지하지만, 누락된 일정을 확인하기 전에는 적용할 수 없습니다.",
+    "partialBlocked": "일부 가용성 근거가 불완전합니다. 소스 상태를 확인하고 다시 조회한 뒤 적용해 주세요.",
+    "unknownBlocked": "확인되지 않은 참석자 또는 소스가 있어 이 추천을 적용할 수 없습니다.",
     "timeApplied": "추천 시간을 적용했고 해당 시간의 회의실 가용성을 새로 확인했습니다.",
+    "assistedDraftVerified": "최근 일정 검증을 통과한 초안입니다. 저장 직전에 한 번 더 확인합니다.",
+    "assistedDraftNeedsFinalCheck": "일정 조율 후 초안이 변경되었습니다. 저장할 때 최신 가용성과 회의실을 다시 확인합니다.",
     "suggestedTimes": "최적 추천 시간",
     "freshness": "{{time}} 확인",
-    "reasons": {
-      "allRequiredAvailable": "확인 가능한 모든 필수 참석자가 근무시간 안에 가능합니다."
+    "resultsTitle": "가용 시간 결과",
+    "resultSummary_one": "검토할 후보 {{count}}개가 있습니다.",
+    "resultSummary_other": "검토할 후보 {{count}}개가 있습니다.",
+    "matrixTitle": "참석자별 가용 시간 표",
+    "matrixDescription": "각 후보를 참석자별 근무시간대와 캘린더 근거로 확인합니다.",
+    "attendee": "참석자",
+    "matrixCellLabel": "{{attendee}}: {{status}}",
+    "roles": {
+      "ORGANIZER": "주최자",
+      "REQUIRED": "필수 참석",
+      "OPTIONAL": "선택 참석"
     },
+    "intervals": {
+      "AVAILABLE": "가능",
+      "BUSY": "바쁨",
+      "TENTATIVE": "미정",
+      "OUT_OF_OFFICE": "부재중",
+      "UNKNOWN": "확인되지 않음"
+    },
+    "reasons": {
+      "allRequiredAvailable": "확인 가능한 모든 필수 참석자가 근무시간 안에 가능합니다.",
+      "ALL_REQUIRED_AVAILABLE": "모든 필수 참석자가 근무시간 안에 가능합니다.",
+      "WITHIN_WORKING_HOURS": "모든 필수 참석자의 근무시간 안에 있는 후보입니다.",
+      "LOWEST_CONFLICT_SCORE": "검증된 충돌 점수가 가장 낮은 후보입니다."
+    },
+    "reasonFallback": "일정 조율 서비스가 검증 근거를 바탕으로 추천한 후보입니다.",
+    "optionalConflictWarning_one": "선택 참석자 {{count}}명에게 알려진 충돌이 있습니다",
+    "optionalConflictWarning_other": "선택 참석자 {{count}}명에게 알려진 충돌이 있습니다",
+    "requiredConflictBlocked": "필수 참석자와 시간이 겹칩니다",
+    "apply": "적용",
     "applyTimeLabel": "{{label}} 사용",
     "noTimes": "앞으로 14일 안에 모두 가능한 근무시간을 찾지 못했습니다.",
     "recommendedRooms": "이 회의에 맞는 회의실",
     "roomsLoading": "회의실 가용성 확인 중",
     "roomsError": "회의실 가용성을 확인하지 못했습니다.",
     "noRooms": "이 시간과 참석 인원에 맞는 회의실이 없습니다.",
+    "evidenceTitle": "일정 조율 근거",
+    "sourcesTitle": "캘린더 소스 상태",
+    "noSourceEvidence": "확인할 수 있는 소스 근거가 없어 추천을 적용할 수 없습니다.",
+    "sourceStatus": {
+      "HEALTHY": "최신",
+      "PARTIAL": "일부 확인",
+      "UNKNOWN": "알 수 없음",
+      "STALE": "오래됨",
+      "UNAVAILABLE": "사용 불가"
+    },
+    "sourceTypes": {
+      "DWP_NATIVE": "DWP 캘린더",
+      "GOOGLE_CALENDAR": "Google 캘린더",
+      "MICROSOFT_365": "Microsoft 365 캘린더"
+    },
+    "sourceReasons": {
+      "SYNC_DELAYED": "최신 동기화가 지연되고 있습니다.",
+      "AUTHORIZATION_REQUIRED": "캘린더 연결 권한을 다시 확인해야 합니다.",
+      "COVERAGE_GAP": "검색 기간 전체를 확인할 수 없는 소스입니다."
+    },
+    "sourceTypeFallback": "연결된 캘린더",
+    "sourceReasonFallback": "이 소스에서 완전한 근거를 제공하지 못했습니다.",
+    "roomReasons": {
+      "CAPACITY_MATCH": "회의 인원에 맞는 수용 규모입니다.",
+      "FEATURE_MATCH": "필요한 회의실 기능을 제공합니다.",
+      "NO_APPROVAL_REQUIRED": "별도 승인이 필요하지 않습니다.",
+      "POLICY_ELIGIBLE": "예약 정책을 충족하는 회의실입니다."
+    },
+    "roomReasonFallback": "현재 수용 규모와 정책 근거를 반영한 회의실 추천입니다.",
+    "roomStatus": {
+      "ELIGIBLE": "사용 가능",
+      "INELIGIBLE": "사용 불가"
+    },
+    "applyRoom": "회의실 적용",
+    "roomSelected": "선택됨",
+    "applyRoomLabel": "{{room}} 회의실 적용",
+    "roomSelectedLabel": "{{room}} 회의실 선택됨",
+    "hardRechecking": "최종 가용 시간과 회의실을 확인하고 있습니다…",
+    "hardRecheckFailed": "최종 확인을 완료하지 못했습니다. 연결 상태를 확인하고 다시 시도해 주세요.",
+    "hardRecheckBlocked": "가용 시간 또는 회의실 정책이 변경되었습니다. 다시 확인한 뒤 적용해 주세요.",
+    "finalCheckFailed": "최종 일정 확인을 완료하지 못해 저장하지 않았습니다. 다시 시도해 주세요.",
+    "finalCheckErrors": {
+      "INVALID_RANGE": "올바른 시작·종료 시간을 선택하고 다시 저장해 주세요.",
+      "UNRESOLVED_PARTICIPANT": "확인할 수 없는 참석자가 있습니다. 참석자를 식별하거나 제거한 뒤 일정 조율 저장을 다시 시도해 주세요.",
+      "PARTICIPANT_LIMIT": "검증 가능한 참석자 수를 초과했습니다. 참석자를 줄이고 다시 시도해 주세요.",
+      "UNVERIFIED_EVIDENCE": "현재 가용성 근거가 일부 누락되었거나 오래되었거나 충돌합니다. 가용 시간을 다시 확인해 주세요.",
+      "HARD_RECHECK_BLOCKED": "최종 확인 중 가용 시간 또는 회의실 정책이 변경되었습니다. 초안을 검토하고 다시 시도해 주세요."
+    },
     "recurringSeriesNotice": "반복 일정의 변경 범위 선택 기능이 준비될 때까지 가용 시간 추천을 중지합니다. 수동 변경은 전체 시리즈에 적용됩니다.",
-    "privacy": "바쁨 구간만 비교하며 일정 제목·설명·장소·참석자는 조회하지 않습니다. 추천을 적용해도 만들기 또는 저장을 확인하기 전에는 일정이 저장되지 않습니다."
+    "privacy": "바쁨 구간만 비교하며 일정 제목·설명·장소는 조회하지 않습니다. 일정 조율을 사용한 일정은 만들기 또는 저장 직전에 다시 검증합니다."
   },
   "schedule": {
     "eyebrow": "캘린더 / 나의 일정",
@@ -691,7 +1116,8 @@
       "company": "회사",
       "mine": "내 캘린더",
       "shared": "나와 공유됨",
-      "team": "팀 및 자원"
+      "team": "팀 및 자원",
+      "external": "외부 캘린더"
     },
     "kinds": {
       "OWNED": "내 캘린더",
@@ -708,6 +1134,16 @@
       "VIEW_FREE_BUSY": "바쁨 여부만",
       "EVENT_ATTENDEE": "일정 참석자",
       "NONE": "접근 없음"
+    }
+  },
+  "external": {
+    "openSource": "Microsoft 365에서 열기",
+    "readOnly": "외부 일정은 DWP 캘린더에서 읽기 전용입니다.",
+    "status": {
+      "STALE": "Microsoft 365 일정이 최신 상태가 아닐 수 있습니다. 마지막 검증본을 읽기 전용으로 표시합니다.",
+      "AUTH_REQUIRED": "외부 일정을 새로 고치려면 Microsoft 365를 다시 연결해 주세요.",
+      "UNAVAILABLE": "현재 Microsoft 365 캘린더를 사용할 수 없습니다. DWP 일정은 계속 사용할 수 있습니다.",
+      "PARTIAL": "Microsoft 365 일정 일부만 불러왔습니다. 표시 범위를 줄이거나 다시 시도해 주세요."
     }
   },
   "sharing": {

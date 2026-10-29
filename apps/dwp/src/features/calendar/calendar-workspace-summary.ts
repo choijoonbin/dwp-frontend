@@ -11,13 +11,18 @@ import {
 import { calendarRegionalTimeZone } from './calendar-regional-time';
 import { calendarHomeSnapshotIsFresh } from './calendar-today-model';
 
-export function useCalendarWorkspaceSummary(enabled: boolean, language: string) {
-  const [timeZone, setTimeZone] = useState(calendarRegionalTimeZone);
+export function useCalendarWorkspaceSummary(
+  enabled: boolean,
+  language: string,
+  preferredTimeZone?: string
+) {
+  const [regionalTimeZone, setRegionalTimeZone] = useState(calendarRegionalTimeZone);
   useEffect(() => {
-    const syncPreference = () => setTimeZone(calendarRegionalTimeZone());
+    const syncPreference = () => setRegionalTimeZone(calendarRegionalTimeZone());
     window.addEventListener('dwp:regional-preference-change', syncPreference);
     return () => window.removeEventListener('dwp:regional-preference-change', syncPreference);
   }, []);
+  const timeZone = preferredTimeZone ?? regionalTimeZone;
   const query = useQuery({
     queryKey: ['calendar', 'home', timeZone, language],
     queryFn: () => getCalendarHome(timeZone),

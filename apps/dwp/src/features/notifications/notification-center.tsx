@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Bookmark, Check, CheckCheck, Clock3, Inbox } from 'lucide-react';
+import { Inbox } from 'lucide-react';
 import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
   applyNotificationTriage,
@@ -21,19 +21,10 @@ import {
   sendMessagingMessage,
   useToast,
 } from '@dwp-frontend/shared-utils';
-import {
-  ActionButton,
-  ActionIconButton,
-  EmptyState,
-  ErrorState,
-  LoadingState,
-} from '@dwp-frontend/design-system';
+import { ActionButton, EmptyState, LoadingState } from '@dwp-frontend/design-system';
 
 import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
-import Drawer from '@mui/material/Drawer';
-import Stack from '@mui/material/Stack';
-import Typography from '@mui/material/Typography';
 import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 
@@ -41,6 +32,7 @@ import { notificationQueryKeys } from './integration-contract';
 import { scheduleNotificationCacheInvalidation } from './notification-cache-policy';
 import { NotificationBulkUndoBanner } from './notification-bulk-undo-banner';
 import { NotificationPageFrame } from './notification-page-frame';
+import { NotificationErrorState } from './notification-error-support';
 import {
   defaultSnoozeTime,
   flattenNotificationPages,
@@ -68,7 +60,10 @@ import {
 } from './notification-filter-model';
 import type { CenterFilters } from './notification-filter-model';
 export type { CenterFilters, NotificationCenterScope } from './notification-filter-model';
-import { NotificationCenterDetail } from './notification-center-detail';
+import {
+  NotificationCenterBulkToolbar,
+  NotificationCenterDetailSurfaces,
+} from './notification-center-surfaces';
 import { useNotificationInspectorHeight } from './use-notification-inspector-height';
 import type { NotificationCenterProps } from './notification-center-contract';
 import { NotificationWorkbenchHeader } from './notification-inbox-chrome';
@@ -731,60 +726,12 @@ export function NotificationCenter({
           onGroupingChange={(grouping) => setPresentation((current) => ({ ...current, grouping }))}
         />
 
-        {selectedIds.size > 0 && (
-          <Stack
-            role="toolbar"
-            aria-label={t('bulk.toolbarLabel')}
-            direction="row"
-            alignItems="center"
-            gap={0.5}
-            sx={{
-              mt: 1,
-              px: 1.25,
-              py: 0.75,
-              border: 1,
-              borderColor: 'divider',
-              borderRadius: (theme) => `${theme.shape.borderRadius}px`,
-              bgcolor: 'action.hover',
-            }}
-          >
-            <Typography variant="caption" fontWeight="fontWeightBold" sx={{ mr: 'auto' }}>
-              {t('bulk.selected', { count: selectedIds.size })}
-            </Typography>
-            <ActionIconButton
-              label={t('actions.markRead')}
-              onClick={() => bulkMutation.mutate('READ')}
-              disabled={bulkMutation.isPending || !online}
-              size="small"
-            >
-              <CheckCheck size={17} />
-            </ActionIconButton>
-            <ActionIconButton
-              label={t('actions.save')}
-              onClick={() => bulkMutation.mutate('SAVE')}
-              disabled={bulkMutation.isPending || !online}
-              size="small"
-            >
-              <Bookmark size={17} />
-            </ActionIconButton>
-            <ActionIconButton
-              label={t('actions.snooze')}
-              onClick={() => bulkMutation.mutate('SNOOZE')}
-              disabled={bulkMutation.isPending || !online}
-              size="small"
-            >
-              <Clock3 size={17} />
-            </ActionIconButton>
-            <ActionIconButton
-              label={t('actions.complete')}
-              onClick={() => bulkMutation.mutate('COMPLETE')}
-              disabled={bulkMutation.isPending || !online}
-              size="small"
-            >
-              <Check size={17} />
-            </ActionIconButton>
-          </Stack>
-        )}
+        <NotificationCenterBulkToolbar
+          selectedCount={selectedIds.size}
+          pending={bulkMutation.isPending}
+          online={online}
+          onAction={(action) => bulkMutation.mutate(action)}
+        />
         {undoReceipt && (
           <NotificationBulkUndoBanner
             expiresAt={undoReceipt.expiresAt}
@@ -815,7 +762,8 @@ export function NotificationCenter({
               <LoadingState label={t('states.loading')} variant="skeleton" skeletonRows={7} />
             ) : (inboxQuery.isError && !isNotificationCursorResetError(inboxQuery.error)) ||
               profileQuery.isError ? (
-              <ErrorState
+              <NotificationErrorState
+                error={[inboxQuery.error, profileQuery.error]}
                 title={t('states.loadErrorTitle')}
                 description={t('states.loadErrorDescription')}
                 retryLabel={t('actions.retry')}
@@ -891,48 +839,30 @@ export function NotificationCenter({
               </Alert>
             )}
           </Box>
-          <Box
-            ref={inspector.ref}
-            data-testid="notification-desktop-inspector"
-            sx={{
-              display: { xs: 'none', lg: 'block' },
-              position: 'sticky',
-              top: 'calc(var(--dwp-shell-desktop-sticky-offset, 64px) + 16px)',
-              minWidth: 0,
-              minHeight: 0,
-              height: inspector.height ?? 'calc(100dvh - 360px)',
-              scrollMarginBottom: (theme) => theme.spacing(2),
-              overflow: 'hidden',
-              border: 1,
-              borderColor: 'divider',
-              borderRadius: (theme) => `${theme.shape.borderRadius}px`,
-              bgcolor: 'background.paper',
-              boxShadow: 'var(--notification-panel-shadow)',
+          <NotificationCenterDetailSurfaces
+            compact={compactDetail}
+            open={detailOpen}
+            privacyReady={privacyReady}
+            item={detailItem}
+            inspectorRef={inspector.ref}
+            inspectorHeight={inspector.height}
+            loading={routedDetailQuery.isLoading || profileQuery.isLoading}
+            error={routedDetailQuery.isError || profileQuery.isError}
+            errorValue={[routedDetailQuery.error, profileQuery.error]}
+            fetching={routedDetailQuery.isFetching || profileQuery.isFetching}
+            busy={triageMutation.isPending || !online}
+            onBack={closeItemDetails}
+            onRetry={() => void Promise.all([routedDetailQuery.refetch(), profileQuery.refetch()])}
+            onTriage={(action, snoozedUntil) => {
+              if (detailItem) triageMutation.mutate({ item: detailItem, action, snoozedUntil });
             }}
-          >
-            <NotificationCenterDetail
-              item={detailOpen && privacyReady ? detailItem : null}
-              open={detailOpen}
-              mode="desktop"
-              loading={routedDetailQuery.isLoading || profileQuery.isLoading}
-              error={routedDetailQuery.isError || profileQuery.isError}
-              fetching={routedDetailQuery.isFetching || profileQuery.isFetching}
-              busy={triageMutation.isPending || !online}
-              onBack={closeItemDetails}
-              onRetry={() =>
-                void Promise.all([routedDetailQuery.refetch(), profileQuery.refetch()])
-              }
-              onTriage={(action, snoozedUntil) => {
-                if (detailItem) triageMutation.mutate({ item: detailItem, action, snoozedUntil });
-              }}
-              onOpenTarget={onOpenTarget}
-              onQuickReply={(target, body, idempotencyKey) =>
-                detailItem
-                  ? quickReply(detailItem, target, body, idempotencyKey)
-                  : Promise.reject(new Error('Notification detail is unavailable.'))
-              }
-            />
-          </Box>
+            onOpenTarget={onOpenTarget}
+            onQuickReply={(target, body, idempotencyKey) =>
+              detailItem
+                ? quickReply(detailItem, target, body, idempotencyKey)
+                : Promise.reject(new Error('Notification detail is unavailable.'))
+            }
+          />
         </Box>
 
         <Box
@@ -953,43 +883,6 @@ export function NotificationCenter({
           {triageAnnouncement}
         </Box>
       </Box>
-
-      <Drawer
-        anchor="right"
-        open={compactDetail && detailOpen}
-        onClose={closeItemDetails}
-        slotProps={{
-          paper: {
-            sx: {
-              width: { xs: '100%', sm: 520 },
-              maxWidth: '100%',
-              overflow: 'hidden',
-              bgcolor: 'background.paper',
-            },
-          },
-        }}
-      >
-        <NotificationCenterDetail
-          item={privacyReady ? detailItem : null}
-          open={detailOpen}
-          mode="mobile"
-          loading={routedDetailQuery.isLoading || profileQuery.isLoading}
-          error={routedDetailQuery.isError || profileQuery.isError}
-          fetching={routedDetailQuery.isFetching || profileQuery.isFetching}
-          busy={triageMutation.isPending || !online}
-          onBack={closeItemDetails}
-          onRetry={() => void Promise.all([routedDetailQuery.refetch(), profileQuery.refetch()])}
-          onTriage={(action, snoozedUntil) => {
-            if (detailItem) triageMutation.mutate({ item: detailItem, action, snoozedUntil });
-          }}
-          onOpenTarget={onOpenTarget}
-          onQuickReply={(target, body, idempotencyKey) =>
-            detailItem
-              ? quickReply(detailItem, target, body, idempotencyKey)
-              : Promise.reject(new Error('Notification detail is unavailable.'))
-          }
-        />
-      </Drawer>
     </NotificationPageFrame>
   );
 }

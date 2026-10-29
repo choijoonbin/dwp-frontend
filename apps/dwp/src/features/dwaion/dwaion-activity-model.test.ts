@@ -7,6 +7,8 @@ import {
   hasExpiredDwaionRunLease,
   resolveDwaionActivityFilter,
   resolveDwaionActivityPeriod,
+  resolveDwaionSelectedRun,
+  shouldRenderDwaionActivityLatency,
   summarizeDwaionActivityWindow,
   updateDwaionActivityFilter,
   updateDwaionActivityPeriod,
@@ -31,6 +33,13 @@ const runs: DwaionUserRun[] = [
 ];
 
 describe('DWAI activity recent-window model', () => {
+  it('keeps cached latency analytics visible across transient refresh errors', () => {
+    expect(shouldRenderDwaionActivityLatency(true, { isPending: false, isError: true })).toBe(true);
+    expect(shouldRenderDwaionActivityLatency(false, { isPending: false, isError: true })).toBe(
+      false
+    );
+  });
+
   it('accepts only supported URL filters and applies them to the loaded window', () => {
     expect(resolveDwaionActivityFilter('running')).toBe('RUNNING');
     expect(resolveDwaionActivityFilter('unknown')).toBe('ALL');
@@ -72,6 +81,18 @@ describe('DWAI activity recent-window model', () => {
       runs[5]?.runId,
     ]);
     expect(attention).toHaveLength(summarizeDwaionActivityWindow(runs).attention);
+    const reordered = filterDwaionActivityWindow(
+      runs.map((item, index) => ({
+        ...item,
+        stateChangedAt: `2026-09-04T00:00:0${index}Z`,
+      })),
+      'ATTENTION'
+    );
+    expect(reordered.map((item) => item.runId)).toEqual([
+      runs[5]?.runId,
+      runs[3]?.runId,
+      runs[2]?.runId,
+    ]);
     expect(
       updateDwaionActivityFilter(new URLSearchParams('run=exact'), 'ATTENTION').toString()
     ).toBe('run=exact&state=ATTENTION');
@@ -98,6 +119,21 @@ describe('DWAI activity recent-window model', () => {
     const alphabetic = run('aaaaaaaa-0000-4000-8000-000000000001', 'COMPLETED', 'ALLOW', null);
     expect(findExactDwaionRun([alphabetic], alphabetic.runId.toUpperCase())).toBe(alphabetic);
     expect(findExactDwaionRun(runs, '10000000-0000-4000-8000-000000000099')).toBeUndefined();
+  });
+
+  it('prioritizes selected-run detail, falls back while pending, and fails closed on denial', () => {
+    const listed = { ...runs[0]!, activityTitle: 'Listed running snapshot' };
+    const detailed = { ...runs[1]!, runId: listed.runId, activityTitle: 'Terminal detail' };
+
+    expect(
+      resolveDwaionSelectedRun({ listRun: listed, detailRun: undefined, detailDenied: false })
+    ).toBe(listed);
+    expect(
+      resolveDwaionSelectedRun({ listRun: listed, detailRun: detailed, detailDenied: false })
+    ).toBe(detailed);
+    expect(
+      resolveDwaionSelectedRun({ listRun: listed, detailRun: detailed, detailDenied: true })
+    ).toBeUndefined();
   });
 
   it('preserves unrelated URL state while changing filters and selection', () => {

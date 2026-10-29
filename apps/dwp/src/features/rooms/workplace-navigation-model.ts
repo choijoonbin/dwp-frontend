@@ -11,6 +11,14 @@ import type {
 
 export type WorkplaceNavigationLocale = 'ko' | 'en';
 
+export function workplaceDeviceCommandMatchesTarget(
+  receipt: Pick<WorkplaceDeviceCommandReceipt, 'commandId' | 'deviceId'> | null | undefined,
+  deviceId: string,
+  commandId: string
+): boolean {
+  return receipt?.deviceId === deviceId && receipt.commandId === commandId;
+}
+
 export function workplaceNavigationPoiName(
   poi: Pick<WorkplaceNavigationPoi, 'nameKo' | 'nameEn'>,
   locale: WorkplaceNavigationLocale

@@ -3,6 +3,8 @@ import { describe, expect, it } from 'vitest';
 import {
   buildMessagingNavigatorSections,
   filterMessagingNavigator,
+  mergeMessagingNavigatorUrlState,
+  readMessagingNavigatorUrlState,
 } from './messaging-navigator-model';
 
 import type { MessagingConversation } from '@dwp-frontend/shared-utils';
@@ -34,6 +36,31 @@ function conversation(
 }
 
 describe('messaging navigator model', () => {
+  it('round-trips search and filter in the URL without dropping deep-link state', () => {
+    const initial = new URLSearchParams('conversation=room-1&message=message-1');
+    const updated = mergeMessagingNavigatorUrlState(initial, {
+      query: 'risk review',
+      filter: 'UNREAD',
+    });
+
+    expect(readMessagingNavigatorUrlState(updated)).toEqual({
+      query: 'risk review',
+      filter: 'UNREAD',
+    });
+    expect(updated.get('conversation')).toBe('room-1');
+    expect(updated.get('message')).toBe('message-1');
+
+    const cleared = mergeMessagingNavigatorUrlState(updated, { query: '', filter: 'ALL' });
+    expect(cleared.toString()).toBe('conversation=room-1&message=message-1');
+  });
+
+  it('fails an unknown URL filter back to the complete conversation list', () => {
+    expect(readMessagingNavigatorUrlState(new URLSearchParams('filter=STALE'))).toEqual({
+      query: '',
+      filter: 'ALL',
+    });
+  });
+
   it('keeps personal favorites distinct from administrator pins and filters unread work', () => {
     const items = [
       conversation('pin', { pinned: true }),

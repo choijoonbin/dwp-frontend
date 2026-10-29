@@ -1,6 +1,7 @@
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { axiosInstance } from '../axios-instance';
+import { registerMailGovernedRequestAuthority } from './mail-governed-transport';
 import {
   createMailOrganizationWritingAssetDraft,
   getMailOrganizationWritingAssets,
@@ -9,6 +10,16 @@ import {
 import { getMailWritingAssets } from './mail-user-completion-api';
 
 describe('mail writing asset API boundaries', () => {
+  let releaseMailAuthority: (() => void) | undefined;
+
+  beforeEach(() => {
+    releaseMailAuthority = registerMailGovernedRequestAuthority({
+      mode: 'LEGACY_COMPATIBILITY',
+      rolloutState: '000',
+    });
+  });
+
+  afterEach(() => releaseMailAuthority?.());
   afterEach(() => vi.restoreAllMocks());
 
   it('requests archived personal and published organization assets explicitly', async () => {

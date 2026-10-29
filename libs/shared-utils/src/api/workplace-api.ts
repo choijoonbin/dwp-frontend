@@ -292,7 +292,7 @@ export function createWorkplaceIdempotencyKey(scope = 'booking'): string {
 }
 
 function bookingCommandIdempotencyKey(
-  action: 'check-in' | 'cancel' | 'release' | 'relocate',
+  action: 'check-in' | 'cancel' | 'release' | 'relocate' | 'force-cancel' | 'legal-hold',
   bookingId: string,
   version: number
 ): string {
@@ -386,18 +386,32 @@ export async function getWorkplaceAdminBookings(
   return response.data.data;
 }
 
+export type WorkplaceAdminBookingCommandOptions = Readonly<{
+  activeAccessMode: 'ELEVATED';
+  idempotencyKey?: string;
+}>;
+
 export async function forceCancelWorkplaceBooking(
   bookingId: string,
   version: number,
-  reason: string
+  reason: string,
+  options: WorkplaceAdminBookingCommandOptions
 ): Promise<WorkplaceAdminBooking> {
+  const idempotencyKey =
+    options.idempotencyKey ?? bookingCommandIdempotencyKey('force-cancel', bookingId, version);
   const response = await axiosInstance.put<
     ApiResponse<WorkplaceAdminBooking>,
     { version: number; reason: string }
-  >(`/api/platform/v1/admin/workplace/bookings/${encodeURIComponent(bookingId)}/force-cancel`, {
-    version,
-    reason,
-  });
+  >(
+    `/api/platform/v1/admin/workplace/bookings/${encodeURIComponent(bookingId)}/force-cancel`,
+    { version, reason },
+    {
+      headers: {
+        'Idempotency-Key': idempotencyKey,
+        'X-DWP-Active-Access-Mode': options.activeAccessMode,
+      },
+    }
+  );
   return response.data.data;
 }
 
@@ -405,16 +419,24 @@ export async function updateWorkplaceBookingLegalHold(
   bookingId: string,
   version: number,
   legalHold: boolean,
-  reason: string
+  reason: string,
+  options: WorkplaceAdminBookingCommandOptions
 ): Promise<WorkplaceAdminBooking> {
+  const idempotencyKey =
+    options.idempotencyKey ?? bookingCommandIdempotencyKey('legal-hold', bookingId, version);
   const response = await axiosInstance.put<
     ApiResponse<WorkplaceAdminBooking>,
     { version: number; legalHold: boolean; reason: string }
-  >(`/api/platform/v1/admin/workplace/bookings/${encodeURIComponent(bookingId)}/legal-hold`, {
-    version,
-    legalHold,
-    reason,
-  });
+  >(
+    `/api/platform/v1/admin/workplace/bookings/${encodeURIComponent(bookingId)}/legal-hold`,
+    { version, legalHold, reason },
+    {
+      headers: {
+        'Idempotency-Key': idempotencyKey,
+        'X-DWP-Active-Access-Mode': options.activeAccessMode,
+      },
+    }
+  );
   return response.data.data;
 }
 

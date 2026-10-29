@@ -8,16 +8,21 @@ import {
   parseWorkplaceServiceFulfillmentQuery,
   parseWorkplaceServiceFulfillmentSort,
   requireWorkplaceServiceWrite,
+  resolveWorkplaceServiceProviderTarget,
   serviceSelectionIsValid,
   updateWorkplaceServiceFulfillmentSearch,
   workplaceServiceAllowedFulfillmentStates,
+  workplaceServiceAdjustmentMatchesTarget,
   workplaceServiceFulfillmentQuantityIsValid,
   workplaceServiceLimitationMessage,
   workplaceServiceReference,
   workplaceServiceResultUnknownAdjustments,
 } from './workplace-services-ui-model';
 
-import type { WorkplaceServiceCatalogItem } from '@dwp-frontend/shared-utils';
+import type {
+  WorkplaceServiceCatalogItem,
+  WorkplaceServiceProvider,
+} from '@dwp-frontend/shared-utils';
 
 const item: WorkplaceServiceCatalogItem = {
   catalogItemId: '18000000-0000-4000-8000-000000000002',
@@ -94,7 +99,7 @@ describe('Workplace Services UI safety model', () => {
     expect(parseWorkplaceServiceFulfillmentDirection('desc')).toBe('desc');
     expect(parseWorkplaceServiceFulfillmentQuery('  AV\u0000 desk  ')).toBe('AV desk');
     expect(
-      updateWorkplaceServiceFulfillmentSearch(new URLSearchParams('order=old'), {
+      updateWorkplaceServiceFulfillmentSearch(new URLSearchParams('order=old&adjustment=stale'), {
         query: 'AV',
         sort: 'provider',
         direction: 'desc',
@@ -121,6 +126,46 @@ describe('Workplace Services UI safety model', () => {
     expect(providerAllowsFulfillmentWrite('STALE')).toBe(false);
   });
 
+  it('accepts a refund target only when the adjustment and parent order both match', () => {
+    const adjustment = {
+      lineAdjustmentId: 'adjustment-1',
+      serviceOrderId: 'order-1',
+    };
+    expect(workplaceServiceAdjustmentMatchesTarget(adjustment, 'order-1', 'adjustment-1')).toBe(
+      true
+    );
+    expect(workplaceServiceAdjustmentMatchesTarget(adjustment, 'order-2', 'adjustment-1')).toBe(
+      false
+    );
+    expect(workplaceServiceAdjustmentMatchesTarget(adjustment, 'order-1', 'adjustment-2')).toBe(
+      false
+    );
+  });
+
+  it('resolves a provider deep link by exact code and fails closed when it is absent', () => {
+    const providers = [
+      { providerCode: 'DWP_NATIVE', providerProfileId: 'provider-1' },
+      { providerCode: 'EXTERNAL_AV', providerProfileId: 'provider-2' },
+    ] as WorkplaceServiceProvider[];
+
+    expect(resolveWorkplaceServiceProviderTarget(providers, 'EXTERNAL_AV')).toEqual({
+      provider: providers[1],
+      unavailable: false,
+    });
+    expect(resolveWorkplaceServiceProviderTarget(providers, 'external_av')).toEqual({
+      provider: null,
+      unavailable: true,
+    });
+    expect(resolveWorkplaceServiceProviderTarget(providers, 'MISSING')).toEqual({
+      provider: null,
+      unavailable: true,
+    });
+    expect(resolveWorkplaceServiceProviderTarget(providers, null)).toEqual({
+      provider: null,
+      unavailable: false,
+    });
+  });
+
   it('mirrors the backend fulfillment transition and quantity rules', () => {
     expect(workplaceServiceAllowedFulfillmentStates('SUBMITTED')).toEqual([
       'SUBMITTED',
@@ -141,7 +186,7 @@ describe('Workplace Services UI safety model', () => {
 
   it('persists queue filters while clearing stale selection and recovers both uncertain events', () => {
     const filtered = updateWorkplaceServiceFulfillmentSearch(
-      new URLSearchParams('state=SUBMITTED&order=old&view=compact'),
+      new URLSearchParams('state=SUBMITTED&order=old&adjustment=stale&view=compact'),
       { state: 'BLOCKED' }
     );
     expect(filtered.toString()).toBe('state=BLOCKED&view=compact');

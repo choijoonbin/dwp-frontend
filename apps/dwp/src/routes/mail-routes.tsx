@@ -4,6 +4,10 @@ import { Outlet, type RouteObject } from 'react-router-dom';
 
 import { MAIL_PRODUCT_MANIFEST } from '../features/mail/mail-product-manifest';
 import { resolveMailProductAreaMobileShell } from '../features/mail/mail-mobile-navigation';
+import {
+  MAIL_NAVIGATION_PROJECTION,
+  renderMailNavigationMore,
+} from '../features/mail/mail-navigation-more';
 import { MailLayout } from '../layouts/mail-layout';
 import {
   authenticationFallback,
@@ -13,13 +17,16 @@ import {
   WorkspaceRouteGuard,
 } from './route-support';
 import { buildTwoSurfaceProductChildren } from './two-surface-product-routes';
+import { MailGovernedRoutePage } from './mail-governed-route-page';
 
 const MailPage = lazy(() => import('../pages/mail'));
 
 const page = (
-  <Suspense fallback={routeFallback}>
-    <MailPage />
-  </Suspense>
+  <MailGovernedRoutePage>
+    <Suspense fallback={routeFallback}>
+      <MailPage />
+    </Suspense>
+  </MailGovernedRoutePage>
 );
 
 const legacyShell = (
@@ -55,6 +62,9 @@ export const mailRoutes: RouteObject[] = [
       areaKey: 'mail',
       translationNamespace: 'mail',
       resolveMobileShell: resolveMailProductAreaMobileShell,
+      shellNavigationProjection: MAIL_NAVIGATION_PROJECTION,
+      renderNavigationItemChildren: renderMailNavigationMore,
+      navigationChildrenPresentation: 'panel',
       renderPage: () => page,
       legacyUnknown: page,
     }),

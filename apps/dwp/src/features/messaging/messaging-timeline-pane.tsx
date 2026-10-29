@@ -29,6 +29,7 @@ import type {
 } from '@dwp-frontend/shared-utils';
 import type { MessagingMentionDraft } from './messaging-composer-model';
 import type { MessagingAttachmentQueue } from './use-messaging-attachment-queue';
+import type { MessagingDraftPersistenceState } from './use-messaging-draft-continuity';
 import type { RefObject, UIEventHandler } from 'react';
 
 type MessagingTimelinePaneProps = {
@@ -44,6 +45,10 @@ type MessagingTimelinePaneProps = {
   allowMentionAll: boolean;
   sending: boolean;
   sendError: boolean;
+  scheduleBusy: boolean;
+  scheduleError: boolean;
+  draftPersistenceState: MessagingDraftPersistenceState;
+  onResolveDraftConflict: (choice: 'SERVER' | 'LOCAL') => void;
   attachmentQueue: MessagingAttachmentQueue;
   lastReadSequence?: number | null;
   newMessageCount: number;
@@ -75,6 +80,7 @@ type MessagingTimelinePaneProps = {
   onOpenMeeting: () => void;
   onSend: () => void;
   onRetrySend: () => void;
+  onSchedule: (input: { scheduledFor: string; displayTimeZone: string }) => Promise<boolean>;
   onReply: (messageId: string) => void;
   onReact: (messageId: string, emoji: string, remove: boolean) => void;
   onSave: (message: MessagingMessage) => void;
@@ -98,6 +104,10 @@ export function MessagingTimelinePane({
   allowMentionAll,
   sending,
   sendError,
+  scheduleBusy,
+  scheduleError,
+  draftPersistenceState,
+  onResolveDraftConflict,
   attachmentQueue,
   lastReadSequence,
   newMessageCount,
@@ -115,6 +125,7 @@ export function MessagingTimelinePane({
   onOpenMeeting,
   onSend,
   onRetrySend,
+  onSchedule,
   onReply,
   onReact,
   onSave,
@@ -240,29 +251,38 @@ export function MessagingTimelinePane({
             }
             const { message } = item;
             return (
-              <MessagingMessageRow
+              <Box
                 key={item.key}
-                message={message}
-                mine={message.senderUserId === currentUserId}
-                display={displayPreference}
-                receipt={receipts.get(message.messageId)}
-                groupedWithPrevious={item.groupedWithPrevious}
-                groupedWithNext={item.groupedWithNext}
-                highlighted={message.messageId === highlightMessageId}
-                replyCount={message.replyCount ?? replyCounts.get(message.messageId) ?? 0}
-                onReply={() => onReply(message.messageId)}
-                onSave={() => onSave(message)}
-                onTrackAsTask={onTrackAsTask ? () => onTrackAsTask(message) : undefined}
-                onEdit={() => onEdit(message)}
-                onDelete={() => onDelete(message)}
-                onReact={(emoji) =>
-                  onReact(
-                    message.messageId,
-                    emoji,
-                    message.reactions.some((reaction) => reaction.emoji === emoji && reaction.mine)
-                  )
-                }
-              />
+                sx={{
+                  contentVisibility: message.messageId === highlightMessageId ? 'visible' : 'auto',
+                  containIntrinsicSize: 'auto 88px',
+                }}
+              >
+                <MessagingMessageRow
+                  message={message}
+                  mine={message.senderUserId === currentUserId}
+                  display={displayPreference}
+                  receipt={receipts.get(message.messageId)}
+                  groupedWithPrevious={item.groupedWithPrevious}
+                  groupedWithNext={item.groupedWithNext}
+                  highlighted={message.messageId === highlightMessageId}
+                  replyCount={message.replyCount ?? replyCounts.get(message.messageId) ?? 0}
+                  onReply={() => onReply(message.messageId)}
+                  onSave={() => onSave(message)}
+                  onTrackAsTask={onTrackAsTask ? () => onTrackAsTask(message) : undefined}
+                  onEdit={() => onEdit(message)}
+                  onDelete={() => onDelete(message)}
+                  onReact={(emoji) =>
+                    onReact(
+                      message.messageId,
+                      emoji,
+                      message.reactions.some(
+                        (reaction) => reaction.emoji === emoji && reaction.mine
+                      )
+                    )
+                  }
+                />
+              </Box>
             );
           })
         ) : (
@@ -327,6 +347,10 @@ export function MessagingTimelinePane({
           onRetry={onRetrySend}
           isSending={sending}
           hasError={sendError}
+          scheduleBusy={scheduleBusy}
+          scheduleError={scheduleError}
+          draftPersistenceState={draftPersistenceState}
+          onResolveDraftConflict={onResolveDraftConflict}
           attachments={attachmentQueue.items}
           attachmentBusy={attachmentQueue.busy}
           onAttachFiles={attachmentQueue.addFiles}
@@ -338,6 +362,7 @@ export function MessagingTimelinePane({
           onMentionsChange={onDraftMentionsChange}
           allowMentionAll={allowMentionAll}
           onOpenMeeting={onOpenMeeting}
+          onSchedule={onSchedule}
         />
       </Box>
     </>

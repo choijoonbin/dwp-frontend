@@ -73,4 +73,24 @@ describe('DWAI activity attention row', () => {
     expect(html).not.toContain('dwaionActivity.attentionSignals.leaseExpired');
     expect(html).toContain('dwaionActivity.states.RUNNING');
   });
+
+  it('uses the latest server state transition time without changing the feed cursor order', () => {
+    const stateChangedAt = '2026-09-09T00:03:00Z';
+    const html = renderRun({ ...expiredRun, stateChangedAt });
+
+    expect(html).toContain(`dateTime="${stateChangedAt}"`);
+  });
+
+  it('renders a terminal detail overlay without retaining the stale RUNNING warning', () => {
+    const html = renderRun({
+      ...expiredRun,
+      runState: 'COMPLETED',
+      answerState: 'COMPLETED',
+      completedAt: '2026-09-09T00:03:00Z',
+      stateChangedAt: '2026-09-09T00:03:00Z',
+    });
+
+    expect(html).toContain('dwaionActivity.states.COMPLETED');
+    expect(html).not.toContain('dwaionActivity.attentionSignals.leaseExpired');
+  });
 });
