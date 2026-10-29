@@ -661,13 +661,16 @@ function cycle(value: unknown, detail: boolean): CompensationCycle {
     detail ? ['guidelines', 'population', 'budgetEntries', 'budgetAggregates'] : []
   );
   const budgetMasked = bool(source.budgetMasked);
-  if (budgetMasked &&
-    (source.budgetEntries !== undefined || source.budgetAggregates !== undefined)) {
+  if (
+    budgetMasked &&
+    (source.budgetEntries !== undefined || source.budgetAggregates !== undefined)
+  ) {
     return invalid();
   }
-  const budgetAggregates = source.budgetAggregates === undefined
-    ? undefined
-    : array(source.budgetAggregates).map(budgetAggregate);
+  const budgetAggregates =
+    source.budgetAggregates === undefined
+      ? undefined
+      : array(source.budgetAggregates).map(budgetAggregate);
   for (let index = 1; index < (budgetAggregates?.length ?? 0); index += 1) {
     const previous = budgetAggregates?.[index - 1];
     const aggregate = budgetAggregates?.[index];

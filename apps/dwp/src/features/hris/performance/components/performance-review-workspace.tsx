@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { ClipboardCheck, RefreshCw, Save, Send } from 'lucide-react';
 import {
   ActionButton,
@@ -9,6 +10,7 @@ import {
   FormDialog,
   foundationTokens,
 } from '@dwp-frontend/design-system';
+import { formatDate } from '@dwp-frontend/shared-i18n';
 
 import Box from '@mui/material/Box';
 import Checkbox from '@mui/material/Checkbox';
@@ -18,6 +20,7 @@ import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
 import { PerformanceReviewAnswerField } from './performance-review-answer-fields';
+import { translatePerformance } from '../performance-i18n';
 
 import type { PerformanceReviewFailure } from '../hooks/use-performance-review';
 import type {
@@ -53,12 +56,12 @@ export type PerformanceReviewWorkspaceViewProps = Readonly<{
   onDiscardAndReload: () => Promise<boolean>;
 }>;
 
-function formatDue(value: string | null | undefined): string {
-  if (!value) return 'No due date';
-  return new Intl.DateTimeFormat(undefined, {
+function formatDue(value: string | null | undefined, emptyLabel: string): string {
+  if (!value) return emptyLabel;
+  return formatDate(value, {
     dateStyle: 'medium',
     timeStyle: 'short',
-  }).format(new Date(value));
+  });
 }
 
 function StatePanel({
@@ -72,6 +75,7 @@ function StatePanel({
   busy?: boolean;
   onRetry?: () => void;
 }>) {
+  const { t } = useTranslation('hcm');
   return (
     <Paper
       component="section"
@@ -90,7 +94,7 @@ function StatePanel({
       {onRetry && (
         <Box sx={{ mt: 2 }}>
           <ActionButton intent="secondary" startIcon={<RefreshCw size={16} />} onClick={onRetry}>
-            Try again
+            {t('hrisPerformance.reviewWorkspace.retry', { defaultValue: 'Try again' })}
           </ActionButton>
         </Box>
       )}
@@ -109,6 +113,7 @@ function ReviewForm({
   PerformanceReviewWorkspaceViewProps,
   'review' | 'answers' | 'validation' | 'validationVisible' | 'onAnswerChange'
 > & { review: AssignedPerformanceReview; disabled: boolean }) {
+  const { t } = useTranslation('hcm');
   const issueByItem = new Map(validation.issues.map((issue) => [issue.itemKey, issue]));
   const sections = review.form.items.filter((item) => item.kind === 'SECTION');
   return (
@@ -122,12 +127,16 @@ function ReviewForm({
     >
       <Paper
         component="nav"
-        aria-label="Review form sections"
+        aria-label={t('hrisPerformance.reviewWorkspace.formSectionsAriaLabel', {
+          defaultValue: 'Review form sections',
+        })}
         variant="outlined"
         sx={{ p: 1.5, position: { md: 'sticky' }, top: { md: 16 } }}
       >
         <Typography component="h2" variant="subtitle2" sx={{ px: 1, pb: 1 }}>
-          Form navigation
+          {t('hrisPerformance.reviewWorkspace.formNavigation', {
+            defaultValue: 'Form navigation',
+          })}
         </Typography>
         <Stack gap={0.5}>
           {(sections.length > 0 ? sections : review.form.items.slice(0, 1)).map((item) => (
@@ -189,6 +198,7 @@ function ReviewForm({
 }
 
 export function PerformanceReviewWorkspaceView(props: PerformanceReviewWorkspaceViewProps) {
+  const { t } = useTranslation('hcm');
   const {
     review,
     answers,
@@ -231,8 +241,12 @@ export function PerformanceReviewWorkspaceView(props: PerformanceReviewWorkspace
   if (loading) {
     return (
       <StatePanel
-        title="Loading assigned review"
-        description="Checking the current assignment and protected review fields."
+        title={t('hrisPerformance.reviewWorkspace.loadingTitle', {
+          defaultValue: 'Loading assigned review',
+        })}
+        description={t('hrisPerformance.reviewWorkspace.loadingDescription', {
+          defaultValue: 'Checking the current assignment and protected review fields.',
+        })}
         busy
       />
     );
@@ -240,24 +254,39 @@ export function PerformanceReviewWorkspaceView(props: PerformanceReviewWorkspace
   if (empty) {
     return (
       <StatePanel
-        title="Select an assigned review"
-        description="Open a review assignment to load its governed form."
+        title={t('hrisPerformance.reviewWorkspace.emptyTitle', {
+          defaultValue: 'Select an assigned review',
+        })}
+        description={t('hrisPerformance.reviewWorkspace.emptyDescription', {
+          defaultValue: 'Open a review assignment to load its governed form.',
+        })}
       />
     );
   }
   if (denied && !review) {
     return (
       <StatePanel
-        title="Review unavailable"
-        description="This review is absent or outside your current assignment."
+        title={t('hrisPerformance.reviewWorkspace.deniedTitle', {
+          defaultValue: 'Review unavailable',
+        })}
+        description={t('hrisPerformance.reviewWorkspace.deniedDescription', {
+          defaultValue: 'This review is absent or outside your current assignment.',
+        })}
       />
     );
   }
   if (!review) {
     return (
       <StatePanel
-        title="Review could not be loaded"
-        description={loadFailure?.message ?? 'The assigned review is temporarily unavailable.'}
+        title={t('hrisPerformance.reviewWorkspace.unavailableTitle', {
+          defaultValue: 'Review could not be loaded',
+        })}
+        description={
+          loadFailure?.message ??
+          t('hrisPerformance.reviewWorkspace.unavailableDescription', {
+            defaultValue: 'The assigned review is temporarily unavailable.',
+          })
+        }
         onRetry={() => void onReload()}
       />
     );
@@ -268,12 +297,16 @@ export function PerformanceReviewWorkspaceView(props: PerformanceReviewWorkspace
     readOnly || fetching || commandBusy || pendingKind !== null || !commandConnected;
   const liveMessage =
     feedback === 'SAVED'
-      ? 'Draft saved.'
+      ? t('hrisPerformance.reviewWorkspace.draftSaved', { defaultValue: 'Draft saved.' })
       : feedback === 'SUBMITTED'
-        ? 'Review submitted.'
+        ? t('hrisPerformance.reviewWorkspace.submitted', { defaultValue: 'Review submitted.' })
         : dirty
-          ? 'Unsaved changes.'
-          : 'Draft is current.';
+          ? t('hrisPerformance.reviewWorkspace.unsavedChanges', {
+              defaultValue: 'Unsaved changes.',
+            })
+          : t('hrisPerformance.reviewWorkspace.draftCurrent', {
+              defaultValue: 'Draft is current.',
+            });
   const submitReview = async () => {
     const completed = await onSubmit();
     if (!completed) {
@@ -323,13 +356,19 @@ export function PerformanceReviewWorkspaceView(props: PerformanceReviewWorkspace
           </GlyphSurface>
           <Box minWidth={0} flex={1}>
             <Typography variant="overline" color="text.secondary">
-              Assigned performance review
+              {t('hrisPerformance.reviewWorkspace.eyebrow', {
+                defaultValue: 'Assigned performance review',
+              })}
             </Typography>
             <Typography component="h1" variant="h4" sx={{ overflowWrap: 'anywhere' }}>
               {review.stageKey.replaceAll('_', ' ')}
             </Typography>
             <Typography color="text.secondary" variant="body2" sx={{ mt: 0.5 }}>
-              {review.reviewerType.replaceAll('_', ' ')} · {formatDue(review.dueAt)}
+              {review.reviewerType.replaceAll('_', ' ')} ·{' '}
+              {formatDue(
+                review.dueAt,
+                t('hrisPerformance.reviewWorkspace.noDueDate', { defaultValue: 'No due date' })
+              )}
             </Typography>
           </Box>
           <Typography
@@ -348,20 +387,40 @@ export function PerformanceReviewWorkspaceView(props: PerformanceReviewWorkspace
       </Paper>
 
       <OperationalContextBar
-        label="Assigned review context"
+        label={t('hrisPerformance.reviewWorkspace.contextLabel', {
+          defaultValue: 'Assigned review context',
+        })}
         items={[
-          { label: 'Template', value: review.form.schemaVersion },
-          { label: 'Version', value: String(review.aggregateVersion) },
           {
-            label: 'Questions',
+            label: t('hrisPerformance.reviewWorkspace.template', { defaultValue: 'Template' }),
+            value: review.form.schemaVersion,
+          },
+          {
+            label: t('hrisPerformance.reviewWorkspace.version', { defaultValue: 'Version' }),
+            value: String(review.aggregateVersion),
+          },
+          {
+            label: t('hrisPerformance.reviewWorkspace.questions', {
+              defaultValue: 'Questions',
+            }),
             value: String(review.form.items.filter((item) => item.kind !== 'SECTION').length),
           },
         ]}
         status={
           <LiveStatus
             state={partial ? 'degraded' : 'live'}
-            label={partial ? 'Partially available' : 'Assignment verified'}
-            refreshLabel="Reload latest review"
+            label={
+              partial
+                ? t('hrisPerformance.reviewWorkspace.partiallyAvailable', {
+                    defaultValue: 'Partially available',
+                  })
+                : t('hrisPerformance.reviewWorkspace.assignmentVerified', {
+                    defaultValue: 'Assignment verified',
+                  })
+            }
+            refreshLabel={t('hrisPerformance.reviewWorkspace.reloadLatest', {
+              defaultValue: 'Reload latest review',
+            })}
             refreshing={fetching}
             onRefresh={commandBusy || pendingKind !== null ? undefined : requestReload}
           />
@@ -369,19 +428,43 @@ export function PerformanceReviewWorkspaceView(props: PerformanceReviewWorkspace
       />
 
       {!commandConnected && (
-        <InlineFeedback severity="info" title="Draft actions are not connected">
-          The review stays read-only until the governed command executor is available.
+        <InlineFeedback
+          severity="info"
+          title={t('hrisPerformance.reviewWorkspace.commandsDisconnectedTitle', {
+            defaultValue: 'Draft actions are not connected',
+          })}
+        >
+          {t('hrisPerformance.reviewWorkspace.commandsDisconnectedDescription', {
+            defaultValue:
+              'The review stays read-only until the governed command executor is available.',
+          })}
         </InlineFeedback>
       )}
       {partial && (
-        <InlineFeedback severity="warning" title="Some review data may be stale">
-          Your loaded draft remains visible. Reload before making a final submission.
+        <InlineFeedback
+          severity="warning"
+          title={t('hrisPerformance.reviewWorkspace.partialTitle', {
+            defaultValue: 'Some review data may be stale',
+          })}
+        >
+          {t('hrisPerformance.reviewWorkspace.partialDescription', {
+            defaultValue:
+              'Your loaded draft remains visible. Reload before making a final submission.',
+          })}
         </InlineFeedback>
       )}
       {commandFailure && (
         <InlineFeedback
           severity={commandFailure.kind === 'INVALID' ? 'warning' : 'error'}
-          title={commandFailure.kind === 'CONFLICT' ? 'Review changed' : 'Review action incomplete'}
+          title={
+            commandFailure.kind === 'CONFLICT'
+              ? t('hrisPerformance.reviewWorkspace.conflictTitle', {
+                  defaultValue: 'Review changed',
+                })
+              : t('hrisPerformance.reviewWorkspace.commandIncompleteTitle', {
+                  defaultValue: 'Review action incomplete',
+                })
+          }
         >
           <Stack gap={1} alignItems="flex-start">
             <span>{commandFailure.message}</span>
@@ -392,12 +475,16 @@ export function PerformanceReviewWorkspaceView(props: PerformanceReviewWorkspace
                 disabled={commandBusy}
                 onClick={() => void onRetryPending()}
               >
-                Retry same request
+                {t('hrisPerformance.reviewWorkspace.retrySameRequest', {
+                  defaultValue: 'Retry same request',
+                })}
               </ActionButton>
             )}
             {commandFailure.kind === 'CONFLICT' && (
               <ActionButton intent="secondary" onClick={requestReload}>
-                Reload latest draft
+                {t('hrisPerformance.reviewWorkspace.reloadLatestDraft', {
+                  defaultValue: 'Reload latest draft',
+                })}
               </ActionButton>
             )}
           </Stack>
@@ -417,8 +504,14 @@ export function PerformanceReviewWorkspaceView(props: PerformanceReviewWorkspace
           }}
         >
           <Typography component="h2" variant="subtitle1">
-            Complete {validation.issues.length} review item
-            {validation.issues.length === 1 ? '' : 's'}
+            {translatePerformance(
+              t,
+              'hrisPerformance.reviewWorkspace.validationSummary',
+              validation.issues.length === 1
+                ? 'Complete {{count}} review item'
+                : 'Complete {{count}} review items',
+              { count: validation.issues.length }
+            )}
           </Typography>
           <Box component="ul" sx={{ mb: 0, pl: 3 }}>
             {validation.issues.map((issue) => {
@@ -456,7 +549,14 @@ export function PerformanceReviewWorkspaceView(props: PerformanceReviewWorkspace
         onAnswerChange={onAnswerChange}
       />
 
-      <Paper component="section" aria-label="Review submission" variant="outlined" sx={{ p: 2 }}>
+      <Paper
+        component="section"
+        aria-label={t('hrisPerformance.reviewWorkspace.submissionAriaLabel', {
+          defaultValue: 'Review submission',
+        })}
+        variant="outlined"
+        sx={{ p: 2 }}
+      >
         <Stack gap={1.5}>
           <Box role="status" aria-live="polite" aria-atomic="true">
             <Typography variant="body2" color="text.secondary">
@@ -464,13 +564,24 @@ export function PerformanceReviewWorkspaceView(props: PerformanceReviewWorkspace
             </Typography>
           </Box>
           {submission && (
-            <InlineFeedback severity="success" title="Review submitted">
-              Submission {submission.submissionNo} was recorded at{' '}
-              {new Intl.DateTimeFormat(undefined, {
-                dateStyle: 'medium',
-                timeStyle: 'short',
-              }).format(new Date(submission.submittedAt))}
-              .
+            <InlineFeedback
+              severity="success"
+              title={t('hrisPerformance.reviewWorkspace.submitted', {
+                defaultValue: 'Review submitted',
+              })}
+            >
+              {translatePerformance(
+                t,
+                'hrisPerformance.reviewWorkspace.submissionRecorded',
+                'Submission {{submissionNo}} was recorded at {{submittedAt}}.',
+                {
+                  submissionNo: submission.submissionNo,
+                  submittedAt: formatDate(submission.submittedAt, {
+                    dateStyle: 'medium',
+                    timeStyle: 'short',
+                  }),
+                }
+              )}
             </InlineFeedback>
           )}
           {!readOnly && (
@@ -482,7 +593,9 @@ export function PerformanceReviewWorkspaceView(props: PerformanceReviewWorkspace
                   onChange={(event) => setAcknowledged(event.target.checked)}
                 />
               }
-              label="I understand that submission is final and uses the saved draft."
+              label={t('hrisPerformance.reviewWorkspace.finalAcknowledgement', {
+                defaultValue: 'I understand that submission is final and uses the saved draft.',
+              })}
             />
           )}
           <Stack direction={{ xs: 'column', sm: 'row' }} gap={1}>
@@ -493,7 +606,7 @@ export function PerformanceReviewWorkspaceView(props: PerformanceReviewWorkspace
               startIcon={<Save size={16} aria-hidden="true" />}
               onClick={() => void onSaveDraft()}
             >
-              Save draft
+              {t('hrisPerformance.reviewWorkspace.saveDraft', { defaultValue: 'Save draft' })}
             </ActionButton>
             <ActionButton
               intent="primary"
@@ -502,17 +615,28 @@ export function PerformanceReviewWorkspaceView(props: PerformanceReviewWorkspace
               startIcon={<Send size={16} aria-hidden="true" />}
               onClick={() => void submitReview()}
             >
-              Submit review
+              {t('hrisPerformance.reviewWorkspace.submitReview', {
+                defaultValue: 'Submit review',
+              })}
             </ActionButton>
           </Stack>
         </Stack>
       </Paper>
       <FormDialog
         open={discardDialogOpen}
-        title="Discard unsaved changes?"
-        description="Reloading replaces your unsaved answers with the latest authoritative draft."
-        cancelLabel="Keep editing"
-        submitLabel="Discard changes and reload"
+        title={t('hrisPerformance.reviewWorkspace.discardTitle', {
+          defaultValue: 'Discard unsaved changes?',
+        })}
+        description={t('hrisPerformance.reviewWorkspace.discardDescription', {
+          defaultValue:
+            'Reloading replaces your unsaved answers with the latest authoritative draft.',
+        })}
+        cancelLabel={t('hrisPerformance.reviewWorkspace.keepEditing', {
+          defaultValue: 'Keep editing',
+        })}
+        submitLabel={t('hrisPerformance.reviewWorkspace.discardAndReload', {
+          defaultValue: 'Discard changes and reload',
+        })}
         onClose={() => setDiscardDialogOpen(false)}
         onSubmit={discardAndReload}
         busy={discarding}

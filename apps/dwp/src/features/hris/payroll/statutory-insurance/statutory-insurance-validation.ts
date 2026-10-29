@@ -53,7 +53,12 @@ export function text(value: unknown, path: string, maximum: number, pattern?: Re
   return value;
 }
 
-export function integer(value: unknown, path: string, minimum = 0, maximum = Number.MAX_SAFE_INTEGER) {
+export function integer(
+  value: unknown,
+  path: string,
+  minimum = 0,
+  maximum = Number.MAX_SAFE_INTEGER
+) {
   if (!Number.isSafeInteger(value) || Number(value) < minimum || Number(value) > maximum) {
     return invalid(path);
   }

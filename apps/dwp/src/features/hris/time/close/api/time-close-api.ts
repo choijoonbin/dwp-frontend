@@ -56,6 +56,33 @@ export const TIME_CLOSE_API_CONTRACTS = Object.freeze([
   },
 ] as const);
 
+export const HCM_TIME_CLOSE_MUTATION_API_CONTRACTS = [
+  {
+    apiFunction: 'validateTimeClosePeriod',
+    routeContractKey: 'route.hcm.operations.time-close-validate.action',
+    method: 'POST',
+    path: `${CLOSE_PERIODS}/{periodId}/validations`,
+  },
+  {
+    apiFunction: 'closeTimePeriod',
+    routeContractKey: 'route.hcm.operations.time-close.action',
+    method: 'POST',
+    path: `${CLOSE_PERIODS}/{periodId}/close`,
+  },
+  {
+    apiFunction: 'reopenTimePeriod',
+    routeContractKey: 'route.hcm.operations.time-reopen.action',
+    method: 'POST',
+    path: `${CLOSE_PERIODS}/{periodId}/reopen`,
+  },
+  {
+    apiFunction: 'createPayrollTimeHandoff',
+    routeContractKey: 'route.hcm.operations.time-payroll-handoff-create.action',
+    method: 'POST',
+    path: `${CLOSE_PERIODS}/{periodId}/payroll-handoffs`,
+  },
+] as const;
+
 export type TimeCloseHttpConfig = Readonly<{
   contextScopeKey: string;
   signal: AbortSignal;
@@ -267,7 +294,7 @@ function commandAuthority(
     throw new Error('Invalid governed TIM close command authority.');
   }
   const governed = highRisk
-    ? productSurfaceHighRiskMutationConfig(authority, { objectVersionHeader: false })
+    ? productSurfaceHighRiskMutationConfig(authority, { objectVersionHeader: true })
     : productSurfaceGovernedMutationConfig(authority, { objectVersionHeader: false });
   return {
     contextScopeKey: authority.contextScopeKey,

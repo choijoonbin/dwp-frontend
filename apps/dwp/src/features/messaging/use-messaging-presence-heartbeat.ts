@@ -5,7 +5,7 @@ import {
   MESSAGING_PRESENCE_REQUEST_TIMEOUT_MS,
   refreshMessagingPresence,
   type MessagingPresenceLeaseTiming,
-} from '@dwp-frontend/shared-utils';
+} from '@dwp-frontend/shared-utils/api/messaging-api';
 
 import {
   MESSAGING_CROSS_TAB_LEASE_RENEW_MS,

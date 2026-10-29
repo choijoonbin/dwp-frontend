@@ -1,6 +1,11 @@
 import { createElement } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
+
+vi.mock('react-i18next', async () => {
+  const { hcmTestUseTranslation } = await import('../../../../../test-utils/hcm-i18n-test-stub');
+  return { useTranslation: hcmTestUseTranslation };
+});
 
 import {
   HRIS_NAVIGATION_POLICY_RUNTIME_STATE,

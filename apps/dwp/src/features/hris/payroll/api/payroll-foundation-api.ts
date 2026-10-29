@@ -320,13 +320,115 @@ export const payrollFoundationDataSource: PayrollFoundationDataSource = Object.f
   reconcile: reconcilePayrollFoundationReceipt,
 });
 
+function configurationPathAtBase(apiBase: string, configurationId: string) {
+  return `${apiBase}/configurations/${encodeURIComponent(configurationId)}`;
+}
+
+export async function createPayrollFoundationAtBase(
+  apiBase: string,
+  request: PayrollFoundationCreateRequest,
+  commandId: string,
+  scope: RequestScope,
+  authority: ProductSurfaceGovernedMutationAuthority
+) {
+  const response = await axiosInstance.post<ApiResponse<unknown>, PayrollFoundationCreateRequest>(
+    `${apiBase}/configurations`,
+    request,
+    commandScope(scope, commandId, authority)
+  );
+  return response.data.data;
+}
+
+export async function updatePayrollFoundationAtBase(
+  apiBase: string,
+  configurationId: string,
+  request: PayrollFoundationUpdateRequest,
+  commandId: string,
+  scope: RequestScope,
+  authority: ProductSurfaceGovernedMutationAuthority
+) {
+  const response = await axiosInstance.put<ApiResponse<unknown>, PayrollFoundationUpdateRequest>(
+    configurationPathAtBase(apiBase, configurationId),
+    request,
+    commandScope(scope, commandId, authority)
+  );
+  return response.data.data;
+}
+
+export async function simulatePayrollFoundationAtBase(
+  apiBase: string,
+  configurationId: string,
+  request: PayrollFoundationVersionCommand,
+  commandId: string,
+  scope: RequestScope,
+  authority: ProductSurfaceGovernedMutationAuthority
+) {
+  const response = await axiosInstance.post<ApiResponse<unknown>, PayrollFoundationVersionCommand>(
+    `${configurationPathAtBase(apiBase, configurationId)}/simulations`,
+    request,
+    commandScope(scope, commandId, authority)
+  );
+  return response.data.data;
+}
+
+export async function publishPayrollFoundationAtBase(
+  apiBase: string,
+  configurationId: string,
+  request: PayrollFoundationVersionCommand,
+  commandId: string,
+  scope: RequestScope,
+  authority: ProductSurfaceGovernedMutationAuthority
+) {
+  const response = await axiosInstance.post<ApiResponse<unknown>, PayrollFoundationVersionCommand>(
+    `${configurationPathAtBase(apiBase, configurationId)}/publish`,
+    request,
+    commandScope(scope, commandId, authority, true, request.expectedVersion)
+  );
+  return response.data.data;
+}
+
+export async function reversePayrollFoundationAtBase(
+  apiBase: string,
+  configurationId: string,
+  request: PayrollFoundationReversalCommand,
+  commandId: string,
+  scope: RequestScope,
+  authority: ProductSurfaceGovernedMutationAuthority
+) {
+  const response = await axiosInstance.post<ApiResponse<unknown>, PayrollFoundationReversalCommand>(
+    `${configurationPathAtBase(apiBase, configurationId)}/reversals`,
+    request,
+    commandScope(scope, commandId, authority, true, request.expectedVersion)
+  );
+  return response.data.data;
+}
+
+export async function reconcilePayrollFoundationReceiptAtBase(
+  apiBase: string,
+  commandId: string,
+  scope: RequestScope,
+  authority: ProductSurfaceGovernedMutationAuthority
+) {
+  const governed = productSurfaceGovernedMutationConfig(authority);
+  const response = await axiosInstance.post<ApiResponse<unknown>, Record<string, never>>(
+    `${apiBase}/receipts/${encodeURIComponent(commandId)}/reconcile`,
+    {},
+    {
+      ...scoped(scope),
+      ...governed,
+      headers: governed.headers,
+      csrfReplay: 'NEVER',
+    }
+  );
+  return response.data.data;
+}
+
 /** Builds a route-family adapter without changing the shared Foundation domain/runtime. */
 export function createPayrollFoundationDataSource(apiBase: string): PayrollFoundationDataSource {
   if (!apiBase.startsWith('/api/payroll/v1/') || apiBase.endsWith('/')) {
     throw new Error('A canonical payroll API base is required.');
   }
-  const path = (configurationId: string) =>
-    `${apiBase}/configurations/${encodeURIComponent(configurationId)}`;
+  const path = (configurationId: string) => configurationPathAtBase(apiBase, configurationId);
 
   return Object.freeze({
     async list(scope) {
@@ -350,48 +452,48 @@ export function createPayrollFoundationDataSource(apiBase: string): PayrollFound
       );
       return response.data.data;
     },
-    async create(request, commandId, scope, authority) {
-      const response = await axiosInstance.post<
-        ApiResponse<unknown>,
-        PayrollFoundationCreateRequest
-      >(`${apiBase}/configurations`, request, commandScope(scope, commandId, authority));
-      return response.data.data;
+    create(request, commandId, scope, authority) {
+      return createPayrollFoundationAtBase(apiBase, request, commandId, scope, authority);
     },
-    async update(configurationId, request, commandId, scope, authority) {
-      const response = await axiosInstance.put<
-        ApiResponse<unknown>,
-        PayrollFoundationUpdateRequest
-      >(path(configurationId), request, commandScope(scope, commandId, authority));
-      return response.data.data;
-    },
-    async simulate(configurationId, request, commandId, scope, authority) {
-      const response = await axiosInstance.post<
-        ApiResponse<unknown>,
-        PayrollFoundationVersionCommand
-      >(`${path(configurationId)}/simulations`, request, commandScope(scope, commandId, authority));
-      return response.data.data;
-    },
-    async publish(configurationId, request, commandId, scope, authority) {
-      const response = await axiosInstance.post<
-        ApiResponse<unknown>,
-        PayrollFoundationVersionCommand
-      >(
-        `${path(configurationId)}/publish`,
+    update(configurationId, request, commandId, scope, authority) {
+      return updatePayrollFoundationAtBase(
+        apiBase,
+        configurationId,
         request,
-        commandScope(scope, commandId, authority, true, request.expectedVersion)
+        commandId,
+        scope,
+        authority
       );
-      return response.data.data;
     },
-    async reverse(configurationId, request, commandId, scope, authority) {
-      const response = await axiosInstance.post<
-        ApiResponse<unknown>,
-        PayrollFoundationReversalCommand
-      >(
-        `${path(configurationId)}/reversals`,
+    simulate(configurationId, request, commandId, scope, authority) {
+      return simulatePayrollFoundationAtBase(
+        apiBase,
+        configurationId,
         request,
-        commandScope(scope, commandId, authority, true, request.expectedVersion)
+        commandId,
+        scope,
+        authority
       );
-      return response.data.data;
+    },
+    publish(configurationId, request, commandId, scope, authority) {
+      return publishPayrollFoundationAtBase(
+        apiBase,
+        configurationId,
+        request,
+        commandId,
+        scope,
+        authority
+      );
+    },
+    reverse(configurationId, request, commandId, scope, authority) {
+      return reversePayrollFoundationAtBase(
+        apiBase,
+        configurationId,
+        request,
+        commandId,
+        scope,
+        authority
+      );
     },
     async receipt(commandId, scope) {
       const response = await axiosInstance.get<ApiResponse<unknown>>(
@@ -400,19 +502,8 @@ export function createPayrollFoundationDataSource(apiBase: string): PayrollFound
       );
       return response.data.data;
     },
-    async reconcile(commandId, scope, authority) {
-      const governed = productSurfaceGovernedMutationConfig(authority);
-      const response = await axiosInstance.post<ApiResponse<unknown>, Record<string, never>>(
-        `${apiBase}/receipts/${encodeURIComponent(commandId)}/reconcile`,
-        {},
-        {
-          ...scoped(scope),
-          ...governed,
-          headers: governed.headers,
-          csrfReplay: 'NEVER',
-        }
-      );
-      return response.data.data;
+    reconcile(commandId, scope, authority) {
+      return reconcilePayrollFoundationReceiptAtBase(apiBase, commandId, scope, authority);
     },
   });
 }

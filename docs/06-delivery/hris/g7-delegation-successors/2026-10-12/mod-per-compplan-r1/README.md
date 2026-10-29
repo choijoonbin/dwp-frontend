@@ -45,7 +45,7 @@ The bundle resolves the recovered contract conflict before any module token:
 - `planId == cycleId == aggregateId` applies only to snapshot publication and
   `XCON-020`/`XCON-021`; proposal events use the proposal public ID;
 - the reachable cycle flow is `NONE -> DRAFT -> OPEN -> PROPOSAL_REVIEW ->
-  APPROVED -> PUBLISHED`, with explicit cancellation and multi-proposal
+APPROVED -> PUBLISHED`, with explicit cancellation and multi-proposal
   branches and no unreachable `PENDING_APPROVAL` state;
 - budget reversals are append-only exact inverses of one unreversed allocation
   under the cycle lock, and approval freezes a collision-free set of exactly

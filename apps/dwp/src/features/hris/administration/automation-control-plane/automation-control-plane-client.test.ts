@@ -186,7 +186,7 @@ describe('SYS-006 automation-control-plane typed client', () => {
     expect(createHeaders.has('If-Match')).toBe(false);
     const approveHeaders = new Headers(transport.post.mock.calls[1][2].headers);
     expect(approveHeaders.get('If-Match')).toBe('"7"');
-    expect(approveHeaders.has('X-DWP-Expected-Object-Version')).toBe(false);
+    expect(approveHeaders.get('X-DWP-Expected-Object-Version')).toBe('7');
     expect(approveHeaders.has('X-DWP-Step-Up-Challenge')).toBe(false);
     expect(approveHeaders.get('X-Purpose-Code')).toBe('HRIS_SYSTEM_ADMIN');
   });
@@ -209,7 +209,9 @@ describe('SYS-006 automation-control-plane typed client', () => {
       expect(transport.post.mock.calls[index][1]).toEqual(fixture.command.body);
       const headers = new Headers(transport.post.mock.calls[index][2].headers);
       expect(headers.has('X-DWP-Step-Up-Challenge')).toBe(false);
-      expect(headers.has('X-DWP-Expected-Object-Version')).toBe(false);
+      expect(headers.get('X-DWP-Expected-Object-Version')).toBe(
+        AUTOMATION_COMMAND_AUTHORITY_POLICY[fixture.command.kind].highRisk ? '7' : null
+      );
       expect(headers.get('If-Match')).toBe(
         AUTOMATION_COMMAND_AUTHORITY_POLICY[fixture.command.kind].requiresObjectRevision
           ? '"7"'

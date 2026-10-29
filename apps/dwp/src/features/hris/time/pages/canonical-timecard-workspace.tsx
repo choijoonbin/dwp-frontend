@@ -6,6 +6,7 @@ import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
+import { useTranslation } from 'react-i18next';
 
 import { TimecardCommandDialogs } from '../components/timecard-command-dialogs';
 import { TimecardCommandNotice } from '../components/timecard-command-notice';
@@ -69,6 +70,7 @@ function TimecardRefreshFailureNotice({
   busy: boolean;
   onRefresh: () => void;
 }) {
+  const { t } = useTranslation('hcm');
   const detail =
     reason === 'DENIED'
       ? 'The owner did not disclose a refreshed record for the current scope.'
@@ -86,10 +88,12 @@ function TimecardRefreshFailureNotice({
         <AlertTriangle size={18} aria-hidden="true" />
         <Box minWidth={0} flex={1}>
           <Typography component="p" variant="subtitle2">
-            Refresh failed — showing the last verified timecard
+            {t('hrisTime.i18nClosure.timecard.workspace.refreshFailedTitle')}
           </Typography>
           <Typography color="text.secondary" variant="body2" sx={{ mt: 0.25 }}>
-            {detail} This view is stale and all commands remain disabled. Your draft is preserved.
+            {t('hrisTime.i18nClosure.timecard.workspace.refreshFailedDescription', {
+              detail,
+            })}
           </Typography>
           <ActionButton
             intent="secondary"
@@ -99,7 +103,7 @@ function TimecardRefreshFailureNotice({
             sx={{ mt: 1.25 }}
             onClick={onRefresh}
           >
-            Retry canonical refresh
+            {t('hrisTime.i18nClosure.timecard.workspace.retryRefresh')}
           </ActionButton>
         </Box>
       </Stack>
@@ -114,6 +118,7 @@ export function CanonicalTimecardWorkspace({
   dataSource,
   idFactory,
 }: CanonicalTimecardWorkspaceProps) {
+  const { t } = useTranslation('hcm');
   const runtime = useTimecardWorkspace({
     timecardId,
     scope,
@@ -152,7 +157,9 @@ export function CanonicalTimecardWorkspace({
   }
 
   if (runtime.readState.kind === 'LOADING') {
-    return <LoadingState size="page" label="Loading canonical timecard" />;
+    return (
+      <LoadingState size="page" label={t('hrisTime.i18nClosure.timecard.workspace.loading')} />
+    );
   }
 
   if (runtime.readState.kind === 'ERROR') {
@@ -231,22 +238,23 @@ export function CanonicalTimecardWorkspace({
       >
         <Box minWidth={0}>
           <Typography id="canonical-timecard-title" component="h1" variant="h4">
-            Canonical timecard
+            {t('hrisTime.i18nClosure.timecard.workspace.title')}
           </Typography>
           <Typography color="text.secondary" sx={{ mt: 0.5, overflowWrap: 'anywhere' }}>
-            Review owner-confirmed totals, state, version and durable command outcomes for timecard{' '}
-            {snapshot.timecard.timecardId}.
+            {t('hrisTime.i18nClosure.timecard.workspace.description', {
+              id: snapshot.timecard.timecardId,
+            })}
           </Typography>
         </Box>
         <ActionButton
           intent="secondary"
           loading={runtime.refreshing}
-          loadingLabel="Refreshing canonical timecard"
+          loadingLabel={t('hrisTime.i18nClosure.timecard.workspace.refreshing')}
           disabled={interactionBusy}
           startIcon={<RefreshCw size={16} aria-hidden="true" />}
           onClick={runtime.refresh}
         >
-          Refresh
+          {t('hrisTime.i18nClosure.timecard.workspace.refresh')}
         </ActionButton>
       </Stack>
 
@@ -255,11 +263,10 @@ export function CanonicalTimecardWorkspace({
           <ShieldCheck size={19} aria-hidden="true" />
           <Box minWidth={0}>
             <Typography component="h2" variant="subtitle1">
-              Owner-bound canonical record
+              {t('hrisTime.i18nClosure.timecard.workspace.ownerBoundTitle')}
             </Typography>
             <Typography color="text.secondary" variant="body2" sx={{ mt: 0.25 }}>
-              This route-neutral workspace uses only the five sealed Time PEPs. It does not read,
-              write or fall back to the active legacy timecard implementation.
+              {t('hrisTime.i18nClosure.timecard.workspace.ownerBoundDescription')}
             </Typography>
           </Box>
         </Stack>
@@ -272,11 +279,10 @@ export function CanonicalTimecardWorkspace({
       <Paper component="section" variant="outlined" aria-labelledby="timecard-actions-title">
         <Box sx={{ p: { xs: 2, md: 2.5 }, borderBottom: 1, borderColor: 'divider' }}>
           <Typography id="timecard-actions-title" component="h2" variant="h6">
-            Available actions
+            {t('hrisTime.i18nClosure.timecard.workspace.actionsTitle')}
           </Typography>
           <Typography color="text.secondary" variant="body2" sx={{ mt: 0.5 }}>
-            Actions are shown only when the exact owner binding, current population and canonical
-            state allow them. The owner re-evaluates authority when each command is dispatched.
+            {t('hrisTime.i18nClosure.timecard.workspace.actionsDescription')}
           </Typography>
         </Box>
         <Stack
@@ -292,7 +298,7 @@ export function CanonicalTimecardWorkspace({
               startIcon={<Edit3 size={16} aria-hidden="true" />}
               onClick={() => setDialogMode('CORRECT')}
             >
-              Record correction
+              {t('hrisTime.i18nClosure.timecard.workspace.recordCorrection')}
             </ActionButton>
           )}
           {runtime.actions.submit && (
@@ -302,7 +308,7 @@ export function CanonicalTimecardWorkspace({
               startIcon={<Send size={16} aria-hidden="true" />}
               onClick={() => setDialogMode('SUBMIT')}
             >
-              Submit timecard
+              {t('hrisTime.i18nClosure.timecard.workspace.submit')}
             </ActionButton>
           )}
           {runtime.actions.decide && (
@@ -312,12 +318,12 @@ export function CanonicalTimecardWorkspace({
               startIcon={<ShieldCheck size={16} aria-hidden="true" />}
               onClick={() => setDialogMode('DECIDE')}
             >
-              Record independent decision
+              {t('hrisTime.i18nClosure.timecard.workspace.recordDecision')}
             </ActionButton>
           )}
           {!anyAction && (
             <Typography role="status" color="text.secondary" variant="body2">
-              This timecard is read only for the current state and authorization scope.
+              {t('hrisTime.i18nClosure.timecard.workspace.readOnly')}
             </Typography>
           )}
         </Stack>

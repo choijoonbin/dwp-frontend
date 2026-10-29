@@ -133,9 +133,7 @@ export function pay004OmittedProjectionWire() {
   return wire;
 }
 
-export function pay004TwoItemProjectionWire(
-  secondTitle = 'Retirement case · November correction'
-) {
+export function pay004TwoItemProjectionWire(secondTitle = 'Retirement case · November correction') {
   const wire = pay004ProjectionWire();
   const first = wire.items[0]!;
   wire.items.push({

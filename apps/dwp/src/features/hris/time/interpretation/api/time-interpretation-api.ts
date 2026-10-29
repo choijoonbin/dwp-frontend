@@ -30,6 +30,13 @@ export const TIME_INTERPRETATION_API_CONTRACTS = Object.freeze([
   },
 ] as const);
 
+export const HCM_TIME_INTERPRETATION_MUTATION_API_CONTRACT = Object.freeze({
+  apiFunction: 'runTimeInterpretation',
+  routeContractKey: 'route.hcm.operations.time-interpretation-run.action',
+  method: 'POST',
+  path: INTERPRETATION_RUNS,
+});
+
 export const TIME_INTERPRETATION_AUTHORIZATION_CONTRACT = Object.freeze({
   version: 38,
   sha256: 'a41145d6a2faefd2e6030a2ca9a070769019d4db5513ea214bf542dda31c374a',

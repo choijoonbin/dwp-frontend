@@ -59,7 +59,7 @@ const expectedRouteCount = Object.values(EXPECTED_SHELL_COUNTS).reduce(
 
 describe('product menu manifest', () => {
   it('keeps every supported menu route unique and under visual governance', () => {
-    expect(PRODUCT_MENU_ROUTES).toHaveLength(236);
+    expect(PRODUCT_MENU_ROUTES).toHaveLength(257);
     expect(PRODUCT_MENU_ROUTES).toHaveLength(expectedRouteCount);
     expect(new Set(PRODUCT_MENU_ROUTES.map((route) => route.id)).size).toBe(expectedRouteCount);
     expect(new Set(PRODUCT_MENU_ROUTES.map((route) => route.path)).size).toBe(expectedRouteCount);
@@ -81,31 +81,31 @@ describe('product menu manifest', () => {
       }, {});
 
     expect(countBy('plane')).toEqual({
-      work: 106,
-      management: 84,
+      work: 113,
+      management: 102,
       'tenant-governance': 22,
       'provider-control': 12,
       account: 8,
     });
     expect(countBy('taskKind')).toEqual({
-      work: 111,
-      team: 3,
-      operations: 55,
-      administration: 63,
+      work: 116,
+      team: 5,
+      operations: 67,
+      administration: 69,
     });
     expect(countBy('migrationWave')).toEqual({
       Keep: 52,
       'W0.5': 12,
       W1a: 20,
-      W1b: 26,
+      W1b: 47,
       W2: 36,
-      W3: 86,
+      W3: 90,
     });
   });
 
-  it('binds each of the 180 business-app menus to exactly one matching surface item', () => {
+  it('binds each of the 205 business-app menus to exactly one matching surface item', () => {
     const productRoutes = PRODUCT_MENU_ROUTES.filter((route) => route.productSurfaceId);
-    expect(productRoutes).toHaveLength(180);
+    expect(productRoutes).toHaveLength(205);
     expect(
       productRoutes.every((route) => route.navigationContextId === route.productSurfaceId)
     ).toBe(true);
@@ -157,15 +157,15 @@ describe('product menu manifest', () => {
       ),
       'utf8'
     );
-    expect(document).toContain('정적 Menu Route **232개 전부**');
-    expect(document).toContain('12개 업무 앱 180개');
+    expect(document).toContain('정적 Menu Route **257개 전부**');
+    expect(document).toContain('12개 업무 앱 205개');
     expect(document).toContain('| `W2`     |             36 | DWAI·ON, Notifications, Spaces');
     expect(document).toContain('| `W1a`    |             20 | Approvals 대표 Pilot');
     expect(document).toContain(
-      '| `W3`     |             86 | DWAI·ON 확장, Calendar, Workplace/Rooms, Mail, Messaging, Meetings'
+      '| `W3`     |             90 | DWAI·ON 확장, Calendar, Workplace/Rooms, Mail, Messaging, Meetings'
     );
-    expect(document).toContain('| `W1b`    |             26 | HCM 대표 Pilot');
-    expect(document).toContain('| **합계** |        **232** |');
+    expect(document).toContain('| `W1b`    |             47 | HCM 대표 Pilot');
+    expect(document).toContain('| **합계** |        **257** |');
     expect(document).toContain('`hcm.system-access`');
     expect(document).toContain('`/hr/manage/system`');
     expect(document).toContain('`hcm.management-system-access.v1`');
@@ -193,86 +193,113 @@ describe('product menu manifest', () => {
         migrationWave,
       })
     ).sort((left, right) => left.id.localeCompare(right.id));
-    const newDwaionMenuIds = new Set([
-      'dwaion.admin-models',
-      'dwaion.artifacts',
-      'dwaion.personal-controls',
-      'dwaion.routines',
+    const calendarIsolatedHcmMenuIds = new Set([
+      'hcm.home',
+      'hcm.me',
+      'hcm.time',
+      'hcm.absence',
+      'hcm.benefits',
+      'hcm.pay',
+      'hcm.talent',
+      'hcm.services',
+      'hcm.directory',
+      'hcm.organization',
+      'hcm.team',
+      'hcm.team-time',
+      'hcm.team-absence',
+      'hcm.operations',
+      'hcm.time-operations',
+      'hcm.absence-operations',
+      'hcm.benefits-operations',
+      'hcm.pay-operations',
+      'hcm.talent-operations',
+      'hcm.people',
+      'hcm.assignments',
+      'hcm.organization-design',
+      'hcm.system-access',
+      'hcm.reference-data',
+      'hcm.data-operations',
+      'hcm.exports',
     ]);
-    const restoredWorkMenuIds = new Set([
-      'work.action-required',
-      'work.day-plan',
-      'work.in-progress',
-      'work.awaiting-response',
-      'work.completed',
+    const integratedHcmMenuIds = new Set([
+      'hcm.compensation-planning',
+      'hcm.employee-change-requests',
+      'hcm.employment-assignments',
+      'hcm.employment-documents',
+      'hcm.operations-home',
+      'hcm.organization-positions',
+      'hcm.payroll-population',
+      'hcm.people-appointments',
+      'hcm.performance-goal-cycles',
+      'hcm.performance-review-operations',
+      'hcm.settings-navigation-policy',
+      'hcm.settings-operations',
+      'hcm.settings-payroll',
+      'hcm.settings-people-employment',
+      'hcm.settings-reference',
+      'hcm.settings-workflow',
+      'hcm.team-delegation',
+      'hcm.team-leave',
+      'hcm.team-people-changes',
+      'hcm.time-clock-ingestion',
+      'hcm.time-exceptions',
+      'hcm.time-interpretation',
+      'hcm.time-leave-operations',
+      'hcm.time-work-plans',
     ]);
-    const newHcmMenuIds = new Set(['hcm.system-access']);
-    const newMailMenuIds = new Set([
-      'mail.search',
-      'mail.follow-up',
-      'mail.delivery',
-      'mail.actions',
-      'mail.templates',
-      'mail.admin-retention',
-      'mail.admin-delivery-audit',
-      'mail.admin-writing-assets',
+    const integratedMessagingMenuIds = new Set([
+      'messaging.activity',
+      'messaging.threads',
+      'messaging.files',
+      'messaging.settings',
     ]);
-    const newCalendarMenuIds = new Set([
-      'calendar.settings',
-      'calendar.bookings',
-      'calendar.polls',
+    const calendarIsolatedMessagingMenuIds = new Set([
+      'messaging.home',
+      'messaging.inbox',
+      'messaging.spaces',
+      'messaging.direct',
+      'messaging.people',
+      'messaging.later',
+      'messaging.admin-overview',
+      'messaging.admin-policy',
     ]);
-    const newWorkplaceMenuIds = new Set([
-      'rooms.planner',
-      'rooms.service-orders',
-      'rooms.safety',
-      'rooms.wayfinding',
-      'rooms.assistant',
-      'rooms.admin-safety',
-      'rooms.admin-service-fulfillment',
-      'rooms.admin-service-catalog',
-      'rooms.admin-service-providers',
-      'rooms.admin-visits',
-      'rooms.admin-visit-policies',
-      'rooms.admin-access-zones',
-      'rooms.admin-visit-providers',
-      'rooms.admin-kiosk-devices',
-      'rooms.admin-devices',
-      'rooms.admin-space-planning',
-      'rooms.admin-assistant-governance',
-      'rooms.admin-exceptions',
+    const retiredHcmMenuIds = new Set([
+      'hcm.team-absence',
+      'hcm.operations',
+      'hcm.absence-operations',
     ]);
-    const newProviderGovernanceMenuIds = new Set([
-      'provider.resourceGovernance',
-      'provider.artifactGovernance',
-    ]);
-    const previousLedger = canonicalLedger.filter(
-      (route) =>
-        !newDwaionMenuIds.has(route.id) &&
-        !restoredWorkMenuIds.has(route.id) &&
-        !newHcmMenuIds.has(route.id) &&
-        !newMailMenuIds.has(route.id) &&
-        !newCalendarMenuIds.has(route.id) &&
-        !newWorkplaceMenuIds.has(route.id) &&
-        !newProviderGovernanceMenuIds.has(route.id)
+    const hrm009FlaggedMenuIds = new Set(['hcm.requests', 'hcm.certificates-documents']);
+    const currentMenuIds = new Set(canonicalLedger.map((route) => route.id));
+    const currentHcmMenuIds = new Set(
+      canonicalLedger.filter((route) => route.shell === 'hcm').map((route) => route.id)
     );
-    expect(previousLedger).toHaveLength(191);
-    expect(createHash('sha256').update(JSON.stringify(previousLedger)).digest('hex')).toBe(
-      '5397c704b47cad91ecd975270656c4fcd7bf56d045e804220b7892d635a1ff3d'
+    const currentMessagingMenuIds = new Set(
+      canonicalLedger.filter((route) => route.shell === 'messaging').map((route) => route.id)
     );
-    const earlierMenuIds = new Set([
-      'mail.contacts',
-      'meetings.follow-ups',
-      'meetings.templates',
-      'meetings.preferences',
-    ]);
-    const earlierLedger = previousLedger.filter((route) => !earlierMenuIds.has(route.id));
-    expect(earlierLedger).toHaveLength(187);
-    expect(createHash('sha256').update(JSON.stringify(earlierLedger)).digest('hex')).toBe(
-      '33f851b5b229b71233369a47bd24381f564aca52297e413d98e0da810c4d03e5'
+    const difference = (left: Set<string>, right: Set<string>) =>
+      [...left].filter((menuId) => !right.has(menuId)).sort();
+    expect(difference(currentHcmMenuIds, calendarIsolatedHcmMenuIds)).toEqual(
+      [...integratedHcmMenuIds].sort()
     );
+    expect(difference(calendarIsolatedHcmMenuIds, currentHcmMenuIds)).toEqual(
+      [...retiredHcmMenuIds].sort()
+    );
+    expect(difference(currentMessagingMenuIds, calendarIsolatedMessagingMenuIds)).toEqual(
+      [...integratedMessagingMenuIds].sort()
+    );
+    expect(difference(calendarIsolatedMessagingMenuIds, currentMessagingMenuIds)).toEqual([]);
+    expect([...hrm009FlaggedMenuIds].filter((menuId) => currentMenuIds.has(menuId))).toEqual([]);
+    expect(
+      canonicalLedger.length -
+        integratedHcmMenuIds.size -
+        integratedMessagingMenuIds.size +
+        retiredHcmMenuIds.size
+    ).toBe(232);
+
+    const calendarIsolatedCheckpoint =
+      '0250c61ac837220f65bb60ad212366fffbae51d919120ee984bb010195d7ccb9';
     const checksum = createHash('sha256').update(JSON.stringify(canonicalLedger)).digest('hex');
-    expect(checksum).toBe('0250c61ac837220f65bb60ad212366fffbae51d919120ee984bb010195d7ccb9');
+    expect(checksum).toBe('a854a719c01272eb47f5fc9100bb19cbe9eb12d0b6c8fddaa707b49a7f96c591');
     const document = fs.readFileSync(
       new URL(
         '../../../../docs/03-architecture/R1 제품 Surface 전체 메뉴 분류표.md',
@@ -281,6 +308,9 @@ describe('product menu manifest', () => {
       'utf8'
     );
     expect(document).toContain(`Ledger SHA-256: \`${checksum}\``);
+    expect(document).toContain(
+      `Calendar +2 격리 Checkpoint SHA-256: \`${calendarIsolatedCheckpoint}\``
+    );
   });
 
   it('requires symmetric label, purpose, and description copy for every admin menu', () => {

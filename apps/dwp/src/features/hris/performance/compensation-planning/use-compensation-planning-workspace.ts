@@ -103,7 +103,14 @@ export function useCompensationPlanningRequestScope() {
 }
 
 function readKey(scope: ProductSurfaceRequestScope, kind: string, ...parts: unknown[]) {
-  return ['hris', 'performance', 'compensation-planning', kind, ...parts, ...scope.cacheKey] as const;
+  return [
+    'hris',
+    'performance',
+    'compensation-planning',
+    kind,
+    ...parts,
+    ...scope.cacheKey,
+  ] as const;
 }
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/;
@@ -131,7 +138,9 @@ function errorCode(error: unknown): string | null {
 }
 
 function stepUpRequired(error: unknown): boolean {
-  return error instanceof HttpError && error.status === 403 && errorCode(error) === 'STEP_UP_REQUIRED';
+  return (
+    error instanceof HttpError && error.status === 403 && errorCode(error) === 'STEP_UP_REQUIRED'
+  );
 }
 
 function denied(error: unknown): boolean {
@@ -152,17 +161,21 @@ function bindAuthoringGuidelines(
   }
   const requested = new Map(candidate.components.map((item) => [item.componentCode, item]));
   return Object.freeze({
-    components: Object.freeze(context.guidelines.components.map((trusted) => {
-      const editable = requested.get(trusted.componentCode);
-      if (!editable) {
-        throw new Error('Compensation guideline choices are not bound to Central authoring context.');
-      }
-      return Object.freeze({
-        ...trusted,
-        minimumAmount: editable.minimumAmount,
-        maximumAmount: editable.maximumAmount,
-      });
-    })),
+    components: Object.freeze(
+      context.guidelines.components.map((trusted) => {
+        const editable = requested.get(trusted.componentCode);
+        if (!editable) {
+          throw new Error(
+            'Compensation guideline choices are not bound to Central authoring context.'
+          );
+        }
+        return Object.freeze({
+          ...trusted,
+          minimumAmount: editable.minimumAmount,
+          maximumAmount: editable.maximumAmount,
+        });
+      })
+    ),
     budgetMode: 'HARD_CAP',
     effectiveFrom,
     effectiveTo,
@@ -179,10 +192,7 @@ async function readAllCycles(
   let first: CompensationCycleCollection | undefined;
   const seen = new Set<string>();
   for (let pageNumber = 0; pageNumber < 500; pageNumber += 1) {
-    const page = await dataSource.cycles(
-      { asOf: anchor, cursor, limit: 200 },
-      context
-    );
+    const page = await dataSource.cycles({ asOf: anchor, cursor, limit: 200 }, context);
     first ??= page;
     if (
       page.asOf !== first.asOf ||
@@ -334,8 +344,7 @@ export function useCompensationPlanningRuntime({
       }
       return detail;
     },
-    enabled:
-      requestScope.ready && scopeCurrent && activeCycleId !== null && cyclesQuery.isSuccess,
+    enabled: requestScope.ready && scopeCurrent && activeCycleId !== null && cyclesQuery.isSuccess,
     meta: requestScope.queryMeta,
   });
 
@@ -372,8 +381,7 @@ export function useCompensationPlanningRuntime({
       }
       return collection;
     },
-    enabled:
-      requestScope.ready && scopeCurrent && activeCycleId !== null && cycleQuery.isSuccess,
+    enabled: requestScope.ready && scopeCurrent && activeCycleId !== null && cycleQuery.isSuccess,
     meta: requestScope.queryMeta,
   });
   const selectedProposalSummary = proposalsQuery.data?.items.find(
@@ -449,14 +457,13 @@ export function useCompensationPlanningRuntime({
   }, [authorityDenied, queryClient]);
 
   useEffect(() => {
-    if (
-      authorityDenied ||
-      !scopeCurrent ||
-      !cyclesQuery.data?.items.length
-    ) {
+    if (authorityDenied || !scopeCurrent || !cyclesQuery.data?.items.length) {
       return;
     }
-    if (selectedCycleId && cyclesQuery.data.items.some((item) => item.cycleId === selectedCycleId)) {
+    if (
+      selectedCycleId &&
+      cyclesQuery.data.items.some((item) => item.cycleId === selectedCycleId)
+    ) {
       return;
     }
     const cycleId = cyclesQuery.data.items[0].cycleId;
@@ -599,35 +606,40 @@ export function useCompensationPlanningRuntime({
         executorReady('CANCEL_CYCLE') &&
         Boolean(commandIntents.cancel),
       onCreate: (body) =>
-        runIntent(verifiedAuthoringContext && commandIntents.create ? () =>
-          commandIntents.create!({
-            cycleCode: body.cycleCode,
-            effectiveFrom: body.effectiveFrom,
-            effectiveTo: body.effectiveTo,
-            guidelines: bindAuthoringGuidelines(
-              verifiedAuthoringContext,
-              body.guidelines,
-              body.effectiveFrom,
-              body.effectiveTo
-            ),
-            population: verifiedAuthoringContext.population,
-            populationSourceRef: verifiedAuthoringContext.populationSourceRef,
-          }) : undefined),
+        runIntent(
+          verifiedAuthoringContext && commandIntents.create
+            ? () =>
+                commandIntents.create!({
+                  cycleCode: body.cycleCode,
+                  effectiveFrom: body.effectiveFrom,
+                  effectiveTo: body.effectiveTo,
+                  guidelines: bindAuthoringGuidelines(
+                    verifiedAuthoringContext,
+                    body.guidelines,
+                    body.effectiveFrom,
+                    body.effectiveTo
+                  ),
+                  population: verifiedAuthoringContext.population,
+                  populationSourceRef: verifiedAuthoringContext.populationSourceRef,
+                })
+            : undefined
+        ),
       onRevise: (body) =>
         runIntent(
           selected && verifiedAuthoringContext && commandIntents.revise
-            ? () => commandIntents.revise!(selected.cycleId, selected.aggregateVersion, {
-                effectiveFrom: body.effectiveFrom,
-                effectiveTo: body.effectiveTo,
-                guidelines: bindAuthoringGuidelines(
-                  verifiedAuthoringContext,
-                  body.guidelines,
-                  body.effectiveFrom,
-                  body.effectiveTo
-                ),
-                population: verifiedAuthoringContext.population,
-                populationSourceRef: verifiedAuthoringContext.populationSourceRef,
-              })
+            ? () =>
+                commandIntents.revise!(selected.cycleId, selected.aggregateVersion, {
+                  effectiveFrom: body.effectiveFrom,
+                  effectiveTo: body.effectiveTo,
+                  guidelines: bindAuthoringGuidelines(
+                    verifiedAuthoringContext,
+                    body.guidelines,
+                    body.effectiveFrom,
+                    body.effectiveTo
+                  ),
+                  population: verifiedAuthoringContext.population,
+                  populationSourceRef: verifiedAuthoringContext.populationSourceRef,
+                })
             : undefined
         ),
       onAllocate: (body) =>
@@ -639,14 +651,14 @@ export function useCompensationPlanningRuntime({
       onDraftProposal: (proposalId, body) =>
         runIntent(
           selected && commandIntents.draftProposal
-            ? () => commandIntents.draftProposal!(
-                selected.cycleId,
-                proposalsQuery.data?.items.find(
-                  (proposal) => proposal.proposalId === proposalId
-                )?.aggregateVersion ?? 0,
-                proposalId,
-                body
-              )
+            ? () =>
+                commandIntents.draftProposal!(
+                  selected.cycleId,
+                  proposalsQuery.data?.items.find((proposal) => proposal.proposalId === proposalId)
+                    ?.aggregateVersion ?? 0,
+                  proposalId,
+                  body
+                )
             : undefined
         ),
       onSubmitProposal: (proposal, body) =>
@@ -702,8 +714,7 @@ export function useCompensationPlanningRuntime({
     (activeCycleId !== null && cycleQuery.isPending)
   ) {
     status = 'LOADING';
-  }
-  else if (activePending) status = 'RESULT_UNKNOWN';
+  } else if (activePending) status = 'RESULT_UNKNOWN';
   else if (stepUpRequired(commandError)) status = 'STEP_UP_REQUIRED';
   else if (commandError instanceof HttpError && [409, 412].includes(commandError.status)) {
     status = 'STALE_VERSION';
@@ -712,11 +723,11 @@ export function useCompensationPlanningRuntime({
 
   return {
     status,
-    cycles: authorityDenied || !scopeCurrent ? [] : cyclesQuery.data?.items ?? [],
+    cycles: authorityDenied || !scopeCurrent ? [] : (cyclesQuery.data?.items ?? []),
     selectedCycleId: activeCycleId,
-    cycleDetail: authorityDenied ? null : cycleQuery.data ?? null,
-    proposals: authorityDenied ? null : proposalsQuery.data ?? null,
-    proposalDetail: authorityDenied ? null : proposalQuery.data ?? null,
+    cycleDetail: authorityDenied ? null : (cycleQuery.data ?? null),
+    proposals: authorityDenied ? null : (proposalsQuery.data ?? null),
+    proposalDetail: authorityDenied ? null : (proposalQuery.data ?? null),
     selectedProposalId: authorityDenied ? null : selectedProposalId,
     actions,
     cycleAuthoringContext: verifiedAuthoringContext,
@@ -729,10 +740,8 @@ export function useCompensationPlanningRuntime({
         : commandError instanceof Error
           ? commandError.message
           : null,
-    proposalsError:
-      proposalsQuery.error instanceof Error ? proposalsQuery.error.message : null,
-    proposalDetailError:
-      proposalQuery.error instanceof Error ? proposalQuery.error.message : null,
+    proposalsError: proposalsQuery.error instanceof Error ? proposalsQuery.error.message : null,
+    proposalDetailError: proposalQuery.error instanceof Error ? proposalQuery.error.message : null,
     proposalLoading: proposalsQuery.isPending || proposalsQuery.isFetching,
     lastRefreshedAt: Math.max(
       cyclesQuery.dataUpdatedAt,
@@ -769,6 +778,8 @@ export function useCompensationPlanningRuntime({
     },
     retryProposals: () => void proposalsQuery.refetch(),
     retryProposalDetail: () => void proposalQuery.refetch(),
-    retryPending: activePending ? () => void execute(activePending).catch(() => undefined) : undefined,
+    retryPending: activePending
+      ? () => void execute(activePending).catch(() => undefined)
+      : undefined,
   } as const;
 }

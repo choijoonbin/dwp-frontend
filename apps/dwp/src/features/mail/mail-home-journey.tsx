@@ -27,6 +27,7 @@ import {
   mailHomeHealthActionPath,
   resolveMailHomeHealth,
 } from './mail-home-health';
+import { mailReadinessInvalidationAt, useMailReadinessNow } from './use-mail-readiness-clock';
 
 const COMPACT_RADIUS = `${foundationTokens.radius.compact}px`;
 
@@ -45,6 +46,9 @@ export function MailDailyFlow({
 }) {
   const { t, i18n } = useTranslation('mail');
   const theme = useTheme();
+  const readinessNow = useMailReadinessNow(
+    mailReadinessInvalidationAt(accounts.map((account) => account.readiness))
+  );
   const items = [
     {
       key: 'unread',
@@ -81,11 +85,15 @@ export function MailDailyFlow({
   const attentionPath = metrics.needsReply
     ? '/mail/inbox?lane=NEEDS_REPLY'
     : '/mail/inbox?importance=URGENT';
-  const health = resolveMailHomeHealth(accounts);
+  const health = resolveMailHomeHealth(accounts, readinessNow);
   const healthPresentation = {
     NO_ACCOUNT: {
       icon: MailPlus,
       color: 'warning' as const,
+    },
+    BLOCKED_EXTERNAL: {
+      icon: CircleAlert,
+      color: 'error' as const,
     },
     ACTION_REQUIRED: {
       icon: CircleAlert,

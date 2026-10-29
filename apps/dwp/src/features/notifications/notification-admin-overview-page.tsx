@@ -7,10 +7,9 @@ import {
   NOTIFICATION_API_CAPABILITIES,
   type NotificationOperationalFinding,
 } from '@dwp-frontend/shared-utils/api/notification-api';
-import { EmptyState, LiveStatus, LoadingState } from '@dwp-frontend/design-system';
+import { EmptyState, InlineFeedback, LiveStatus, LoadingState } from '@dwp-frontend/design-system';
 import { formatDate, formatNumber } from '@dwp-frontend/shared-i18n';
 
-import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
 import ButtonBase from '@mui/material/ButtonBase';
 import Chip from '@mui/material/Chip';
@@ -246,9 +245,9 @@ export function NotificationAdminOverviewPage({
         />
       </Stack>
       {data.partial && (
-        <Alert severity="warning">
+        <InlineFeedback severity="warning">
           {t('states.partial', { count: data.unavailableSources.length })}
-        </Alert>
+        </InlineFeedback>
       )}
       <NotificationAdminMetricGrid
         metrics={data.metrics}

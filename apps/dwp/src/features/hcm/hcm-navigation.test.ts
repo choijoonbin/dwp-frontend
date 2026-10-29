@@ -2,11 +2,13 @@ import { describe, expect, it } from 'vitest';
 
 import { isHrWorkItem, selectCurrentPerson } from './hcm-experience-model';
 import {
+  createHcmNavigation,
   createHcmOperationsNavigation,
   createHcmPersonalNavigation,
   findHcmNavigationItem,
   HCM_DEEP_LINK_COMPATIBILITY_ITEMS,
   HCM_MANAGEMENT_NAVIGATION,
+  HCM_NAVIGATION,
   HCM_OPERATIONS_NAVIGATION,
   HCM_PERSONAL_NAVIGATION,
   HCM_TEAM_NAVIGATION,
@@ -161,13 +163,15 @@ describe('HR product navigation', () => {
   });
 
   it('keeps successor module pages governed-only and bound to their exact PAGE capability', () => {
+    const hrm009Navigation = createHcmNavigation(true);
+
     expect(findHcmNavigationItem('/hr/me/employment-documents')).toMatchObject({
       view: 'employment-documents',
       governedOnly: true,
       requiredResourceKey: 'DATA.HRIS_WORKFORCE',
       requiredPermissionCode: 'VIEW',
     });
-    expect(findHcmNavigationItem('/hr/me/requests')).toMatchObject({
+    expect(findHcmNavigationItem('/hr/me/requests', hrm009Navigation)).toMatchObject({
       view: 'requests',
       governedOnly: true,
       requiredResourceKey: 'DATA.HRIS_SELF_REQUEST',
@@ -247,7 +251,9 @@ describe('HR product navigation', () => {
       requiredResourceKey: 'DATA.HRIS_WORKFORCE',
       requiredPermissionCode: 'VIEW',
     });
-    expect(findHcmNavigationItem('/hr/operations/people/certificates-documents')).toMatchObject({
+    expect(
+      findHcmNavigationItem('/hr/operations/people/certificates-documents', hrm009Navigation)
+    ).toMatchObject({
       view: 'certificates-documents',
       governedOnly: true,
       requiredResourceKey: 'DATA.HRIS_WORKFORCE',
@@ -283,6 +289,26 @@ describe('HR product navigation', () => {
       requiredResourceKey: 'CONFIG.HRIS_NAVIGATION_POLICY',
       requiredPermissionCode: 'VIEW',
     });
+  });
+
+  it('keeps default-off HRM-009 PAGEs out of navigation and route admission lookup', () => {
+    const disabledNavigation = createHcmNavigation(false);
+    const enabledNavigation = createHcmNavigation(true);
+    const hrm009Paths = ['/hr/me/requests', '/hr/operations/people/certificates-documents'];
+    const defaultPaths = HCM_NAVIGATION.flatMap((group) => group.items.map((item) => item.path));
+    const disabledPaths = disabledNavigation.flatMap((group) =>
+      group.items.map((item) => item.path)
+    );
+
+    expect(defaultPaths).toEqual(disabledPaths);
+    expect(disabledPaths).not.toEqual(expect.arrayContaining(hrm009Paths));
+    expect(enabledNavigation.flatMap((group) => group.items.map((item) => item.path))).toEqual(
+      expect.arrayContaining(hrm009Paths)
+    );
+    for (const path of hrm009Paths) {
+      expect(findHcmNavigationItem(path, disabledNavigation)).toBeUndefined();
+      expect(findHcmNavigationItem(path, enabledNavigation)?.path).toBe(path);
+    }
   });
 
   it('projects each canonical PAGE through its exact capability contract', () => {

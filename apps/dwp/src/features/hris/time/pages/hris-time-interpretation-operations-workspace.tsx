@@ -5,7 +5,7 @@ import {
   FormField,
   InlineFeedback,
 } from '@dwp-frontend/design-system';
-import { resolveSupportedLocale } from '@dwp-frontend/shared-i18n';
+import { resolveSupportedLocale, resolveSystemTimeZone } from '@dwp-frontend/shared-i18n';
 import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
 import Stack from '@mui/material/Stack';
@@ -60,7 +60,7 @@ export function buildTimeInterpretationRunRequest(
 }
 
 function localTimeZone() {
-  return Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC';
+  return resolveSystemTimeZone('UTC');
 }
 
 /**
@@ -69,7 +69,7 @@ function localTimeZone() {
  * substituted when the PAGE or ACTION projection is unavailable.
  */
 export function HrisTimeInterpretationOperationsWorkspace() {
-  const { i18n } = useTranslation('hcm');
+  const { t, i18n } = useTranslation('hcm');
   const requestScope = useProductSurfaceRequestScope({
     productKey: 'hcm',
     surfaceKey: 'hcm.operations',
@@ -148,18 +148,17 @@ export function HrisTimeInterpretationOperationsWorkspace() {
         <Stack gap={2}>
           <Box>
             <Typography component="h2" variant="h6">
-              Interpretation run scope
+              {t('hrisTime.i18nClosure.interpretation.scopeTitle')}
             </Typography>
             <Typography color="text.secondary">
-              Enter the exact worker population and civil-date period before enabling the governed
-              run command.
+              {t('hrisTime.i18nClosure.interpretation.scopeDescription')}
             </Typography>
           </Box>
           <FormField
-            label="Worker public IDs"
+            label={t('hrisTime.i18nClosure.interpretation.workerIds')}
             value={draft.workerIds}
             onChange={(event) => updateDraft({ workerIds: event.target.value })}
-            supportingText="Separate UUIDs with commas, spaces, or new lines. Duplicate IDs are rejected."
+            supportingText={t('hrisTime.i18nClosure.interpretation.workerIdsHelp')}
             multiline
             minRows={2}
             fullWidth
@@ -167,32 +166,37 @@ export function HrisTimeInterpretationOperationsWorkspace() {
           />
           <Stack direction={{ xs: 'column', sm: 'row' }} gap={2}>
             <DatePickerField
-              label="Period start"
+              label={t('hrisTime.i18nClosure.interpretation.periodStart')}
               value={draft.periodStart}
               onValueChange={(value) => updateDraft({ periodStart: value ?? '' })}
               fullWidth
             />
             <DatePickerField
-              label="Period end"
+              label={t('hrisTime.i18nClosure.interpretation.periodEnd')}
               value={draft.periodEnd}
               onValueChange={(value) => updateDraft({ periodEnd: value ?? '' })}
               fullWidth
             />
           </Stack>
           {draftError && (
-            <InlineFeedback severity="error" title="Run scope is invalid">
-              Use unique worker UUIDs and a valid date range of period start through period end.
+            <InlineFeedback
+              severity="error"
+              title={t('hrisTime.i18nClosure.interpretation.invalidTitle')}
+            >
+              {t('hrisTime.i18nClosure.interpretation.invalidDescription')}
             </InlineFeedback>
           )}
           {runRequest && (
-            <InlineFeedback severity="success" title="Run scope is prepared">
-              The governed command is enabled only when the selected result also advertises the
-              exact TIM interpretation action.
+            <InlineFeedback
+              severity="success"
+              title={t('hrisTime.i18nClosure.interpretation.preparedTitle')}
+            >
+              {t('hrisTime.i18nClosure.interpretation.preparedDescription')}
             </InlineFeedback>
           )}
           <Box>
             <ActionButton intent="secondary" onClick={prepareRun}>
-              Prepare exact run
+              {t('hrisTime.i18nClosure.interpretation.prepareRun')}
             </ActionButton>
           </Box>
         </Stack>

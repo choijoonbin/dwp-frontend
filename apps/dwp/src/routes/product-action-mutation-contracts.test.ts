@@ -16,7 +16,17 @@ import {
   SERVICES_MUTATION_API_CONTRACTS,
 } from '@dwp-frontend/shared-utils';
 import { APPROVAL_GOVERNED_MUTATION_API_CONTRACTS } from '@dwp-frontend/shared-utils/api/approval-governed-mutation-api-contracts';
+import { HCM_AUTOMATION_MUTATION_API_CONTRACTS } from '../features/hris/administration/automation-control-plane/automation-control-plane-client';
+import { HCM_INTEGRATION_MUTATION_API_CONTRACTS } from '../features/hris/administration/integration-control-plane/integration-control-plane-client';
+import {
+  HCM_NAVIGATION_POLICY_MUTATION_API_CONTRACTS,
+  HCM_NAVIGATION_POLICY_V2_MUTATION_API_CONTRACTS,
+} from '../features/hris/administration/navigation-policy/api/navigation-policy-api';
+import { HCM_REFERENCE_CONFIGURATION_MUTATION_API_CONTRACTS } from '../features/hris/administration/reference-configuration/api/reference-configuration-api';
+import { HCM_OPERATIONAL_MUTATION_API_CONTRACTS } from '../features/hris/hris-operational-mutation-api-contracts';
+import { HCM_PAYROLL_ELEMENT_FORMULA_MUTATION_API_CONTRACTS } from '../features/hris/payroll/api/payroll-element-formula-api';
 import { PAYROLL_FOUNDATION_MUTATION_API_CONTRACTS } from '../features/hris/payroll/api/payroll-foundation-api';
+import { HCM_PAYROLL_FOUNDATION_SETTINGS_MUTATION_API_CONTRACTS } from '../features/hris/payroll/api/payroll-foundation-settings-api';
 import { PERFORMANCE_CYCLE_MUTATION_API_CONTRACTS } from '../features/hris/performance/api/performance-cycle-api';
 import { PERFORMANCE_POPULATION_FREEZE_API_CONTRACT } from '../features/hris/performance/population-freeze/population-freeze-api';
 import { COMPENSATION_PLANNING_MUTATION_API_CONTRACTS } from '../features/hris/performance/compensation-planning/compensation-planning-api';
@@ -61,6 +71,14 @@ const IMPLEMENTED_ACTION_CONTRACTS: readonly Readonly<{
   ...PAYROLL_FOUNDATION_MUTATION_API_CONTRACTS,
   ...HRIS_TIME_WORK_PLAN_MUTATION_API_CONTRACTS,
   ...CLOCK_COMMAND_MUTATION_API_CONTRACTS,
+  ...HCM_OPERATIONAL_MUTATION_API_CONTRACTS,
+  ...HCM_AUTOMATION_MUTATION_API_CONTRACTS,
+  ...HCM_INTEGRATION_MUTATION_API_CONTRACTS,
+  ...HCM_REFERENCE_CONFIGURATION_MUTATION_API_CONTRACTS,
+  ...HCM_NAVIGATION_POLICY_MUTATION_API_CONTRACTS,
+  ...HCM_NAVIGATION_POLICY_V2_MUTATION_API_CONTRACTS,
+  ...HCM_PAYROLL_ELEMENT_FORMULA_MUTATION_API_CONTRACTS,
+  ...HCM_PAYROLL_FOUNDATION_SETTINGS_MUTATION_API_CONTRACTS,
 ];
 
 function comparable(values: readonly ComparableContract[]) {
@@ -74,6 +92,7 @@ function comparable(values: readonly ComparableContract[]) {
 }
 
 const APPROVAL_EXECUTION_CHAINS: Readonly<Record<string, readonly string[]>> = {
+  approveApprovalHrisSeparationWaiverTask: ['approvalHighRiskMutationExecutionConfig'],
   createApprovalRequest: ['approvalRequestExecutionConfig'],
   updateApprovalDraft: ['approvalRequestExecutionConfig'],
   preflightApprovalRequest: ['approvalRequestExecutionConfig'],
@@ -196,6 +215,68 @@ const HRIS_EXECUTION_CHAINS: Readonly<Record<string, readonly string[]>> = {
   publishHrisTimeWorkPlan: ['transitionHrisTimeWorkPlan', 'timeCommandConfig'],
   recordClockEvent: ['secureAuthority'],
   voidClockEvent: ['secureAuthority'],
+  createEmploymentEvent: ['employmentEventMutationConfig'],
+  validateEmploymentEvent: ['employmentEventMutationConfig'],
+  submitEmploymentEvent: ['executeEmploymentEventLifecycle', 'employmentEventMutationConfig'],
+  publishEmploymentEvent: ['executeEmploymentEventLifecycle', 'employmentEventMutationConfig'],
+  activateCountryPack: ['activationAuthority'],
+  createEmployeeChangeRequest: ['mutationConfig'],
+  submitEmployeeChangeRequest: ['mutationConfig'],
+  applyEmployeeChangeRequest: ['mutationConfig'],
+  preparePayrollRun: ['prepareConfig'],
+  calculatePayrollRun: ['mutate'],
+  approvePayrollRun: ['mutate'],
+  finalizePayrollRun: ['mutate'],
+  validateTimeClosePeriod: ['dispatchCommand', 'commandAuthority'],
+  closeTimePeriod: ['dispatchCommand', 'commandAuthority'],
+  reopenTimePeriod: ['dispatchCommand', 'commandAuthority'],
+  createPayrollTimeHandoff: ['dispatchCommand', 'commandAuthority'],
+  runTimeInterpretation: ['governedConfig'],
+  saveAssignedPerformanceReviewDraft: ['mutationConfig'],
+  submitAssignedPerformanceReview: ['mutationConfig'],
+  createPerformanceFeedbackRequest: ['per008GovernedMutationTransport'],
+  submitPerformanceFeedbackResponse: ['per008GovernedMutationTransport'],
+  correctTimecard: ['postTimecardCommand', 'commandConfig'],
+  submitTimecard: ['postTimecardCommand', 'commandConfig'],
+  decideTimecard: ['postTimecardCommand', 'commandConfig'],
+  replaceWorkExplorerPreferences: ['commandConfig'],
+  recordWorkExplorerRecent: ['commandConfig'],
+  executeAutomationCommand: [],
+  executeIntegrationCommand: [],
+  createReferenceConfigurationVersion: ['mutate'],
+  validateReferenceConfigurationVersion: ['versionMutation', 'mutate'],
+  simulateReferenceConfigurationVersion: ['versionMutation', 'mutate'],
+  submitReferenceConfigurationVersion: ['versionMutation', 'mutate'],
+  approveReferenceConfigurationVersion: ['versionMutation', 'mutate'],
+  scheduleReferenceConfigurationVersion: ['versionMutation', 'mutate'],
+  publishReferenceConfigurationVersion: ['versionMutation', 'mutate'],
+  rollbackReferenceConfigurationVersion: ['versionMutation', 'mutate'],
+  retireReferenceConfigurationVersion: ['versionMutation', 'mutate'],
+  createNavigationPolicyDraftRevision: ['mutate'],
+  updateNavigationPolicyDraftRevision: ['mutate'],
+  validateNavigationPolicyDraftRevision: ['draftTransition', 'mutate'],
+  submitNavigationPolicyDraftRevision: ['draftTransition', 'mutate'],
+  approveNavigationPolicyRevision: ['revisionTransition', 'mutate'],
+  publishNavigationPolicyRevision: ['revisionTransition', 'mutate'],
+  restoreNavigationPolicyRevision: ['revisionTransition', 'mutate'],
+  createNavigationPolicyV2DraftRevision: ['mutate'],
+  updateNavigationPolicyV2DraftRevision: ['mutate'],
+  validateNavigationPolicyV2DraftRevision: ['mutate'],
+  submitNavigationPolicyV2DraftRevision: ['mutate'],
+  approveNavigationPolicyV2Revision: ['mutate'],
+  publishNavigationPolicyV2Revision: ['mutate'],
+  restoreNavigationPolicyV2Revision: ['mutate'],
+  createPayrollElementVersion: ['mutate'],
+  createPayrollFormulaVersion: ['mutate'],
+  validatePayrollFormula: ['mutate'],
+  simulatePayrollFormula: ['mutate'],
+  publishPayrollFormula: ['mutate'],
+  createPayrollFoundationAtBase: ['commandScope'],
+  updatePayrollFoundationAtBase: ['commandScope'],
+  simulatePayrollFoundationAtBase: ['commandScope'],
+  publishPayrollFoundationAtBase: ['commandScope'],
+  reversePayrollFoundationAtBase: ['commandScope'],
+  reconcilePayrollFoundationReceiptAtBase: [],
 };
 
 function hrisExecutionBody(source: ts.SourceFile, apiFunction: string) {
@@ -226,11 +307,18 @@ function hrisExecutionBody(source: ts.SourceFile, apiFunction: string) {
     visit(current.body);
     expect(calls, `${current.name?.text} -> ${calleeName}`).toHaveLength(1);
     const callee = declarations.get(calleeName);
+    const executionParameterName = current.parameters
+      .map((parameter) => parameter.name.getText(source))
+      .find((parameter) => parameter === 'authority' || parameter === 'execution');
+    expect(executionParameterName, `${current.name?.text} execution parameter`).toBeDefined();
     const authorityIndex = callee?.parameters.findIndex(
-      (parameter) => parameter.name.getText(source) === 'authority'
+      (parameter) => parameter.name.getText(source) === executionParameterName
     );
-    expect(authorityIndex, `${calleeName} authority parameter`).toBeGreaterThanOrEqual(0);
-    expect(calls[0]?.arguments[authorityIndex!]?.getText(source)).toBe('authority');
+    expect(
+      authorityIndex,
+      `${calleeName} ${executionParameterName} parameter`
+    ).toBeGreaterThanOrEqual(0);
+    expect(calls[0]?.arguments[authorityIndex!]?.getText(source)).toBe(executionParameterName);
     current = callee;
   }
   if (!current?.body) throw new Error('Missing HRIS authority configuration');
@@ -272,9 +360,11 @@ function approvalExecutionBody(source: ts.SourceFile, apiFunction: string) {
     visit(current.body);
     expect(calls, `${current.name?.text} -> ${calleeName}`).toHaveLength(1);
     const callee = declarations.get(calleeName);
-    const executionIndex = callee?.parameters.findIndex(
-      (parameter) => parameter.name.getText(source) === 'execution'
-    );
+    const executionIndex = callee
+      ? callee.parameters.findIndex((parameter) => parameter.name.getText(source) === 'execution')
+      : calleeName === 'approvalHighRiskMutationExecutionConfig'
+        ? 0
+        : undefined;
     expect(executionIndex, `${calleeName} authority parameter`).toBeGreaterThanOrEqual(0);
     expect(calls[0]?.arguments[executionIndex!]?.getText(source)).toBe('execution');
     if (calleeName === 'command' && source.fileName.endsWith('approval-document-api.ts')) {
@@ -331,7 +421,7 @@ function approvalExecutionBody(source: ts.SourceFile, apiFunction: string) {
       }[apiFunction];
       expect(calls[0]?.arguments[1]?.getText(source)).toBe(`'${action}'`);
     }
-    current = callee;
+    if (callee) current = callee;
   }
   if (!current?.body) throw new Error('Missing approval authority configuration');
   bodies.push(current.body.getText(source));
@@ -344,18 +434,20 @@ function approvalExecutionBody(source: ts.SourceFile, apiFunction: string) {
 
 describe('Generated product ACTION mutation closure', () => {
   it('maps every generated production ACTION binding with no missing or extra API boundary', () => {
-    const canonical = productAuthorizationRouteProjections.filter(
-      (route) =>
-        route.routeKind === 'ACTION' &&
-        route.subjectType === 'PRODUCT' &&
-        ['approvals', 'communications', 'hcm', 'services'].includes(route.productId ?? '')
-    ).flatMap((route) =>
-      route.gatewayBindings.map((binding) => ({
-        routeContractKey: route.routeContractKey,
-        method: binding.method,
-        path: binding.path,
-      }))
-    );
+    const canonical = productAuthorizationRouteProjections
+      .filter(
+        (route) =>
+          route.routeKind === 'ACTION' &&
+          route.subjectType === 'PRODUCT' &&
+          ['approvals', 'communications', 'hcm', 'services'].includes(route.productId ?? '')
+      )
+      .flatMap((route) =>
+        route.gatewayBindings.map((binding) => ({
+          routeContractKey: route.routeContractKey,
+          method: binding.method,
+          path: binding.path,
+        }))
+      );
 
     expect(comparable(IMPLEMENTED_ACTION_CONTRACTS)).toEqual(comparable(canonical));
   });
@@ -378,6 +470,7 @@ describe('Generated product ACTION mutation closure', () => {
     const apiRoot = path.resolve(process.cwd(), 'libs/shared-utils/src/api');
     const files = [
       'approval-api.ts',
+      'approval-hris-separation-waiver-api.ts',
       'approval-document-api.ts',
       'approval-draft-api.ts',
       'approval-form-workspace-api.ts',
@@ -429,6 +522,78 @@ describe('Generated product ACTION mutation closure', () => {
       path.resolve(
         process.cwd(),
         'apps/dwp/src/features/hris/time/clock-ingestion/api/clock-ingestion-api.ts'
+      ),
+      path.resolve(
+        process.cwd(),
+        'apps/dwp/src/features/hris/employment/assignment-proposal-model.ts'
+      ),
+      path.resolve(
+        process.cwd(),
+        'apps/dwp/src/features/hris/employee-services/certificates/certificate-api.ts'
+      ),
+      path.resolve(
+        process.cwd(),
+        'apps/dwp/src/features/hris/payroll/statutory-insurance/statutory-insurance-api.ts'
+      ),
+      path.resolve(
+        process.cwd(),
+        'apps/dwp/src/features/hris/employee-services/employee-change/api/employee-change-api.ts'
+      ),
+      path.resolve(
+        process.cwd(),
+        'apps/dwp/src/features/hris/people/contracts-compensation-basis/contracts-compensation-basis-api.ts'
+      ),
+      path.resolve(
+        process.cwd(),
+        'apps/dwp/src/features/hris/payroll/population/payroll-population-api.ts'
+      ),
+      path.resolve(
+        process.cwd(),
+        'apps/dwp/src/features/hris/payroll/api/payroll-calculation-api.ts'
+      ),
+      path.resolve(process.cwd(), 'apps/dwp/src/features/hris/employment/separation-case-api.ts'),
+      path.resolve(process.cwd(), 'apps/dwp/src/features/hris/time/close/api/time-close-api.ts'),
+      path.resolve(
+        process.cwd(),
+        'apps/dwp/src/features/hris/time/interpretation/api/time-interpretation-api.ts'
+      ),
+      path.resolve(
+        process.cwd(),
+        'apps/dwp/src/features/hris/people/data-quality/data-quality-api.ts'
+      ),
+      path.resolve(
+        process.cwd(),
+        'apps/dwp/src/features/hris/performance/api/performance-review-api.ts'
+      ),
+      path.resolve(
+        process.cwd(),
+        'apps/dwp/src/features/hris/performance/feedback/per008-axios-adapter.ts'
+      ),
+      path.resolve(process.cwd(), 'apps/dwp/src/features/hris/time/api/timecard-api.ts'),
+      path.resolve(process.cwd(), 'apps/dwp/src/features/hris/explorer/work-explorer-api.ts'),
+      path.resolve(
+        process.cwd(),
+        'apps/dwp/src/features/hris/administration/automation-control-plane/automation-control-plane-client.ts'
+      ),
+      path.resolve(
+        process.cwd(),
+        'apps/dwp/src/features/hris/administration/operations/api/controlled-transfer-api.ts'
+      ),
+      path.resolve(
+        process.cwd(),
+        'apps/dwp/src/features/hris/administration/integration-control-plane/integration-control-plane-client.ts'
+      ),
+      path.resolve(
+        process.cwd(),
+        'apps/dwp/src/features/hris/administration/reference-configuration/api/reference-configuration-api.ts'
+      ),
+      path.resolve(
+        process.cwd(),
+        'apps/dwp/src/features/hris/administration/navigation-policy/api/navigation-policy-api.ts'
+      ),
+      path.resolve(
+        process.cwd(),
+        'apps/dwp/src/features/hris/payroll/api/payroll-element-formula-api.ts'
       )
     );
 

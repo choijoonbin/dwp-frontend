@@ -34,6 +34,13 @@ export {
   EMPLOYMENT_EVENT_ROUTE_BINDINGS,
 };
 
+export const HCM_EMPLOYMENT_EVENT_MUTATION_API_CONTRACTS = [
+  { apiFunction: 'createEmploymentEvent', ...EMPLOYMENT_EVENT_API_CONTRACTS[0] },
+  { apiFunction: 'validateEmploymentEvent', ...EMPLOYMENT_EVENT_API_CONTRACTS[1] },
+  { apiFunction: 'submitEmploymentEvent', ...EMPLOYMENT_EVENT_API_CONTRACTS[2] },
+  { apiFunction: 'publishEmploymentEvent', ...EMPLOYMENT_EVENT_API_CONTRACTS[3] },
+] as const;
+
 export type EmploymentEventType = 'HIRE' | 'CONCURRENT_EMPLOYMENT';
 export type EmploymentType = 'EMPLOYEE' | 'CONTINGENT' | 'INTERN' | 'APPRENTICE';
 export type EmploymentEventLifecycle =

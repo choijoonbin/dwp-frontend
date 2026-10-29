@@ -35,7 +35,6 @@ import type {
   CalendarEventImportance,
   CalendarRecurrenceEditScope,
   CalendarResource,
-  CalendarSettings,
   CalendarEventType,
   IdempotentMutationIntent,
   DwaionProposalHandoffBinding,
@@ -55,6 +54,7 @@ import {
   type CalendarEventDraft,
   type CalendarInitialAttendee,
 } from './calendar-event-editor-model';
+import { calendarCreationDraftWithSettings } from './calendar-event-draft-settings';
 import { CalendarSchedulingAssistant } from './calendar-scheduling-assistant';
 import { calendarReplaceAttendeeType } from './calendar-attendee-picker-model';
 import {
@@ -71,6 +71,7 @@ import {
   calendarEventSaveErrorMessage,
   calendarEventSaveFailureKind,
 } from './calendar-event-dialog-status';
+import { retryRecoverableCalendarRead } from './calendar-read-source-state';
 import {
   calendarWorkHandoffRecoveryReceipt,
   clearCalendarWorkHandoffRecovery,
@@ -115,35 +116,6 @@ type CalendarEventDialogProps = {
 };
 
 const EMPTY_CALENDAR_RESOURCES: CalendarResource[] = [];
-
-function creationDraftWithSettings(
-  draft: CalendarEventDraft,
-  settings: CalendarSettings | undefined,
-  explicit: Readonly<{
-    end: boolean;
-    timeZone: boolean;
-    visibility: boolean;
-  }>
-) {
-  if (!settings) return draft;
-  const startsAt = new Date(draft.startsAt);
-  const speedyMinutes =
-    settings.speedyMeetingMode === 'FIVE_TEN' ? (settings.defaultEventMinutes >= 60 ? 10 : 5) : 0;
-  const durationMinutes = Math.max(5, settings.defaultEventMinutes - speedyMinutes);
-  return {
-    ...draft,
-    endsAt:
-      explicit.end || Number.isNaN(startsAt.getTime())
-        ? draft.endsAt
-        : new Date(startsAt.getTime() + durationMinutes * 60_000).toISOString(),
-    timeZone: explicit.timeZone ? draft.timeZone : settings.timeZone,
-    visibility: explicit.visibility
-      ? draft.visibility
-      : settings.defaultVisibility === 'PRIVATE'
-        ? ('PRIVATE' as const)
-        : ('DEFAULT' as const),
-  };
-}
 
 export function CalendarEventDialog({
   open,
@@ -193,16 +165,19 @@ export function CalendarEventDialog({
     staleTime: 60_000,
     retry: 1,
   });
+  const sharedPolicyState = queryClient.getQueryState(['calendar', 'policy']);
   const attendeePolicyQuery = useQuery({
     queryKey: ['calendar', 'policy'],
     queryFn: getCalendarPolicy,
-    enabled: open && canMutate,
+    // A Calendar surface may already own this authority query. After a failed refresh, reuse the
+    // shared fail-closed state instead of starting a duplicate request when the composer opens.
+    enabled: open && canMutate && (!sharedPolicyState || sharedPolicyState.fetchFailureCount === 0),
     staleTime: 5 * 60_000,
-    retry: 1,
+    retry: retryRecoverableCalendarRead,
   });
   const externalAttendeePolicyState = attendeePolicyQuery.isPending
     ? ('LOADING' as const)
-    : attendeePolicyQuery.isError
+    : attendeePolicyQuery.isError || attendeePolicyQuery.failureCount > 0
       ? ('UNAVAILABLE' as const)
       : attendeePolicyQuery.data?.allowExternalAttendees
         ? ('ALLOWED' as const)
@@ -218,7 +193,7 @@ export function CalendarEventDialog({
   const workProtected = Boolean(workDescription);
   const actorOrganizedEvent = calendarSchedulingActorIsOrganizerV2(event, auth.user);
   const [form, setForm] = useState<CalendarEventDraft>(() => {
-    const draft = creationDraftWithSettings(
+    const draft = calendarCreationDraftWithSettings(
       calendarEventDraft(event, {
         initialStart,
         initialEnd,
@@ -290,7 +265,7 @@ export function CalendarEventDialog({
 
   useEffect(() => {
     if (!open) return;
-    const draft = creationDraftWithSettings(
+    const draft = calendarCreationDraftWithSettings(
       calendarEventDraft(event, {
         initialStart,
         initialEnd,

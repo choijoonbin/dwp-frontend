@@ -8,8 +8,8 @@ import {
   TriangleAlert,
   XCircle,
 } from 'lucide-react';
+import { InlineFeedback } from '@dwp-frontend/design-system';
 
-import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
 import Stack from '@mui/material/Stack';
@@ -58,9 +58,9 @@ export function MessagingAdminReadiness({
         <Typography id="messaging-runtime-readiness-title" component="h2" variant="h6">
           {t('admin.readiness.title')}
         </Typography>
-        <Alert severity="warning" sx={{ mt: 1 }}>
+        <InlineFeedback severity="warning" sx={{ mt: 1 }}>
           {t('admin.readiness.contractUnavailable')}
-        </Alert>
+        </InlineFeedback>
       </Box>
     );
   }
@@ -154,7 +154,7 @@ function CapabilityRow({ capability, locale }: { capability: RuntimeCapability; 
       }}
     >
       <Box sx={{ minWidth: 0 }}>
-        <Typography variant="body2" fontWeight={800} sx={{ overflowWrap: 'anywhere' }}>
+        <Typography variant="body2" fontWeight="fontWeightBold" sx={{ overflowWrap: 'anywhere' }}>
           {label}
         </Typography>
         <Typography variant="caption" color="text.secondary" sx={{ overflowWrap: 'anywhere' }}>

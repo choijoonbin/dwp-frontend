@@ -1,5 +1,9 @@
 /** App-level integration evidence; imported only by verification suites. */
-import { HCM_DEEP_LINK_COMPATIBILITY_ITEMS, HCM_NAVIGATION } from '../features/hcm/hcm-navigation';
+import {
+  createHcmNavigation,
+  HCM_DEEP_LINK_COMPATIBILITY_ITEMS,
+  HCM_NAVIGATION,
+} from '../features/hcm/hcm-navigation';
 import { HRIS_R7_GOVERNED_PAGE_CATALOG } from '../components/hris-governed-page-catalog';
 import { ADMIN_NAVIGATION } from '../features/admin/admin-navigation';
 import { OFFICIAL_PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE } from '../routes/official-product-page-route-contracts';
@@ -192,7 +196,12 @@ export function buildHrisCrossLayerReadinessReport({
   catalogNodes?: readonly HrisCatalogNode[];
 }): HrisCrossLayerReadinessReport {
   const navigationItems = HCM_NAVIGATION.flatMap((group) => group.items);
-  const navigationByPath = new Map(navigationItems.map((item) => [item.path, item]));
+  const navigationPaths = new Set(navigationItems.map((item) => item.path));
+  const featureFlaggedDefaultOffItems = createHcmNavigation(true)
+    .flatMap((group) => group.items)
+    .filter((item) => !navigationPaths.has(item.path));
+  const mountableNavigationItems = [...navigationItems, ...featureFlaggedDefaultOffItems];
+  const navigationByPath = new Map(mountableNavigationItems.map((item) => [item.path, item]));
   const compatibilityByPath = new Map(
     HCM_DEEP_LINK_COMPATIBILITY_ITEMS.map((item) => [item.path, item])
   );
@@ -210,7 +219,7 @@ export function buildHrisCrossLayerReadinessReport({
     }),
   ];
 
-  for (const item of [...navigationItems, ...HCM_DEEP_LINK_COMPATIBILITY_ITEMS]) {
+  for (const item of [...mountableNavigationItems, ...HCM_DEEP_LINK_COMPATIBILITY_ITEMS]) {
     if (!authorizedPagePaths.has(item.path)) {
       drifts.push(`mounted HCM route has no PAGE authorization: ${item.path}`);
     }

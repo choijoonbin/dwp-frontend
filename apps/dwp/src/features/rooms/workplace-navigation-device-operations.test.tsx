@@ -40,6 +40,7 @@ vi.mock('@dwp-frontend/design-system', () => ({
   }) => createElement('div', { 'data-testid': testId, role: 'alert' }, children),
   LoadingState: ({ label }: { label: ReactNode }) => createElement('div', null, label),
   PageCanvas: ({ children }: { children: ReactNode }) => createElement('main', null, children),
+  foundationTokens: { radius: { control: 6 } },
 }));
 
 vi.mock('./workplace-member-surfaces', () => ({

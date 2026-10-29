@@ -20,6 +20,7 @@ vi.mock('react-i18next', () => ({
 
 vi.mock('@dwp-frontend/shared-i18n', () => ({
   resolveSupportedLocale: () => 'en',
+  resolveSystemTimeZone: () => 'UTC',
 }));
 
 vi.mock('../payroll', () => ({

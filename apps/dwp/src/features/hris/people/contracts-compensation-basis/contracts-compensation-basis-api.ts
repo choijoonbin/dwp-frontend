@@ -23,6 +23,13 @@ const CORRELATION_ID =
   /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/iu;
 const ISSUE_PATH = '/api/people/v1/hris/employment-contracts';
 
+export const HCM_EMPLOYMENT_CONTRACT_ISSUE_MUTATION_API_CONTRACT = Object.freeze({
+  apiFunction: 'issueEmploymentContract',
+  routeContractKey: HRM011_ISSUE_ROUTE_CONTRACT,
+  method: 'POST',
+  path: ISSUE_PATH,
+});
+
 export const HRM011_API_CONTRACTS = Object.freeze([
   Object.freeze({
     bindingId: HRM011_QUERY_CONTRACT.queryId,

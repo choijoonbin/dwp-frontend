@@ -20,6 +20,13 @@ import type {
   PayrollRunPreparedReceipt,
 } from './payroll-population-contract';
 
+export const HCM_PAYROLL_RUN_PREPARE_MUTATION_API_CONTRACT = Object.freeze({
+  apiFunction: 'preparePayrollRun',
+  routeContractKey: PAYROLL_RUN_PREPARE_ROUTE_CONTRACT_KEY,
+  method: 'POST',
+  path: PAYROLL_RUN_PREPARE_PATH,
+});
+
 export type PayrollPopulationReadContext = Readonly<{
   routeContractKey: typeof PAYROLL_POPULATION_DATA_ROUTE_CONTRACT_KEY;
   contextScopeKey: string;

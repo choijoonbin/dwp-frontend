@@ -375,7 +375,7 @@ test('calendar advances its live countdown, refreshes automatically, and expires
   await expect(page.getByRole('button', { name: 'New event', exact: true })).toHaveCount(0);
 });
 
-test('calendar isolates work-hour policy failure without inventing a final open window', async ({
+test('calendar withholds open-window guidance when work-hour policy evidence is unavailable', async ({
   page,
 }, testInfo) => {
   test.skip(testInfo.project.name !== 'chromium');
@@ -396,10 +396,7 @@ test('calendar isolates work-hour policy failure without inventing a final open 
   await expect(page.getByTestId('calendar-today-workspace')).toBeVisible();
   await expect(page.getByTestId('calendar-read-state')).toHaveCount(0);
   await expect(page.getByRole('button', { name: 'New event', exact: true })).toBeVisible();
-  await expect(page.getByTestId('calendar-today-open-window')).toHaveCount(2);
-  await expect(page.getByTestId('calendar-today-open-window').last()).not.toContainText(
-    'within your working hours'
-  );
+  await expect(page.getByTestId('calendar-today-open-window')).toHaveCount(0);
 });
 
 test('calendar withdraws cached work-hour guidance after policy refetch failures', async ({
@@ -447,7 +444,7 @@ test('calendar withdraws cached work-hour guidance after policy refetch failures
   await expect(page.getByTestId('calendar-today-workspace')).toBeVisible();
   await expect(page.getByTestId('calendar-read-state')).toHaveCount(0);
   await expect(page.getByRole('button', { name: 'New event', exact: true })).toBeVisible();
-  await expect(openWindows).toHaveCount(2);
+  await expect(openWindows).toHaveCount(0);
   await expect(page.getByText('within your working hours', { exact: false })).toHaveCount(0);
 
   policyMode = 'denied';
@@ -455,7 +452,7 @@ test('calendar withdraws cached work-hour guidance after policy refetch failures
   await expect.poll(() => deniedRequests).toBe(1);
   await expect(page.getByTestId('calendar-today-workspace')).toBeVisible();
   await expect(page.getByRole('button', { name: 'New event', exact: true })).toBeVisible();
-  await expect(openWindows).toHaveCount(2);
+  await expect(openWindows).toHaveCount(0);
   await expect(page.getByText('within your working hours', { exact: false })).toHaveCount(0);
 });
 

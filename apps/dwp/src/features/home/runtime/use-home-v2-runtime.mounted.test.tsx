@@ -327,7 +327,13 @@ describe('mounted Home v2 runtime receipt', () => {
     await render(input);
     await waitFor(() => expect(receipt().dataset.headline).toBe('Tenant A Home'));
 
-    await render({ accessFingerprint: 'v1:scope-b', locale: 'ko-KR', tenantId: 2, userId: 9 });
+    await render({
+      accessFingerprint: 'v1:scope-b',
+      deviceClass: 'DESKTOP_STANDARD',
+      locale: 'ko-KR',
+      tenantId: 2,
+      userId: 9,
+    });
     await waitFor(() => expect(transport.getHomeV2).toHaveBeenCalledTimes(2));
     expect(receipt().dataset).toMatchObject({
       activation: 'PENDING',

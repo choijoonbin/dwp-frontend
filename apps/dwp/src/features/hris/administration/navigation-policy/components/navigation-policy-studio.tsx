@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { InlineFeedback, ActionButton, FormField, LoadingState } from '@dwp-frontend/design-system';
 import Chip from '@mui/material/Chip';
 import FormControl from '@mui/material/FormControl';
@@ -39,12 +40,12 @@ export type NavigationPolicyStudioProps = Readonly<{
 export function NavigationPolicyStudio({
   state,
   workspace,
-  locale,
   commandOwner,
   onRefresh,
   onCommandCommitted,
 }: NavigationPolicyStudioProps) {
-  const copy = navigationPolicyCopy(locale);
+  const { t } = useTranslation('hcm');
+  const copy = useMemo(() => navigationPolicyCopy(t), [t]);
   const sourceDraft = useMemo(() => editableDraft(workspace), [workspace]);
   const [draft, setDraft] = useState(sourceDraft);
   const [dirty, setDirty] = useState(false);
@@ -82,7 +83,7 @@ export function NavigationPolicyStudio({
   if (state === 'ERROR' || state === 'UNAVAILABLE' || !workspace || !draft) {
     return (
       <InlineFeedback severity="error" title={copy.unavailableTitle}>
-        No policy command was submitted. Retry after the owner projection becomes available.
+        {t('administration.navigation.unavailableDescription')}
       </InlineFeedback>
     );
   }
@@ -166,18 +167,17 @@ export function NavigationPolicyStudio({
     <Stack gap={2} minWidth={0} data-testid="navigation-policy-studio" data-policy-state={state}>
       {state === 'EMPTY' ? (
         <InlineFeedback severity="info" title={copy.emptyTitle}>
-          Start with the complete canonical catalog. Publishing remains unavailable until validation
-          and independent approval are complete.
+          {t('administration.navigation.emptyDescription')}
         </InlineFeedback>
       ) : null}
       {state === 'STALE' ? (
         <InlineFeedback severity="warning" title={copy.staleTitle}>
-          Refresh the owner projection before editing or making a lifecycle decision.
+          {t('administration.navigation.staleDescription')}
         </InlineFeedback>
       ) : null}
       {state === 'PARTIAL' ? (
         <InlineFeedback severity="warning" title={copy.partialTitle}>
-          The visible evidence is read-only. Refresh before creating or advancing a revision.
+          {t('administration.navigation.partialDescription')}
         </InlineFeedback>
       ) : null}
 
@@ -200,10 +200,17 @@ export function NavigationPolicyStudio({
         </ActionButton>
       </Stack>
 
-      <Stack direction="row" gap={1} flexWrap="wrap" aria-label="Policy evidence summary">
+      <Stack
+        direction="row"
+        gap={1}
+        flexWrap="wrap"
+        aria-label={t('administration.navigation.evidenceSummary')}
+      >
         <Chip
           color={workspace.queryState.freshness === 'CURRENT' ? 'success' : 'warning'}
-          label={`Evidence: ${workspace.queryState.freshness}`}
+          label={t('administration.navigation.evidenceState', {
+            state: workspace.queryState.freshness,
+          })}
         />
         <Chip
           variant="outlined"
@@ -212,8 +219,13 @@ export function NavigationPolicyStudio({
           } · ${workspace.scope.displayName}`}
         />
         <Chip variant="outlined" label={`${copy.lifecycle}: ${lifecycle}`} />
-        <Chip variant="outlined" label={`${enabledCount}/17 nodes enabled`} />
-        {dirty ? <Chip color="warning" label="Unsaved draft" /> : null}
+        <Chip
+          variant="outlined"
+          label={t('administration.navigation.enabledNodes', { count: enabledCount })}
+        />
+        {dirty ? (
+          <Chip color="warning" label={t('administration.navigation.unsavedDraft')} />
+        ) : null}
       </Stack>
 
       <Paper component="section" variant="outlined" sx={{ p: { xs: 2, sm: 2.5 } }}>
@@ -226,8 +238,7 @@ export function NavigationPolicyStudio({
               {copy.impactDescription}
             </Typography>
             <Typography variant="caption" sx={{ overflowWrap: 'anywhere' }}>
-              Effective = canonical IA ∩ installed configuration ∩ tenant baseline ∩ legal overlay ∩
-              PAGE authority
+              {t('administration.navigation.effectiveFormula')}
             </Typography>
           </Stack>
           <Stack gap={0.5} flex={1} minWidth={0}>
@@ -238,31 +249,42 @@ export function NavigationPolicyStudio({
               {copy.recoveryDescription}
             </Typography>
             <Typography variant="caption">
-              Approve, publish, and restore require step-up and an actor other than the author.
+              {t('administration.navigation.highRiskBoundary')}
             </Typography>
           </Stack>
         </Stack>
       </Paper>
 
       {validationIssues.length > 0 ? (
-        <InlineFeedback severity="warning" title={`${validationIssues.length} validation issue(s)`}>
+        <InlineFeedback
+          severity="warning"
+          title={t('administration.navigation.validationIssues', {
+            count: validationIssues.length,
+          })}
+        >
           {validationIssues.map((issue) => issue.message).join(' ')}
         </InlineFeedback>
       ) : null}
       {!commandOwner ? (
-        <InlineFeedback severity="warning" title="Governed commands unavailable">
+        <InlineFeedback
+          severity="warning"
+          title={t('administration.navigation.commandsUnavailable')}
+        >
           {copy.commandUnavailable}
         </InlineFeedback>
       ) : null}
       {command.state === 'RUNNING' ? (
         <InlineFeedback severity="info" title={`${command.action} in progress`}>
-          Waiting for the immutable owner receipt. Repeated clicks are suppressed.
+          {t('administration.navigation.commandRunning')}
         </InlineFeedback>
       ) : null}
       {command.state === 'SUCCEEDED' && command.receipt ? (
         <InlineFeedback severity="success" title={`${command.action} completed`}>
-          Receipt {command.receipt.receiptId} · revision {command.receipt.revision} · object version{' '}
-          {command.receipt.objectVersion}
+          {t('administration.navigation.commandReceipt', {
+            receiptId: command.receipt.receiptId,
+            revision: command.receipt.revision,
+            objectVersion: command.receipt.objectVersion,
+          })}
         </InlineFeedback>
       ) : null}
       {command.state === 'ERROR' ? (
@@ -285,17 +307,22 @@ export function NavigationPolicyStudio({
 
       {lifecycle === 'PUBLISHED' && (workspace.restorableRevisions?.length ?? 0) > 0 ? (
         <FormControl size="small" sx={{ width: { xs: '100%', sm: 360 } }}>
-          <InputLabel id="restore-policy-revision-label">Restore target</InputLabel>
+          <InputLabel id="restore-policy-revision-label">
+            {t('administration.navigation.restoreTarget')}
+          </InputLabel>
           <Select
             labelId="restore-policy-revision-label"
-            label="Restore target"
+            label={t('administration.navigation.restoreTarget')}
             value={restoreTargetRevisionId}
             disabled={evidenceUnsafe || command.state === 'RUNNING'}
             onChange={(event) => setRestoreTargetRevisionId(event.target.value)}
           >
             {workspace.restorableRevisions?.map((revision) => (
               <MenuItem key={revision.revisionId} value={revision.revisionId}>
-                Revision {revision.revision} · {revision.digest.slice(0, 12)}
+                {t('administration.navigation.restoreRevision', {
+                  revision: revision.revision,
+                  digest: revision.digest.slice(0, 12),
+                })}
               </MenuItem>
             ))}
           </Select>
@@ -305,13 +332,13 @@ export function NavigationPolicyStudio({
       {actions.some(isHighRiskAction) ? (
         <FormField
           fullWidth={false}
-          label="Decision justification"
+          label={t('administration.navigation.decisionJustification')}
           value={reason}
           required
           multiline
           minRows={2}
           inputProps={{ minLength: 12, maxLength: 500 }}
-          supportingText="Required for approve, publish, and restore. Stored with the immutable audit receipt."
+          supportingText={t('administration.navigation.decisionJustificationHelp')}
           disabled={evidenceUnsafe || command.state === 'RUNNING'}
           onChange={(event) => {
             setReason(event.target.value);
@@ -322,7 +349,7 @@ export function NavigationPolicyStudio({
 
       <Stack
         component="section"
-        aria-label="Navigation policy lifecycle actions"
+        aria-label={t('administration.navigation.actionsAriaLabel')}
         direction={{ xs: 'column', sm: 'row' }}
         gap={1}
         justifyContent="flex-end"

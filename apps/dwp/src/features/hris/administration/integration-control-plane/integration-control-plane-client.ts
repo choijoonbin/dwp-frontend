@@ -43,6 +43,105 @@ const POLICY_REFERENCE = /^policy_[A-Za-z0-9_-]{16,200}$/;
 const REASON_CODE = /^[A-Z][A-Z0-9_]{2,63}$/;
 const WORKFLOW_KEY = /^[a-z][a-z0-9.-]{2,127}$/;
 
+export const HCM_INTEGRATION_MUTATION_API_CONTRACTS = [
+  {
+    apiFunction: 'executeIntegrationCommand:CREATE_DEFINITION',
+    routeContractKey: 'route.hcm.configuration.connector-definition-create.action',
+    method: 'POST',
+    path: CONNECTOR_BASE_PATH,
+  },
+  {
+    apiFunction: 'executeIntegrationCommand:TEST_CONNECTOR',
+    routeContractKey: 'route.hcm.configuration.connector-test.action',
+    method: 'POST',
+    path: `${CONNECTOR_BASE_PATH}/{connectorId}/test`,
+  },
+  {
+    apiFunction: 'executeIntegrationCommand:DRY_RUN_MAPPING',
+    routeContractKey: 'route.hcm.configuration.connector-mapping-dry-run.action',
+    method: 'POST',
+    path: `${CONNECTOR_BASE_PATH}/{connectorId}/mappings/{version}/dry-runs`,
+  },
+  {
+    apiFunction: 'executeIntegrationCommand:CREATE_EXECUTION',
+    routeContractKey: 'route.hcm.configuration.connector-execution-create.action',
+    method: 'POST',
+    path: `${CONNECTOR_BASE_PATH}/{connectorId}/executions`,
+  },
+  {
+    apiFunction: 'executeIntegrationCommand:VALIDATE_DEFINITION',
+    routeContractKey: 'route.hcm.configuration.connector-definition-validate.action',
+    method: 'POST',
+    path: `${CONNECTOR_BASE_PATH}/{connectorId}/validate`,
+  },
+  {
+    apiFunction: 'executeIntegrationCommand:SUBMIT_DEFINITION',
+    routeContractKey: 'route.hcm.configuration.connector-definition-submit.action',
+    method: 'POST',
+    path: `${CONNECTOR_BASE_PATH}/{connectorId}/submit`,
+  },
+  {
+    apiFunction: 'executeIntegrationCommand:APPROVE_DEFINITION',
+    routeContractKey: 'route.hcm.configuration.connector-definition-approve.action',
+    method: 'POST',
+    path: `${CONNECTOR_BASE_PATH}/{connectorId}/approve`,
+  },
+  {
+    apiFunction: 'executeIntegrationCommand:ACTIVATE_DEFINITION',
+    routeContractKey: 'route.hcm.configuration.connector-definition-activate.action',
+    method: 'POST',
+    path: `${CONNECTOR_BASE_PATH}/{connectorId}/activate`,
+  },
+  {
+    apiFunction: 'executeIntegrationCommand:CREATE_MAPPING',
+    routeContractKey: 'route.hcm.configuration.connector-mapping-version-create.action',
+    method: 'POST',
+    path: `${CONNECTOR_BASE_PATH}/{connectorId}/mappings`,
+  },
+  {
+    apiFunction: 'executeIntegrationCommand:VALIDATE_MAPPING',
+    routeContractKey: 'route.hcm.configuration.connector-mapping-version-validate.action',
+    method: 'POST',
+    path: `${CONNECTOR_BASE_PATH}/{connectorId}/mappings/{version}/validate`,
+  },
+  {
+    apiFunction: 'executeIntegrationCommand:SUBMIT_MAPPING',
+    routeContractKey: 'route.hcm.configuration.connector-mapping-version-submit.action',
+    method: 'POST',
+    path: `${CONNECTOR_BASE_PATH}/{connectorId}/mappings/{version}/submit`,
+  },
+  {
+    apiFunction: 'executeIntegrationCommand:APPROVE_MAPPING',
+    routeContractKey: 'route.hcm.configuration.connector-mapping-version-approve.action',
+    method: 'POST',
+    path: `${CONNECTOR_BASE_PATH}/{connectorId}/mappings/{version}/approve`,
+  },
+  {
+    apiFunction: 'executeIntegrationCommand:ACTIVATE_MAPPING',
+    routeContractKey: 'route.hcm.configuration.connector-mapping-version-activate.action',
+    method: 'POST',
+    path: `${CONNECTOR_BASE_PATH}/{connectorId}/mappings/{version}/activate`,
+  },
+  {
+    apiFunction: 'executeIntegrationCommand:RECONCILE_EXECUTION',
+    routeContractKey: 'route.hcm.configuration.connector-execution-reconcile.action',
+    method: 'POST',
+    path: `${EXECUTION_BASE_PATH}/{executionId}/reconcile`,
+  },
+  {
+    apiFunction: 'executeIntegrationCommand:RETRY_EXECUTION',
+    routeContractKey: 'route.hcm.configuration.connector-execution-retry.action',
+    method: 'POST',
+    path: `${EXECUTION_BASE_PATH}/{executionId}/retry`,
+  },
+  {
+    apiFunction: 'executeIntegrationCommand:CANCEL_EXECUTION',
+    routeContractKey: 'route.hcm.configuration.connector-execution-cancel.action',
+    method: 'POST',
+    path: `${EXECUTION_BASE_PATH}/{executionId}/cancel`,
+  },
+] as const;
+
 type CommandKind = IntegrationCommand['kind'];
 
 type ResolvedIntegrationCommand = Readonly<{
@@ -142,7 +241,7 @@ export async function executeIntegrationCommand(
   validateCommandAuthority(authority, resolved);
   const governed = resolved.highRisk
     ? productSurfaceHighRiskMutationConfig(authority.governance, {
-        objectVersionHeader: false,
+        objectVersionHeader: true,
       })
     : productSurfaceGovernedMutationConfig(authority.governance, {
         objectVersionHeader: false,
@@ -597,7 +696,6 @@ function readConfig(context: IntegrationReadContext) {
 function browserSafeGovernedHeaders(headers: Readonly<Record<string, string>>) {
   const safeHeaders = { ...headers };
   delete safeHeaders['X-DWP-Step-Up-Challenge'];
-  delete safeHeaders['X-DWP-Expected-Object-Version'];
   return safeHeaders;
 }
 

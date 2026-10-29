@@ -1,5 +1,6 @@
 import { ActionIconButton } from '@dwp-frontend/design-system';
 import { ArrowDown, ArrowUp } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import Box from '@mui/material/Box';
 import Checkbox from '@mui/material/Checkbox';
 import Chip from '@mui/material/Chip';
@@ -41,6 +42,7 @@ export function NavigationPolicyEditor({
   copy,
   onChange,
 }: NavigationPolicyEditorProps) {
+  const { t } = useTranslation('hcm');
   const groups = [...draft.groups].sort((left, right) => left.displayOrder - right.displayOrder);
   return (
     <Paper component="section" variant="outlined" sx={{ minWidth: 0, overflow: 'hidden' }}>
@@ -55,7 +57,7 @@ export function NavigationPolicyEditor({
             {copy.groupsTitle}
           </Typography>
           <Typography variant="body2" color="text.secondary">
-            7 groups · 17 canonical nodes · HRIS-WB-HR-OPERATIONS
+            {t('administration.navigation.editor.catalogSummary')}
           </Typography>
         </Stack>
         <FormControl size="small" sx={{ minWidth: { xs: '100%', sm: 180 } }}>
@@ -72,9 +74,13 @@ export function NavigationPolicyEditor({
               })
             }
           >
-            <MenuItem value="OFF">OFF</MenuItem>
-            <MenuItem value="SHADOW">SHADOW</MenuItem>
-            <MenuItem value="ENFORCED">ENFORCED</MenuItem>
+            <MenuItem value="OFF">{t('administration.navigation.editor.rollout.off')}</MenuItem>
+            <MenuItem value="SHADOW">
+              {t('administration.navigation.editor.rollout.shadow')}
+            </MenuItem>
+            <MenuItem value="ENFORCED">
+              {t('administration.navigation.editor.rollout.enforced')}
+            </MenuItem>
           </Select>
         </FormControl>
       </Stack>
@@ -198,7 +204,10 @@ export function NavigationPolicyEditor({
                                     {node.label}
                                   </Typography>
                                   {overlayCeiling ? (
-                                    <Chip size="small" label="Tenant disabled" />
+                                    <Chip
+                                      size="small"
+                                      label={t('administration.navigation.editor.tenantDisabled')}
+                                    />
                                   ) : null}
                                 </Stack>
                                 <Typography

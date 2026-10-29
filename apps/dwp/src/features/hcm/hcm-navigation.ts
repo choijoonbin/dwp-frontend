@@ -106,7 +106,7 @@ export type HcmNavigationGroup = {
 export { HRIS_R7_GOVERNED_PAGE_CATALOG } from '../../components/hris-governed-page-catalog';
 export type { HrisR7GovernedPageCatalogItem } from '../../components/hris-governed-page-catalog';
 
-export const HCM_NAVIGATION: readonly HcmNavigationGroup[] = [
+const HCM_FULL_NAVIGATION: readonly HcmNavigationGroup[] = [
   {
     id: 'start',
     items: [
@@ -574,6 +574,25 @@ export const HCM_NAVIGATION: readonly HcmNavigationGroup[] = [
   },
 ];
 
+export function isHrisHrm009FrontendEnabled() {
+  return import.meta.env?.VITE_HRIS_HRM_009_ENABLED === 'true';
+}
+
+export function createHcmNavigation(
+  hrm009Enabled = isHrisHrm009FrontendEnabled()
+): readonly HcmNavigationGroup[] {
+  if (hrm009Enabled) return HCM_FULL_NAVIGATION;
+
+  return HCM_FULL_NAVIGATION.flatMap((group) => {
+    const items = group.items.filter(
+      (item) => item.view !== 'requests' && item.view !== 'certificates-documents'
+    );
+    return items.length ? [{ ...group, items }] : [];
+  });
+}
+
+export const HCM_NAVIGATION = createHcmNavigation();
+
 /**
  * Historical bookmarks remain resolvable, but are deliberately kept outside every navigation
  * projection. The canonical R6-C PAGE owns menu placement; these aliases can only be reached by
@@ -612,7 +631,7 @@ const capability = (capabilityContractKey: string) => ({
   capabilityContractKey,
 });
 
-const HCM_PERSONAL_NAVIGATION_WITH_HRM009 = projectProductSurfaceNavigation(HCM_NAVIGATION, {
+const HCM_PERSONAL_NAVIGATION_WITH_HRM009 = projectProductSurfaceNavigation(HCM_FULL_NAVIGATION, {
   home: { taskKind: 'work', access: policy('hcm.personal-core-access.v1') },
   me: { taskKind: 'work', access: policy('hcm.personal-core-access.v1') },
   'employment-documents': {
@@ -629,10 +648,6 @@ const HCM_PERSONAL_NAVIGATION_WITH_HRM009 = projectProductSurfaceNavigation(HCM_
   directory: { taskKind: 'work', access: policy('hcm.directory-access.v1') },
   organization: { taskKind: 'work', access: policy('hcm.directory-access.v1') },
 });
-
-export function isHrisHrm009FrontendEnabled() {
-  return import.meta.env.VITE_HRIS_HRM_009_ENABLED === 'true';
-}
 
 function withoutHrm009Navigation(navigation: ReturnType<typeof projectProductSurfaceNavigation>) {
   return navigation.flatMap((group) => {
@@ -665,7 +680,7 @@ export const HCM_TEAM_NAVIGATION = projectProductSurfaceNavigation(HCM_NAVIGATIO
   },
 });
 
-const HCM_OPERATIONS_NAVIGATION_WITH_HRM009 = projectProductSurfaceNavigation(HCM_NAVIGATION, {
+const HCM_OPERATIONS_NAVIGATION_WITH_HRM009 = projectProductSurfaceNavigation(HCM_FULL_NAVIGATION, {
   'operations-home': {
     taskKind: 'operations',
     access: {
@@ -851,10 +866,12 @@ export function visibleHcmNavigation(access: HcmAudienceAccess): HcmNavigationGr
   });
 }
 
-export function findHcmNavigationItem(pathname: string): HcmNavigationItem | undefined {
+export function findHcmNavigationItem(
+  pathname: string,
+  navigation: readonly HcmNavigationGroup[] = HCM_NAVIGATION
+): HcmNavigationItem | undefined {
   const normalized = pathname.length > 1 ? pathname.replace(/\/+$/u, '') : pathname;
-  return [
-    ...HCM_NAVIGATION.flatMap((group) => group.items),
-    ...HCM_DEEP_LINK_COMPATIBILITY_ITEMS,
-  ].find((item) => item.path === normalized);
+  return [...navigation.flatMap((group) => group.items), ...HCM_DEEP_LINK_COMPATIBILITY_ITEMS].find(
+    (item) => item.path === normalized
+  );
 }

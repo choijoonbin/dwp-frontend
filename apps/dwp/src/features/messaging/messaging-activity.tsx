@@ -16,6 +16,7 @@ import { getMessagingActivity } from '@dwp-frontend/shared-utils';
 import {
   ActionButton,
   ErrorState,
+  FormField,
   GuidedEmptyState,
   LoadingState,
   PageCanvas,
@@ -25,7 +26,6 @@ import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
 import InputAdornment from '@mui/material/InputAdornment';
 import Stack from '@mui/material/Stack';
-import TextField from '@mui/material/TextField';
 import ToggleButton from '@mui/material/ToggleButton';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import Typography from '@mui/material/Typography';
@@ -96,7 +96,8 @@ export function MessagingActivity() {
 
       <Box component="section" aria-labelledby="messaging-activity-results" sx={{ mt: 2.5 }}>
         <Stack spacing={1.25}>
-          <TextField
+          <FormField
+            fullWidth={false}
             size="small"
             value={queryText}
             onChange={(event) => updateParam('q', event.target.value)}
@@ -212,7 +213,7 @@ export function MessagingActivity() {
                   </Box>
                   <Box sx={{ minWidth: 0 }}>
                     <Stack direction="row" spacing={0.75} alignItems="center" flexWrap="wrap">
-                      <Typography variant="body2" fontWeight={800}>
+                      <Typography variant="body2" fontWeight="fontWeightBold">
                         {t(`activity.itemTitle.${item.kind}`, { actor: item.actorName })}
                       </Typography>
                       <Chip

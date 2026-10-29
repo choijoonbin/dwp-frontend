@@ -2,9 +2,7 @@ import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useQueryClient } from '@tanstack/react-query';
 import { getMailGovernedEventStream, getTenantId, useAuth } from '@dwp-frontend/shared-utils';
-import { ActionButton } from '@dwp-frontend/design-system';
-
-import Alert from '@mui/material/Alert';
+import { ActionButton, InlineFeedback } from '@dwp-frontend/design-system';
 
 import { useMailGovernedAuthorityLease } from './mail-governed-authority-lease';
 
@@ -339,7 +337,7 @@ export function MailLiveInvalidationBridge({
 
   if (!evidenceStale) return null;
   return (
-    <Alert
+    <InlineFeedback
       severity="warning"
       sx={{ mx: { xs: 1.5, md: 2.5 }, mt: 1.5 }}
       action={
@@ -353,6 +351,6 @@ export function MailLiveInvalidationBridge({
       }
     >
       {t('live.stale')}
-    </Alert>
+    </InlineFeedback>
   );
 }

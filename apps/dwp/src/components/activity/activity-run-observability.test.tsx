@@ -10,7 +10,7 @@ vi.mock('react-i18next', () => ({
   useTranslation: () => ({
     t: (key: string, values?: Record<string, string | number>) => {
       const failureCopy: Record<string, string> = {
-        'dwaionAsk.sourceTypes.WORK_ITEM': '업무 항목',
+        'askPage.sourceTypes.WORK_ITEM': '업무 항목',
         'dwaionActivity.observability.failure.codes.MODEL_PROVIDER_UNAVAILABLE.title':
           'The model service is unavailable',
         'dwaionActivity.observability.failure.codes.MODEL_PROVIDER_UNAVAILABLE.description':

@@ -1,7 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { ActionButton } from '@dwp-frontend/design-system';
-
-import Alert from '@mui/material/Alert';
+import { ActionButton, InlineFeedback } from '@dwp-frontend/design-system';
 
 import type { CalendarExternalProjection } from '@dwp-frontend/shared-utils';
 
@@ -22,7 +20,7 @@ export function CalendarExternalSourceNotice({
 
   const status = error ? 'UNAVAILABLE' : (unhealthy?.status ?? 'UNAVAILABLE');
   return (
-    <Alert
+    <InlineFeedback
       severity={status === 'UNAVAILABLE' ? 'info' : 'warning'}
       sx={{ mb: 1.5 }}
       action={
@@ -32,6 +30,6 @@ export function CalendarExternalSourceNotice({
       }
     >
       {t(`external.status.${status}`)}
-    </Alert>
+    </InlineFeedback>
   );
 }

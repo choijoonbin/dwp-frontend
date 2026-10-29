@@ -40,10 +40,10 @@ const EXPECTED_MENU_COUNTS: Readonly<Record<string, number>> = {
   calendar: 13,
   communications: 6,
   dwaion: 19,
-  hcm: 39,
+  hcm: 47,
   mail: 24,
   meetings: 10,
-  messaging: 8,
+  messaging: 12,
   notifications: 9,
   services: 6,
   spaces: 11,
@@ -107,7 +107,7 @@ function routeBySurfaceId(
 }
 
 describe('all-product surface expansion', () => {
-  it('registers all 12 business apps and exactly the governed 193 menu rows', () => {
+  it('registers all 12 business apps and exactly the governed 205 menu rows', () => {
     expect(GOVERNED_PRODUCT_MANIFESTS.map((manifest) => manifest.id).sort()).toEqual(
       Object.keys(EXPECTED_MENU_COUNTS).sort()
     );
@@ -122,7 +122,7 @@ describe('all-product surface expansion', () => {
         manifest.surfaces.length
       );
     }
-    expect(Object.values(EXPECTED_MENU_COUNTS).reduce((sum, count) => sum + count, 0)).toBe(193);
+    expect(Object.values(EXPECTED_MENU_COUNTS).reduce((sum, count) => sum + count, 0)).toBe(205);
   });
 
   it('binds promoted Workplace menus to their explicit PAGE authority source', () => {
@@ -329,8 +329,8 @@ describe('all-product surface expansion', () => {
     const menuContracts = DRAFT_PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE.filter(
       (route) => !route.pattern.includes(':')
     );
-    expect(menuContracts).toHaveLength(69);
-    expect(DRAFT_PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE).toHaveLength(73);
+    expect(menuContracts).toHaveLength(73);
+    expect(DRAFT_PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE).toHaveLength(77);
     for (const route of menuContracts) {
       expect(
         PRODUCT_MENU_ROUTES.filter(
@@ -464,7 +464,7 @@ describe('all-product surface expansion', () => {
     ]);
     expect(
       PRODUCT_MENU_ROUTES.filter((menu) => menu.productSurfaceId).map((menu) => menu.path)
-    ).toHaveLength(193);
+    ).toHaveLength(205);
 
     const spacesWorkShell = spacesRoutes[0]?.children?.find(
       (route) => !route.index && route.path === undefined

@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { resolveSystemTimeZone } from '@dwp-frontend/shared-i18n';
 import {
   ActionButton,
   DatePickerField,
@@ -83,6 +84,7 @@ export type EmployeeChangeWorkspaceViewProps = Readonly<{
 }>;
 
 function DisabledWorkspace({ copy }: Readonly<{ copy: Copy }>) {
+  const { t } = useTranslation('workforce');
   return (
     <Stack
       gap={2}
@@ -96,13 +98,16 @@ function DisabledWorkspace({ copy }: Readonly<{ copy: Copy }>) {
       </InlineFeedback>
       <Paper component="section" variant="outlined" sx={{ p: { xs: 2, sm: 2.5 } }}>
         <Stack gap={1.25} alignItems="flex-start">
-          <Chip size="small" variant="outlined" label="Feature state: OFF" />
+          <Chip
+            size="small"
+            variant="outlined"
+            label={t('governedPeople.employeeChange.disabled.state')}
+          />
           <Typography component="h2" variant="subtitle1">
-            Dedicated employee-change request family
+            {t('governedPeople.employeeChange.disabled.title')}
           </Typography>
           <Typography color="text.secondary">
-            People 360 and assignment proposals remain separate owner surfaces. No protected data is
-            requested while this feature is disabled.
+            {t('governedPeople.employeeChange.disabled.description')}
           </Typography>
         </Stack>
       </Paper>
@@ -207,6 +212,7 @@ function CreateRequestForm({
   onCancel: () => void;
   onCreate: (draft: EmployeeChangeCreateDraft) => Promise<unknown>;
 }>) {
+  const { t } = useTranslation('workforce');
   const [targetPersonPublicId, setTargetPersonPublicId] = useState('');
   const [targetAggregateType, setTargetAggregateType] =
     useState<EmployeeChangeCreateRequest['targetAggregateType']>('PERSON');
@@ -267,10 +273,13 @@ function CreateRequestForm({
     >
       <Stack gap={1.5}>
         <Typography component="h3" variant="subtitle1">
-          Create employee-change request
+          {t('governedPeople.employeeChange.create.title')}
         </Typography>
         {validationError && (
-          <InlineFeedback severity="error" title="Request draft is incomplete">
+          <InlineFeedback
+            severity="error"
+            title={t('governedPeople.employeeChange.create.incompleteTitle')}
+          >
             {validationError}
           </InlineFeedback>
         )}
@@ -283,13 +292,13 @@ function CreateRequestForm({
         >
           <FormField
             required
-            label="Target person public ID"
+            label={t('governedPeople.employeeChange.create.targetPersonPublicId')}
             value={targetPersonPublicId}
             onChange={(event) => setTargetPersonPublicId(event.target.value)}
           />
           <FormField
             select
-            label="Target aggregate type"
+            label={t('governedPeople.employeeChange.create.targetAggregateType')}
             value={targetAggregateType}
             onChange={(event) =>
               setTargetAggregateType(
@@ -305,33 +314,33 @@ function CreateRequestForm({
           </FormField>
           <FormField
             required
-            label="Target aggregate public ID"
+            label={t('governedPeople.employeeChange.create.targetAggregatePublicId')}
             value={targetAggregatePublicId}
             onChange={(event) => setTargetAggregatePublicId(event.target.value)}
           />
           <FormField
             required
-            label="Change type"
+            label={t('governedPeople.employeeChange.create.changeType')}
             value={changeType}
             onChange={(event) => setChangeType(event.target.value)}
           />
           <DatePickerField
             required
-            label="Effective date"
+            label={t('governedPeople.employeeChange.create.effectiveDate')}
             value={effectiveDate || null}
             onValueChange={(value) => setEffectiveDate(value ?? '')}
           />
           <FormField
             required
             type="number"
-            label="Expected target version"
+            label={t('governedPeople.employeeChange.create.expectedTargetVersion')}
             value={expectedVersion}
             slotProps={{ htmlInput: { min: 0, step: 1 } }}
             onChange={(event) => setExpectedVersion(event.target.value)}
           />
           <FormField
             required
-            label="Patch schema key"
+            label={t('governedPeople.employeeChange.create.patchSchemaKey')}
             value={schemaKey}
             onChange={(event) => setSchemaKey(event.target.value)}
           />
@@ -340,23 +349,23 @@ function CreateRequestForm({
           required
           multiline
           minRows={3}
-          label="Patch operations (JSON)"
+          label={t('governedPeople.employeeChange.create.patchOperations')}
           value={patchText}
           onChange={(event) => setPatchText(event.target.value)}
         />
         <FormField
           multiline
           minRows={2}
-          label="Evidence references (JSON)"
+          label={t('governedPeople.employeeChange.create.evidenceReferences')}
           value={evidenceText}
           onChange={(event) => setEvidenceText(event.target.value)}
         />
         <Stack direction={{ xs: 'column', sm: 'row' }} gap={1} justifyContent="flex-end">
           <ActionButton intent="secondary" disabled={busy} onClick={onCancel}>
-            Cancel
+            {t('governedPeople.common.cancel')}
           </ActionButton>
           <ActionButton intent="primary" loading={busy} onClick={() => void submit()}>
-            Create request
+            {t('governedPeople.employeeChange.create.action')}
           </ActionButton>
         </Stack>
       </Stack>
@@ -394,7 +403,7 @@ export function EmployeeChangeWorkspaceView({
   onApply,
   onRecoverReceipt,
 }: EmployeeChangeWorkspaceViewProps) {
-  const { t } = useTranslation('common');
+  const { t } = useTranslation('workforce');
   const [creating, setCreating] = useState(false);
   const receiptStatusRef = useRef<HTMLDivElement | null>(null);
   const receiptAnnouncementKey = `${receiptRecoveryPhase}:${receipt?.receiptId ?? 'none'}:${receipt?.status ?? 'none'}`;
@@ -434,7 +443,7 @@ export function EmployeeChangeWorkspaceView({
           </Box>
           <Stack direction="row" gap={1} flexWrap="wrap">
             <ActionButton intent="secondary" disabled={commandBusy} onClick={onRefresh}>
-              Refresh
+              {t('governedPeople.common.refresh')}
             </ActionButton>
             {canCreate && (
               <ActionButton
@@ -442,7 +451,7 @@ export function EmployeeChangeWorkspaceView({
                 disabled={commandBusy || commandLockedByReceipt}
                 onClick={() => setCreating(true)}
               >
-                New request
+                {t('governedPeople.employeeChange.actions.newRequest')}
               </ActionButton>
             )}
           </Stack>
@@ -457,30 +466,49 @@ export function EmployeeChangeWorkspaceView({
         />
       )}
       {loading && (
-        <LoadingState label="Loading employee-change requests…" embedded spinnerSize={20} />
+        <LoadingState
+          label={t('governedPeople.employeeChange.states.loading')}
+          embedded
+          spinnerSize={20}
+        />
       )}
       {Boolean(error) && (
-        <InlineFeedback severity="error" title="Employee-change requests are unavailable">
-          The governed workbench could not be loaded. No cached protected data is shown.
+        <InlineFeedback
+          severity="error"
+          title={t('governedPeople.employeeChange.states.unavailableTitle')}
+        >
+          {t('governedPeople.employeeChange.states.unavailableDescription')}
         </InlineFeedback>
       )}
       {state === 'PARTIAL' && (
-        <InlineFeedback severity="warning" title="Some request evidence is unavailable">
-          Review the available items carefully and refresh before running a command.
+        <InlineFeedback
+          severity="warning"
+          title={t('governedPeople.employeeChange.states.partialTitle')}
+        >
+          {t('governedPeople.employeeChange.states.partialDescription')}
         </InlineFeedback>
       )}
       {state === 'UNAVAILABLE' && (
-        <InlineFeedback severity="error" title="Authority is unavailable">
-          The employee-change workbench is closed until governed authority is restored.
+        <InlineFeedback
+          severity="error"
+          title={t('governedPeople.employeeChange.states.authorityUnavailableTitle')}
+        >
+          {t('governedPeople.employeeChange.states.authorityUnavailableDescription')}
         </InlineFeedback>
       )}
       {projection?.queryState.freshness === 'STALE' && (
-        <InlineFeedback severity="warning" title="Workbench evidence is stale">
-          Refresh before submitting or applying a request.
+        <InlineFeedback
+          severity="warning"
+          title={t('governedPeople.employeeChange.states.staleTitle')}
+        >
+          {t('governedPeople.employeeChange.states.staleDescription')}
         </InlineFeedback>
       )}
       {commandError && (
-        <InlineFeedback severity="error" title="Employee-change command failed">
+        <InlineFeedback
+          severity="error"
+          title={t('governedPeople.employeeChange.states.commandFailedTitle')}
+        >
           {commandError.message}
         </InlineFeedback>
       )}
@@ -508,13 +536,20 @@ export function EmployeeChangeWorkspaceView({
               </Typography>
               {receipt && (
                 <Typography component="span" variant="caption">
-                  Receipt {receipt.receiptId} · correlation {receipt.correlationId}
+                  {t('governedPeople.employeeChange.receipt.identity', {
+                    receiptId: receipt.receiptId,
+                    correlationId: receipt.correlationId,
+                  })}
                 </Typography>
               )}
-              {receiptDeepLink && <Link href={receiptDeepLink}>Open employee-change requests</Link>}
+              {receiptDeepLink && (
+                <Link href={receiptDeepLink}>
+                  {t('governedPeople.employeeChange.receipt.openRequests')}
+                </Link>
+              )}
               {receiptRecoveryCanRecover && (
                 <ActionButton intent="secondary" onClick={onRecoverReceipt}>
-                  Recover receipt
+                  {t('governedPeople.employeeChange.receipt.recover')}
                 </ActionButton>
               )}
             </Stack>
@@ -525,10 +560,10 @@ export function EmployeeChangeWorkspaceView({
       {!loading && !error && projection && projection.items.length === 0 && (
         <Paper component="section" variant="outlined" sx={{ p: 2 }}>
           <Typography component="h3" variant="subtitle1">
-            No employee-change requests
+            {t('governedPeople.employeeChange.empty.title')}
           </Typography>
           <Typography color="text.secondary">
-            No requests are visible in the governed population scope.
+            {t('governedPeople.employeeChange.empty.description')}
           </Typography>
         </Paper>
       )}
@@ -543,7 +578,7 @@ export function EmployeeChangeWorkspaceView({
         >
           <Paper component="section" variant="outlined" sx={{ p: 1.5 }}>
             <Typography component="h3" variant="subtitle1" sx={{ px: 0.5, mb: 1 }}>
-              Requests
+              {t('governedPeople.employeeChange.list.title')}
             </Typography>
             <Stack component="ul" gap={0.75} sx={{ p: 0, m: 0, listStyle: 'none' }}>
               {projection.items.map((item) => (
@@ -597,7 +632,9 @@ export function EmployeeChangeWorkspaceView({
                     {selectedItem.title}
                   </Typography>
                   <Typography variant="caption" color="text.secondary">
-                    Request version {employeeChangeItemVersion(selectedItem) ?? 'restricted'}
+                    {t('governedPeople.employeeChange.detail.version', {
+                      version: employeeChangeItemVersion(selectedItem) ?? 'restricted',
+                    })}
                   </Typography>
                 </Box>
                 <Chip size="small" label={selectedItem.statusCode.replaceAll('_', ' ')} />
@@ -605,13 +642,19 @@ export function EmployeeChangeWorkspaceView({
               <Divider sx={{ my: 2 }} />
               <Stack gap={1}>
                 <Typography variant="body2">
-                  Change summary: {fieldText(selectedItem, 'CHANGE_REQUEST_SUMMARY')}
+                  {t('governedPeople.employeeChange.detail.changeSummary', {
+                    value: fieldText(selectedItem, 'CHANGE_REQUEST_SUMMARY'),
+                  })}
                 </Typography>
                 <Typography variant="body2">
-                  Approval status: {fieldText(selectedItem, 'APPROVAL_STATUS')}
+                  {t('governedPeople.employeeChange.detail.approvalStatus', {
+                    value: fieldText(selectedItem, 'APPROVAL_STATUS'),
+                  })}
                 </Typography>
                 <Typography variant="body2">
-                  Employment: {fieldText(selectedItem, 'EMPLOYMENT')}
+                  {t('governedPeople.employeeChange.detail.employment', {
+                    value: fieldText(selectedItem, 'EMPLOYMENT'),
+                  })}
                 </Typography>
               </Stack>
               <Stack direction={{ xs: 'column', sm: 'row' }} gap={1} sx={{ mt: 2 }}>
@@ -625,7 +668,7 @@ export function EmployeeChangeWorkspaceView({
                     disabled={commandLockedByReceipt}
                     onClick={() => void onSubmit()}
                   >
-                    Submit for approval
+                    {t('governedPeople.employeeChange.actions.submit')}
                   </ActionButton>
                 )}
                 {hasEmployeeChangeAction(
@@ -638,7 +681,7 @@ export function EmployeeChangeWorkspaceView({
                     disabled={!applyConnected || commandLockedByReceipt}
                     onClick={() => void onApply()}
                   >
-                    Apply approved change
+                    {t('governedPeople.employeeChange.actions.apply')}
                   </ActionButton>
                 )}
               </Stack>
@@ -653,7 +696,7 @@ export function EmployeeChangeWorkspaceView({
                     display="block"
                     sx={{ mt: 1 }}
                   >
-                    Apply remains closed until the shared step-up command coordinator is connected.
+                    {t('governedPeople.employeeChange.actions.applyDisconnected')}
                   </Typography>
                 )}
             </Paper>
@@ -663,18 +706,20 @@ export function EmployeeChangeWorkspaceView({
 
       <Stack direction="row" gap={1} alignItems="center" justifyContent="flex-end">
         {fetching && !loading && (
-          <LoadingState label={t('labels.loading')} embedded spinnerSize={18} />
+          <LoadingState label={t('common:labels.loading')} embedded spinnerSize={18} />
         )}
         <ActionButton
           intent="secondary"
           disabled={!canPrevious || commandBusy}
           onClick={onPrevious}
         >
-          Previous
+          {t('governedPeople.common.previous')}
         </ActionButton>
-        <Typography variant="caption">Page {pageIndex + 1}</Typography>
+        <Typography variant="caption">
+          {t('governedPeople.common.page', { page: pageIndex + 1 })}
+        </Typography>
         <ActionButton intent="secondary" disabled={!canNext || commandBusy} onClick={onNext}>
-          Next
+          {t('governedPeople.common.next')}
         </ActionButton>
       </Stack>
     </Stack>
@@ -694,7 +739,7 @@ function EnabledWorkspace({
 }>) {
   const { i18n } = useTranslation('hcm');
   const locale = i18n.resolvedLanguage || i18n.language || 'en-US';
-  const timeZone = useMemo(() => Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC', []);
+  const timeZone = useMemo(() => resolveSystemTimeZone('UTC'), []);
   const runtime = useEmployeeChangeWorkspace({
     enabled: true,
     locale,

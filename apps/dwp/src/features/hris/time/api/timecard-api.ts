@@ -96,6 +96,27 @@ export const TIMECARD_ACTION_CONTRACTS = Object.freeze({
   }),
 } as const);
 
+export const HCM_TIMECARD_MUTATION_API_CONTRACTS = [
+  {
+    apiFunction: 'correctTimecard',
+    routeContractKey: TIMECARD_ACTION_CONTRACTS.CORRECT.routeContractKey,
+    method: 'POST',
+    path: `${TIMECARDS}/{timecardId}/corrections`,
+  },
+  {
+    apiFunction: 'submitTimecard',
+    routeContractKey: TIMECARD_ACTION_CONTRACTS.SUBMIT.routeContractKey,
+    method: 'POST',
+    path: `${TIMECARDS}/{timecardId}/submit`,
+  },
+  {
+    apiFunction: 'decideTimecard',
+    routeContractKey: TIMECARD_ACTION_CONTRACTS.DECIDE.routeContractKey,
+    method: 'POST',
+    path: `${TIMECARDS}/{timecardId}/decisions`,
+  },
+] as const;
+
 export const TIMECARD_AUTHORIZATION_CONTRACT = Object.freeze({
   version: 42,
   sha256: 'f73f9a64816ac8f5567a2a7c292821f4a40e6d675915ebc3c3ac8aad7d1fd983',

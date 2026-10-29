@@ -210,6 +210,9 @@ vi.mock('@dwp-frontend/design-system', () => ({
         )
       )
     ),
+  InlineFeedback: ({ children }: { children: ReactNode }) =>
+    createElement('div', { role: 'alert' }, children),
+  foundationTokens: { home: { typography: { weightEmphasis: 750 } } },
 }));
 
 const generatedAt = '2026-10-28T00:00:00Z';

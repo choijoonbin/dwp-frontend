@@ -5,6 +5,8 @@ import { createRoot, type Root } from 'react-dom/client';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { Outlet, type RouteObject } from 'react-router-dom';
 
+import type * as ReactQueryModule from '@tanstack/react-query';
+
 const mocks = vi.hoisted(() => ({
   authority: {
     authorityPending: false,
@@ -13,6 +15,12 @@ const mocks = vi.hoisted(() => ({
   decision: { state: 'route-denied' } as { state: string },
   mode: 'surface-ui',
   useMessagingPresenceHeartbeat: vi.fn(),
+  useQuery: vi.fn(),
+}));
+
+vi.mock('@tanstack/react-query', async (importOriginal) => ({
+  ...(await importOriginal<typeof ReactQueryModule>()),
+  useQuery: mocks.useQuery,
 }));
 
 vi.mock('../features/shell/product-surface-canary-runtime', () => ({
@@ -43,6 +51,7 @@ vi.mock('../components/product-surface-loading-shell', () => ({
 }));
 
 vi.mock('@dwp-frontend/shared-utils', () => ({
+  getMessagingPrivacyPreference: vi.fn(),
   isAppReadEntitled: () => true,
   useAuth: () => ({ user: { tenantId: 7, userId: 42 } }),
   usePermissions: () => ({ permissions: [], isLoaded: true }),
@@ -93,6 +102,7 @@ describe('Messaging presence ProductSurface gate', () => {
     mocks.decision = { state: 'route-denied' };
     mocks.mode = 'surface-ui';
     mocks.useMessagingPresenceHeartbeat.mockReset();
+    mocks.useQuery.mockReset().mockReturnValue({ data: undefined });
   });
 
   afterEach(async () => {
@@ -119,6 +129,9 @@ describe('Messaging presence ProductSurface gate', () => {
 
   it('publishes only after the server Surface decision is allowed', async () => {
     mocks.decision = { state: 'allowed' };
+    mocks.useQuery.mockReturnValue({
+      data: { readReceiptsEnabled: true, presenceSharingEnabled: true, version: 1 },
+    });
 
     await renderBoundary();
 

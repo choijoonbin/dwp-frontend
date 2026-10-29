@@ -1,8 +1,13 @@
 import { useEffect, useMemo, useState } from 'react';
-import { ActionButton, InlineFeedback, LoadingState } from '@dwp-frontend/design-system';
+import {
+  ActionButton,
+  FormField,
+  InlineFeedback,
+  LoadingState,
+  foundationTokens,
+} from '@dwp-frontend/design-system';
 import { formatDate, resolveSupportedLocale } from '@dwp-frontend/shared-i18n';
 
-import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
 import Checkbox from '@mui/material/Checkbox';
 import Chip from '@mui/material/Chip';
@@ -13,7 +18,6 @@ import FormLabel from '@mui/material/FormLabel';
 import Radio from '@mui/material/Radio';
 import RadioGroup from '@mui/material/RadioGroup';
 import Stack from '@mui/material/Stack';
-import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 
 import {
@@ -144,14 +148,14 @@ export function CalendarBookingCapabilityNotice({
   copy,
 }: Readonly<{ externalEnabled: boolean; disabledReason?: string; copy: CalendarBookingCopy }>) {
   return (
-    <Alert severity={externalEnabled ? 'info' : 'warning'} role="status">
+    <InlineFeedback severity={externalEnabled ? 'info' : 'warning'} role="status">
       {externalEnabled ? copy.externalEnabled : copy.externalDisabled}
       {!externalEnabled && disabledReason ? (
         <Typography variant="body2" sx={{ mt: 0.5 }}>
           {disabledReason}
         </Typography>
       ) : null}
-    </Alert>
+    </InlineFeedback>
   );
 }
 
@@ -196,7 +200,7 @@ export function CalendarBookingPageBrowser({
 
   return (
     <Stack spacing={1.5} component="section" aria-label={copy.pagesLabel}>
-      <TextField
+      <FormField
         size="small"
         label={copy.searchLabel}
         placeholder={copy.searchPlaceholder}
@@ -225,7 +229,7 @@ export function CalendarBookingPageBrowser({
             sx={{
               border: 1,
               borderColor: selectedPageId === page.pageId ? 'primary.main' : 'divider',
-              borderRadius: 2,
+              borderRadius: foundationTokens.radius.control * 2 + 'px',
               p: 1.5,
               bgcolor: 'background.paper',
               '@media (forced-colors: active)': { borderColor: 'CanvasText' },
@@ -233,7 +237,12 @@ export function CalendarBookingPageBrowser({
           >
             <Stack direction="row" justifyContent="space-between" spacing={1} alignItems="start">
               <Box sx={{ minWidth: 0 }}>
-                <Typography component="h3" fontWeight={700} noWrap title={page.title}>
+                <Typography
+                  component="h3"
+                  fontWeight={foundationTokens.home.typography.weightBold}
+                  noWrap
+                  title={page.title}
+                >
                   {page.title}
                 </Typography>
                 {page.description ? (
@@ -290,7 +299,12 @@ export function CalendarBookingOwnedPageDetail({
       component="section"
       aria-labelledby="calendar-booking-owned-page-heading"
       spacing={1.25}
-      sx={{ border: 1, borderColor: 'divider', borderRadius: 2, p: { xs: 1.5, sm: 2 } }}
+      sx={{
+        border: 1,
+        borderColor: 'divider',
+        borderRadius: foundationTokens.radius.control * 2 + 'px',
+        p: { xs: 1.5, sm: 2 },
+      }}
     >
       <CalendarBookingStatus state={state} copy={copy} onRetry={onRetry} />
       <Stack direction="row" alignItems="start" justifyContent="space-between" spacing={1}>
@@ -298,7 +312,11 @@ export function CalendarBookingOwnedPageDetail({
           <Typography id="calendar-booking-owned-page-heading" component="h2" variant="h6">
             {copy.pageDetailHeading}
           </Typography>
-          <Typography component="h3" fontWeight={700} sx={{ overflowWrap: 'anywhere' }}>
+          <Typography
+            component="h3"
+            fontWeight={foundationTokens.home.typography.weightBold}
+            sx={{ overflowWrap: 'anywhere' }}
+          >
             {page.title}
           </Typography>
         </Box>
@@ -380,7 +398,11 @@ function QuestionFields({
   const validation = calendarBookingAnswers(page.questions, draft);
   return (
     <Stack spacing={1.25} component="fieldset" sx={{ border: 0, p: 0, m: 0 }}>
-      <Typography component="legend" variant="subtitle1" fontWeight={700}>
+      <Typography
+        component="legend"
+        variant="subtitle1"
+        fontWeight={foundationTokens.home.typography.weightBold}
+      >
         {copy.questionsHeading}
       </Typography>
       {page.questions.map((question) => {
@@ -435,15 +457,14 @@ function QuestionFields({
           );
         }
         return (
-          <TextField
+          <FormField
             key={question.key}
             label={label}
             value={draft[question.key] ?? ''}
             multiline={question.type === 'LONG_TEXT'}
             minRows={question.type === 'LONG_TEXT' ? 3 : undefined}
             disabled={disabled}
-            error={Boolean(error)}
-            helperText={
+            errorMessage={
               error
                 ? error === 'REQUIRED_ANSWER_MISSING'
                   ? copy.answerRequired
@@ -540,7 +561,11 @@ export function CalendarBookingBookablePanel({
         <Typography id="calendar-booking-bookable-heading" component="h2" variant="h6">
           {copy.bookableHeading}
         </Typography>
-        <Typography component="h3" variant="subtitle1" fontWeight={700}>
+        <Typography
+          component="h3"
+          variant="subtitle1"
+          fontWeight={foundationTokens.home.typography.weightBold}
+        >
           {page.title}
         </Typography>
         {page.description ? (
@@ -751,9 +776,18 @@ export function CalendarBookingAppointments({
           <Stack
             spacing={1.25}
             aria-live="polite"
-            sx={{ border: 1, borderColor: 'divider', borderRadius: 2, p: { xs: 1.5, sm: 2 } }}
+            sx={{
+              border: 1,
+              borderColor: 'divider',
+              borderRadius: foundationTokens.radius.control * 2 + 'px',
+              p: { xs: 1.5, sm: 2 },
+            }}
           >
-            <Typography component="h3" variant="subtitle1" fontWeight={700}>
+            <Typography
+              component="h3"
+              variant="subtitle1"
+              fontWeight={foundationTokens.home.typography.weightBold}
+            >
               {copy.appointmentDetail}
             </Typography>
             <Typography>
@@ -774,7 +808,7 @@ export function CalendarBookingAppointments({
                 {copy.actionsUnavailable}
               </Typography>
             ) : null}
-            <TextField
+            <FormField
               label={copy.cancelReason}
               value={reason}
               disabled={!actionsEnabled}
@@ -824,7 +858,7 @@ export function CalendarBookingOneTimeTokenNotice({
   onDismiss: () => void;
 }>) {
   return (
-    <Alert
+    <InlineFeedback
       severity="warning"
       role="status"
       action={
@@ -848,6 +882,6 @@ export function CalendarBookingOneTimeTokenNotice({
       <Box component="code" sx={{ display: 'block', mt: 0.75 }}>
         {token.value}
       </Box>
-    </Alert>
+    </InlineFeedback>
   );
 }

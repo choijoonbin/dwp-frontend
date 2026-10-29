@@ -7,6 +7,13 @@ import { HttpError } from '@dwp-frontend/shared-utils';
 import type * as SharedUtils from '@dwp-frontend/shared-utils';
 import type { WorkspaceActivityFilters } from '@dwp-frontend/shared-utils';
 
+import {
+  ACTIVITY_RUNNING_REFRESH_INTERVAL_MS,
+  activityDetailRefetchOnWindowFocus,
+  activityDetailRefreshInterval,
+  activityDetailStaleTime,
+} from '../../components/activity/activity-query-contract';
+
 const runtime = vi.hoisted(() => ({
   auth: { tenantId: 1, userId: 7, isAuthenticated: true },
   permissions: { loaded: true, activity: true, ask: true },
@@ -38,11 +45,8 @@ vi.mock('@dwp-frontend/shared-utils', async (importOriginal) => ({
 
 import {
   ACTIVITY_FEED_REFRESH_INTERVAL_MS,
-  ACTIVITY_RUNNING_REFRESH_INTERVAL_MS,
   ACTIVITY_SOURCE_REFRESH_INTERVAL_MS,
-  activityDetailRefetchOnWindowFocus,
-  activityDetailRefreshInterval,
-  activityDetailStaleTime,
+  activityEvidenceObserverPolicy,
   activityEvidenceRefreshInterval,
   activityRunRefetchOnWindowFocus,
   activityRunRefreshInterval,
@@ -125,17 +129,18 @@ describe('Activity query access, refresh and cache isolation', () => {
     await render();
     await waitForSuccess();
     await vi.waitFor(() => expect(result.evidence.isSuccess).toBe(true));
-    const evidenceQuery = client
-      .getQueryCache()
-      .getAll()
-      .find(
-        (query) => query.queryKey.includes('evidence') && query.queryKey.at(-1) === 'private-event'
-      );
+    expect(activityEvidenceObserverPolicy).toEqual({
+      staleTime: Infinity,
+      retry: false,
+      refetchInterval: false,
+      refetchOnWindowFocus: false,
+    });
+    expect(runtime.eventEvidence).toHaveBeenCalledTimes(1);
 
-    expect(evidenceQuery?.options.staleTime).toBe(Infinity);
-    expect(evidenceQuery?.options.refetchInterval).toBe(false);
-    expect(evidenceQuery?.options.refetchOnWindowFocus).toBe(false);
-    expect(evidenceQuery?.options.retry).toBe(false);
+    await act(async () => {
+      await result.evidence.refetch();
+    });
+    expect(runtime.eventEvidence).toHaveBeenCalledTimes(2);
   });
 
   it('uses bounded polling intervals for feeds, sources, active runs and terminal evidence', () => {

@@ -1,16 +1,13 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useInfiniteQuery } from '@tanstack/react-query';
-import { ActionButton } from '@dwp-frontend/design-system';
+import { ActionButton, AutocompleteMultiField, InlineFeedback } from '@dwp-frontend/design-system';
 import { listPeople, useAuth } from '@dwp-frontend/shared-utils';
 
-import Alert from '@mui/material/Alert';
-import Autocomplete from '@mui/material/Autocomplete';
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
 import ListItemText from '@mui/material/ListItemText';
 import Stack from '@mui/material/Stack';
-import TextField from '@mui/material/TextField';
 
 import {
   calendarAttendeeOptions,
@@ -18,9 +15,26 @@ import {
 } from './calendar-attendee-picker-model';
 
 import type { CalendarEditorAttendee } from './calendar-event-editor-model';
+import type { AutocompleteMultiFieldProps, FieldFeedbackProps } from '@dwp-frontend/design-system';
+import type { AutocompleteProps } from '@mui/material/Autocomplete';
 
 const ATTENDEE_PAGE_SIZE = 50;
 const SEARCH_DEBOUNCE_MS = 275;
+
+type CalendarFreeSoloMultiFieldProps<T> = Omit<
+  AutocompleteProps<T, true, false, boolean>,
+  'renderInput'
+> &
+  FieldFeedbackProps &
+  Pick<AutocompleteMultiFieldProps<T>, 'label' | 'required' | 'textFieldProps'>;
+
+/**
+ * The shared field owns the rendered input while this local adapter keeps the
+ * Calendar picker's existing optional free-solo value contract.
+ */
+function CalendarFreeSoloMultiField<T>(props: CalendarFreeSoloMultiFieldProps<T>) {
+  return <AutocompleteMultiField<T> {...(props as unknown as AutocompleteMultiFieldProps<T>)} />;
+}
 
 export type CalendarExternalAttendeePolicyState = 'ALLOWED' | 'DENIED' | 'LOADING' | 'UNAVAILABLE';
 
@@ -100,8 +114,7 @@ export function CalendarAttendeePicker({
 
   return (
     <Stack spacing={0.75}>
-      <Autocomplete<CalendarEditorAttendee, true, false, boolean>
-        multiple
+      <CalendarFreeSoloMultiField<CalendarEditorAttendee>
         freeSolo={externalAllowed}
         disabled={disabled}
         options={options}
@@ -174,28 +187,24 @@ export function CalendarAttendeePicker({
             );
           })
         }
-        renderInput={(params) => (
-          <TextField
-            {...params}
-            fullWidth
-            label={label}
-            placeholder={value.length ? undefined : placeholder}
-            error={invalidExternal}
-            helperText={
-              invalidExternal
-                ? t('event.attendeePicker.invalidExternalEmail')
-                : [supportingText, policyHint].filter(Boolean).join(' · ')
-            }
-            inputProps={{
-              ...params.inputProps,
+        label={label}
+        errorMessage={invalidExternal ? t('event.attendeePicker.invalidExternalEmail') : undefined}
+        supportingText={
+          invalidExternal ? undefined : [supportingText, policyHint].filter(Boolean).join(' · ')
+        }
+        textFieldProps={{
+          placeholder: value.length ? undefined : placeholder,
+          slotProps: {
+            htmlInput: (ownerState) => ({
+              ...ownerState.inputProps,
               autoComplete: 'off',
               inputMode: externalAllowed ? 'email' : 'search',
-            }}
-          />
-        )}
+            }),
+          },
+        }}
       />
       {peopleQuery.isError ? (
-        <Alert
+        <InlineFeedback
           severity="warning"
           action={
             <ActionButton intent="quiet" size="small" onClick={() => void peopleQuery.refetch()}>
@@ -204,7 +213,7 @@ export function CalendarAttendeePicker({
           }
         >
           {t('event.attendeePicker.loadError')}
-        </Alert>
+        </InlineFeedback>
       ) : null}
       {peopleQuery.hasNextPage ? (
         <ActionButton

@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { InlineFeedback, FormField, ActionButton } from '@dwp-frontend/design-system';
 import MenuItem from '@mui/material/MenuItem';
 import Paper from '@mui/material/Paper';
@@ -14,13 +15,22 @@ import { useProductActionMutation } from '../../../../components/use-product-act
 import { useProductSurfaceHighRiskCommandExecutor } from '../../../../components/use-product-surface-high-risk-command-executor';
 import {
   approveNavigationPolicyRevision,
+  approveNavigationPolicyV2Revision,
   createNavigationPolicyDraftRevision,
+  createNavigationPolicyV2DraftRevision,
   navigationPolicyDraftBody,
+  NAVIGATION_POLICY_OPERATION_BINDINGS,
+  NAVIGATION_POLICY_V2_OPERATION_BINDINGS,
   publishNavigationPolicyRevision,
+  publishNavigationPolicyV2Revision,
   restoreNavigationPolicyRevision,
+  restoreNavigationPolicyV2Revision,
   submitNavigationPolicyDraftRevision,
+  submitNavigationPolicyV2DraftRevision,
   updateNavigationPolicyDraftRevision,
+  updateNavigationPolicyV2DraftRevision,
   validateNavigationPolicyDraftRevision,
+  validateNavigationPolicyV2DraftRevision,
 } from './api/navigation-policy-api';
 import { HrisNavigationPolicyWorkspace } from './pages/hris-navigation-policy-workspace';
 import {
@@ -47,6 +57,13 @@ export const NAVIGATION_POLICY_ACTION_CONTRACTS = Object.freeze({
   SUBMIT: 'route.hcm.configuration.navigation-policy-draft-submit.action',
 } as const);
 
+export const NAVIGATION_POLICY_V2_ACTION_CONTRACTS = Object.freeze({
+  CREATE_DRAFT: 'route.hcm.configuration.navigation-policy-v2-draft-create.action',
+  SAVE_DRAFT: 'route.hcm.configuration.navigation-policy-v2-draft-update.action',
+  VALIDATE: 'route.hcm.configuration.navigation-policy-v2-draft-validate.action',
+  SUBMIT: 'route.hcm.configuration.navigation-policy-v2-draft-submit.action',
+} as const);
+
 type SealedCommand = Readonly<{
   input: NavigationPolicyCommandInput;
   revisionId: string;
@@ -59,18 +76,26 @@ const HIGH_RISK_OPERATION = {
   RESTORE: 'HCM_NAVIGATION_POLICY_RESTORE',
 } as const satisfies Readonly<Record<string, ProductSurfaceHighRiskOperation>>;
 
+const HIGH_RISK_V2_OPERATION = {
+  APPROVE: 'HCM_NAVIGATION_POLICY_V2_APPROVE',
+  PUBLISH: 'HCM_NAVIGATION_POLICY_V2_PUBLISH',
+  RESTORE: 'HCM_NAVIGATION_POLICY_V2_RESTORE',
+} as const satisfies Readonly<Record<string, ProductSurfaceHighRiskOperation>>;
+
 export function navigationPolicyHighRiskCommand(command: SealedCommand) {
   const action = command.input.action;
   if (action !== 'APPROVE' && action !== 'PUBLISH' && action !== 'RESTORE') {
     throw new Error('Navigation-policy command is not high risk.');
   }
-  const suffix = action.toLowerCase();
+  const v2 = command.input.draft.scopeKind === 'LEGAL_ENTITY';
+  const operationIndex = action === 'APPROVE' ? 5 : action === 'PUBLISH' ? 6 : 7;
+  const pathTemplate = (
+    v2 ? NAVIGATION_POLICY_V2_OPERATION_BINDINGS : NAVIGATION_POLICY_OPERATION_BINDINGS
+  )[operationIndex][1];
   return productSurfaceHighRiskCommand({
-    operation: HIGH_RISK_OPERATION[action],
+    operation: v2 ? HIGH_RISK_V2_OPERATION[action] : HIGH_RISK_OPERATION[action],
     commandMethod: 'POST',
-    commandPath: `/api/platform/v1/admin/hris/navigation-policies/revisions/${encodeURIComponent(
-      command.revisionId
-    )}/${suffix}`,
+    commandPath: pathTemplate.replace('{revisionId}', encodeURIComponent(command.revisionId)),
     targetType: 'HRIS_NAVIGATION_POLICY_REVISION',
     targetId: command.revisionId,
     expectedObjectVersion: command.envelope.expectedVersion,
@@ -84,12 +109,23 @@ export function navigationPolicyHighRiskCommand(command: SealedCommand) {
 }
 
 export function HrisNavigationPolicyCommandRuntime() {
+  const { t } = useTranslation('hcm');
   const [searchParams] = useSearchParams();
   const requestedScope = selectHrisLegalEntitySelector(searchParams);
   const createAuthority = useProductActionMutation(NAVIGATION_POLICY_ACTION_CONTRACTS.CREATE_DRAFT);
   const updateAuthority = useProductActionMutation(NAVIGATION_POLICY_ACTION_CONTRACTS.SAVE_DRAFT);
   const validateAuthority = useProductActionMutation(NAVIGATION_POLICY_ACTION_CONTRACTS.VALIDATE);
   const submitAuthority = useProductActionMutation(NAVIGATION_POLICY_ACTION_CONTRACTS.SUBMIT);
+  const createV2Authority = useProductActionMutation(
+    NAVIGATION_POLICY_V2_ACTION_CONTRACTS.CREATE_DRAFT
+  );
+  const updateV2Authority = useProductActionMutation(
+    NAVIGATION_POLICY_V2_ACTION_CONTRACTS.SAVE_DRAFT
+  );
+  const validateV2Authority = useProductActionMutation(
+    NAVIGATION_POLICY_V2_ACTION_CONTRACTS.VALIDATE
+  );
+  const submitV2Authority = useProductActionMutation(NAVIGATION_POLICY_V2_ACTION_CONTRACTS.SUBMIT);
   const approveAuthority = useProductSurfaceHighRiskCommandExecutor({
     operation: HIGH_RISK_OPERATION.APPROVE,
     buildCommand: navigationPolicyHighRiskCommand,
@@ -102,11 +138,32 @@ export function HrisNavigationPolicyCommandRuntime() {
     operation: HIGH_RISK_OPERATION.RESTORE,
     buildCommand: navigationPolicyHighRiskCommand,
   });
+  const approveV2Authority = useProductSurfaceHighRiskCommandExecutor({
+    operation: HIGH_RISK_V2_OPERATION.APPROVE,
+    buildCommand: navigationPolicyHighRiskCommand,
+  });
+  const publishV2Authority = useProductSurfaceHighRiskCommandExecutor({
+    operation: HIGH_RISK_V2_OPERATION.PUBLISH,
+    buildCommand: navigationPolicyHighRiskCommand,
+  });
+  const restoreV2Authority = useProductSurfaceHighRiskCommandExecutor({
+    operation: HIGH_RISK_V2_OPERATION.RESTORE,
+    buildCommand: navigationPolicyHighRiskCommand,
+  });
 
   const execute = useCallback<NavigationPolicyCommandOwner['execute']>(
     async (input) => {
       const sealed = await sealNavigationPolicyCommand(input);
+      const useV2 = input.draft.scopeKind === 'LEGAL_ENTITY';
       if (input.action === 'CREATE_DRAFT') {
+        if (useV2) {
+          return createV2Authority((authority) =>
+            createNavigationPolicyV2DraftRevision(
+              { ...sealed.envelope, body: navigationPolicyDraftBody(input.draft) },
+              authority
+            )
+          );
+        }
         return createAuthority((authority) =>
           createNavigationPolicyDraftRevision(
             { ...sealed.envelope, body: navigationPolicyDraftBody(input.draft) },
@@ -115,6 +172,15 @@ export function HrisNavigationPolicyCommandRuntime() {
         );
       }
       if (input.action === 'SAVE_DRAFT') {
+        if (useV2) {
+          return updateV2Authority((authority) =>
+            updateNavigationPolicyV2DraftRevision(
+              sealed.revisionId,
+              { ...sealed.envelope, body: navigationPolicyDraftBody(input.draft) },
+              authority
+            )
+          );
+        }
         return updateAuthority((authority) =>
           updateNavigationPolicyDraftRevision(
             sealed.revisionId,
@@ -124,6 +190,15 @@ export function HrisNavigationPolicyCommandRuntime() {
         );
       }
       if (input.action === 'VALIDATE') {
+        if (useV2) {
+          return validateV2Authority((authority) =>
+            validateNavigationPolicyV2DraftRevision(
+              sealed.revisionId,
+              { ...sealed.envelope, body: {} },
+              authority
+            )
+          );
+        }
         return validateAuthority((authority) =>
           validateNavigationPolicyDraftRevision(
             sealed.revisionId,
@@ -133,6 +208,15 @@ export function HrisNavigationPolicyCommandRuntime() {
         );
       }
       if (input.action === 'SUBMIT') {
+        if (useV2) {
+          return submitV2Authority((authority) =>
+            submitNavigationPolicyV2DraftRevision(
+              sealed.revisionId,
+              { ...sealed.envelope, body: {} },
+              authority
+            )
+          );
+        }
         return submitAuthority((authority) =>
           submitNavigationPolicyDraftRevision(
             sealed.revisionId,
@@ -143,10 +227,16 @@ export function HrisNavigationPolicyCommandRuntime() {
       }
       const executor =
         input.action === 'APPROVE'
-          ? approveAuthority
+          ? useV2
+            ? approveV2Authority
+            : approveAuthority
           : input.action === 'PUBLISH'
-            ? publishAuthority
-            : restoreAuthority;
+            ? useV2
+              ? publishV2Authority
+              : publishAuthority
+            : useV2
+              ? restoreV2Authority
+              : restoreAuthority;
       return executor.execute((authority, descriptor) => {
         const envelope = {
           ...sealed.envelope,
@@ -154,22 +244,38 @@ export function HrisNavigationPolicyCommandRuntime() {
           body: { reason: requireReason(input.reason) },
         };
         if (input.action === 'APPROVE') {
+          if (useV2) {
+            return approveNavigationPolicyV2Revision(sealed.revisionId, envelope, authority);
+          }
           return approveNavigationPolicyRevision(sealed.revisionId, envelope, authority);
         }
         if (input.action === 'PUBLISH') {
+          if (useV2) {
+            return publishNavigationPolicyV2Revision(sealed.revisionId, envelope, authority);
+          }
           return publishNavigationPolicyRevision(sealed.revisionId, envelope, authority);
+        }
+        if (useV2) {
+          return restoreNavigationPolicyV2Revision(sealed.revisionId, envelope, authority);
         }
         return restoreNavigationPolicyRevision(sealed.revisionId, envelope, authority);
       }, sealed);
     },
     [
       approveAuthority,
+      approveV2Authority,
       createAuthority,
+      createV2Authority,
       publishAuthority,
+      publishV2Authority,
       restoreAuthority,
+      restoreV2Authority,
       submitAuthority,
+      submitV2Authority,
       updateAuthority,
+      updateV2Authority,
       validateAuthority,
+      validateV2Authority,
     ]
   );
   const commandOwner = useMemo<NavigationPolicyCommandOwner>(() => ({ execute }), [execute]);
@@ -179,8 +285,11 @@ export function HrisNavigationPolicyCommandRuntime() {
       <Stack gap={2} minWidth={0}>
         <NavigationPolicyRequestedScopeSelector />
         {requestedScope.state === 'INVALID' ? (
-          <InlineFeedback severity="error" title="Invalid legal-entity selector">
-            The requested legal-entity public ID is not a single UUID. No policy data was requested.
+          <InlineFeedback
+            severity="error"
+            title={t('administration.navigation.runtime.invalidTitle')}
+          >
+            {t('administration.navigation.runtime.invalidDescription')}
           </InlineFeedback>
         ) : (
           <HrisNavigationPolicyWorkspace
@@ -193,11 +302,15 @@ export function HrisNavigationPolicyCommandRuntime() {
       <ProductSurfaceHighRiskCommandDialog controller={approveAuthority.controller} />
       <ProductSurfaceHighRiskCommandDialog controller={publishAuthority.controller} />
       <ProductSurfaceHighRiskCommandDialog controller={restoreAuthority.controller} />
+      <ProductSurfaceHighRiskCommandDialog controller={approveV2Authority.controller} />
+      <ProductSurfaceHighRiskCommandDialog controller={publishV2Authority.controller} />
+      <ProductSurfaceHighRiskCommandDialog controller={restoreV2Authority.controller} />
     </>
   );
 }
 
 function NavigationPolicyRequestedScopeSelector() {
+  const { t } = useTranslation('hcm');
   const [searchParams, setSearchParams] = useSearchParams();
   const requestedScope = selectHrisLegalEntitySelector(searchParams);
   const routedValue = searchParams.get(HRIS_LEGAL_ENTITY_SELECTOR_PARAM) ?? '';
@@ -227,12 +340,10 @@ function NavigationPolicyRequestedScopeSelector() {
       <Stack gap={1.5}>
         <Stack gap={0.25}>
           <Typography component="h2" variant="subtitle1" fontWeight="fontWeightBold">
-            Policy scope
+            {t('administration.navigation.runtime.scopeTitle')}
           </Typography>
           <Typography variant="body2" color="text.secondary">
-            Choose the tenant baseline or request a legal-entity restriction. The browser value is
-            only a selector; the People owner revalidates it against the authenticated scope before
-            returning or changing policy data.
+            {t('administration.navigation.runtime.scopeDescription')}
           </Typography>
         </Stack>
         <Stack direction={{ xs: 'column', md: 'row' }} gap={1.25} alignItems={{ md: 'flex-start' }}>
@@ -240,28 +351,32 @@ function NavigationPolicyRequestedScopeSelector() {
             fullWidth={false}
             select
             size="small"
-            label="Policy scope"
+            label={t('administration.navigation.runtime.scopeTitle')}
             value={scopeKind}
             onChange={(event) =>
               setScopeKind(event.target.value === 'LEGAL_ENTITY' ? 'LEGAL_ENTITY' : 'TENANT')
             }
             sx={{ minWidth: { xs: '100%', md: 220 } }}
           >
-            <MenuItem value="TENANT">Tenant baseline</MenuItem>
-            <MenuItem value="LEGAL_ENTITY">Legal-entity restriction</MenuItem>
+            <MenuItem value="TENANT">
+              {t('administration.navigation.runtime.tenantBaseline')}
+            </MenuItem>
+            <MenuItem value="LEGAL_ENTITY">
+              {t('administration.navigation.runtime.legalEntityRestriction')}
+            </MenuItem>
           </FormField>
           {scopeKind === 'LEGAL_ENTITY' ? (
             <FormField
               fullWidth={false}
               size="small"
-              label="Legal-entity public ID"
+              label={t('administration.navigation.runtime.legalEntityPublicId')}
               value={legalEntityPublicId}
               errorMessage={
                 Boolean(legalEntityPublicId) && !validLegalEntity
-                  ? 'UUID requested for server-side People ownership verification'
+                  ? t('administration.navigation.runtime.uuidHelp')
                   : undefined
               }
-              supportingText="UUID requested for server-side People ownership verification"
+              supportingText={t('administration.navigation.runtime.uuidHelp')}
               inputProps={{ inputMode: 'text', autoComplete: 'off', spellCheck: false }}
               onChange={(event) => setLegalEntityPublicId(event.target.value)}
               sx={{ flex: 1, minWidth: { xs: '100%', md: 360 } }}
@@ -273,7 +388,7 @@ function NavigationPolicyRequestedScopeSelector() {
             onClick={applyScope}
             sx={{ minHeight: 40, alignSelf: { xs: 'stretch', md: 'flex-start' } }}
           >
-            Apply scope
+            {t('administration.navigation.runtime.applyScope')}
           </ActionButton>
         </Stack>
       </Stack>

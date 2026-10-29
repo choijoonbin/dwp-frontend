@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { ActionButton, InlineFeedback } from '@dwp-frontend/design-system';
 import { HttpError } from '@dwp-frontend/shared-utils';
 import Stack from '@mui/material/Stack';
+import { useTranslation } from 'react-i18next';
 
 import { createTimeCloseDataSource } from '../api/time-close-api';
 import { TimeCloseCommandCenter } from '../components/time-close-command-center';
@@ -60,6 +61,7 @@ function TimeCloseWorkspace({
   onFocusResourceChange,
   idFactory,
 }: Omit<TimeCloseWorkspaceRuntimeProps, 'enabled' | 'tenantEnrolled'>) {
+  const { t } = useTranslation('hcm');
   const controlledFocus = focusResourceId !== undefined;
   const pageBound = ownerBinding?.page?.routeContractKey === pageRoute[entryMode];
   const reader = pageBound ? dataSource.readProjection : undefined;
@@ -278,36 +280,43 @@ function TimeCloseWorkspace({
   const commandNotice = useMemo(() => {
     if (commands.feedback?.kind === 'CONFLICT') {
       return (
-        <InlineFeedback severity="warning" title="The aggregate changed">
-          Refresh the owner snapshot before any new command. Your entered values remain in this
-          dialog.
+        <InlineFeedback
+          severity="warning"
+          title={t('hrisTime.i18nClosure.close.notice.conflictTitle')}
+        >
+          {t('hrisTime.i18nClosure.close.notice.conflictDescription')}
         </InlineFeedback>
       );
     }
     if (commands.feedback?.kind === 'DENIED') {
       return (
-        <InlineFeedback severity="error" title="Authority is no longer available">
-          The owner denied this exact period action without disclosing adjacent scope facts.
+        <InlineFeedback severity="error" title={t('hrisTime.i18nClosure.close.notice.deniedTitle')}>
+          {t('hrisTime.i18nClosure.close.notice.deniedDescription')}
         </InlineFeedback>
       );
     }
     if (commands.feedback?.kind === 'REJECTED') {
       return (
-        <InlineFeedback severity="error" title="The command was rejected">
-          Review the immutable approval, reason, and result identifiers before trying again.
+        <InlineFeedback
+          severity="error"
+          title={t('hrisTime.i18nClosure.close.notice.rejectedTitle')}
+        >
+          {t('hrisTime.i18nClosure.close.notice.rejectedDescription')}
         </InlineFeedback>
       );
     }
     if (commands.feedback?.kind === 'RESULT_UNKNOWN') {
       return (
-        <InlineFeedback severity="warning" title="Command result is unknown">
-          Preserve this draft and command identity while replay or receipt reconciliation confirms
-          the durable outcome.
+        <InlineFeedback
+          severity="warning"
+          title={t('hrisTime.i18nClosure.close.notice.unknownTitle')}
+        >
+          {t('hrisTime.i18nClosure.close.notice.unknownDescription')}
         </InlineFeedback>
       );
     }
     return null;
-  }, [commands.feedback]);
+  }, [commands.feedback, t]);
 
   return (
     <Stack gap={2}>
@@ -321,13 +330,17 @@ function TimeCloseWorkspace({
                 ? 'error'
                 : 'info'
           }
-          title={`Owner receipt: ${commands.feedback.receipt.status}`}
+          title={t('hrisTime.i18nClosure.close.notice.ownerReceipt', {
+            status: commands.feedback.receipt.status,
+          })}
         >
           <Stack direction={{ xs: 'column', sm: 'row' }} gap={1} alignItems={{ sm: 'center' }}>
             <span>
               {commands.feedback.receipt.receiptId}
               {commands.feedback.receipt.resultRef
-                ? ` · immutable result ${commands.feedback.receipt.resultRef}`
+                ? t('hrisTime.i18nClosure.close.notice.immutableResultSuffix', {
+                    value: commands.feedback.receipt.resultRef,
+                  })
                 : ''}
             </span>
             {['ACCEPTED', 'RUNNING'].includes(commands.feedback.receipt.status) && (
@@ -336,23 +349,26 @@ function TimeCloseWorkspace({
                 size="small"
                 onClick={() => void commands.reconcile()}
               >
-                Check receipt
+                {t('hrisTime.i18nClosure.close.notice.checkReceipt')}
               </ActionButton>
             )}
           </Stack>
         </InlineFeedback>
       )}
       {commands.feedback?.kind === 'RESULT_UNKNOWN' && (
-        <InlineFeedback severity="warning" title="Owner outcome is not yet proven">
+        <InlineFeedback
+          severity="warning"
+          title={t('hrisTime.i18nClosure.close.notice.outcomeUnprovenTitle')}
+        >
           <Stack direction={{ xs: 'column', sm: 'row' }} gap={1} alignItems={{ sm: 'center' }}>
-            <span>Reuse the same idempotency key or reconcile the known receipt.</span>
+            <span>{t('hrisTime.i18nClosure.close.notice.outcomeUnprovenDescription')}</span>
             <ActionButton
               intent="secondary"
               size="small"
               disabled={commands.commandDisabled}
               onClick={() => void commands.retryExact()}
             >
-              Replay exact command
+              {t('hrisTime.i18nClosure.close.notice.replayExact')}
             </ActionButton>
             {commands.feedback.canReconcile && (
               <ActionButton
@@ -361,21 +377,26 @@ function TimeCloseWorkspace({
                 disabled={commands.busy}
                 onClick={() => void commands.reconcile()}
               >
-                Reconcile receipt
+                {t('hrisTime.i18nClosure.close.notice.reconcileReceipt')}
               </ActionButton>
             )}
           </Stack>
         </InlineFeedback>
       )}
       {commands.feedback?.kind === 'CONFLICT' && (
-        <InlineFeedback severity="warning" title="Refresh required before another command">
-          The stale CAS value is frozen. Refresh successfully to bind a new command identity to the
-          current aggregate version.
+        <InlineFeedback
+          severity="warning"
+          title={t('hrisTime.i18nClosure.close.notice.refreshRequiredTitle')}
+        >
+          {t('hrisTime.i18nClosure.close.notice.refreshRequiredDescription')}
         </InlineFeedback>
       )}
       {handoffError && (
-        <InlineFeedback severity="error" title="Handoff status could not be verified">
-          No prior or adjacent handoff status was substituted.
+        <InlineFeedback
+          severity="error"
+          title={t('hrisTime.i18nClosure.close.notice.handoffErrorTitle')}
+        >
+          {t('hrisTime.i18nClosure.close.notice.handoffErrorDescription')}
         </InlineFeedback>
       )}
       <TimeCloseCommandCenter

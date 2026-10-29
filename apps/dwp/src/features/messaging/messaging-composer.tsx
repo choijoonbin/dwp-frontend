@@ -1,7 +1,12 @@
 import { useId, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { AtSign, Clock3, Paperclip, RotateCcw, Send, SmilePlus, Video } from 'lucide-react';
-import { ActionButton, ActionIconButton, FormField } from '@dwp-frontend/design-system';
+import {
+  ActionButton,
+  ActionIconButton,
+  FormField,
+  InlineFeedback,
+} from '@dwp-frontend/design-system';
 
 import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
@@ -263,7 +268,7 @@ export function MessagingComposer({
         </Alert>
       )}
       {draftPersistenceState === 'CONFLICT' && onResolveDraftConflict && (
-        <Alert
+        <InlineFeedback
           severity="warning"
           action={
             <Stack direction="row" spacing={0.5}>
@@ -285,7 +290,7 @@ export function MessagingComposer({
           }
         >
           {t('draft.conflictDescription')}
-        </Alert>
+        </InlineFeedback>
       )}
       <MessagingFormattingToolbar disabled={isSending} onFormat={format} />
       <Box ref={composerRef} sx={{ minWidth: 0 }}>

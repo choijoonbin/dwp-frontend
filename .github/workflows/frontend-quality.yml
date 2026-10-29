@@ -125,6 +125,8 @@ jobs:
         run: corepack yarn playwright test e2e/responsive-accessibility.spec.ts --project=chromium --workers=1
 
       - name: Run design-system Storybook interaction and accessibility gates
+        env:
+          NODE_OPTIONS: --max-old-space-size=6144
         run: corepack yarn test:storybook --project=chromium --ignore-snapshots
 
       - name: Run Provider control-plane and tenant-boundary gates
@@ -213,8 +215,8 @@ jobs:
       - name: Install dependencies
         run: corepack yarn install --immutable
 
-      - name: Install Playwright Chromium
-        run: corepack yarn playwright install --with-deps chromium
+      - name: Install Calendar Playwright browsers
+        run: corepack yarn playwright install --with-deps chromium webkit
 
       - name: Run Calendar behavior, resilience, responsive, and accessibility gates
         env:
@@ -327,8 +329,8 @@ jobs:
       - name: Install dependencies
         run: corepack yarn install --immutable
 
-      - name: Install Playwright Chromium
-        run: corepack yarn playwright install --with-deps chromium
+      - name: Install Playwright Chromium and WebKit
+        run: corepack yarn playwright install --with-deps chromium webkit
 
       - name: Run all Mail desktop and mobile behavior gates
         env:
@@ -476,6 +478,7 @@ jobs:
 
       - name: Run approved design-system Storybook pixel baselines
         env:
+          NODE_OPTIONS: --max-old-space-size=6144
           PLAYWRIGHT_HTML_OUTPUT_DIR: playwright-report/storybook
           PLAYWRIGHT_OUTPUT_DIR: test-results/storybook
         run: corepack yarn test:storybook --project=chromium --project=mobile
@@ -583,8 +586,8 @@ jobs:
       - name: Install dependencies
         run: corepack yarn install --immutable
 
-      - name: Install Playwright Chromium
-        run: corepack yarn playwright install chromium
+      - name: Install Calendar Playwright browsers
+        run: corepack yarn playwright install chromium webkit
 
       - name: Run approved Darwin Calendar visual baselines
         env:

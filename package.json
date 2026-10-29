@@ -50,7 +50,7 @@
     "source-size:baseline": "node scripts/check-source-size.mjs --write",
     "maintenance-source-size:check": "node scripts/check-maintenance-source-size.mjs",
     "maintenance-source-size:baseline": "node scripts/check-maintenance-source-size.mjs --write",
-    "quality-ratchets:test": "node --test scripts/check-quality-ratchets.test.mjs scripts/check-production-reachability.test.mjs scripts/check-maintenance-source-size.test.mjs scripts/check-unused-internal-exports.test.mjs scripts/check-calendar-quality-workflow.test.mjs scripts/check-mail-quality-workflow.test.mjs scripts/check-workplace-quality-workflow.test.mjs",
+    "quality-ratchets:test": "node --test scripts/check-quality-ratchets.test.mjs scripts/check-production-reachability.test.mjs scripts/check-maintenance-source-size.test.mjs scripts/check-unused-internal-exports.test.mjs scripts/check-calendar-quality-workflow.test.mjs scripts/check-frontend-visual-quality-workflow.test.mjs scripts/check-mail-quality-workflow.test.mjs scripts/check-workplace-quality-workflow.test.mjs",
     "dependency-cycles:check": "node scripts/check-relative-import-cycles.mjs",
     "production-reachability:check": "node scripts/check-production-reachability.mjs",
     "production-reachability:test": "node --test scripts/check-production-reachability.test.mjs",

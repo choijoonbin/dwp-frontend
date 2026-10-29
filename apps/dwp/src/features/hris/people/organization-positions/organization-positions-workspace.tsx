@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import { GuidedEmptyState, LocalErrorState } from '@dwp-frontend/design-system';
 
 import { HrisOrganizationPositionsBranch } from './organization-positions-explorer';
@@ -26,6 +27,7 @@ export function HrisOrganizationPositionsWorkspace({
   adapter?: HrisOrganizationPositionsQueryAdapter;
   now?: string;
 }) {
+  const { t } = useTranslation('workforce');
   const trustedAdmission = Boolean(
     admission?.kind === 'TRUSTED_PRODUCT_SURFACE_PAGE' &&
     admission.feature === HRIS_ORGANIZATION_POSITIONS_FEATURE &&
@@ -42,8 +44,8 @@ export function HrisOrganizationPositionsWorkspace({
       <div data-slice="BASE-TFR-HRM-005" data-runtime-state="unavailable">
         <GuidedEmptyState
           kind="permission"
-          title="Organization and positions are unavailable"
-          description="This governed view is not available in the current context."
+          title={t('governedPeople.organizationPositions.workspace.unavailableTitle')}
+          description={t('governedPeople.organizationPositions.workspace.unavailableDescription')}
           size="page"
         />
       </div>
@@ -53,8 +55,10 @@ export function HrisOrganizationPositionsWorkspace({
     return (
       <div data-slice="BASE-TFR-HRM-005" data-runtime-state="unavailable">
         <LocalErrorState
-          title="Organization graph is unavailable"
-          description="The canonical read adapter is not available. No organization request was sent."
+          title={t('governedPeople.organizationPositions.workspace.adapterUnavailableTitle')}
+          description={t(
+            'governedPeople.organizationPositions.workspace.adapterUnavailableDescription'
+          )}
           size="page"
         />
       </div>

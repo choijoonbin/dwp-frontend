@@ -33,6 +33,12 @@ export const APPROVAL_GOVERNED_MUTATION_API_CONTRACTS = [
     path: `${base}/tasks/{taskId}/decisions`,
   },
   {
+    apiFunction: 'approveApprovalHrisSeparationWaiverTask',
+    routeContractKey: 'route.approvals.work.hris-separation-waiver-task-approve.action',
+    method: 'POST',
+    path: `${base}/hris/separation-waiver-tasks/{taskId}/approve`,
+  },
+  {
     apiFunction: 'createApprovalRequest',
     routeContractKey: 'route.approvals.work.request-create.action',
     method: 'POST',

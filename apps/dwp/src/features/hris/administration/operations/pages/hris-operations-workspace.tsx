@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import { InlineFeedback } from '@dwp-frontend/design-system';
+import { useTranslation } from 'react-i18next';
 
 import Chip from '@mui/material/Chip';
 import Paper from '@mui/material/Paper';
@@ -99,6 +100,7 @@ function DisabledHrisOperationsWorkspace({
   copy: HrisOperationsWorkspaceCopy;
   tenantEnrolled: boolean;
 }>) {
+  const { t } = useTranslation('hcm');
   return (
     <Stack
       gap={2}
@@ -107,13 +109,16 @@ function DisabledHrisOperationsWorkspace({
       data-tenant-enrolled={String(tenantEnrolled)}
       sx={{ minWidth: 0, maxWidth: '100%' }}
     >
-      <InlineFeedback severity="info" title="HRIS operations exception center is unavailable">
-        The module is installed but remains default-off for this tenant. No entry, exception,
-        projection or receipt request has been started.
+      <InlineFeedback severity="info" title={t('administration.operations.disabled.title')}>
+        {t('administration.operations.disabled.description')}
       </InlineFeedback>
       <Paper component="section" variant="outlined" sx={{ p: { xs: 1.5, sm: 2 }, minWidth: 0 }}>
         <Stack gap={1.25} alignItems="flex-start" minWidth={0}>
-          <Chip size="small" variant="outlined" label="Feature state: OFF" />
+          <Chip
+            size="small"
+            variant="outlined"
+            label={t('administration.operations.disabled.featureOff')}
+          />
           <Typography component="h1" variant="h5" sx={{ overflowWrap: 'anywhere' }}>
             {copy.title}
           </Typography>
@@ -121,8 +126,7 @@ function DisabledHrisOperationsWorkspace({
             {copy.description}
           </Typography>
           <Typography variant="caption" color="text.secondary" sx={{ overflowWrap: 'anywhere' }}>
-            Recovery commands and owner automation remain in their owning domains and are never
-            mounted here.
+            {t('administration.operations.disabled.boundary')}
           </Typography>
         </Stack>
       </Paper>

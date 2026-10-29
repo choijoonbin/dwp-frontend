@@ -23,6 +23,13 @@ import type {
 const CERTIFICATE_PATH = '/api/people/v1/hris/certificates';
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/iu;
 
+export const HCM_CERTIFICATE_ISSUE_MUTATION_API_CONTRACT = Object.freeze({
+  apiFunction: 'requestCertificate',
+  routeContractKey: HRM009_REQUEST_CERTIFICATE_ROUTE_CONTRACT,
+  method: 'POST',
+  path: CERTIFICATE_PATH,
+});
+
 export const HRM009_API_CONTRACTS = Object.freeze([
   Object.freeze({
     bindingId: 'IAQ-003',

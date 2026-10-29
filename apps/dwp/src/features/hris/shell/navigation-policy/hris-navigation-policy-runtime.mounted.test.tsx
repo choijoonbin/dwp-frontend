@@ -12,7 +12,7 @@ const state = vi.hoisted(() => ({
   v3Enabled: false,
 }));
 
-vi.mock('@dwp-frontend/shared-utils', async (importOriginal) => ({
+vi.mock('@dwp-frontend/shared-utils/axios-instance', async (importOriginal) => ({
   ...(await importOriginal<object>()),
   axiosInstance: state.transport,
 }));

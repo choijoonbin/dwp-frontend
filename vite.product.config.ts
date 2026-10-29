@@ -38,6 +38,13 @@ const DWAION_GLOBAL_RUNTIME_ROUTE_CONTRACT_KEYS = [
   'route.dwaion.work.voice-synthesize.action',
   'route.dwaion.work.voice-transcribe.action',
 ] as const;
+const HCM_APPROVAL_ADAPTER_ROUTE_CONTRACT_KEYS = [
+  'route.approvals.admin.policies.page',
+  'route.approvals.admin.policy-publish.action',
+  'route.approvals.work.delegation-create.action',
+  'route.approvals.work.delegation-revoke.action',
+  'route.approvals.work.delegations.page',
+] as const;
 const productId = process.env.DWP_PRODUCT_ID;
 if (!productId || !/^[a-z][a-z0-9-]*$/.test(productId)) {
   throw new Error('DWP_PRODUCT_ID must identify the product application being built.');
@@ -46,7 +53,7 @@ if (!productId || !/^[a-z][a-z0-9-]*$/.test(productId)) {
 const routeExports: Record<string, [string, string]> = {
   workspace: ['workspace-application-routes.tsx', 'workspaceApplicationRoutes'],
   dwaion: ['dwaion-routes.tsx', 'dwaionRoutes'],
-  hcm: ['hcm-routes.tsx', 'hcmRoutes'],
+  hcm: ['hcm-route-entry.tsx', 'hcmRouteEntries'],
   approvals: ['approvals-routes.tsx', 'approvalsRoutes'],
   spaces: ['spaces-routes.tsx', 'spacesRoutes'],
   calendar: ['calendar-routes.tsx', 'calendarRoutes'],
@@ -359,7 +366,6 @@ const productRoutePlugin = {
     }
     if (id === resolvedScopedRouterSourceId) {
       return `export default ${JSON.stringify({
-        ...routerSource,
         pageRoutes: productApplicationDescriptor.pageRoutes,
         legacyRedirects: productApplicationDescriptor.legacyRoutes,
       })};`;
@@ -434,6 +440,7 @@ const productIsolationPlugin = {
           ...(globalRuntimeHosts.includes('dwaion')
             ? DWAION_GLOBAL_RUNTIME_ROUTE_CONTRACT_KEYS
             : []),
+          ...(productId === 'hcm' ? HCM_APPROVAL_ADAPTER_ROUTE_CONTRACT_KEYS : []),
         ],
       })) {
         violations.add(`foreign route contract ${routeContractKey}`);

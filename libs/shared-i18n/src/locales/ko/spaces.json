@@ -141,7 +141,8 @@
       "emptyDescription": "관리자가 공개 범위를 게시하면 이곳에서 확인할 수 있습니다."
     },
     "results": "Space 디렉터리",
-    "resultCount": "검색 결과 {{count}}개",
+    "resultCount_one": "검색 결과 {{count}}개",
+    "resultCount_other": "검색 결과 {{count}}개",
     "searching": "검색 중…",
     "search": "Space 이름 또는 설명 검색",
     "loadError": "Space 목록을 불러오지 못했습니다.",

@@ -114,8 +114,10 @@ describe('navigation-policy API', () => {
     expect(transport.post.mock.calls[0][2].headers).toMatchObject({
       'Idempotency-Key': IDEMPOTENCY_KEY,
       'X-DWP-Step-Up-Challenge': 'signed-step-up',
-      'X-DWP-Expected-Object-Version': '7',
     });
+    expect(transport.post.mock.calls[0][2].headers).not.toHaveProperty(
+      'X-DWP-Expected-Object-Version'
+    );
     expect(transport.post.mock.calls[1][0]).toContain(`/revisions/${RESTORE_TARGET_ID}/restore`);
     expect(transport.post.mock.calls[1][1]).toMatchObject({
       expectedVersion: 7,

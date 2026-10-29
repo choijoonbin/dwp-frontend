@@ -3,6 +3,7 @@ import Chip from '@mui/material/Chip';
 import Paper from '@mui/material/Paper';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
+import { useTranslation } from 'react-i18next';
 
 import type { PayrollCalculationReceipt } from '../model/payroll-calculation-contract';
 import type { PayrollCalculationCopy } from '../model/payroll-calculation-copy';
@@ -14,6 +15,7 @@ export function PayrollCalculationReceiptEvidence({
   receipts: readonly PayrollCalculationReceipt[];
   copy: PayrollCalculationCopy;
 }>) {
+  const { t } = useTranslation('hcm');
   return (
     <Paper component="section" variant="outlined" sx={{ p: 2, minWidth: 0 }}>
       <Typography component="h2" variant="h6">
@@ -57,7 +59,11 @@ export function PayrollCalculationReceiptEvidence({
                   color="text.secondary"
                   sx={{ overflowWrap: 'anywhere' }}
                 >
-                  Request {receipt.requestDigest} · Population {receipt.populationScopeDigest}
+                  {t('hrisPayroll.calculationReceipt.requestPopulation', {
+                    requestDigest: receipt.requestDigest,
+                    populationDigest: receipt.populationScopeDigest,
+                    defaultValue: 'Request {{requestDigest}} · Population {{populationDigest}}',
+                  })}
                 </Typography>
               </Stack>
             </Paper>

@@ -129,10 +129,7 @@ describe('SYS-002 HRIS operations GET adapters', () => {
       readHrisOperationalExceptionDetail('../recover', { contextScopeKey: PACKAGE_SCOPE })
     ).rejects.toThrow('identity is invalid');
     await expect(
-      readHrisOperationalExceptions(
-        { cursor: 'short' },
-        { contextScopeKey: PACKAGE_SCOPE }
-      )
+      readHrisOperationalExceptions({ cursor: 'short' }, { contextScopeKey: PACKAGE_SCOPE })
     ).rejects.toThrow('cursor is invalid');
     expect(transport.get).not.toHaveBeenCalled();
   });

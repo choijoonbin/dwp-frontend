@@ -37,9 +37,16 @@ export function approvalInformationReceiptFixture(state: '110' | '111' = '110') 
     ],
   };
   const snapshot = parseProductSurfaceAuthoritySnapshot({
-    contractVersion: 'product-surfaces.v1',
+    contractVersion: '2',
     decisionRevision: `psr-${'a'.repeat(64)}`,
-    sourceRevisions: {},
+    sourceRevisions: {
+      auth: 'unit-auth-1',
+      policy: 'unit-policy-1',
+      productRelationship: 'unit-product-relationship-1',
+      targetPopulation: 'unit-target-population-1',
+      support: null,
+      tenantControl: 'unit-tenant-control-1',
+    },
     activeAccessMode: 'NORMAL',
     generatedAt: new Date().toISOString(),
     contexts: [context],

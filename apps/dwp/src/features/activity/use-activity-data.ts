@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, type QueryObserverOptions } from '@tanstack/react-query';
 import {
   getActivityPage,
   getActivityEvent,
@@ -14,13 +14,19 @@ import {
 } from '@dwp-frontend/shared-utils';
 import type {
   DwaionUserRun,
-  WorkspaceActivityEvent,
   WorkspaceActivityEvidence,
   WorkspaceActivityFilters,
 } from '@dwp-frontend/shared-utils';
 
+import {
+  ACTIVITY_RUNNING_REFRESH_INTERVAL_MS,
+  activityDetailRefetchOnWindowFocus,
+  activityDetailRefreshInterval,
+  activityDetailStaleTime,
+  isAuthoritativeActivityRootDenial,
+  usableActivityQueryData,
+} from '../../components/activity/activity-query-contract';
 import { activityQueryKeys, validActivityTimeRange } from './activity-model';
-import { isAuthoritativeActivityRootDenial, usableActivityQueryData } from './activity-query-state';
 
 function retryActivity(failureCount: number, error: Error) {
   return (
@@ -30,13 +36,18 @@ function retryActivity(failureCount: number, error: Error) {
 
 export const ACTIVITY_FEED_REFRESH_INTERVAL_MS = 60_000;
 export const ACTIVITY_SOURCE_REFRESH_INTERVAL_MS = 5 * 60_000;
-export const ACTIVITY_RUNNING_REFRESH_INTERVAL_MS = 15_000;
 
-export function activityDetailRefreshInterval(
-  event: Pick<WorkspaceActivityEvent, 'state'> | undefined
-): number | false {
-  return event?.state === 'running' ? ACTIVITY_RUNNING_REFRESH_INTERVAL_MS : false;
-}
+type ActivityEvidenceObserverPolicy = Pick<
+  QueryObserverOptions<WorkspaceActivityEvidence>,
+  'staleTime' | 'retry' | 'refetchInterval' | 'refetchOnWindowFocus'
+>;
+
+export const activityEvidenceObserverPolicy = {
+  staleTime: Infinity,
+  retry: false,
+  refetchInterval: false,
+  refetchOnWindowFocus: false,
+} as const satisfies ActivityEvidenceObserverPolicy;
 
 export function activityRunRefreshInterval(
   run: Pick<DwaionUserRun, 'runState'> | undefined
@@ -48,18 +59,6 @@ export function activityEvidenceRefreshInterval(
   _evidence: Pick<WorkspaceActivityEvidence, 'integrityStatus'> | undefined
 ): number | false {
   return false;
-}
-
-export function activityDetailStaleTime(
-  event: Pick<WorkspaceActivityEvent, 'state'> | undefined
-): number {
-  return event && activityDetailRefreshInterval(event) === false ? Infinity : 15_000;
-}
-
-export function activityDetailRefetchOnWindowFocus(
-  event: Pick<WorkspaceActivityEvent, 'state'> | undefined
-): boolean {
-  return activityDetailRefreshInterval(event) !== false;
 }
 
 export function activityRunStaleTime(run: Pick<DwaionUserRun, 'runState'> | undefined): number {
@@ -176,10 +175,7 @@ export function useActivityData(filters: WorkspaceActivityFilters, eventId = '')
         ? getWorkspaceActivityAuditEvidence(evidenceTarget, agentExecutionId, signal)
         : getWorkspaceActivityEventEvidence(evidenceTarget, signal);
     },
-    staleTime: Infinity,
-    retry: false,
-    refetchInterval: false,
-    refetchOnWindowFocus: false,
+    ...activityEvidenceObserverPolicy,
   });
   const sources = useQuery({
     ...options,

@@ -472,7 +472,8 @@
           "QUEUE_CHANGED": "목록과 상세의 버전이 달라 다시 확인해야 합니다.",
           "CONTENT_ACCESS_DENIED": "현재 권한으로 본문과 결정 근거를 확인할 수 없습니다.",
           "SELF_APPROVAL_BLOCKED": "자기 결재 방지 정책으로 처리할 수 없습니다.",
-          "DECISION_AUTHORITY_UNAVAILABLE": "현재 사용자에게 이 결재의 결정 권한이 없습니다."
+          "DECISION_AUTHORITY_UNAVAILABLE": "현재 사용자에게 이 결재의 결정 권한이 없습니다.",
+          "HIGH_RISK_CONFIRMATION_REQUIRED": "이 결재는 개별 고위험 확인을 거쳐야 합니다."
         }
       },
       "batchCompleted": "배치 승인을 완료했습니다.",

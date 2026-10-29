@@ -63,6 +63,7 @@ import {
   readMailSendAttempt,
   rememberMailSendAttempt,
 } from './mail-send-attempt';
+import { mailReadinessInvalidationAt, useMailReadinessNow } from './use-mail-readiness-clock';
 import { useMailUserPermissions } from './use-mail-user-permissions';
 
 import type { MailGroupMessageAttempt } from './mail-address-book-dialogs';
@@ -247,6 +248,14 @@ export function MailAddressBook() {
     staleTime: 30_000,
     retry: 1,
   });
+  const readinessNow = useMailReadinessNow(
+    mailReadinessInvalidationAt(
+      composeContextQuery.data?.accounts.map(
+        (account) =>
+          composeContextQuery.data?.accountReadiness?.[account.accountId] ?? account.readiness
+      ) ?? []
+    )
+  );
 
   const refresh = async () => {
     await queryClient.invalidateQueries({ queryKey: ['mail', 'address-book'] });
@@ -438,8 +447,8 @@ export function MailAddressBook() {
       return {
         ...account,
         ready:
-          mailAccountReadinessIsReady(readiness) &&
-          mailAccountFeatureIsReady(readiness, 'SEND') &&
+          mailAccountReadinessIsReady(readiness, readinessNow) &&
+          mailAccountFeatureIsReady(readiness, 'SEND', readinessNow) &&
           Boolean(capabilities),
         supportsBcc: capabilities?.bcc === true,
       };

@@ -167,7 +167,7 @@ export function MailInboxBulkToolbar({
       sx={{ mt: 1, pt: 1, borderTop: 1, borderColor: 'divider' }}
       aria-live="polite"
     >
-      <Typography variant="caption" fontWeight={700}>
+      <Typography variant="caption" fontWeight="fontWeightBold">
         {t('mailbox.bulk.selected', { count: selectedCount })}
       </Typography>
       <Stack direction="row" spacing={0.5} useFlexGap flexWrap="wrap">

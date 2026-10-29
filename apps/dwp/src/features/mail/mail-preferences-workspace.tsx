@@ -1,17 +1,6 @@
 import { useEffect, useId, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import {
-  AlertTriangle,
-  CheckCircle2,
-  CirclePause,
-  FileSignature,
-  Keyboard,
-  LoaderCircle,
-  MailCheck,
-  RefreshCw,
-  RotateCcw,
-  Save,
-} from 'lucide-react';
+import { FileSignature, Keyboard, MailCheck, RefreshCw, RotateCcw, Save } from 'lucide-react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Link as RouterLink, useSearchParams } from 'react-router-dom';
 import {
@@ -27,6 +16,7 @@ import {
   ActionIconButton,
   ConfirmDialog,
   GuidedEmptyState,
+  InlineFeedback,
   PageCanvas,
   SelectField,
 } from '@dwp-frontend/design-system';
@@ -48,6 +38,7 @@ import {
   mailAccountFeatureReadinessPresentation,
   mailAccountReadinessIsReady,
 } from './mail-account-capability-presentation';
+import { accountStatusPresentation } from './mail-account-status-presentation';
 import { MAIL_PREFERENCES_QUERY_KEY } from './mail-runtime-preferences';
 import {
   mailPreferencesEqual,
@@ -56,13 +47,12 @@ import {
   resolveReadinessAction,
   type PreferenceTab,
 } from './mail-preferences-model';
+import { mailReadinessInvalidationAt, useMailReadinessNow } from './use-mail-readiness-clock';
 import { useMailUserPermissions } from './use-mail-user-permissions';
 
 import type {
   MailAccount,
-  MailAccountConnectionState,
   MailAccountReadinessEvidence,
-  MailAccountSynchronizationState,
   MailComposeCapabilities,
   MailPreferences,
   MailPreferenceKey,
@@ -291,6 +281,13 @@ function AccountSettings({
   onChange: (next: MailPreferences) => void;
 }) {
   const { t } = useTranslation('mail');
+  const readinessNow = useMailReadinessNow(
+    mailReadinessInvalidationAt(
+      accounts.map(
+        (account) => accountReadiness[account.accountId] ?? account.readiness ?? undefined
+      )
+    )
+  );
   if (!accounts.length) {
     return (
       <Stack spacing={1.5}>
@@ -316,7 +313,9 @@ function AccountSettings({
         {t('secondary.accounts.capabilityBoundary')}
       </Typography>
       {capabilityError && (
-        <Alert severity="warning">{t('secondary.accounts.capabilityLoadError')}</Alert>
+        <InlineFeedback severity="warning">
+          {t('secondary.accounts.capabilityLoadError')}
+        </InlineFeedback>
       )}
       <SelectField
         label={t('secondary.accounts.defaultSender')}
@@ -327,7 +326,8 @@ function AccountSettings({
           disabled:
             account.connectionState !== 'ACTIVE' ||
             !mailAccountReadinessIsReady(
-              accountReadiness[account.accountId] ?? account.readiness ?? undefined
+              accountReadiness[account.accountId] ?? account.readiness ?? undefined,
+              readinessNow
             ),
         }))}
         disabled={isLocked(draft, 'defaultAccountId')}
@@ -346,12 +346,14 @@ function AccountSettings({
               account={account}
               capabilities={
                 mailAccountReadinessIsReady(
-                  accountReadiness[account.accountId] ?? account.readiness ?? undefined
+                  accountReadiness[account.accountId] ?? account.readiness ?? undefined,
+                  readinessNow
                 )
                   ? accountCapabilities[account.accountId]
                   : undefined
               }
               readiness={accountReadiness[account.accountId] ?? account.readiness ?? undefined}
+              readinessNow={readinessNow}
               capabilityLoading={capabilityLoading}
               onRetry={onRefreshReadiness}
             />
@@ -374,22 +376,28 @@ function AccountRow({
   account,
   capabilities,
   readiness,
+  readinessNow,
   capabilityLoading,
   onRetry,
 }: {
   account: MailAccount;
   capabilities?: MailComposeCapabilities;
   readiness?: MailAccountReadinessEvidence;
+  readinessNow: number;
   capabilityLoading: boolean;
   onRetry: () => void;
 }) {
   const { t } = useTranslation('mail');
   const status = accountStatusPresentation(account);
   const StatusIcon = status.icon;
-  const readinessReady = mailAccountReadinessIsReady(readiness);
-  const readinessState = readinessReady ? 'READY' : (readiness?.state ?? 'UNAVAILABLE');
-  const featureReadiness = mailAccountFeatureReadinessPresentation(readiness);
-  const readinessAction = resolveReadinessAction(account, readiness);
+  const readinessReady = mailAccountReadinessIsReady(readiness, readinessNow);
+  const readinessState = readinessReady
+    ? 'READY'
+    : readiness?.state === 'DEGRADED'
+      ? 'DEGRADED'
+      : 'UNAVAILABLE';
+  const featureReadiness = mailAccountFeatureReadinessPresentation(readiness, readinessNow);
+  const readinessAction = resolveReadinessAction(account, readiness, readinessNow);
   const readinessSourceLabel = (source: string) => {
     const knownSources = new Set([
       'CONNECTOR_RUNTIME',
@@ -953,31 +961,4 @@ function isLocked(preferences: MailPreferences, key: LockedPreference) {
 
 function lockReason(preferences: MailPreferences, key: LockedPreference) {
   return preferences.orgLocks?.[key];
-}
-
-type AccountStatusPresentation = {
-  color: 'success' | 'info' | 'warning' | 'error';
-  icon: typeof CheckCircle2;
-  labelKey: string;
-};
-
-function accountStatusPresentation(account: MailAccount): AccountStatusPresentation {
-  const connection: Record<MailAccountConnectionState, AccountStatusPresentation> = {
-    ACTIVE: { color: 'success', icon: CheckCircle2, labelKey: 'accounts.status.ready' },
-    REAUTHENTICATION_REQUIRED: {
-      color: 'warning',
-      icon: AlertTriangle,
-      labelKey: 'accounts.status.reauthenticationRequired',
-    },
-    SUSPENDED: { color: 'error', icon: CirclePause, labelKey: 'accounts.status.suspended' },
-    DISCONNECTED: { color: 'error', icon: AlertTriangle, labelKey: 'accounts.status.disconnected' },
-  };
-  if (account.connectionState !== 'ACTIVE') return connection[account.connectionState];
-  const synchronization: Record<MailAccountSynchronizationState, AccountStatusPresentation> = {
-    READY: connection.ACTIVE,
-    SYNCING: { color: 'info', icon: LoaderCircle, labelKey: 'accounts.status.syncing' },
-    DEGRADED: { color: 'warning', icon: AlertTriangle, labelKey: 'accounts.status.degraded' },
-    PAUSED: { color: 'warning', icon: CirclePause, labelKey: 'accounts.status.paused' },
-  };
-  return synchronization[account.synchronizationState];
 }

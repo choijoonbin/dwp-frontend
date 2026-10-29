@@ -59,14 +59,14 @@ const RECOVERY_HINTS = new Set<DwaionRunRecoveryHint>(
   Object.keys(RECOVERY_HINT_MEMBERS) as DwaionRunRecoveryHint[]
 );
 const SOURCE_TYPE_LABEL_KEYS = {
-  WORK_ITEM: 'dwaionAsk.sourceTypes.WORK_ITEM',
-  MAIL: 'dwaionAsk.sourceTypes.MAIL',
-  CALENDAR: 'dwaionAsk.sourceTypes.CALENDAR',
-  APPROVAL_TASK: 'dwaionAsk.sourceTypes.APPROVAL_TASK',
-  APPROVAL_REQUEST: 'dwaionAsk.sourceTypes.APPROVAL_REQUEST',
-  APPROVAL_FORM: 'dwaionAsk.sourceTypes.APPROVAL_FORM',
-  APPROVAL_OPERATION: 'dwaionAsk.sourceTypes.APPROVAL_OPERATION',
-  ATTACHMENT: 'dwaionAsk.sourceTypes.ATTACHMENT',
+  WORK_ITEM: 'askPage.sourceTypes.WORK_ITEM',
+  MAIL: 'askPage.sourceTypes.MAIL',
+  CALENDAR: 'askPage.sourceTypes.CALENDAR',
+  APPROVAL_TASK: 'askPage.sourceTypes.APPROVAL_TASK',
+  APPROVAL_REQUEST: 'askPage.sourceTypes.APPROVAL_REQUEST',
+  APPROVAL_FORM: 'askPage.sourceTypes.APPROVAL_FORM',
+  APPROVAL_OPERATION: 'askPage.sourceTypes.APPROVAL_OPERATION',
+  ATTACHMENT: 'askPage.sourceTypes.ATTACHMENT',
 } satisfies Record<DwaionRunSourceType, string>;
 
 export function activityRunFailurePresentation(

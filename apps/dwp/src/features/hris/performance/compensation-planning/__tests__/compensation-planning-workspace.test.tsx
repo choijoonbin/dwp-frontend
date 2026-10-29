@@ -40,10 +40,16 @@ const actions = {
 };
 const authoringContext = {
   guidelines: {
-    components: [{
-      componentCode: 'BASE', currency: 'USD', minimumAmount: '0', maximumAmount: '100',
-      exceptionPolicyCode: 'NONE', roundingPolicyVersionPublicId: ID.policy,
-    }],
+    components: [
+      {
+        componentCode: 'BASE',
+        currency: 'USD',
+        minimumAmount: '0',
+        maximumAmount: '100',
+        exceptionPolicyCode: 'NONE',
+        roundingPolicyVersionPublicId: ID.policy,
+      },
+    ],
     budgetMode: 'HARD_CAP' as const,
     effectiveFrom: '2027-01-01',
     effectiveTo: null,
@@ -51,15 +57,17 @@ const authoringContext = {
   population: {
     asOf: NOW,
     hrmOwnerRevision: 12,
-    lines: [{
-      workerPublicId: ID.worker,
-      assignmentPublicId: ID.assignment,
-      organizationPublicId: ID.organization,
-      gradePublicId: null,
-      jobProfilePublicId: null,
-      assignmentOwnerRevision: 3,
-      eligibleComponentCodes: ['BASE'],
-    }],
+    lines: [
+      {
+        workerPublicId: ID.worker,
+        assignmentPublicId: ID.assignment,
+        organizationPublicId: ID.organization,
+        gradePublicId: null,
+        jobProfilePublicId: null,
+        assignmentOwnerRevision: 3,
+        eligibleComponentCodes: ['BASE'],
+      },
+    ],
   },
   populationSourceRef: {
     snapshotPublicId: ID.snapshot,
@@ -148,8 +156,12 @@ describe('compensation-planning workspace', () => {
         status="READY"
         cycles={[cycle]}
         selectedCycleId={ID.cycle}
-        cycleDetail={{ item: cycle, referenceEffectiveAt: NOW,
-          freshnessWatermark: NOW, fieldPolicyRevision: 4 }}
+        cycleDetail={{
+          item: cycle,
+          referenceEffectiveAt: NOW,
+          freshnessWatermark: NOW,
+          fieldPolicyRevision: 4,
+        }}
         proposals={null}
         actions={{ ...actions, canCreate: true, canRevise: true }}
         onSelectCycle={vi.fn()}
@@ -170,8 +182,12 @@ describe('compensation-planning workspace', () => {
           status="READY"
           cycles={[cycle]}
           selectedCycleId={ID.cycle}
-          cycleDetail={{ item: cycle, referenceEffectiveAt: NOW,
-            freshnessWatermark: NOW, fieldPolicyRevision: 4 }}
+          cycleDetail={{
+            item: cycle,
+            referenceEffectiveAt: NOW,
+            freshnessWatermark: NOW,
+            fieldPolicyRevision: 4,
+          }}
           proposals={null}
           cycleAuthoringContext={authoringContext}
           actions={{ ...actions, canCreate: true, onCreate: create }}
@@ -180,8 +196,9 @@ describe('compensation-planning workspace', () => {
         />
       );
     });
-    const newCycle = [...document.querySelectorAll('button')]
-      .find((button) => button.textContent?.trim() === 'New cycle') as HTMLButtonElement;
+    const newCycle = [...document.querySelectorAll('button')].find(
+      (button) => button.textContent?.trim() === 'New cycle'
+    ) as HTMLButtonElement;
     await act(async () => newCycle.click());
     expect(document.body.textContent).toContain(ID.snapshot);
     expect(document.body.textContent).toContain(HASH);
@@ -191,12 +208,15 @@ describe('compensation-planning workspace', () => {
 
     const cycleCode = document.querySelector('input[name="cycleCode"]') as HTMLInputElement;
     await act(async () => {
-      Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value')?.set
-        ?.call(cycleCode, 'FY28');
+      Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value')?.set?.call(
+        cycleCode,
+        'FY28'
+      );
       cycleCode.dispatchEvent(new Event('input', { bubbles: true }));
     });
-    const confirm = [...document.querySelectorAll('button')]
-      .find((button) => button.textContent?.trim() === 'Confirm') as HTMLButtonElement;
+    const confirm = [...document.querySelectorAll('button')].find(
+      (button) => button.textContent?.trim() === 'Confirm'
+    ) as HTMLButtonElement;
     expect(confirm.disabled).toBe(false);
     await act(async () => confirm.click());
     expect(create).toHaveBeenCalledTimes(1);
@@ -247,8 +267,9 @@ describe('compensation-planning workspace', () => {
       onSelectProposal: vi.fn(),
       onRefresh: vi.fn(),
     };
-    expect(renderToStaticMarkup(<CompensationPlanningWorkspace {...common} />))
-      .toContain('View amount');
+    expect(renderToStaticMarkup(<CompensationPlanningWorkspace {...common} />)).toContain(
+      'View amount'
+    );
     const detailHtml = renderToStaticMarkup(
       <CompensationPlanningWorkspace
         {...common}
@@ -268,31 +289,39 @@ describe('compensation-planning workspace', () => {
     const projected = {
       ...cycle,
       budgetMasked: false,
-      budgetEntries: [{
-        entryId: '88888888-8888-4888-8888-888888888888',
-        entrySequence: 1,
-        organizationPublicId: ID.organization,
-        currency: 'USD',
-        amount: '111',
-        entryType: 'ALLOCATE' as const,
-        sourceEntryPublicId: null,
-        createdAt: NOW,
-      }],
-      budgetAggregates: [{
-        organizationPublicId: ID.organization,
-        currency: 'USD',
-        allocatedAmount: '900',
-        committedAmount: '125',
-        remainingAmount: '775',
-      }],
+      budgetEntries: [
+        {
+          entryId: '88888888-8888-4888-8888-888888888888',
+          entrySequence: 1,
+          organizationPublicId: ID.organization,
+          currency: 'USD',
+          amount: '111',
+          entryType: 'ALLOCATE' as const,
+          sourceEntryPublicId: null,
+          createdAt: NOW,
+        },
+      ],
+      budgetAggregates: [
+        {
+          organizationPublicId: ID.organization,
+          currency: 'USD',
+          allocatedAmount: '900',
+          committedAmount: '125',
+          remainingAmount: '775',
+        },
+      ],
     };
     const html = renderToStaticMarkup(
       <CompensationPlanningWorkspace
         status="READY"
         cycles={[cycle]}
         selectedCycleId={ID.cycle}
-        cycleDetail={{ item: projected, referenceEffectiveAt: NOW,
-          freshnessWatermark: NOW, fieldPolicyRevision: 4 }}
+        cycleDetail={{
+          item: projected,
+          referenceEffectiveAt: NOW,
+          freshnessWatermark: NOW,
+          fieldPolicyRevision: 4,
+        }}
         proposals={null}
         actions={actions}
         onSelectCycle={vi.fn()}
@@ -312,24 +341,30 @@ describe('compensation-planning workspace', () => {
     const priorServerCycle = {
       ...cycle,
       budgetMasked: false,
-      budgetEntries: [{
-        entryId: '88888888-8888-4888-8888-888888888888',
-        entrySequence: 1,
-        organizationPublicId: ID.organization,
-        currency: 'USD',
-        amount: '987654.321',
-        entryType: 'ALLOCATE' as const,
-        sourceEntryPublicId: null,
-        createdAt: NOW,
-      }],
+      budgetEntries: [
+        {
+          entryId: '88888888-8888-4888-8888-888888888888',
+          entrySequence: 1,
+          organizationPublicId: ID.organization,
+          currency: 'USD',
+          amount: '987654.321',
+          entryType: 'ALLOCATE' as const,
+          sourceEntryPublicId: null,
+          createdAt: NOW,
+        },
+      ],
     };
     const html = renderToStaticMarkup(
       <CompensationPlanningWorkspace
         status="READY"
         cycles={[cycle]}
         selectedCycleId={ID.cycle}
-        cycleDetail={{ item: priorServerCycle, referenceEffectiveAt: NOW,
-          freshnessWatermark: NOW, fieldPolicyRevision: 4 }}
+        cycleDetail={{
+          item: priorServerCycle,
+          referenceEffectiveAt: NOW,
+          freshnessWatermark: NOW,
+          fieldPolicyRevision: 4,
+        }}
         proposals={null}
         actions={actions}
         onSelectCycle={vi.fn()}
@@ -372,8 +407,12 @@ describe('compensation-planning workspace', () => {
         status="READY"
         cycles={[cycle]}
         selectedCycleId={ID.cycle}
-        cycleDetail={{ item: cycle, referenceEffectiveAt: NOW,
-          freshnessWatermark: NOW, fieldPolicyRevision: 4 }}
+        cycleDetail={{
+          item: cycle,
+          referenceEffectiveAt: NOW,
+          freshnessWatermark: NOW,
+          fieldPolicyRevision: 4,
+        }}
         proposals={null}
         proposalsError="proposal service unavailable"
         actions={actions}
@@ -395,11 +434,19 @@ describe('compensation-planning workspace', () => {
     const root = createRoot(mount);
     const approve = vi.fn().mockResolvedValue(undefined);
     const submitted = {
-      proposalId: ID.proposal, aggregateVersion: 1, cycleId: ID.cycle,
-      workerId: ID.worker, assignmentId: ID.assignment, componentCode: 'BASE',
-      currency: 'USD', effectiveFrom: '2027-01-01', effectiveTo: null,
-      currentRevision: 1, status: 'SUBMITTED' as const,
-      contentDigest: HASH, amountMasked: true,
+      proposalId: ID.proposal,
+      aggregateVersion: 1,
+      cycleId: ID.cycle,
+      workerId: ID.worker,
+      assignmentId: ID.assignment,
+      componentCode: 'BASE',
+      currency: 'USD',
+      effectiveFrom: '2027-01-01',
+      effectiveTo: null,
+      currentRevision: 1,
+      status: 'SUBMITTED' as const,
+      contentDigest: HASH,
+      amountMasked: true,
     };
     await act(async () => {
       root.render(
@@ -407,10 +454,20 @@ describe('compensation-planning workspace', () => {
           status="READY"
           cycles={[cycle]}
           selectedCycleId={ID.cycle}
-          cycleDetail={{ item: cycle, referenceEffectiveAt: NOW,
-            freshnessWatermark: NOW, fieldPolicyRevision: 4 }}
-          proposals={{ items: [submitted], nextCursor: null, hasMore: false,
-            referenceEffectiveAt: NOW, freshnessWatermark: NOW, fieldPolicyRevision: 4 }}
+          cycleDetail={{
+            item: cycle,
+            referenceEffectiveAt: NOW,
+            freshnessWatermark: NOW,
+            fieldPolicyRevision: 4,
+          }}
+          proposals={{
+            items: [submitted],
+            nextCursor: null,
+            hasMore: false,
+            referenceEffectiveAt: NOW,
+            freshnessWatermark: NOW,
+            fieldPolicyRevision: 4,
+          }}
           actions={{ ...actions, canApprove: true, onApprove: approve }}
           actorId="checker-27"
           onSelectCycle={vi.fn()}
@@ -418,20 +475,24 @@ describe('compensation-planning workspace', () => {
         />
       );
     });
-    const approveButton = [...document.querySelectorAll('button')]
-      .find((button) => button.textContent?.includes('Approve plan')) as HTMLButtonElement;
+    const approveButton = [...document.querySelectorAll('button')].find((button) =>
+      button.textContent?.includes('Approve plan')
+    ) as HTMLButtonElement;
     await act(async () => approveButton.click());
     expect(approve).not.toHaveBeenCalled();
     expect(document.body.textContent).toContain('Impact preview');
     expect(document.body.textContent).toContain('Checker: checker-27');
-    const confirmButton = [...document.querySelectorAll('button')]
-      .find((button) => button.textContent?.trim() === 'Confirm') as HTMLButtonElement;
+    const confirmButton = [...document.querySelectorAll('button')].find(
+      (button) => button.textContent?.trim() === 'Confirm'
+    ) as HTMLButtonElement;
     expect(confirmButton.disabled).toBe(true);
 
     const reason = document.querySelector('input[name="reasonCode"]') as HTMLInputElement;
     await act(async () => {
-      Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value')?.set
-        ?.call(reason, 'ANNUAL_REVIEW');
+      Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value')?.set?.call(
+        reason,
+        'ANNUAL_REVIEW'
+      );
       reason.dispatchEvent(new Event('input', { bubbles: true }));
     });
     const immutable = document.querySelector('input[type="checkbox"]') as HTMLInputElement;
@@ -444,10 +505,13 @@ describe('compensation-planning workspace', () => {
   });
 
   it('uses semantic theme tokens with forced-color and reduced-motion fallbacks', () => {
-    const css = readFileSync(resolve(
-      process.cwd(),
-      'apps/dwp/src/features/hris/performance/compensation-planning/compensation-planning-workspace.css'
-    ), 'utf8');
+    const css = readFileSync(
+      resolve(
+        process.cwd(),
+        'apps/dwp/src/features/hris/performance/compensation-planning/compensation-planning-workspace.css'
+      ),
+      'utf8'
+    );
     expect(css).toContain('@media (forced-colors: active)');
     expect(css).toContain('@media (prefers-reduced-motion: reduce)');
     expect(css).toContain('CanvasText');

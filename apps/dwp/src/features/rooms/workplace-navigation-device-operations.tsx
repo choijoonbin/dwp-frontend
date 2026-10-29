@@ -26,6 +26,7 @@ import {
   InlineFeedback,
   LoadingState,
   PageCanvas,
+  foundationTokens,
 } from '@dwp-frontend/design-system';
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
@@ -336,7 +337,11 @@ function DeviceInspector({
                   gap={1}
                   sx={
                     command.commandId === requestedCommandId
-                      ? { bgcolor: 'action.selected', borderRadius: 1, p: 0.75 }
+                      ? {
+                          bgcolor: 'action.selected',
+                          borderRadius: foundationTokens.radius.control + 'px',
+                          p: 0.75,
+                        }
                       : undefined
                   }
                 >

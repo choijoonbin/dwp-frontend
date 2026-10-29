@@ -6,7 +6,7 @@ import {
   isAuthoritativeActivityDenial,
   isAuthoritativeActivityRootDenial,
   usableActivityQueryData,
-} from '../activity/activity-query-state';
+} from '../../components/activity/activity-query-contract';
 import { DWAION_ACTIVITY_PAGE_LIMIT } from './dwaion-activity-model';
 
 import type { DwaionActivityPeriod } from './dwaion-activity-model';

@@ -1,7 +1,12 @@
 import { useId } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Send } from 'lucide-react';
-import { ActionButton, FormField, InlineFeedback } from '@dwp-frontend/design-system';
+import {
+  ActionButton,
+  FormField,
+  InlineFeedback,
+  foundationTokens,
+} from '@dwp-frontend/design-system';
 
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
@@ -67,7 +72,12 @@ export function CalendarSchedulingPollParticipant({
       component="section"
       aria-labelledby={titleId}
       data-testid="calendar-scheduling-poll-participant"
-      sx={{ border: 1, borderColor: 'divider', borderRadius: 1, overflow: 'hidden' }}
+      sx={{
+        border: 1,
+        borderColor: 'divider',
+        borderRadius: foundationTokens.radius.control,
+        overflow: 'hidden',
+      }}
     >
       <Stack
         direction={{ xs: 'column', sm: 'row' }}
@@ -77,7 +87,12 @@ export function CalendarSchedulingPollParticipant({
         sx={{ px: 2, py: 1.5 }}
       >
         <Box sx={{ minWidth: 0 }}>
-          <Typography id={titleId} component="h2" variant="h6" fontWeight={750}>
+          <Typography
+            id={titleId}
+            component="h2"
+            variant="h6"
+            fontWeight={foundationTokens.home.typography.weightEmphasis}
+          >
             {details.poll.title}
           </Typography>
           <Typography variant="body2" color="text.secondary">
@@ -128,7 +143,12 @@ export function CalendarSchedulingPollParticipant({
                     key={candidate.candidateId}
                     component="fieldset"
                     disabled={!actions.canVote || submitting}
-                    sx={{ border: 1, borderColor: 'divider', borderRadius: 1, p: 1.5 }}
+                    sx={{
+                      border: 1,
+                      borderColor: 'divider',
+                      borderRadius: foundationTokens.radius.control,
+                      p: 1.5,
+                    }}
                   >
                     <FormLabel id={labelId} component="legend">
                       {t('polls.candidateLabel', { count: index + 1 })}

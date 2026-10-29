@@ -16,14 +16,14 @@
 
 ## 책임과 데이터 경계
 
-| 영역 | 정본·책임자 | 운영 전 필수 승인 |
-| --- | --- | --- |
-| Workspace Activity 사건·감사 receipt | Platform 서비스·DB 운영자 | Product owner, Platform owner, Security |
-| DWAI·ON run·stage·source 관측 | Agent 서비스·DB 운영자 | Agent owner, Security |
-| hash/checkpoint와 legal hold | 중앙 Audit owner | Security, Privacy/Legal, Audit owner |
-| 개인 Mail/Calendar 연결 상태 | Productivity connector owner | Connector owner, Privacy/Legal |
-| UI·접근성·브라우저 증거 | Frontend owner | Product owner, Accessibility reviewer |
-| SLO·경보·on-call | SRE/Operations | Service owners, SRE |
+| 영역                                 | 정본·책임자                  | 운영 전 필수 승인                       |
+| ------------------------------------ | ---------------------------- | --------------------------------------- |
+| Workspace Activity 사건·감사 receipt | Platform 서비스·DB 운영자    | Product owner, Platform owner, Security |
+| DWAI·ON run·stage·source 관측        | Agent 서비스·DB 운영자       | Agent owner, Security                   |
+| hash/checkpoint와 legal hold         | 중앙 Audit owner             | Security, Privacy/Legal, Audit owner    |
+| 개인 Mail/Calendar 연결 상태         | Productivity connector owner | Connector owner, Privacy/Legal          |
+| UI·접근성·브라우저 증거              | Frontend owner               | Product owner, Accessibility reviewer   |
+| SLO·경보·on-call                     | SRE/Operations               | Service owners, SRE                     |
 
 활동 API와 metric에는 prompt·답변·원문·credential·tenant ID·user ID·event/run ID를 기록하지 않는다. `dwp.activity.read.duration`은 고정된 `operation`과 `result` 태그만 사용한다.
 
@@ -116,14 +116,14 @@ git diff --check
 
 다음 수치는 **초기 제안 SLO**이며 SRE와 Product owner 승인 전에는 계약 SLO가 아니다.
 
-| 신호 | 제안 목표 | 경고 | 중단/rollback 검토 |
-| --- | --- | --- | --- |
-| `LIST` 서버 p95 | 750 ms 이하 | 15분간 750 ms 초과 | 15분간 1.5 s 초과 |
-| `SUMMARY` 서버 p95 | 500 ms 이하 | 15분간 500 ms 초과 | 15분간 1 s 초과 |
-| `EVIDENCE`/`SOURCE_STATUS` p95 | 500 ms 이하 | 15분간 500 ms 초과 | 15분간 1 s 초과 |
-| `result=ERROR` 비율 | 5분간 1% 미만 | 1% 이상 | 5% 이상 |
-| `result=STALE|UNAVAILABLE` | 승인된 connector 기준선 이하 | 10분 연속 기준선 초과 | tenant canary의 모든 원천이 5분 이상 unavailable |
-| 첫 유용한 Activity 내용 p75 | 2.5 s 이하 | 2.5 s 초과 | 4 s 초과 |
+| 신호                           | 제안 목표     | 경고                         | 중단/rollback 검토    |
+| ------------------------------ | ------------- | ---------------------------- | --------------------- |
+| `LIST` 서버 p95                | 750 ms 이하   | 15분간 750 ms 초과           | 15분간 1.5 s 초과     |
+| `SUMMARY` 서버 p95             | 500 ms 이하   | 15분간 500 ms 초과           | 15분간 1 s 초과       |
+| `EVIDENCE`/`SOURCE_STATUS` p95 | 500 ms 이하   | 15분간 500 ms 초과           | 15분간 1 s 초과       |
+| `result=ERROR` 비율            | 5분간 1% 미만 | 1% 이상                      | 5% 이상               |
+| `result=STALE                  | UNAVAILABLE`  | 승인된 connector 기준선 이하 | 10분 연속 기준선 초과 | tenant canary의 모든 원천이 5분 이상 unavailable |
+| 첫 유용한 Activity 내용 p75    | 2.5 s 이하    | 2.5 s 초과                   | 4 s 초과              |
 
 SRE는 배포 전 아래 PromQL을 staging dashboard에 저장하고, 실제 scrape 이름이 Micrometer 기본 변환인 `dwp_activity_read_duration_seconds_*`와 일치하는지 먼저 확인한다. 결과가 없는 쿼리를 0으로 간주하지 않는다.
 

@@ -3,8 +3,8 @@ import { AuthGuard } from '@dwp-frontend/shared-utils/auth/auth-guard';
 import type { RouteObject } from 'react-router-dom';
 
 import { HomeRouteFallback } from '../components/home-loading-skeleton';
-import { CatalogLayout } from '../layouts/catalog-layout';
-import { HomeLayout } from '../layouts/home-layout';
+import { CatalogLayout } from '../layouts/catalog-layout-boundary';
+import { HomeLayout } from '../layouts/home-layout-boundary';
 import { authenticationFallback, routeFallback, WorkspaceRouteGuard } from './route-support';
 
 const HomePage = lazy(() => import('../pages/home'));

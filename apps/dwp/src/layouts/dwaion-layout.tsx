@@ -1,7 +1,7 @@
 import { DWAION_PRODUCT_MANIFEST } from '../features/dwaion/dwaion-navigation';
 import { resolveDwaionProductAreaMobileShell } from '../features/dwaion/dwaion-product-area-mobile-shell';
 import { DWAION_SURFACE_MANIFEST } from '../features/dwaion/dwaion-product-manifest';
-import { ProductAreaLayout } from './product-area-layout';
+import { ProductAreaLayout } from './product-area-layout-boundary';
 
 export function DwaionLayout() {
   return (

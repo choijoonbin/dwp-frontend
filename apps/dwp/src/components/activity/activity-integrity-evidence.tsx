@@ -14,7 +14,7 @@ import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
 import type { WorkspaceActivityEvidence } from '@dwp-frontend/shared-utils';
-import { usableActivityQueryData } from '../../features/activity/activity-query-state';
+import { usableActivityQueryData } from './activity-query-contract';
 
 const accessibleFeedbackSx = {
   color: 'text.primary',

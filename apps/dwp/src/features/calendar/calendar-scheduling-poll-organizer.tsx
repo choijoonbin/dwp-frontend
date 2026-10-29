@@ -1,7 +1,12 @@
 import { useId, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CalendarCheck2, RotateCcw, XCircle } from 'lucide-react';
-import { ActionButton, InlineFeedback, SelectField } from '@dwp-frontend/design-system';
+import {
+  ActionButton,
+  InlineFeedback,
+  SelectField,
+  foundationTokens,
+} from '@dwp-frontend/design-system';
 
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
@@ -83,7 +88,12 @@ export function CalendarSchedulingPollOrganizer({
       component="section"
       aria-labelledby={titleId}
       data-testid="calendar-scheduling-poll-organizer"
-      sx={{ border: 1, borderColor: 'divider', borderRadius: 1, overflow: 'hidden' }}
+      sx={{
+        border: 1,
+        borderColor: 'divider',
+        borderRadius: foundationTokens.radius.control,
+        overflow: 'hidden',
+      }}
     >
       <Stack
         direction={{ xs: 'column', sm: 'row' }}
@@ -93,7 +103,12 @@ export function CalendarSchedulingPollOrganizer({
         sx={{ px: 2, py: 1.5 }}
       >
         <Box sx={{ minWidth: 0 }}>
-          <Typography id={titleId} component="h2" variant="h6" fontWeight={750}>
+          <Typography
+            id={titleId}
+            component="h2"
+            variant="h6"
+            fontWeight={foundationTokens.home.typography.weightEmphasis}
+          >
             {details.poll.title}
           </Typography>
           <Typography variant="body2" color="text.secondary">
@@ -148,7 +163,7 @@ export function CalendarSchedulingPollOrganizer({
                       sx={{
                         border: 1,
                         borderColor: candidateEligible ? 'success.main' : 'divider',
-                        borderRadius: 1,
+                        borderRadius: foundationTokens.radius.control,
                         px: 1.25,
                         py: 1,
                       }}
@@ -159,7 +174,10 @@ export function CalendarSchedulingPollOrganizer({
                         control={<Radio />}
                         label={
                           <Box>
-                            <Typography fontWeight={700} variant="body2">
+                            <Typography
+                              fontWeight={foundationTokens.home.typography.weightBold}
+                              variant="body2"
+                            >
                               {t('polls.candidateLabel', { count: index + 1 })}
                             </Typography>
                             <Typography variant="body2">

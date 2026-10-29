@@ -46,14 +46,12 @@ import {
   selectedActivityEvent,
 } from '../../components/activity/activity-detail-model';
 import {
-  isAuthoritativeActivityDenial,
-  usableActivityQueryData,
-} from '../activity/activity-query-state';
-import {
   activityDetailRefetchOnWindowFocus,
   activityDetailRefreshInterval,
   activityDetailStaleTime,
-} from '../activity/use-activity-data';
+  isAuthoritativeActivityDenial,
+  usableActivityQueryData,
+} from '../../components/activity/activity-query-contract';
 
 import type {
   DwaionUserRun,
@@ -90,7 +88,8 @@ export function DwaionActivitySelection({
   const canAsk = !accessDenied && isLoaded && hasPermission('APP.ASK', 'VIEW');
   const canInspectCommonActivity = canAsk && hasPermission('APP.ACTIVITY', 'VIEW');
   const sampleRun = run?.dataProvenance === 'SAMPLE';
-  const canQueryCommonActivity = canInspectCommonActivity && Boolean(run) && !sampleRun;
+  const canQueryCommonActivity =
+    canInspectCommonActivity && Boolean(runId) && !runLoading && !sampleRun;
   const eventId = `dwaion:${runId}`;
   const identity = [
     user?.tenantId ?? '',
@@ -464,6 +463,13 @@ function CommonActivityEvidence({
                 {selected.summary}
               </Typography>
             )}
+            <Typography
+              variant="caption"
+              color="text.secondary"
+              sx={{ mt: 0.35, display: 'block' }}
+            >
+              {t(`activityFoundation.detail.kind.${model.kind}.description`)}
+            </Typography>
           </Box>
 
           <Accordion
@@ -504,6 +510,13 @@ function CommonActivityEvidence({
               </Box>
             </AccordionDetails>
           </Accordion>
+
+          <InlineFeedback
+            severity={model.audit.recordId ? 'info' : 'warning'}
+            title={t(`activityFoundation.detail.audit.${model.audit.presentation}.title`)}
+          >
+            {t(`activityFoundation.detail.audit.${model.audit.presentation}.description`)}
+          </InlineFeedback>
 
           {evidenceQuery && (
             <Box>

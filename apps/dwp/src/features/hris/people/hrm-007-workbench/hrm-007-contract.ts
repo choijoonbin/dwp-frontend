@@ -1,4 +1,5 @@
 import type { ProductAccessMode } from '../../../../components/product-surface-context';
+import { resolveCanonicalTimeZone } from '@dwp-frontend/shared-i18n';
 
 export const HRM007_FEATURE = 'HRIS_HRM_APPOINTMENT_WORKBENCH' as const;
 export const HRM007_ADAPTER_KIND = 'HRIS_HRM_007_ENTRY_QUERY_V1' as const;
@@ -736,7 +737,7 @@ export function assertHrm007TrustedScope(value: unknown): Hrm007TrustedScope {
   let canonicalTimeZone: string;
   try {
     [canonicalLocale] = Intl.getCanonicalLocales(locale);
-    canonicalTimeZone = new Intl.DateTimeFormat('en', { timeZone }).resolvedOptions().timeZone;
+    canonicalTimeZone = resolveCanonicalTimeZone(timeZone) ?? invalid('scope.localeOrTimeZone');
   } catch {
     return invalid('scope.localeOrTimeZone');
   }

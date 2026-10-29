@@ -1,6 +1,6 @@
 import { SPACE_NAVIGATION } from '../features/spaces/space-navigation';
 import { SPACE_PRODUCT_MANIFEST } from '../features/spaces/space-product-manifest';
-import { ProductAreaLayout } from './product-area-layout';
+import { ProductAreaLayout } from './product-area-layout-boundary';
 
 export function SpaceLayout() {
   return (

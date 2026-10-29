@@ -35,6 +35,11 @@ import { DwaionActivitySelection } from './dwaion-activity-selection';
 import { DwaionActivityLatency } from './dwaion-activity-latency';
 import { DwaionActivitySummary } from './dwaion-activity-summary';
 import { ActivityListBody, ActivityListHeader, EmptyInspector } from './dwaion-activity-view';
+import {
+  isAuthoritativeActivityDenial,
+  isAuthoritativeActivityRootDenial,
+  usableActivityQueryData,
+} from '../../components/activity/activity-query-contract';
 import { DWAION_ACTIVITY_REFRESH_EVENT } from './dwaion-mobile-shell-profile';
 import {
   dwaionKnownRunDetailRefetchInterval,
@@ -43,11 +48,6 @@ import {
   overlayDwaionRunPages,
   useDwaionRunPages,
 } from './use-dwaion-run-pages';
-import {
-  isAuthoritativeActivityDenial,
-  isAuthoritativeActivityRootDenial,
-  usableActivityQueryData,
-} from '../activity/activity-query-state';
 
 import type { DwaionActivityFilter, DwaionActivityPeriod } from './dwaion-activity-model';
 
@@ -119,6 +119,10 @@ export function DwaionActivity() {
     selectedRunDetail.isError && isAuthoritativeActivityRootDenial(selectedRunDetail.error);
   const selectedDetailDenied =
     selectedRunDetail.isError && isAuthoritativeActivityDenial(selectedRunDetail.error);
+  const selectedRunAccessDenied =
+    selectedRunDetail.isError &&
+    selectedRunDetail.error instanceof HttpError &&
+    [401, 403].includes(selectedRunDetail.error.status);
   const selectedDetailData = usableActivityQueryData(selectedRunDetail);
   const runDataUsable = rootRunDataUsable && !selectedRootDenied;
   const accessResponseDenied = runs.rootDenied || selectedRootDenied;
@@ -159,7 +163,7 @@ export function DwaionActivity() {
   const selectedRunLoading =
     !selectedRun && runDataUsable && selectedRunDetail.isPending && Boolean(selectedRunId);
   const selectionActive = Boolean(selectedRunId);
-  const selectionAccessDenied = !runDataUsable || (selectionActive && selectedDetailDenied);
+  const selectionAccessDenied = !runDataUsable || (selectionActive && selectedRunAccessDenied);
   const retrievalError =
     runs.isError || runs.isFetchNextPageError || (selectionActive && selectedRunDetail.isError);
   const retrievalPending =

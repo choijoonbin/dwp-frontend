@@ -29,6 +29,8 @@ import type {
 
 export const NAVIGATION_POLICY_ADMIN_BASE =
   '/api/platform/v1/admin/hris/navigation-policies' as const;
+export const NAVIGATION_POLICY_V2_ADMIN_BASE =
+  '/api/platform/v2/admin/hris/navigation-policies' as const;
 export const NAVIGATION_POLICY_RUNTIME_PATH =
   '/api/platform/v1/hris/navigation/projection' as const;
 
@@ -42,6 +44,107 @@ export const NAVIGATION_POLICY_OPERATION_BINDINGS = [
   ['POST', `${NAVIGATION_POLICY_ADMIN_BASE}/revisions/{revisionId}/publish`],
   ['POST', `${NAVIGATION_POLICY_ADMIN_BASE}/revisions/{revisionId}/restore`],
   ['GET', NAVIGATION_POLICY_RUNTIME_PATH],
+] as const;
+
+export const NAVIGATION_POLICY_V2_OPERATION_BINDINGS = [
+  ['GET', `${NAVIGATION_POLICY_V2_ADMIN_BASE}/workspace`],
+  ['POST', `${NAVIGATION_POLICY_V2_ADMIN_BASE}/drafts`],
+  ['PUT', `${NAVIGATION_POLICY_V2_ADMIN_BASE}/drafts/{revisionId}`],
+  ['POST', `${NAVIGATION_POLICY_V2_ADMIN_BASE}/drafts/{revisionId}/validate`],
+  ['POST', `${NAVIGATION_POLICY_V2_ADMIN_BASE}/drafts/{revisionId}/submit`],
+  ['POST', `${NAVIGATION_POLICY_V2_ADMIN_BASE}/revisions/{revisionId}/approve`],
+  ['POST', `${NAVIGATION_POLICY_V2_ADMIN_BASE}/revisions/{revisionId}/publish`],
+  ['POST', `${NAVIGATION_POLICY_V2_ADMIN_BASE}/revisions/{revisionId}/restore`],
+] as const;
+
+export const HCM_NAVIGATION_POLICY_MUTATION_API_CONTRACTS = [
+  {
+    apiFunction: 'createNavigationPolicyDraftRevision',
+    routeContractKey: 'route.hcm.configuration.navigation-policy-draft-create.action',
+    method: 'POST',
+    path: `${NAVIGATION_POLICY_ADMIN_BASE}/drafts`,
+  },
+  {
+    apiFunction: 'updateNavigationPolicyDraftRevision',
+    routeContractKey: 'route.hcm.configuration.navigation-policy-draft-update.action',
+    method: 'PUT',
+    path: `${NAVIGATION_POLICY_ADMIN_BASE}/drafts/{revisionId}`,
+  },
+  {
+    apiFunction: 'validateNavigationPolicyDraftRevision',
+    routeContractKey: 'route.hcm.configuration.navigation-policy-draft-validate.action',
+    method: 'POST',
+    path: `${NAVIGATION_POLICY_ADMIN_BASE}/drafts/{revisionId}/validate`,
+  },
+  {
+    apiFunction: 'submitNavigationPolicyDraftRevision',
+    routeContractKey: 'route.hcm.configuration.navigation-policy-draft-submit.action',
+    method: 'POST',
+    path: `${NAVIGATION_POLICY_ADMIN_BASE}/drafts/{revisionId}/submit`,
+  },
+  {
+    apiFunction: 'approveNavigationPolicyRevision',
+    routeContractKey: 'route.hcm.configuration.navigation-policy-revision-approve.action',
+    method: 'POST',
+    path: `${NAVIGATION_POLICY_ADMIN_BASE}/revisions/{revisionId}/approve`,
+  },
+  {
+    apiFunction: 'publishNavigationPolicyRevision',
+    routeContractKey: 'route.hcm.configuration.navigation-policy-revision-publish.action',
+    method: 'POST',
+    path: `${NAVIGATION_POLICY_ADMIN_BASE}/revisions/{revisionId}/publish`,
+  },
+  {
+    apiFunction: 'restoreNavigationPolicyRevision',
+    routeContractKey: 'route.hcm.configuration.navigation-policy-revision-restore.action',
+    method: 'POST',
+    path: `${NAVIGATION_POLICY_ADMIN_BASE}/revisions/{revisionId}/restore`,
+  },
+] as const;
+
+export const HCM_NAVIGATION_POLICY_V2_MUTATION_API_CONTRACTS = [
+  {
+    apiFunction: 'createNavigationPolicyV2DraftRevision',
+    routeContractKey: 'route.hcm.configuration.navigation-policy-v2-draft-create.action',
+    method: 'POST',
+    path: `${NAVIGATION_POLICY_V2_ADMIN_BASE}/drafts`,
+  },
+  {
+    apiFunction: 'updateNavigationPolicyV2DraftRevision',
+    routeContractKey: 'route.hcm.configuration.navigation-policy-v2-draft-update.action',
+    method: 'PUT',
+    path: `${NAVIGATION_POLICY_V2_ADMIN_BASE}/drafts/{revisionId}`,
+  },
+  {
+    apiFunction: 'validateNavigationPolicyV2DraftRevision',
+    routeContractKey: 'route.hcm.configuration.navigation-policy-v2-draft-validate.action',
+    method: 'POST',
+    path: `${NAVIGATION_POLICY_V2_ADMIN_BASE}/drafts/{revisionId}/validate`,
+  },
+  {
+    apiFunction: 'submitNavigationPolicyV2DraftRevision',
+    routeContractKey: 'route.hcm.configuration.navigation-policy-v2-draft-submit.action',
+    method: 'POST',
+    path: `${NAVIGATION_POLICY_V2_ADMIN_BASE}/drafts/{revisionId}/submit`,
+  },
+  {
+    apiFunction: 'approveNavigationPolicyV2Revision',
+    routeContractKey: 'route.hcm.configuration.navigation-policy-v2-revision-approve.action',
+    method: 'POST',
+    path: `${NAVIGATION_POLICY_V2_ADMIN_BASE}/revisions/{revisionId}/approve`,
+  },
+  {
+    apiFunction: 'publishNavigationPolicyV2Revision',
+    routeContractKey: 'route.hcm.configuration.navigation-policy-v2-revision-publish.action',
+    method: 'POST',
+    path: `${NAVIGATION_POLICY_V2_ADMIN_BASE}/revisions/{revisionId}/publish`,
+  },
+  {
+    apiFunction: 'restoreNavigationPolicyV2Revision',
+    routeContractKey: 'route.hcm.configuration.navigation-policy-v2-revision-restore.action',
+    method: 'POST',
+    path: `${NAVIGATION_POLICY_V2_ADMIN_BASE}/revisions/{revisionId}/restore`,
+  },
 ] as const;
 
 export type NavigationPolicyCommandEnvelope<T> = Readonly<{
@@ -75,8 +178,12 @@ export async function readNavigationPolicyWorkspace(
 ): Promise<NavigationPolicyWorkspace> {
   const search = workspaceSearch(input.scopeKind, input.scopePublicId);
   const scoped = productSurfaceReadScopeConfig(input.contextScopeKey, input.signal);
+  const workspacePath =
+    input.scopeKind === 'LEGAL_ENTITY'
+      ? NAVIGATION_POLICY_V2_OPERATION_BINDINGS[0][1]
+      : NAVIGATION_POLICY_OPERATION_BINDINGS[0][1];
   const response = await axiosInstance.get<ApiResponse<unknown>>(
-    `${NAVIGATION_POLICY_ADMIN_BASE}/workspace?${search.toString()}`,
+    `${workspacePath}?${search.toString()}`,
     {
       ...scoped,
       headers: commandIdentityHeaders(input.correlationId),
@@ -86,7 +193,7 @@ export async function readNavigationPolicyWorkspace(
     return selectNavigationPolicyWorkspace(response.data.data);
   }
   const tenantResponse = await axiosInstance.get<ApiResponse<unknown>>(
-    `${NAVIGATION_POLICY_ADMIN_BASE}/workspace?${workspaceSearch('TENANT').toString()}`,
+    `${NAVIGATION_POLICY_OPERATION_BINDINGS[0][1]}?${workspaceSearch('TENANT').toString()}`,
     {
       ...scoped,
       headers: commandIdentityHeaders(input.correlationId),
@@ -165,6 +272,109 @@ export function restoreNavigationPolicyRevision(
   return revisionTransition(revisionId, 'restore', envelope, authority, 'RESTORE');
 }
 
+export function createNavigationPolicyV2DraftRevision(
+  envelope: NavigationPolicyCommandEnvelope<NavigationPolicyDraftBody>,
+  authority: ProductSurfaceGovernedMutationAuthority
+): Promise<NavigationPolicyCommandReceipt> {
+  if (envelope.expectedVersion !== 0) {
+    return Promise.reject(new Error('A new navigation-policy draft must start at version zero.'));
+  }
+  return mutate(
+    'POST',
+    `${NAVIGATION_POLICY_V2_ADMIN_BASE}/drafts`,
+    envelope,
+    authority,
+    'CREATE_DRAFT'
+  );
+}
+
+export function updateNavigationPolicyV2DraftRevision(
+  revisionId: string,
+  envelope: NavigationPolicyCommandEnvelope<NavigationPolicyDraftBody>,
+  authority: ProductSurfaceGovernedMutationAuthority
+) {
+  return mutate(
+    'PUT',
+    `${NAVIGATION_POLICY_V2_ADMIN_BASE}/drafts/${encodeURIComponent(revisionId)}`,
+    envelope,
+    authority,
+    'SAVE_DRAFT'
+  );
+}
+
+export function validateNavigationPolicyV2DraftRevision(
+  revisionId: string,
+  envelope: NavigationPolicyCommandEnvelope<NavigationPolicyLifecycleBody>,
+  authority: ProductSurfaceGovernedMutationAuthority
+) {
+  return mutate(
+    'POST',
+    `${NAVIGATION_POLICY_V2_ADMIN_BASE}/drafts/${encodeURIComponent(revisionId)}/validate`,
+    envelope,
+    authority,
+    'VALIDATE'
+  );
+}
+
+export function submitNavigationPolicyV2DraftRevision(
+  revisionId: string,
+  envelope: NavigationPolicyCommandEnvelope<NavigationPolicyLifecycleBody>,
+  authority: ProductSurfaceGovernedMutationAuthority
+) {
+  return mutate(
+    'POST',
+    `${NAVIGATION_POLICY_V2_ADMIN_BASE}/drafts/${encodeURIComponent(revisionId)}/submit`,
+    envelope,
+    authority,
+    'SUBMIT'
+  );
+}
+
+export function approveNavigationPolicyV2Revision(
+  revisionId: string,
+  envelope: NavigationPolicyCommandEnvelope<NavigationPolicyLifecycleBody>,
+  authority: ProductSurfaceGovernedMutationAuthority
+) {
+  return mutate(
+    'POST',
+    `${NAVIGATION_POLICY_V2_ADMIN_BASE}/revisions/${encodeURIComponent(revisionId)}/approve`,
+    envelope,
+    authority,
+    'APPROVE',
+    true
+  );
+}
+
+export function publishNavigationPolicyV2Revision(
+  revisionId: string,
+  envelope: NavigationPolicyCommandEnvelope<NavigationPolicyLifecycleBody>,
+  authority: ProductSurfaceGovernedMutationAuthority
+) {
+  return mutate(
+    'POST',
+    `${NAVIGATION_POLICY_V2_ADMIN_BASE}/revisions/${encodeURIComponent(revisionId)}/publish`,
+    envelope,
+    authority,
+    'PUBLISH',
+    true
+  );
+}
+
+export function restoreNavigationPolicyV2Revision(
+  revisionId: string,
+  envelope: NavigationPolicyCommandEnvelope<NavigationPolicyRestoreBody>,
+  authority: ProductSurfaceGovernedMutationAuthority
+) {
+  return mutate(
+    'POST',
+    `${NAVIGATION_POLICY_V2_ADMIN_BASE}/revisions/${encodeURIComponent(revisionId)}/restore`,
+    envelope,
+    authority,
+    'RESTORE',
+    true
+  );
+}
+
 export function navigationPolicyDraftBody(draft: NavigationPolicyDraft): NavigationPolicyDraftBody {
   return Object.freeze({
     scopeKind: draft.scopeKind,
@@ -221,7 +431,7 @@ async function mutate<T>(
 ): Promise<NavigationPolicyCommandReceipt> {
   assertEnvelope(envelope, authority);
   const governed = highRisk
-    ? productSurfaceHighRiskMutationConfig(authority, { objectVersionHeader: true })
+    ? productSurfaceHighRiskMutationConfig(authority, { objectVersionHeader: false })
     : productSurfaceGovernedMutationConfig(authority, { objectVersionHeader: true });
   const config = {
     ...governed,

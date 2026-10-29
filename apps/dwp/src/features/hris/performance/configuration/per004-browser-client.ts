@@ -16,7 +16,11 @@ export type Per004ActionGrant = Readonly<{
 
 export type Per004BrowserTransport = (
   path: string,
-  init: Readonly<{ method: 'GET' | 'POST'; headers: Readonly<Record<string, string>>; body?: string }>
+  init: Readonly<{
+    method: 'GET' | 'POST';
+    headers: Readonly<Record<string, string>>;
+    body?: string;
+  }>
 ) => Promise<Readonly<{ status: number; data: unknown }>>;
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/;
@@ -30,24 +34,34 @@ function header(value: unknown): value is string {
 export function createPer004BrowserClient(transport: Per004BrowserTransport) {
   return {
     async load(variant: Per004Variant): Promise<Per004Projection> {
-      const path = variant === 'FORMS_SCALES' ? PER004_ROUTES.formsScales
-        : PER004_ROUTES.settingsPerformance;
+      const path =
+        variant === 'FORMS_SCALES' ? PER004_ROUTES.formsScales : PER004_ROUTES.settingsPerformance;
       const response = await transport(path, { method: 'GET', headers: {} });
       if (response.status === 403) throw new Error('FORBIDDEN');
       if (response.status !== 200) throw new Error('PER004_UNAVAILABLE');
       return parsePer004Projection(response.data, variant);
     },
-    async execute(action: Per004Action, grant: Per004ActionGrant): Promise<'SUCCEEDED' | 'STEP_UP_REQUIRED'> {
+    async execute(
+      action: Per004Action,
+      grant: Per004ActionGrant
+    ): Promise<'SUCCEEDED' | 'STEP_UP_REQUIRED'> {
       const checked = parsePer004Action(action, action.targetConfigurationId);
-      if (!UUID.test(grant.targetConfigurationId) || grant.actionKey !== checked.actionKey ||
-          grant.targetConfigurationId !== checked.targetConfigurationId ||
-          grant.targetVersion !== checked.targetVersion ||
-          grant.expectedObjectVersion !== checked.expectedObjectVersion ||
-          !header(grant.idempotencyKey) || grant.idempotencyKey.length < 16 ||
-          grant.idempotencyKey.length > 128 ||
-          !header(grant.expectedDecisionRevision) || !header(grant.purposeCode) ||
-          grant.body === null || typeof grant.body !== 'object' || Array.isArray(grant.body) ||
-          grant.stepUpChallenge !== undefined && !header(grant.stepUpChallenge)) {
+      if (
+        !UUID.test(grant.targetConfigurationId) ||
+        grant.actionKey !== checked.actionKey ||
+        grant.targetConfigurationId !== checked.targetConfigurationId ||
+        grant.targetVersion !== checked.targetVersion ||
+        grant.expectedObjectVersion !== checked.expectedObjectVersion ||
+        !header(grant.idempotencyKey) ||
+        grant.idempotencyKey.length < 16 ||
+        grant.idempotencyKey.length > 128 ||
+        !header(grant.expectedDecisionRevision) ||
+        !header(grant.purposeCode) ||
+        grant.body === null ||
+        typeof grant.body !== 'object' ||
+        Array.isArray(grant.body) ||
+        (grant.stepUpChallenge !== undefined && !header(grant.stepUpChallenge))
+      ) {
         throw new Error('PER004_ACTION_GRANT_MISMATCH');
       }
       const response = await transport(checked.resolvedHref, {
@@ -57,12 +71,16 @@ export function createPer004BrowserClient(transport: Per004BrowserTransport) {
           'Idempotency-Key': grant.idempotencyKey,
           'X-DWP-Expected-Decision-Revision': grant.expectedDecisionRevision,
           'X-Purpose-Code': grant.purposeCode,
-          ...(checked.expectedObjectVersion === undefined ? {} : {
-            'X-DWP-Expected-Object-Version': String(checked.expectedObjectVersion),
-          }),
-          ...(grant.stepUpChallenge === undefined ? {} : {
-            'X-DWP-Step-Up-Challenge': grant.stepUpChallenge,
-          }),
+          ...(checked.expectedObjectVersion === undefined
+            ? {}
+            : {
+                'X-DWP-Expected-Object-Version': String(checked.expectedObjectVersion),
+              }),
+          ...(grant.stepUpChallenge === undefined
+            ? {}
+            : {
+                'X-DWP-Step-Up-Challenge': grant.stepUpChallenge,
+              }),
         },
         body: JSON.stringify(grant.body),
       });

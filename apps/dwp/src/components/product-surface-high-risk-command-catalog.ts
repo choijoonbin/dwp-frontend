@@ -25,6 +25,7 @@ export type ProductSurfaceHighRiskOperation =
   | 'SIGNATURE_SIGN'
   | 'SIGNATURE_POLICY_PUBLISH'
   | 'EXTERNAL_SIGNATURE_HANDOVER'
+  | 'HRIS_SEPARATION_WAIVER_TASK_APPROVE'
   | 'HCM_ORG_PUBLISH'
   | 'HCM_EXPORT_CREATE'
   | 'HCM_EXPORT_RETRY'
@@ -48,6 +49,9 @@ export type ProductSurfaceHighRiskOperation =
   | 'HCM_NAVIGATION_POLICY_APPROVE'
   | 'HCM_NAVIGATION_POLICY_PUBLISH'
   | 'HCM_NAVIGATION_POLICY_RESTORE'
+  | 'HCM_NAVIGATION_POLICY_V2_APPROVE'
+  | 'HCM_NAVIGATION_POLICY_V2_PUBLISH'
+  | 'HCM_NAVIGATION_POLICY_V2_RESTORE'
   | 'DWAION_EMERGENCY_RECOVERY'
   | ApprovalRelease15HighRiskOperation;
 
@@ -203,6 +207,12 @@ export const PRODUCT_SURFACE_HIGH_RISK_COMMAND_CATALOG: readonly ProductSurfaceH
       routeContractKey: 'route.approvals.work.external-signature-handover.action',
     },
     {
+      operation: 'HRIS_SEPARATION_WAIVER_TASK_APPROVE',
+      productKey: 'approvals',
+      surfaceKey: 'approvals.work',
+      routeContractKey: 'route.approvals.work.hris-separation-waiver-task-approve.action',
+    },
+    {
       operation: 'HCM_EXPORT_CREATE',
       productKey: 'hcm',
       surfaceKey: 'hcm.management',
@@ -333,6 +343,24 @@ export const PRODUCT_SURFACE_HIGH_RISK_COMMAND_CATALOG: readonly ProductSurfaceH
       productKey: 'hcm',
       surfaceKey: 'hcm.management',
       routeContractKey: 'route.hcm.configuration.navigation-policy-revision-restore.action',
+    },
+    {
+      operation: 'HCM_NAVIGATION_POLICY_V2_APPROVE',
+      productKey: 'hcm',
+      surfaceKey: 'hcm.management',
+      routeContractKey: 'route.hcm.configuration.navigation-policy-v2-revision-approve.action',
+    },
+    {
+      operation: 'HCM_NAVIGATION_POLICY_V2_PUBLISH',
+      productKey: 'hcm',
+      surfaceKey: 'hcm.management',
+      routeContractKey: 'route.hcm.configuration.navigation-policy-v2-revision-publish.action',
+    },
+    {
+      operation: 'HCM_NAVIGATION_POLICY_V2_RESTORE',
+      productKey: 'hcm',
+      surfaceKey: 'hcm.management',
+      routeContractKey: 'route.hcm.configuration.navigation-policy-v2-revision-restore.action',
     },
     {
       operation: 'DWAION_EMERGENCY_RECOVERY',

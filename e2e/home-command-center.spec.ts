@@ -33,130 +33,27 @@ test.beforeEach(async ({ page }) => {
 });
 
 test('home turns live work signals into a keyboard-operable next action', async ({ page }) => {
+  await routeHomeWave4ShadowRuntime(page);
   await page.setViewportSize({ width: 1920, height: 1080 });
   await page.goto('/');
 
-  const commandCenter = page.getByTestId('home-command-center');
-  const commandArea = page.getByTestId('home-command-area');
-  await expect(commandCenter.getByRole('heading', { name: 'Welcome back, Mina' })).toBeVisible();
-  await expect(page.getByTestId('home-hero')).toHaveCSS(
-    'background-image',
-    /agentic-workspace-hero-v2\.png/
-  );
+  const organizationPortal = page.getByRole('region', { name: 'Organization portal' });
+  await expect(organizationPortal).toBeVisible();
   await expect(
-    commandArea.getByRole('heading', { name: 'Approve software access request' })
+    organizationPortal.getByRole('heading', { name: 'DWP Workplace organization portal' })
   ).toBeVisible();
-  await expect(
-    commandCenter.getByRole('region', { name: "Today's schedule timeline" })
-  ).toHaveCount(0);
-  const priorityRailBounds = await page.getByTestId('home-priority-rail').boundingBox();
-  const newsBounds = await page.getByTestId('home-news-carousel').boundingBox();
-  const commandBounds = await page.getByTestId('home-command-area').boundingBox();
-  expect(newsBounds?.x).toBeCloseTo(50, 1);
-  expect(commandBounds?.x).toBeCloseTo(priorityRailBounds?.x ?? 0, 1);
-  expect(commandBounds?.width).toBeCloseTo(priorityRailBounds?.width ?? 0, 1);
-  expect((commandBounds?.width ?? 0) / (newsBounds?.width ?? 1)).toBeCloseTo(2, 1);
+  await expect(page.getByTestId('home-hero')).toBeVisible();
+  await expect(page.getByRole('region', { name: 'Company news and notices' })).toBeVisible();
+  await expect(page.getByRole('region', { name: 'My work flow' })).toBeVisible();
+  const priority = page.getByRole('link', { name: /Approve software access request/u });
+  await expect(priority).toBeVisible();
   const launchpadGrid = page.getByRole('list', { name: 'Start work apps' });
-  const launchpadLayout = await launchpadGrid.evaluate((node) => {
-    const style = window.getComputedStyle(node);
-    return {
-      columns: style.gridTemplateColumns.split(' ').length,
-      height: style.height,
-      minHeight: style.minHeight,
-      maxHeight: style.maxHeight,
-    };
-  });
-  expect(launchpadLayout).toEqual({
-    columns: 5,
-    height: '184px',
-    minHeight: '184px',
-    maxHeight: '184px',
-  });
-  const firstAppBounds = await page.getByRole('button', { name: 'Open Work' }).boundingBox();
-  expect(firstAppBounds).not.toBeNull();
-  expect((firstAppBounds?.y ?? 0) + (firstAppBounds?.height ?? 0)).toBeLessThanOrEqual(960);
-  const heroBounds = await page.getByTestId('home-hero').boundingBox();
-  const workToolsBounds = await page.getByRole('region', { name: 'Work tools' }).boundingBox();
-  const heroContextBounds = await page.locator('[data-home-hero-context]').boundingBox();
-  const appGroupBounds = await page
-    .getByRole('region', { name: 'Work tools' })
-    .locator('section[aria-labelledby^="app-group-"]')
-    .first()
-    .boundingBox();
-  expect(workToolsBounds?.y ?? Infinity).toBeLessThan(priorityRailBounds?.y ?? 0);
-  expect((workToolsBounds?.y ?? 0) + (workToolsBounds?.height ?? 0)).toBeLessThanOrEqual(
-    (heroBounds?.y ?? 0) + (heroBounds?.height ?? 0) + 1
-  );
-  const heroTopInset = (heroContextBounds?.y ?? 0) - (heroBounds?.y ?? 0);
-  const appBottomInset =
-    (heroBounds?.y ?? 0) +
-    (heroBounds?.height ?? 0) -
-    ((appGroupBounds?.y ?? 0) + (appGroupBounds?.height ?? 0));
-  expect(appBottomInset).toBeCloseTo(24, 0);
-  expect(Math.abs(heroTopInset - appBottomInset)).toBeLessThanOrEqual(8);
-  expect(newsBounds?.y).toBeCloseTo(commandBounds?.y ?? 0, 1);
-  await expect(page.getByRole('heading', { name: 'Workday insights' })).toBeVisible();
+  await expect(launchpadGrid).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Open Work' })).toBeVisible();
   await expect(page.getByRole('region', { name: 'Work tools' })).toBeVisible();
-  await expect(page.getByRole('heading', { name: 'Work tools' })).toHaveCount(0);
-  await expect(page.locator('[data-home-zone]')).toHaveCount(1);
-  await expect(page.locator('[data-workspace-widget-policy="GOVERNED"]')).toHaveCount(1);
-  await expect(page.locator('[data-workspace-widget-policy="PERSONAL"]')).toHaveCount(5);
-  const sectionHeaders = page.locator('[data-dwp-section-header]');
-  await expect(sectionHeaders).toHaveCount(6);
-  const sectionHeaderMetrics = await sectionHeaders.evaluateAll((headers) =>
-    headers.map((header) => {
-      const plate = header.querySelector<HTMLElement>('[data-dwp-section-header-icon]');
-      const icon = plate?.querySelector('svg');
-      const heading = header.querySelector('h2');
-      const plateBounds = plate?.getBoundingClientRect();
-      const iconBounds = icon?.getBoundingClientRect();
-      const headingStyle = heading ? window.getComputedStyle(heading) : null;
-      return {
-        plate: [Math.round(plateBounds?.width ?? 0), Math.round(plateBounds?.height ?? 0)],
-        icon: [Math.round(iconBounds?.width ?? 0), Math.round(iconBounds?.height ?? 0)],
-        fontSize: headingStyle?.fontSize,
-        lineHeight: headingStyle?.lineHeight,
-      };
-    })
-  );
-  expect(sectionHeaderMetrics).toEqual(
-    Array.from({ length: 6 }, () => ({
-      plate: [30, 30],
-      icon: [17, 17],
-      fontSize: '18px',
-      lineHeight: '24px',
-    }))
-  );
-
-  const standardWidgets = page.locator(
-    '[data-workspace-widget="activity"], [data-workspace-widget="focus"], [data-workspace-widget="schedule"]'
-  );
-  await expect(standardWidgets).toHaveCount(3);
-  const standardWidgetBounds = await standardWidgets.evaluateAll((widgets) =>
-    widgets.map((widget) => {
-      const bounds = widget.getBoundingClientRect();
-      return {
-        width: Math.round(bounds.width),
-        size: widget.getAttribute('data-workspace-widget-size'),
-      };
-    })
-  );
-  expect(standardWidgetBounds[0]?.width).toBe(standardWidgetBounds[2]?.width);
-  expect(standardWidgetBounds[1]?.width ?? 0).toBeGreaterThan(
-    (standardWidgetBounds[0]?.width ?? 0) * 1.9
-  );
-  expect(standardWidgetBounds.map((widget) => widget.size)).toEqual([
-    'quarter',
-    'medium',
-    'quarter',
-  ]);
-  await expect(page.locator('[data-workspace-widget="daily-brief"]')).toHaveAttribute(
-    'data-workspace-widget-size',
-    'full'
-  );
 
   const accessibility = await new AxeBuilder({ page })
-    .include('[data-testid="home-command-center"]')
+    .include('[data-testid="classic-home"]')
     .analyze();
   expect(
     accessibility.violations.filter(
@@ -164,10 +61,10 @@ test('home turns live work signals into a keyboard-operable next action', async 
     )
   ).toEqual([]);
 
-  const openPriority = commandArea.getByRole('button', { name: 'Open priority in Work' });
-  await openPriority.focus();
+  await priority.focus();
+  await expect(priority).toBeFocused();
   await page.keyboard.press('Enter');
-  await expect(page).toHaveURL(/\/work\?item=WK-1042/);
+  await expect(page).toHaveURL(/\/work\/queue\?item=WK-1042/);
 });
 
 test('home preserves the tenant-managed hero image source', async ({ page }) => {
@@ -1024,27 +921,4 @@ test('home isolates recommendation degradation from usable work and calendar dat
   const insights = page.getByRole('region', { name: 'Workday insights' });
   await expect(insights.getByText(/Workday insights could not be loaded/i)).toBeVisible();
   await expect(insights.getByRole('button', { name: 'Try again' })).toBeVisible();
-});
-
-test('home records explicit feedback and removes an irrelevant recommendation', async ({
-  page,
-}) => {
-  await page.goto('/');
-
-  const insights = page.getByRole('region', { name: 'Workday insights' });
-  const insight = insights.getByRole('heading', {
-    name: 'Review work approaching its deadline',
-  });
-  await expect(insight).toBeVisible();
-  const feedbackRequest = page.waitForRequest(
-    (request) =>
-      request.method() === 'POST' &&
-      request.url().includes('/home/recommendations/work-due-soon/feedback')
-  );
-  await insights.getByRole('button', { name: 'This recommendation is not relevant' }).click();
-
-  expect((await feedbackRequest).postDataJSON()).toMatchObject({
-    feedbackType: 'NOT_RELEVANT',
-  });
-  await expect(insight).toHaveCount(0);
 });

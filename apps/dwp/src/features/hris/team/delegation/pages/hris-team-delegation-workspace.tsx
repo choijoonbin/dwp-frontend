@@ -1,6 +1,8 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { CheckCircle2, Plus, RefreshCw, UserRoundX } from 'lucide-react';
+import { formatDate } from '@dwp-frontend/shared-i18n';
 import {
   ActionButton,
   FormField,
@@ -75,6 +77,7 @@ function denied(error: unknown): boolean {
 }
 
 function DisabledDelegation({ invalid }: Readonly<{ invalid: boolean }>) {
+  const { t } = useTranslation('workforce');
   return (
     <Stack
       data-testid="hris-team-delegation-workspace"
@@ -93,10 +96,10 @@ function DisabledDelegation({ invalid }: Readonly<{ invalid: boolean }>) {
       </InlineFeedback>
       <Paper variant="outlined" sx={{ p: { xs: 1.5, sm: 2 } }}>
         <Typography component="h1" variant="h5" sx={{ overflowWrap: 'anywhere' }}>
-          Manager delegation
+          {t('governedPeople.delegation.header.title')}
         </Typography>
         <Typography color="text.secondary" sx={{ mt: 1, overflowWrap: 'anywhere' }}>
-          Review Approval-owned delegation windows for the authorized manager population.
+          {t('governedPeople.delegation.disabled.description')}
         </Typography>
       </Paper>
     </Stack>
@@ -140,6 +143,7 @@ function ActiveDelegation({
   dataSource: HrisDelegationDataSource;
   commandRunner?: HrisApprovalCommandRunner;
 }>) {
+  const { t } = useTranslation('workforce');
   const queryClient = useQueryClient();
   const scopeIdentity = approvalAdapterScopeIdentity(admission);
   const authorityRef = useRef({ admission, scopeIdentity });
@@ -250,22 +254,25 @@ function ActiveDelegation({
         <Stack direction={{ xs: 'column', sm: 'row' }} gap={1.5} justifyContent="space-between">
           <Box minWidth={0}>
             <Typography component="h1" variant="h5" sx={{ overflowWrap: 'anywhere' }}>
-              Manager delegation
+              {t('governedPeople.delegation.header.title')}
             </Typography>
             <Typography color="text.secondary" sx={{ mt: 0.75, overflowWrap: 'anywhere' }}>
-              Inspect governed windows for the authorized population and submit owner-managed create
-              or revoke commands.
+              {t('governedPeople.delegation.header.description')}
             </Typography>
           </Box>
           <Stack direction="row" gap={1} flexWrap="wrap" useFlexGap>
-            <Chip size="small" variant="outlined" label="Approval owner · live authority" />
+            <Chip
+              size="small"
+              variant="outlined"
+              label={t('governedPeople.delegation.header.liveAuthority')}
+            />
             <ActionButton
               intent="secondary"
               startIcon={<Plus size={17} />}
               disabled={!canManage || pending || !delegations.isSuccess}
               onClick={() => setShowCreate((value) => !value)}
             >
-              Create delegation
+              {t('governedPeople.delegation.actions.create')}
             </ActionButton>
           </Stack>
         </Stack>
@@ -275,7 +282,7 @@ function ActiveDelegation({
         <Paper component="section" variant="outlined" sx={{ p: { xs: 1.5, sm: 2 } }}>
           <Stack gap={1.5}>
             <Typography component="h2" variant="h6">
-              Governed delegation window
+              {t('governedPeople.delegation.create.title')}
             </Typography>
             <Box
               sx={{
@@ -285,24 +292,24 @@ function ActiveDelegation({
               }}
             >
               <FormField
-                label="Delegate user ID"
+                label={t('governedPeople.delegation.create.delegateUserId')}
                 value={draft.delegateUserId}
                 onChange={(event) => setDraft({ ...draft, delegateUserId: event.target.value })}
                 inputMode="numeric"
               />
               <FormField
-                label="Reason"
+                label={t('governedPeople.delegation.create.reason')}
                 value={draft.reason}
                 onChange={(event) => setDraft({ ...draft, reason: event.target.value })}
                 inputProps={{ maxLength: 500 }}
               />
               <LocalDateTimePickerField
-                label="Starts at"
+                label={t('governedPeople.delegation.create.startsAt')}
                 value={draft.startsAt || null}
                 onValueChange={(value) => setDraft({ ...draft, startsAt: value ?? '' })}
               />
               <LocalDateTimePickerField
-                label="Ends at"
+                label={t('governedPeople.delegation.create.endsAt')}
                 value={draft.endsAt || null}
                 onValueChange={(value) => setDraft({ ...draft, endsAt: value ?? '' })}
               />
@@ -315,7 +322,9 @@ function ActiveDelegation({
                 if (input) create.mutate(input);
               }}
             >
-              {create.isPending ? 'Submitting…' : 'Submit to Approval owner'}
+              {create.isPending
+                ? t('governedPeople.delegation.actions.submitting')
+                : t('governedPeople.delegation.actions.submit')}
             </ActionButton>
           </Stack>
         </Paper>
@@ -323,7 +332,7 @@ function ActiveDelegation({
 
       {delegations.isLoading ? (
         <LoadingState
-          label="Loading Approval delegations"
+          label={t('governedPeople.delegation.states.loading')}
           variant="skeleton"
           skeletonHeights={[96, 320]}
           skeletonGap={1}
@@ -338,12 +347,11 @@ function ActiveDelegation({
               : 'Delegation owner unavailable'
           }
         >
-          No cached delegation selection or command is shown. Confirm authority, then retry the
-          exact owner query.
+          {t('governedPeople.delegation.states.ownerUnavailableDescription')}
         </InlineFeedback>
       ) : rows.length === 0 ? (
-        <InlineFeedback severity="info" title="No delegations are available">
-          No Approval delegation exists for the authorized population and window.
+        <InlineFeedback severity="info" title={t('governedPeople.delegation.states.emptyTitle')}>
+          {t('governedPeople.delegation.states.emptyDescription')}
         </InlineFeedback>
       ) : (
         <Box
@@ -380,7 +388,11 @@ function ActiveDelegation({
                       <Chip size="small" label={delegation.lifecycleState} />
                     </Stack>
                     <Typography variant="caption" color="text.secondary">
-                      {delegation.direction} · {delegation.scopeType} · v{delegation.version}
+                      {t('governedPeople.delegation.list.identity', {
+                        direction: delegation.direction,
+                        scopeType: delegation.scopeType,
+                        version: delegation.version,
+                      })}
                     </Typography>
                   </ActionButton>
                 </Box>
@@ -394,14 +406,25 @@ function ActiveDelegation({
                   {selected.delegateDisplayName}
                 </Typography>
                 <Typography variant="body2" color="text.secondary">
-                  {new Date(selected.startsAt).toLocaleString()} –{' '}
-                  {new Date(selected.endsAt).toLocaleString()}
+                  {t('governedPeople.delegation.detail.period', {
+                    startsAt: formatDate(selected.startsAt, {
+                      dateStyle: 'medium',
+                      timeStyle: 'short',
+                    }),
+                    endsAt: formatDate(selected.endsAt, {
+                      dateStyle: 'medium',
+                      timeStyle: 'short',
+                    }),
+                  })}
                 </Typography>
                 <Typography sx={{ whiteSpace: 'pre-wrap', overflowWrap: 'anywhere' }}>
                   {selected.reason}
                 </Typography>
                 <Typography variant="caption" color="text.secondary">
-                  Delegation {selected.delegationId} · subject revision {selected.version}
+                  {t('governedPeople.delegation.detail.identity', {
+                    delegationId: selected.delegationId,
+                    version: selected.version,
+                  })}
                 </Typography>
                 <ActionButton
                   intent="danger"
@@ -414,7 +437,9 @@ function ActiveDelegation({
                     })
                   }
                 >
-                  {revoke.isPending ? 'Revoking…' : 'Revoke delegation'}
+                  {revoke.isPending
+                    ? t('governedPeople.delegation.actions.revoking')
+                    : t('governedPeople.delegation.actions.revoke')}
                 </ActionButton>
               </Stack>
             ) : null}
@@ -428,25 +453,28 @@ function ActiveDelegation({
         disabled={delegations.isFetching || pending}
         onClick={() => void delegations.refetch()}
       >
-        Refresh authority
+        {t('governedPeople.delegation.actions.refreshAuthority')}
       </ActionButton>
       {pending ? (
-        <InlineFeedback severity="info" title="Delegation command pending">
-          Awaiting the Approval owner. No optimistic success has been applied.
+        <InlineFeedback severity="info" title={t('governedPeople.delegation.states.pendingTitle')}>
+          {t('governedPeople.delegation.states.pendingDescription')}
         </InlineFeedback>
       ) : null}
       {create.isError || revoke.isError ? (
-        <InlineFeedback severity="error" title="Delegation command rejected">
-          The owner rejected or could not confirm the command. Refresh authority before retrying.
+        <InlineFeedback
+          severity="error"
+          title={t('governedPeople.delegation.states.rejectedTitle')}
+        >
+          {t('governedPeople.delegation.states.rejectedDescription')}
         </InlineFeedback>
       ) : null}
       {ownerOutcome ? (
         <InlineFeedback
           severity="success"
-          title="Owner-confirmed delegation outcome"
+          title={t('governedPeople.delegation.states.confirmedTitle')}
           icon={<CheckCircle2 size={18} />}
         >
-          {ownerOutcome} The owner projection replaced the prior list; no local receipt was created.
+          {t('governedPeople.delegation.states.confirmedDescription', { ownerOutcome })}
         </InlineFeedback>
       ) : null}
     </Stack>

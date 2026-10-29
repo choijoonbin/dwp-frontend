@@ -45,6 +45,9 @@ vi.mock('@dwp-frontend/design-system', () => ({
   }) => createElement('button', { disabled: Boolean(disabled || loading), onClick }, children),
   InlineFeedback: ({ children, action }: { children: ReactNode; action?: ReactNode }) =>
     createElement('div', null, children, action),
+  foundationTokens: {
+    home: { color: { heroMuted84: 'rgba(248,250,252,0.84)' } },
+  },
 }));
 
 vi.mock('qrcode.react', () => ({

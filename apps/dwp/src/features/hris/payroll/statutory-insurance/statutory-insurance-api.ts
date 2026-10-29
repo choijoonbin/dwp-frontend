@@ -27,6 +27,13 @@ import type {
   StatutoryConfigurationQuery,
 } from './statutory-insurance-contract';
 
+export const HCM_COUNTRY_PACK_ACTIVATION_MUTATION_API_CONTRACT = Object.freeze({
+  apiFunction: 'activateCountryPack',
+  routeContractKey: COUNTRY_PACK_ACTIVATE_ROUTE_CONTRACT_KEY,
+  method: 'POST',
+  path: '/api/payroll/v1/country-packs/{packId}/activate',
+});
+
 export type StatutoryConfigurationReadContext = Readonly<{
   routeContractKey: typeof STATUTORY_CONFIGURATION_DATA_ROUTE_CONTRACT_KEY;
   contextScopeKey: string;

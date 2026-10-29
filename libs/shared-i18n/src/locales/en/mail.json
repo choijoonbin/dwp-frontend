@@ -184,6 +184,10 @@
           "label": "No mail account connected",
           "action": "Connect an account"
         },
+        "BLOCKED_EXTERNAL": {
+          "label": "{{count}} account connections await external provider approval",
+          "action": "Review external activation"
+        },
         "ACTION_REQUIRED": {
           "label": "{{count}} account connections require recovery",
           "action": "Recover accounts"

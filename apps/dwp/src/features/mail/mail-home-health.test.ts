@@ -29,8 +29,22 @@ function account(overrides: Partial<MailAccount> = {}): MailAccount {
       lastSuccessfulSyncScope: 'INBOX',
       errorCode: null,
       action: 'NONE',
-      consentEvidence: null,
-      tokenEvidence: null,
+      consentEvidence: {
+        state: 'VERIFIED',
+        source: 'CONNECTOR_RUNTIME',
+        observedAt: '2026-10-28T01:59:00.000Z',
+        expiresAt: null,
+        errorCode: null,
+        action: 'NONE',
+      },
+      tokenEvidence: {
+        state: 'VERIFIED',
+        source: 'CONNECTOR_RUNTIME',
+        observedAt: '2026-10-28T01:59:00.000Z',
+        expiresAt: '2026-10-28T03:00:00.000Z',
+        errorCode: null,
+        action: 'NONE',
+      },
       featureReadiness: {},
     },
     ...overrides,
@@ -56,15 +70,48 @@ describe('mail home health', () => {
     expect(resolveMailHomeHealth([account()], NOW).state).toBe('HEALTHY');
   });
 
-  it.each(['REAUTHENTICATION_REQUIRED', 'DISCONNECTED'] as const)(
-    'classifies %s as action required',
-    (connectionState) => {
-      expect(resolveMailHomeHealth([account({ connectionState })], NOW)).toMatchObject({
-        state: 'ACTION_REQUIRED',
-        affectedAccountCount: 1,
-      });
-    }
-  );
+  it('keeps external provider activation visibly blocked', () => {
+    expect(
+      resolveMailHomeHealth([account({ connectionState: 'REAUTHENTICATION_REQUIRED' })], NOW)
+    ).toMatchObject({ state: 'BLOCKED_EXTERNAL', affectedAccountCount: 1 });
+    expect(
+      resolveMailHomeHealth(
+        [
+          account({
+            readiness: {
+              ...account().readiness!,
+              consentEvidence: {
+                ...account().readiness!.consentEvidence!,
+                state: 'REQUIRED',
+                action: 'ACTIVATE_EXTERNALLY',
+              },
+            },
+          }),
+        ],
+        NOW
+      )
+    ).toMatchObject({ state: 'BLOCKED_EXTERNAL', affectedAccountCount: 1 });
+  });
+
+  it('classifies disconnected or current negative readiness evidence as action required', () => {
+    expect(
+      resolveMailHomeHealth([account({ connectionState: 'DISCONNECTED' })], NOW)
+    ).toMatchObject({ state: 'ACTION_REQUIRED', affectedAccountCount: 1 });
+    expect(
+      resolveMailHomeHealth(
+        [
+          account({
+            readiness: {
+              ...account().readiness!,
+              credentialConfigured: false,
+              action: 'CONTACT_ADMIN',
+            },
+          }),
+        ],
+        NOW
+      )
+    ).toMatchObject({ state: 'ACTION_REQUIRED', affectedAccountCount: 1 });
+  });
 
   it('keeps suspended connections and paused synchronization separate from recovery actions', () => {
     expect(resolveMailHomeHealth([account({ connectionState: 'SUSPENDED' })], NOW).state).toBe(
@@ -83,6 +130,21 @@ describe('mail home health', () => {
 
     expect(resolveMailHomeHealth([withSyncAt(atBoundary)], NOW).state).toBe('HEALTHY');
     expect(resolveMailHomeHealth([withSyncAt(beyondBoundary)], NOW).state).toBe('STALE');
+  });
+
+  it('never reports stale or future readiness receipts as healthy', () => {
+    for (const observedAt of [
+      '2026-10-28T01:50:00.000Z',
+      '2026-10-28T02:00:00.001Z',
+      'not-an-instant',
+    ]) {
+      expect(
+        resolveMailHomeHealth(
+          [account({ readiness: { ...account().readiness!, observedAt } })],
+          NOW
+        ).state
+      ).toBe('STALE');
+    }
   });
 
   it('uses the oldest account sync so one stale account cannot be hidden by a fresh account', () => {
@@ -105,7 +167,7 @@ describe('mail home health', () => {
     expect(result.oldestSuccessfulSyncAt).toBe('2026-10-28T00:30:00.000Z');
   });
 
-  it.each(['NO_ACCOUNT', 'ACTION_REQUIRED', 'PAUSED', 'STALE'] as const)(
+  it.each(['NO_ACCOUNT', 'BLOCKED_EXTERNAL', 'ACTION_REQUIRED', 'PAUSED', 'STALE'] as const)(
     'routes %s recovery actions to account recovery',
     (state) => {
       expect(mailHomeHealthActionPath(state, '/mail/inbox')).toBe('/mail/accounts');

@@ -3,7 +3,636 @@
     "loadError": "정보를 불러오지 못했습니다",
     "retry": "다시 시도"
   },
+  "administration": {
+    "common": {
+      "verifySession": "세션 확인"
+    },
+    "integration": {
+      "loadingWorkbenchAuthority": "통제된 워크벤치 권한을 확인하는 중입니다…",
+      "loadingCertificateAuthority": "통제된 증명서 권한을 확인하는 중입니다…",
+      "approvalOwnerScopeUnavailable": "이 HR 워크스페이스에서 승인 소유자 범위를 사용할 수 없습니다.",
+      "loadingCrossProductAuthority": "제품 간 권한을 확인하는 중입니다…",
+      "approvalOwnerAccessUnavailable": "이 HR 워크스페이스에서 승인 소유자 접근 권한을 사용할 수 없습니다."
+    },
+    "operations": {
+      "notAvailable": "아직 사용할 수 없음",
+      "refresh": "프로젝션 새로고침",
+      "loading": {
+        "exceptions": "HRIS 운영 예외를 불러오는 중입니다",
+        "summary": "HRIS 운영 요약을 불러오는 중입니다",
+        "workspace": "HRIS 운영 워크스페이스를 불러오는 중입니다"
+      },
+      "projection": {
+        "partialTitle": "일부 소유자 프로젝션을 사용할 수 없습니다",
+        "partialDescription": "확인된 예외는 읽기 전용으로 유지됩니다. 아래 원본 상태에서 확인되지 않은 소유자 프로젝션을 확인할 수 있습니다.",
+        "staleTitle": "소유자 프로젝션이 오래되었습니다",
+        "staleDescription": "마지막으로 확인된 프로젝션은 조사 목적으로만 표시됩니다. 마지막 정상 새로고침: {{refreshedAt}}.",
+        "unavailableTitle": "운영 프로젝션을 확인하지 못했습니다",
+        "unavailableDescription": "소유자 예외나 캐시된 상세 정보를 표시하지 않습니다."
+      },
+      "summary": {
+        "title": "고객 및 프로세스 영향",
+        "meta": "권한이 확인된 예외 {{count}}건 · {{asOf}} 기준",
+        "open": "열림",
+        "acknowledged": "확인됨",
+        "resolved": "해결됨",
+        "highImpact": "높은 영향"
+      },
+      "filters": {
+        "ownerModule": "소유 모듈",
+        "allModules": "모든 모듈",
+        "severity": "심각도",
+        "allSeverities": "모든 심각도",
+        "ownerState": "소유자 상태",
+        "allStates": "모든 상태"
+      },
+      "list": {
+        "title": "권한이 확인된 예외",
+        "page": "안정적인 소유자 순서 · {{page}}페이지",
+        "emptyTitle": "이 범위에 예외가 없습니다",
+        "emptyDescription": "현재 권한 범위와 필터에 해당하는 소유자 예외가 없습니다. 이 워크스페이스에서는 복구 작업을 수행할 수 없습니다.",
+        "lastObserved": "마지막 관찰 {{observedAt}} · {{count}}회 발생"
+      },
+      "pagination": {
+        "previous": "이전",
+        "next": "다음"
+      },
+      "receipt": {
+        "loading": "기존 명령 영수증을 불러오는 중입니다",
+        "deniedTitle": "영수증을 사용할 수 없습니다",
+        "deniedDescription": "영수증이 없거나 현재 원본 명령 및 테넌트 범위를 벗어났습니다. 캐시된 영수증은 표시하지 않습니다.",
+        "unavailableTitle": "영수증을 확인하지 못했습니다",
+        "unavailableDescription": "기존 영수증 조회기를 사용할 수 없습니다. 이 워크스페이스에서는 명령을 재시도하지 않습니다.",
+        "title": "기존 명령 영수증 · {{profile}}"
+      },
+      "detail": {
+        "title": "마스킹된 예외 상세",
+        "select": "검사할 권한이 있는 예외를 선택하세요.",
+        "loading": "마스킹된 예외 상세를 불러오는 중입니다",
+        "deniedTitle": "예외 상세를 사용할 수 없습니다",
+        "deniedDescription": "선택한 객체가 없거나 현재 테넌트, 패키지, 목적 또는 필드 범위를 벗어났습니다. 캐시된 상세 정보는 표시하지 않습니다.",
+        "unavailableTitle": "예외 상세를 확인하지 못했습니다",
+        "unavailableDescription": "현재 선택을 유지한 채 워크스페이스를 새로고침하세요. 소유자 작업은 노출되지 않습니다.",
+        "revision": "{{module}} · {{type}} · 리비전 {{revision}}",
+        "firstObserved": "최초 관찰",
+        "lastObserved": "마지막 관찰",
+        "correlation": "상관관계 ID",
+        "continueInvestigation": "소유 워크스페이스에서 조사 계속하기",
+        "evidenceReferences": "마스킹된 증적 참조",
+        "inspectReceipt": "기존 영수증 {{receiptId}} 검사",
+        "readOnlyTitle": "읽기 및 딥 링크 전용",
+        "readOnlyDescription": "복구는 소유 도메인에서 수행합니다. 이 워크스페이스는 예외를 재시도, 억제, 해결 또는 자동화하지 않습니다.",
+        "noAuthorizedDetail": "권한이 확인된 상세 정보가 없습니다."
+      },
+      "badges": {
+        "tenantScoped": "테넌트 범위",
+        "readOnly": "읽기 전용"
+      },
+      "producer": {
+        "emptyTitle": "연결된 실시간 소유자 프로듀서가 없습니다",
+        "emptyDescription": "SYS 소비자와 읽기 화면은 설치되었지만 서비스 간 프로듀서 전달은 외부 게이트로 남아 있습니다. 운영 예외의 완전성을 보장하지 않습니다."
+      },
+      "disabled": {
+        "title": "HRIS 운영 예외 센터를 사용할 수 없습니다",
+        "description": "모듈이 설치되었지만 이 테넌트에서는 기본적으로 비활성화되어 있습니다. 진입, 예외, 프로젝션 또는 영수증 요청을 시작하지 않았습니다.",
+        "featureOff": "기능 상태: 꺼짐",
+        "boundary": "복구 명령과 소유자 자동화는 각 소유 도메인에 유지되며 여기에 탑재되지 않습니다."
+      }
+    },
+    "workflow": {
+      "title": "승인 워크플로 정책",
+      "description": "승인 서비스가 소유한 정책 카탈로그를 검토하고 독립적으로 검토된 버전을 게시하세요.",
+      "activeDescription": "승인 서비스 소유 카탈로그를 비교하고 현재 독립 검토가 완료된 버전만 게시하세요.",
+      "liveAuthority": "승인 소유자 · 실시간 권한",
+      "loading": "승인 워크플로 정책을 불러오는 중입니다",
+      "refreshAuthority": "권한 새로고침",
+      "policyVersionShort": "{{policyKey}} · v{{version}}",
+      "policyVersion": "{{policyType}} · {{enforcementMode}} · 버전 {{version}}",
+      "disabled": {
+        "invalidTitle": "워크플로 정책에 접근할 수 없습니다",
+        "offTitle": "워크플로 정책이 꺼져 있습니다",
+        "invalidDescription": "HCM 페이지와 승인 읽기 증적의 테넌트, 사용자, 범위 또는 권한 리비전이 더 이상 일치하지 않습니다. 승인 소유자 요청을 시작하지 않았습니다.",
+        "offDescription": "기본 비활성 HRIS 어댑터가 이 테넌트에 등록되지 않았습니다. 승인 정책 요청을 시작하지 않았습니다."
+      },
+      "error": {
+        "accessTitle": "정책에 접근할 수 없습니다",
+        "ownerTitle": "정책 소유자를 사용할 수 없습니다",
+        "description": "캐시된 정책 선택이나 명령을 표시하지 않습니다. 권한을 확인한 후 동일한 소유자 조회를 다시 시도하세요."
+      },
+      "empty": {
+        "title": "사용 가능한 정책이 없습니다",
+        "description": "권한이 확인된 승인 정책 카탈로그가 비어 있습니다. 게시 제어는 사용할 수 없습니다."
+      },
+      "review": {
+        "pending": "검토 대기",
+        "requiredTitle": "독립 검토 필요",
+        "noneTitle": "게시 가능한 검토 없음",
+        "requiredDescription": "대기 중인 소유자 정책 변경을 검토하세요.",
+        "noneDescription": "승인 소유자에게 이 정책의 검토 대기 버전이 없습니다.",
+        "fourEyesTitle": "4-eyes 분리 원칙 적용",
+        "fourEyesDescription": "제출자는 이 대기 정책 버전을 게시할 수 없습니다.",
+        "comment": "검토 의견"
+      },
+      "publish": {
+        "publishing": "게시 중…",
+        "action": "검토 완료 버전 게시",
+        "pendingTitle": "게시 대기 중",
+        "pendingDescription": "승인 소유자의 응답을 기다리고 있습니다. 낙관적 성공 상태를 적용하지 않았습니다.",
+        "rejectedTitle": "게시 거부됨",
+        "rejectedDescription": "소유자가 명령을 거부했거나 확인하지 못했습니다. 재시도하기 전에 권한을 새로고침하세요.",
+        "confirmedTitle": "소유자 확인 게시",
+        "ownerConfirmed": "소유자가 {{policyId}}의 게시를 확인했습니다.",
+        "confirmedDescription": "반환된 소유자 프로젝션이 이전 선택을 대체했으며 로컬 영수증은 생성하지 않았습니다."
+      }
+    },
+    "reference": {
+      "title": "참조 구성",
+      "description": "승인, 게시, 폐기 또는 롤백하기 전에 수명주기 증적을 비교하세요.",
+      "loadingWorkspace": "참조 구성 증적을 불러오는 중입니다…",
+      "loadingDetail": "불변 버전 증적을 불러오는 중입니다…",
+      "restrictedTitle": "참조 구성이 제한되었습니다",
+      "restrictedDescription": "현재 범위에서는 이 워크벤치를 읽을 수 없습니다. 구성 조회자 역할을 요청하세요.",
+      "unavailableTitle": "참조 구성을 사용할 수 없습니다",
+      "unavailableDescription": "수명주기 명령을 제출하지 않았습니다. 소유자 프로젝션을 사용할 수 있게 되면 다시 시도하세요.",
+      "partialTitle": "일부 구성 증적을 사용할 수 없습니다",
+      "partialDescription": "사용 가능한 버전은 계속 표시됩니다. 수명주기 결정을 내리기 전에 새로고침하세요.",
+      "refresh": "새로고침",
+      "evidenceState": "증적: {{state}}",
+      "lifecycleStatus": "수명주기 상태",
+      "allStates": "모든 상태",
+      "emptyTitle": "이 범위와 일치하는 구성 버전이 없습니다",
+      "emptyDescription": "수명주기 필터를 지우거나 기존 소유자 참조에서 첫 번째 버전을 생성하세요.",
+      "listAriaLabel": "참조 구성 목록",
+      "detailAriaLabel": "선택한 구성 증적",
+      "version": "버전",
+      "versionValue": "v{{version}} · 리비전 {{revision}}",
+      "effectiveFrom": "적용 시작",
+      "effectiveTo": "적용 종료",
+      "openEnded": "종료일 없음",
+      "ownerEvidence": "소유자 증적 — 콘텐츠는 여기에 복사되지 않습니다",
+      "configurationId": "구성 {{configurationId}}",
+      "digest": "SHA-256 {{digest}}",
+      "availableDecisions": "사용 가능한 수명주기 결정",
+      "commandAuthorityUnavailableTitle": "수명주기 명령 권한을 사용할 수 없습니다",
+      "commandAuthorityUnavailableDescription": "통제 계층이 관리 명령 소유자를 주입하지 않았습니다. 모든 수명주기 결정은 비활성 상태이며 요청을 전송하지 않습니다.",
+      "commandRunningDescription": "명령 소유자의 불변 명령 영수증을 기다리는 중입니다.",
+      "commandSucceededDescription": "불변 영수증 {{receiptId}} · 집계 리비전 {{revision}}",
+      "staleTitle": "수명주기 증적이 오래되었습니다",
+      "staleDescription": "이 결정을 다시 시도하기 전에 소유자 증적을 새로고침하세요.",
+      "commandFailedDescription": "이 워크스페이스에 성공한 영수증이 기록되지 않았습니다.",
+      "noTransition": "이 불변 버전에는 사용 가능한 전이가 없습니다.",
+      "selectConfiguration": "증적을 검사할 구성을 선택하세요.",
+      "lastProjection": "마지막 소유자 프로젝션: {{asOf}} · {{version}}"
+    },
+    "navigation": {
+      "copy": {
+        "title": "HRIS 메뉴 정책",
+        "description": "테넌트 기준과 법인별 제한을 검토하고 하나의 불변 정책 리비전으로 게시합니다.",
+        "refresh": "새로고침",
+        "scope": "적용 범위",
+        "tenant": "테넌트 기준",
+        "legalEntity": "법인 제한",
+        "lifecycle": "수명주기",
+        "rollout": "적용 모드",
+        "impactTitle": "게시 영향",
+        "impactDescription": "표시 설정은 권한을 부여하지 않으며, PAGE 권한이 없는 메뉴는 항상 제외됩니다.",
+        "recoveryTitle": "복구와 감사",
+        "recoveryDescription": "복원은 과거 리비전을 수정하지 않고 이전 digest를 가리키는 새 리비전을 만듭니다.",
+        "groupsTitle": "인사 운영 메뉴 구성",
+        "defaultNode": "기본 메뉴",
+        "moveUp": "위로 이동",
+        "moveDown": "아래로 이동",
+        "loadingTitle": "메뉴 정책 근거를 불러오는 중입니다",
+        "emptyTitle": "아직 게시된 메뉴 정책이 없습니다",
+        "deniedTitle": "메뉴 정책 접근이 제한되었습니다",
+        "deniedDescription": "현재 범위에는 설정 관리자 PAGE 권한이 없습니다.",
+        "unavailableTitle": "메뉴 정책 서비스를 사용할 수 없습니다",
+        "staleTitle": "정책 근거가 오래되었습니다",
+        "partialTitle": "일부 정책 근거를 확인하지 못했습니다",
+        "commandUnavailable": "중앙 통제 명령 권한이 연결되지 않아 변경 작업이 비활성화되었습니다."
+      },
+      "editor": {
+        "catalogSummary": "7개 그룹 · 17개 표준 노드 · HRIS-WB-HR-OPERATIONS",
+        "rollout": {
+          "off": "비활성",
+          "shadow": "섀도",
+          "enforced": "적용"
+        },
+        "tenantDisabled": "테넌트에서 비활성"
+      },
+      "unavailableDescription": "정책 명령을 제출하지 않았습니다. 소유자 프로젝션을 사용할 수 있게 되면 다시 시도하세요.",
+      "emptyDescription": "완전한 표준 카탈로그에서 시작하세요. 검증과 독립 승인이 완료되기 전에는 게시할 수 없습니다.",
+      "staleDescription": "편집하거나 수명주기 결정을 내리기 전에 소유자 프로젝션을 새로고침하세요.",
+      "partialDescription": "표시된 증적은 읽기 전용입니다. 리비전을 만들거나 진행하기 전에 새로고침하세요.",
+      "evidenceSummary": "정책 증적 요약",
+      "evidenceState": "증적: {{state}}",
+      "enabledNodes": "17개 노드 중 {{count}}개 활성",
+      "unsavedDraft": "저장되지 않은 초안",
+      "effectiveFormula": "유효 메뉴 = 표준 IA ∩ 설치 구성 ∩ 테넌트 기준 ∩ 법인 제한 ∩ PAGE 권한",
+      "highRiskBoundary": "승인, 게시, 복원에는 추가 인증과 작성자가 아닌 사용자의 결정이 필요합니다.",
+      "validationIssues": "검증 문제 {{count}}건",
+      "commandsUnavailable": "관리 명령을 사용할 수 없음",
+      "commandRunning": "불변 소유자 영수증을 기다리는 중입니다. 반복 클릭은 억제됩니다.",
+      "commandReceipt": "영수증 {{receiptId}} · 리비전 {{revision}} · 객체 버전 {{objectVersion}}",
+      "restoreTarget": "복원 대상",
+      "restoreRevision": "리비전 {{revision}} · {{digest}}",
+      "decisionJustification": "결정 사유",
+      "decisionJustificationHelp": "승인, 게시, 복원에 필요하며 불변 감사 영수증에 저장됩니다.",
+      "actionsAriaLabel": "메뉴 정책 수명주기 작업",
+      "disabled": {
+        "title": "HRIS 메뉴 정책이 활성화되지 않았습니다",
+        "description": "스튜디오는 설치되었지만 기능이 꺼져 있습니다. 테넌트 정책을 불러오지 않으며 명령을 제출할 수 없습니다.",
+        "governedTitle": "활성화는 중앙에서 통제됩니다",
+        "governedDescription": "이 테넌트를 활성화하기 전에 통제 계층에서 PAGE 정책, 신뢰 범위, 라우트 및 명령 권한을 연결해야 합니다."
+      },
+      "scopeRequired": {
+        "title": "법인 선택자가 필요합니다",
+        "description": "서버 측 소유권 확인에 필요한 법인 공개 식별자를 통제 계층에서 제공하지 않았습니다. 정책 데이터를 요청하지 않았습니다."
+      },
+      "runtime": {
+        "invalidTitle": "잘못된 법인 선택자",
+        "invalidDescription": "요청한 법인 공개 ID가 단일 UUID가 아닙니다. 정책 데이터를 요청하지 않았습니다.",
+        "scopeTitle": "정책 범위",
+        "scopeDescription": "테넌트 기준을 선택하거나 법인 제한을 요청하세요. 브라우저 값은 선택자일 뿐이며, People 소유 서비스가 정책 데이터를 반환하거나 변경하기 전에 인증된 범위와 다시 대조합니다.",
+        "tenantBaseline": "테넌트 기준",
+        "legalEntityRestriction": "법인 제한",
+        "legalEntityPublicId": "법인 공개 ID",
+        "uuidHelp": "서버 측 People 소유권 확인에 사용할 UUID",
+        "applyScope": "범위 적용"
+      }
+    },
+    "automation": {
+      "eyebrow": "HRIS 거버넌스",
+      "title": "자동화 통제 센터",
+      "scope": "범위: {{scope}}",
+      "asOf": "{{asOf}} 기준",
+      "noSnapshot": "확인된 스냅샷 없음",
+      "refreshEvidence": "자동화 증적 새로고침",
+      "newDefinition": "새 정의",
+      "partial": {
+        "title": "일부 자동화 증적이 제한되었거나 오래되었습니다",
+        "description": "확인된 카탈로그 정보는 계속 표시되지만 최신의 완전한 권한 프로젝션을 사용할 수 있을 때까지 모든 명령이 비활성화됩니다."
+      },
+      "context": {
+        "label": "자동화 증적 컨텍스트",
+        "tenantScope": "테넌트 범위",
+        "snapshot": "스냅샷",
+        "authorizationRevision": "권한 리비전",
+        "fieldVisibility": "필드 가시성",
+        "fieldVisibilityValue": "표시 {{visible}}개 · 제한 {{restricted}}개",
+        "currentEvidence": "최신 증적",
+        "readOnly": "읽기 전용"
+      },
+      "summaryAriaLabel": "자동화 거버넌스 요약",
+      "filter": {
+        "ariaLabel": "자동화 카탈로그 필터",
+        "searchLabel": "카탈로그 검색",
+        "searchPlaceholder": "자동화 키, 핸들러, 수명주기…",
+        "resultLabel": "전체 {{total}}개 중 {{filtered}}개 리소스",
+        "resourceType": "리소스 유형",
+        "allResources": "모든 리소스",
+        "definitions": "정의",
+        "versions": "버전",
+        "schedules": "일정",
+        "emptyTitle": "필터와 일치하는 카탈로그 리소스가 없습니다",
+        "emptyDescription": "검색어를 지우거나 다른 리소스 유형을 선택하세요. 수명주기 명령은 제출되지 않았습니다.",
+        "clear": "필터 지우기"
+      },
+      "state": {
+        "noProjectionTitle": "자동화 증적을 사용할 수 없습니다",
+        "noProjectionDescription": "선언된 상태에 신뢰할 수 있는 소유자 프로젝션이 없습니다. 명령을 제출할 수 없습니다.",
+        "loadingTitle": "자동화 거버넌스를 불러오는 중입니다",
+        "loadingDescription": "정의, 일정, 실행 및 현재 권한을 확인하는 중입니다.",
+        "emptyTitle": "이 범위에 자동화 정의가 없습니다",
+        "emptyDescription": "정의 식별자와 메타데이터를 먼저 생성하세요. 버전, 일정 및 활성화는 별도로 통제되는 단계입니다.",
+        "createFirst": "첫 번째 정의 생성",
+        "restrictedTitle": "자동화 거버넌스가 제한되었습니다",
+        "restrictedDescription": "현재 세션에 필요한 페이지, 기능 또는 작업 결정이 없습니다.",
+        "stepUpTitle": "추가 인증이 필요합니다",
+        "stepUpDescription": "영향도가 높은 자동화 결정을 검토하거나 제출하기 전에 이 세션을 확인하세요.",
+        "retryTitle": "자동화 증적을 새로고치지 못했습니다",
+        "retryDescription": "이전에 확인된 화면은 대체되지 않았으며 명령도 제출되지 않았습니다.",
+        "retryRefresh": "새로고침 다시 시도",
+        "unavailableTitle": "자동화 거버넌스를 사용할 수 없습니다",
+        "unavailableDescription": "신뢰할 수 있는 카탈로그 증적을 사용할 수 없거나 허용된 최신성 범위를 벗어났습니다. 명령을 제출할 수 없습니다.",
+        "requestIdHelp": "지원팀에 문의할 때 실패한 소유자 응답의 상관관계 ID를 사용하세요."
+      },
+      "catalog": {
+        "ariaLabel": "자동화 리소스 카탈로그",
+        "resource": "리소스",
+        "state": "상태",
+        "context": "컨텍스트",
+        "nextEvent": "다음 이벤트",
+        "action": "작업",
+        "review": "검토"
+      },
+      "inspector": {
+        "detail": "{{resource}} 거버넌스 상세",
+        "lifecycle": "수명주기",
+        "targetFacts": "대상 정보",
+        "restrictedFacts": "제한됨 — 명령 억제",
+        "visibleFacts": "표시 및 확인됨",
+        "nextActions": "권한이 확인된 다음 작업",
+        "noActions": "현재 수명주기, 자격, 호출자 및 표시 가능한 정보의 교집합에서 수행할 수 있는 작업이 없습니다."
+      },
+      "run": {
+        "title": "실행 증적",
+        "identity": "실행 {{runId}} · 정의 {{definitionId}} · 버전 {{version}}",
+        "items": "항목",
+        "succeeded": "성공",
+        "failed": "실패",
+        "retryEligible": "재시도 가능",
+        "attempts": "시도",
+        "noAttempts": "기록된 시도 없음",
+        "attempt": "시도 {{attempt}} · {{state}}",
+        "attemptItems": "{{mode}} · {{count}}개 항목",
+        "noItems": "기록된 항목 영수증 없음",
+        "checkpoints": "체크포인트",
+        "noCheckpoints": "커밋된 체크포인트 없음",
+        "checkpoint": "시도 {{attempt}} · 체크포인트 {{checkpoint}}",
+        "checkpointItems": "{{count}}개 항목 · {{committedAt}}"
+      }
+    },
+    "integrationControl": {
+      "eyebrow": "HRIS 거버넌스",
+      "title": "통합 통제 센터",
+      "scope": "범위: {{scope}}",
+      "asOf": "{{asOf}} 기준",
+      "noSnapshot": "확인된 스냅샷 없음",
+      "refreshEvidence": "통합 증적 새로고침",
+      "newConnector": "새 커넥터",
+      "partial": {
+        "resultUnknownTitle": "최신 명령 결과가 확인되지 않았습니다",
+        "restrictedTitle": "일부 통합 증적이 제한되었거나 오래되었습니다",
+        "description": "확인된 커넥터 정보는 계속 표시되지만 최신의 완전한 소유자 증적을 사용할 수 있을 때까지 모든 명령이 보류됩니다. 조정은 원본 결과 불명 영수증을 변경하지 않습니다."
+      },
+      "context": {
+        "label": "통합 증적 컨텍스트",
+        "tenantScope": "테넌트 범위",
+        "projection": "프로젝션",
+        "hrisSettings": "HRIS 설정",
+        "dwpControl": "DWP 통제",
+        "snapshot": "스냅샷",
+        "injectedSnapshot": "주입된 소유자 스냅샷",
+        "evidenceState": "증적 상태",
+        "currentEvidence": "최신 증적",
+        "readOnly": "읽기 전용"
+      },
+      "summaryAriaLabel": "통합 거버넌스 요약",
+      "filter": {
+        "ariaLabel": "커넥터 증적 필터",
+        "searchLabel": "커넥터 검색",
+        "searchPlaceholder": "커넥터, 정책, 상태…",
+        "resultLabel": "전체 {{total}}개 중 {{filtered}}개 커넥터",
+        "emptyTitle": "검색과 일치하는 커넥터가 없습니다",
+        "emptyDescription": "검색어를 지워 확인된 소유자 프로젝션으로 돌아가세요. 명령은 제출되지 않았습니다.",
+        "clear": "검색 지우기"
+      },
+      "state": {
+        "noProjectionTitle": "통합 증적을 사용할 수 없습니다",
+        "noProjectionDescription": "선언된 상태에 신뢰할 수 있는 소유자 프로젝션이 없습니다. 명령을 제출할 수 없습니다.",
+        "loadingTitle": "통합 거버넌스를 불러오는 중입니다",
+        "loadingDescription": "커넥터 정책, 유효 상태 및 현재 권한을 확인하는 중입니다.",
+        "emptyTitle": "이 범위에 커넥터 정의가 없습니다",
+        "emptyDescription": "커넥터 정의를 먼저 생성하세요. 검증, 승인, 활성화 및 공급자 실행은 별도로 통제되는 단계입니다.",
+        "createFirst": "첫 번째 커넥터 생성",
+        "restrictedTitle": "통합 거버넌스가 제한되었습니다",
+        "restrictedDescription": "현재 세션에 유효한 기능, 라우트 또는 작업 결정이 없습니다.",
+        "stepUpTitle": "추가 인증이 필요합니다",
+        "stepUpDescription": "영향도가 높은 통합 결정을 제출하기 전에 이 세션을 확인하세요.",
+        "retryTitle": "통합 증적을 새로고치지 못했습니다",
+        "retryDescription": "이전에 확인된 화면은 대체되지 않았으며 명령도 제출되지 않았습니다.",
+        "retryRefresh": "새로고침 다시 시도",
+        "unavailableTitle": "통합 거버넌스를 사용할 수 없습니다",
+        "unavailableDescription": "신뢰할 수 있는 소유자 증적을 사용할 수 없습니다. 커넥터 명령을 제출할 수 없습니다.",
+        "requestIdHelp": "지원팀에 문의할 때 실패한 소유자 응답의 상관관계 ID를 사용하세요.",
+        "reconcileTitle": "명령 결과 조정이 필요합니다",
+        "reconcileDescription": "확인된 읽기 스냅샷이 없습니다. 원본 상관관계와 공급자 영수증 증적을 사용하고 추측으로 재전송하지 마세요."
+      },
+      "catalog": {
+        "ariaLabel": "커넥터 거버넌스 증적",
+        "connector": "커넥터",
+        "status": "상태",
+        "policyContext": "정책 컨텍스트",
+        "action": "작업",
+        "revision": "리비전 {{revision}}",
+        "review": "검토"
+      },
+      "inspector": {
+        "detail": "커넥터 거버넌스 상세",
+        "effectiveStatus": "유효 상태",
+        "statusRevision": "상태 리비전",
+        "targetFacts": "대상 정보",
+        "restrictedFacts": "제한됨 — 명령 억제",
+        "visibleFacts": "표시 및 확인됨",
+        "nextActions": "권한이 확인된 다음 작업",
+        "commandsWithheld": "최신의 완전한 소유자 증적을 사용할 수 있을 때까지 명령이 보류됩니다.",
+        "noActions": "현재 소유자 정책의 교집합에서 수행할 수 있는 작업이 없습니다."
+      },
+      "execution": {
+        "title": "실행 증적",
+        "identity": "실행 {{executionId}} · 매핑 버전 {{mappingVersion}}",
+        "commandsWithheld": "명령 보류",
+        "outcomeTitle": "공급자 결과 증적이 필요합니다",
+        "outcomeDescription": "원본 공급자 키와 영수증 증적으로 조정하세요. 추측으로 재전송할 수 없습니다.",
+        "source": "원본",
+        "accepted": "수락",
+        "rejected": "거부",
+        "selected": "선택"
+      }
+    }
+  },
   "hrisTime": {
+    "i18nClosure": {
+      "common": {
+        "cancel": "취소",
+        "masked": "마스킹됨",
+        "noneExposed": "표시할 정보 없음",
+        "notLoaded": "불러오지 않음",
+        "openEnded": "종료일 없음",
+        "pending": "대기 중",
+        "submitting": "제출 중…",
+        "unavailable": "사용할 수 없음"
+      },
+      "close": {
+        "center": {
+          "aggregateVersion": "집계 버전",
+          "blockedDescription": "차단 항목 {{count}}개를 해결한 후 최신 집계 버전을 검증하세요.",
+          "blockedTitle": "마감이 차단되었습니다",
+          "blockers": "차단 항목",
+          "checkStatus": "상태 확인",
+          "closePeriod": "기간 마감",
+          "closeRevision": "마감 리비전",
+          "closeStatus": "마감 상태",
+          "commandReceipt": "명령 영수증",
+          "createHandoff": "인계 생성",
+          "emptyDescription": "소유 서비스가 명시적인 빈 결과를 반환했습니다. 이 작업 화면 밖에서 권한 범위 또는 적용일을 조정하세요.",
+          "emptyTitle": "이 범위에 해당하는 마감 기간이 없습니다",
+          "filterPeriods": "기간 필터",
+          "freshness": "최신성: {{value}}",
+          "handoffId": "인계 ID",
+          "immutableResult": "불변 결과",
+          "impact": "영향",
+          "loadMore": "기간 더 보기",
+          "loading": "권한이 확인된 근태 마감 증적을 불러오는 중…",
+          "outcome": "처리 결과",
+          "ownerFacts": "소유 서비스의 사실 정보는 읽기 전용입니다. 명령은 새로운 불변 시도와 결과를 생성합니다.",
+          "partialDescription": "새로고침 구성요소 하나가 실패했습니다. 검증된 기간 스냅샷은 유지됩니다.",
+          "partialTitle": "일부 마감 증적을 사용할 수 없습니다",
+          "payloadDigest": "페이로드 다이제스트",
+          "payrollHandoffStatus": "급여 인계 상태",
+          "periodId": "기간 ID",
+          "periodMeta": "{{start}} — {{end}} · v{{version}}",
+          "periods": "기간",
+          "receiverReceipt": "수신 영수증",
+          "refreshEvidence": "증적 새로고침",
+          "refreshFailedDescription": "마지막으로 권한이 확인된 스냅샷을 오래된 증적으로 계속 표시합니다. 명령은 해당 버전에 연결되며 새로고침에 성공할 때까지 비활성화될 수 있습니다.",
+          "refreshFailedTitle": "최근 새로고침을 검증하지 못했습니다",
+          "reopen": "다시 열기",
+          "selectPeriodDescription": "차단 항목, 불변 영수증 증적, 허용 작업을 확인할 기간을 선택하세요.",
+          "selectPeriodTitle": "기간 선택",
+          "snapshot": "스냅샷: {{value}}",
+          "unavailableDescription": "현재 권한 범위에는 이전 기간 사실 정보나 작업을 표시하지 않습니다.",
+          "unavailableTitle": "근태 마감 증적을 사용할 수 없습니다",
+          "validate": "검증"
+        },
+        "dialog": {
+          "approvalReceiptHelp": "이 기간과 버전에 승인된 UUID를 사용하세요.",
+          "approvalReceiptId": "승인 영수증 ID",
+          "closeSubmit": "기간 마감",
+          "closeTitle": "이 근태 기간 마감",
+          "closedTimeResultError": "유효한 마감 근태 결과 UUID를 입력하세요.",
+          "closedTimeResultId": "마감 근태 결과 ID",
+          "description": "{{title}}. 전송 전에 집계 버전 {{version}}을 다시 확인합니다.",
+          "handoffSubmit": "인계 생성",
+          "handoffTitle": "급여 인계 생성",
+          "immutableEvidence": "검증 및 명령 결과는 변경할 수 없는 소유 서비스 증적입니다. 새로고침은 이전 차단 항목, 결과, 이벤트 또는 영수증을 다시 쓰지 않습니다.",
+          "payPeriodError": "유효한 급여 기간 UUID를 입력하세요.",
+          "payPeriodId": "급여 기간 ID",
+          "payrollEntityError": "유효한 급여 엔터티 UUID를 입력하세요.",
+          "payrollEntityId": "급여 엔터티 ID",
+          "reopenReasonCode": "다시 열기 사유 코드",
+          "reopenReasonHelp": "전진 정정만 가능합니다. 마감 결과와 이전 이벤트는 변경되지 않습니다.",
+          "reopenSubmit": "기간 다시 열기",
+          "reopenTitle": "전진 정정으로 다시 열기",
+          "validateSubmit": "기간 검증",
+          "validateTitle": "기간 마감 검증",
+          "validationDescription": "검증은 기간을 마감하거나 일부 변경하지 않고 현재 버전의 차단 항목 스냅샷을 기록합니다."
+        },
+        "notice": {
+          "checkReceipt": "영수증 확인",
+          "conflictDescription": "새 명령 전에 소유 서비스 스냅샷을 새로고침하세요. 입력한 값은 이 대화상자에 유지됩니다.",
+          "conflictTitle": "집계가 변경되었습니다",
+          "deniedDescription": "소유 서비스가 인접 범위 정보를 공개하지 않고 이 기간 작업을 거부했습니다.",
+          "deniedTitle": "더 이상 권한을 사용할 수 없습니다",
+          "handoffErrorDescription": "이전 또는 인접 인계 상태로 대체하지 않았습니다.",
+          "handoffErrorTitle": "인계 상태를 검증하지 못했습니다",
+          "immutableResultSuffix": " · 불변 결과 {{value}}",
+          "outcomeUnprovenDescription": "같은 멱등성 키를 다시 사용하거나 확인된 영수증을 대사하세요.",
+          "outcomeUnprovenTitle": "소유 서비스의 결과가 아직 확인되지 않았습니다",
+          "ownerReceipt": "소유 서비스 영수증: {{status}}",
+          "reconcileReceipt": "영수증 대사",
+          "refreshRequiredDescription": "오래된 CAS 값은 고정되어 있습니다. 새로고침에 성공한 후 현재 집계 버전에 새 명령 ID를 연결하세요.",
+          "refreshRequiredTitle": "다음 명령 전에 새로고침이 필요합니다",
+          "rejectedDescription": "다시 시도하기 전에 불변 승인, 사유, 결과 식별자를 검토하세요.",
+          "rejectedTitle": "명령이 거절되었습니다",
+          "replayExact": "동일 명령 재실행",
+          "unknownDescription": "재실행 또는 영수증 대사로 영속 결과를 확인할 때까지 이 초안과 명령 ID를 보존하세요.",
+          "unknownTitle": "명령 결과를 확인할 수 없습니다"
+        }
+      },
+      "timecard": {
+        "dialog": {
+          "approve": "승인",
+          "auditComment": "제한 감사 의견(선택)",
+          "auditCommentHelp": "{{count}}/1000. 이 의견은 도메인 이벤트에 포함되지 않습니다.",
+          "correctionDescription": "{{start}}부터 {{end}}까지의 기간입니다. 양수 및 음수 분 조정값을 원장에 추가합니다.",
+          "correctionReasonCode": "정정 사유 코드",
+          "correctionSubmit": "정정 기록",
+          "correctionTitle": "불변 정정 기록",
+          "decision": "결정",
+          "decisionDescription": "근로자, 제출자, 최근 정정 작성자는 이 근태표를 결정할 수 없습니다. 전송 시 권한을 다시 확인합니다.",
+          "decisionReasonCode": "결정 사유 코드",
+          "decisionSubmit": "결정 기록",
+          "decisionTitle": "독립 결정 기록",
+          "ledgerDescription": "기존 원장 행은 대체되지 않습니다. 분을 취소하려면 음수, 추가하려면 양수를 사용하세요.",
+          "minuteAdjustment": "분 조정",
+          "minuteHelp": "0을 제외한 -1440~1440 범위의 정수를 입력하세요.",
+          "payCode": "급여 코드",
+          "reject": "거절",
+          "requireCorrection": "정정 요구",
+          "submitAction": "근태표 제출",
+          "submitDescription": "제출하면 현재 OPEN 버전이 SUBMITTED로 이동합니다. 서버가 수락 전에 권한과 버전을 다시 확인합니다.",
+          "submitReasonCode": "제출 사유 코드(선택)",
+          "submitTitle": "이 근태표 제출",
+          "workDate": "근무일"
+        },
+        "notice": {
+          "checkReceipt": "기존 영수증 확인",
+          "receipt": "영수증 {{id}} · {{status}}",
+          "refresh": "정규 근태표 새로고침",
+          "retryExact": "동일 명령 다시 시도"
+        },
+        "summary": {
+          "aggregateVersion": "집계 버전",
+          "currentState": "현재 상태",
+          "ledgerRevision": "원장 리비전",
+          "recordedTotal": "기록 합계",
+          "state": "상태",
+          "stateModelDescription": "현재 서버 상태에서만 명령을 사용할 수 있습니다. 마감되거나 대체된 기록은 읽기 전용으로 유지됩니다.",
+          "stateModelTitle": "정규 상태 모델",
+          "stateValue": "상태: {{value}}",
+          "states": {
+            "APPROVED": "승인됨",
+            "CLOSED": "마감됨",
+            "CORRECTION_REQUIRED": "정정 필요",
+            "LOCKED": "잠김",
+            "OPEN": "열림",
+            "REJECTED": "거절됨",
+            "SUBMITTED": "제출됨",
+            "SUPERSEDED": "대체됨"
+          },
+          "title": "근태표 요약",
+          "workerReference": "근로자 참조"
+        },
+        "workspace": {
+          "actionsDescription": "정확한 소유 서비스 연결, 현재 인구집단, 정규 상태가 허용할 때만 작업을 표시합니다. 각 명령 전송 시 소유 서비스가 권한을 다시 평가합니다.",
+          "actionsTitle": "사용 가능한 작업",
+          "description": "근태표 {{id}}의 소유 서비스 확인 합계, 상태, 버전, 영속 명령 결과를 검토합니다.",
+          "loading": "정규 근태표를 불러오는 중",
+          "ownerBoundDescription": "이 경로 중립 작업 화면은 봉인된 5개 Time PEP만 사용합니다. 활성 레거시 근태표 구현을 읽거나 쓰거나 대체 경로로 사용하지 않습니다.",
+          "ownerBoundTitle": "소유 서비스 연결 정규 기록",
+          "readOnly": "현재 상태와 권한 범위에서는 이 근태표가 읽기 전용입니다.",
+          "recordCorrection": "정정 기록",
+          "recordDecision": "독립 결정 기록",
+          "refresh": "새로고침",
+          "refreshFailedDescription": "{{detail}} 이 화면은 오래되었으며 모든 명령이 계속 비활성화됩니다. 작성 중인 초안은 보존됩니다.",
+          "refreshFailedTitle": "새로고침 실패 — 마지막으로 검증된 근태표 표시 중",
+          "refreshing": "정규 근태표 새로고침 중",
+          "retryRefresh": "정규 새로고침 다시 시도",
+          "submit": "근태표 제출",
+          "title": "정규 근태표"
+        }
+      },
+      "interpretation": {
+        "agendaAriaLabel": "근태 해석 일정 목록",
+        "evidenceAriaLabel": "근태 해석 증적",
+        "invalidDescription": "중복되지 않은 근로자 UUID와 시작일부터 종료일까지의 유효한 기간을 사용하세요.",
+        "invalidTitle": "실행 범위가 올바르지 않습니다",
+        "periodEnd": "기간 종료일",
+        "periodStart": "기간 시작일",
+        "prepareRun": "정확한 실행 준비",
+        "preparedDescription": "선택한 결과에도 정확한 TIM 해석 작업이 제공될 때만 통제 명령이 활성화됩니다.",
+        "preparedTitle": "실행 범위가 준비되었습니다",
+        "rule": "규칙",
+        "run": "실행",
+        "scopeDescription": "통제 실행 명령을 활성화하기 전에 정확한 근로자 인구집단과 기준일 기간을 입력하세요.",
+        "scopeTitle": "해석 실행 범위",
+        "traceAriaLabel": "결정론적 해석 추적",
+        "workerIds": "근로자 공개 ID",
+        "workerIdsHelp": "UUID를 쉼표, 공백 또는 줄바꿈으로 구분하세요. 중복 ID는 거부됩니다."
+      }
+    },
     "boundary": {
       "title": "근태 명령 처리 경계",
       "scheduleConnected": "회사의 연동 근무 일정에 포함된 날짜만 입력할 수 있습니다. 모든 변경 시 근태표 버전과 HRIS 권한을 다시 확인합니다.",
@@ -1657,6 +2286,124 @@
         "hcm-personal-assistant": "HR 어시스턴트",
         "hcm-settings-ai-governance": "AI 거버넌스"
       }
+    }
+  },
+  "hrisPerformance": {
+    "reviewWorkspace": {
+      "retry": "다시 시도",
+      "formSectionsAriaLabel": "평가 양식 섹션",
+      "formNavigation": "양식 탐색",
+      "loadingTitle": "배정된 평가를 불러오는 중",
+      "loadingDescription": "현재 배정과 보호된 평가 필드를 확인하고 있습니다.",
+      "emptyTitle": "배정된 평가를 선택하세요",
+      "emptyDescription": "평가 배정을 열어 거버넌스 양식을 불러오세요.",
+      "deniedTitle": "평가를 사용할 수 없음",
+      "deniedDescription": "이 평가는 없거나 현재 배정 범위 밖에 있습니다.",
+      "unavailableTitle": "평가를 불러오지 못했습니다",
+      "unavailableDescription": "배정된 평가를 일시적으로 사용할 수 없습니다.",
+      "draftSaved": "초안을 저장했습니다.",
+      "submitted": "평가를 제출했습니다",
+      "unsavedChanges": "저장하지 않은 변경사항이 있습니다.",
+      "draftCurrent": "초안이 최신 상태입니다.",
+      "eyebrow": "배정된 성과 평가",
+      "noDueDate": "마감일 없음",
+      "contextLabel": "배정 평가 컨텍스트",
+      "template": "템플릿",
+      "version": "버전",
+      "questions": "질문",
+      "partiallyAvailable": "일부만 사용 가능",
+      "assignmentVerified": "배정 확인됨",
+      "reloadLatest": "최신 평가 다시 불러오기",
+      "commandsDisconnectedTitle": "초안 작업이 연결되지 않았습니다",
+      "commandsDisconnectedDescription": "거버넌스 명령 실행기가 연결될 때까지 평가는 읽기 전용입니다.",
+      "partialTitle": "일부 평가 데이터가 오래되었을 수 있습니다",
+      "partialDescription": "불러온 초안은 계속 표시됩니다. 최종 제출 전에 다시 불러오세요.",
+      "conflictTitle": "평가가 변경되었습니다",
+      "commandIncompleteTitle": "평가 작업이 완료되지 않았습니다",
+      "retrySameRequest": "동일 요청 다시 시도",
+      "reloadLatestDraft": "최신 초안 다시 불러오기",
+      "validationSummary_one": "평가 항목 {{count}}개를 완료하세요",
+      "validationSummary_other": "평가 항목 {{count}}개를 완료하세요",
+      "submissionAriaLabel": "평가 제출",
+      "submissionRecorded": "제출 {{submissionNo}}이(가) {{submittedAt}}에 기록되었습니다.",
+      "finalAcknowledgement": "제출은 최종이며 저장된 초안을 사용한다는 점을 이해했습니다.",
+      "saveDraft": "초안 저장",
+      "submitReview": "평가 제출",
+      "discardTitle": "저장하지 않은 변경사항을 버릴까요?",
+      "discardDescription": "다시 불러오면 저장하지 않은 답변이 최신 정본 초안으로 대체됩니다.",
+      "keepEditing": "계속 편집",
+      "discardAndReload": "변경사항을 버리고 다시 불러오기"
+    },
+    "reviewAnswer": {
+      "requiredLabel": "{{label}} (필수)",
+      "minimum": "최소 {{value}}",
+      "maximum": "최대 {{value}}",
+      "clearFor": "{{label}} 응답 지우기",
+      "clear": "응답 지우기",
+      "unsupported": "이 평가 항목은 안전하게 표시할 수 없습니다."
+    },
+    "compensationPlanning": {
+      "refresh": "새로고침",
+      "reconcileResult": "결과 재조정",
+      "commandFeedback": "명령 결과",
+      "pendingCommandTitle": "명령의 확정 결과를 기다리는 중",
+      "pendingCommandDescription": "{{command}} 명령은 봉인된 동일 멱등성 식별자로 재실행됩니다.",
+      "cycleVersion": "{{effectiveFrom}} · v{{version}}",
+      "boundProposalVersion": "{{proposalId}} · v{{version}}",
+      "impactSummary": "{{cycleLabel}} {{cycleCode}} · {{sourceVersion}} v{{version}}; {{submittedCount}}{{submittedSuffix}}. {{impactRevalidation}}",
+      "ledger": {
+        "allocate": "배정 (ALLOCATE)",
+        "reverse": "취소 (REVERSE)"
+      },
+      "state": {
+        "LOADING": {
+          "title": "보상 계획을 불러오는 중",
+          "description": "범위와 소유자 데이터를 다시 검증하고 있습니다."
+        },
+        "EMPTY": {
+          "title": "보상 주기가 없습니다",
+          "description": "거버넌스 보상 주기를 생성해 계획을 시작하세요."
+        },
+        "READY": { "title": "", "description": "" },
+        "DENIED": {
+          "title": "접근할 수 없음",
+          "description": "현재 직무 또는 대상 범위로 이 보기를 사용할 수 없습니다."
+        },
+        "STEP_UP_REQUIRED": {
+          "title": "추가 확인 필요",
+          "description": "고위험 작업을 계속하려면 새 인증을 완료하세요."
+        },
+        "STALE_VERSION": {
+          "title": "계획이 변경되었습니다",
+          "description": "다음 작업을 수행하기 전에 계획을 새로고침하세요."
+        },
+        "RESULT_UNKNOWN": {
+          "title": "결과 재조정 필요",
+          "description": "동일한 봉인 명령을 다시 실행해 확정 결과를 확인하세요."
+        },
+        "ERROR": {
+          "title": "보상 계획을 사용할 수 없음",
+          "description": "거버넌스 프로젝션을 새로고침하거나 문의 시 상관관계 참조를 사용하세요."
+        }
+      },
+      "evidence": {
+        "title": "영구 감사 증빙",
+        "receipt": "영수증: {{value}}",
+        "aggregateVersion": "집계 버전: {{value}}",
+        "digest": "다이제스트: {{value}}",
+        "snapshot": "스냅샷: {{snapshotId}} · 리비전 {{revision}}",
+        "sourceVersion": "소스 버전: {{sourceVersion}} · 라인 {{lineCount}}",
+        "published": "게시 시각: {{value}}"
+      }
+    },
+    "feedback": {
+      "sortIdAscending": "ID 오름차순",
+      "sortIdDescending": "ID 내림차순"
+    }
+  },
+  "hrisPayroll": {
+    "calculationReceipt": {
+      "requestPopulation": "요청 {{requestDigest}} · 대상 {{populationDigest}}"
     }
   },
   "myProfile": {

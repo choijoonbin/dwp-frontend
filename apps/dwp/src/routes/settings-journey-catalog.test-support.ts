@@ -51,7 +51,7 @@ export const APP_MANAGEMENT_ENTRY_ROUTES = [
   '/spaces/admin/overview',
   '/services/admin/catalog',
   '/communications/admin/content',
-  '/hr/operations',
+  '/hr/operations/home',
 ] as const;
 
 /**

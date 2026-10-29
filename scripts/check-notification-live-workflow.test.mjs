@@ -62,13 +62,53 @@ test('live workflow keeps the real cross-service Notification gate fail-closed',
     workflow,
     /corepack yarn playwright test --config playwright\.notification-live\.config\.ts/u
   );
-  const evidenceTestIndex = workflow.indexOf('e2e/support/notification-live-evidence.test.ts');
+  const setupIndex = workflow.indexOf('      - name: Set up Node.js\n');
+  const corepackIndex = workflow.indexOf('      - name: Enable Corepack and activate Yarn\n');
+  const cacheIndex = workflow.indexOf('      - name: Restore Yarn cache\n');
+  const evidenceStepIndex = workflow.indexOf(
+    '      - name: Verify the live gate cannot degrade to a mock or no-op\n'
+  );
   const dependencyInstallIndex = workflow.indexOf('Install frontend dependencies');
-  assert.notEqual(evidenceTestIndex, -1);
-  assert.notEqual(dependencyInstallIndex, -1);
   assert.ok(
-    evidenceTestIndex < dependencyInstallIndex,
-    'dependency-free tests must run pre-install'
+    setupIndex >= 0 &&
+      setupIndex < corepackIndex &&
+      corepackIndex < cacheIndex &&
+      cacheIndex < evidenceStepIndex &&
+      evidenceStepIndex < dependencyInstallIndex,
+    'live CI must set up Node, activate Corepack, restore Yarn cache, run dependency-free tests, then install'
+  );
+
+  const initialSetup = workflow.slice(setupIndex, corepackIndex);
+  assert.match(initialSetup, /node-version-file: dwp-frontend\/\.node-version/u);
+  assert.doesNotMatch(initialSetup, /cache: yarn|cache-dependency-path:/u);
+
+  const corepack = workflow.slice(corepackIndex, cacheIndex);
+  assert.match(corepack, /working-directory: dwp-frontend/u);
+  assert.match(corepack, /corepack enable/u);
+  assert.match(corepack, /corepack prepare yarn@4\.17\.1 --activate/u);
+
+  const cache = workflow.slice(cacheIndex, evidenceStepIndex);
+  assert.match(cache, /uses: actions\/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6/u);
+  assert.match(cache, /node-version-file: dwp-frontend\/\.node-version/u);
+  assert.match(cache, /cache: yarn/u);
+  assert.match(cache, /cache-dependency-path: dwp-frontend\/yarn\.lock/u);
+
+  const evidenceTestIndex = workflow.indexOf(
+    'e2e/support/notification-live-evidence.test.ts',
+    evidenceStepIndex
+  );
+  assert.ok(evidenceTestIndex > evidenceStepIndex && evidenceTestIndex < dependencyInstallIndex);
+  const dependencyInstallEnd = workflow.indexOf(
+    '      - name: Lint the live gate source and evidence helpers\n',
+    dependencyInstallIndex
+  );
+  const dependencyInstall = workflow.slice(dependencyInstallIndex, dependencyInstallEnd);
+  assert.match(dependencyInstall, /working-directory: dwp-frontend/u);
+  assert.doesNotMatch(dependencyInstall, /corepack enable|corepack prepare/u);
+  assert.equal(
+    [...workflow.matchAll(/corepack prepare yarn@4\.17\.1 --activate/gu)].length,
+    1,
+    'live CI must activate the pinned Yarn version exactly once'
   );
   assert.match(workflow, /corepack yarn eslint/u);
   assert.match(workflow, /e2e\/support\/notification-live-\*\.ts/u);

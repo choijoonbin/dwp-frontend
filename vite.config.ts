@@ -115,10 +115,17 @@ export default defineConfig(({ command, mode }) => {
                 priority: 30,
               },
               {
-                name: 'vendor-livekit',
+                name: 'vendor-livekit-components',
                 test: (moduleId) =>
                   packagePath(moduleId, '@livekit/components-react') ||
-                  packagePath(moduleId, '@livekit/components-core') ||
+                  packagePath(moduleId, '@livekit/components-core'),
+                includeDependenciesRecursively: false,
+                minSize: 0,
+                priority: 30,
+              },
+              {
+                name: 'vendor-livekit-client',
+                test: (moduleId) =>
                   packagePath(moduleId, 'livekit-client') ||
                   packagePath(moduleId, '@livekit/protocol') ||
                   packagePath(moduleId, '@bufbuild/protobuf'),

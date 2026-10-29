@@ -2,6 +2,7 @@ import {
   SOCIAL_INSURANCE_SORTS,
   STATUTORY_CONFIGURATION_SORTS,
 } from './statutory-insurance-contract';
+import { resolveCanonicalTimeZone } from '@dwp-frontend/shared-i18n';
 
 import type {
   SocialInsuranceQuery,
@@ -96,16 +97,7 @@ function canonicalLocale(value: unknown, path: string) {
 
 function canonicalTimeZone(value: unknown, path: string) {
   const candidate = text(value, path, 255);
-  try {
-    if (
-      new Intl.DateTimeFormat('en', { timeZone: candidate }).resolvedOptions().timeZone !==
-      candidate
-    ) {
-      return invalid(path);
-    }
-  } catch {
-    return invalid(path);
-  }
+  if (resolveCanonicalTimeZone(candidate) !== candidate) return invalid(path);
   return candidate;
 }
 

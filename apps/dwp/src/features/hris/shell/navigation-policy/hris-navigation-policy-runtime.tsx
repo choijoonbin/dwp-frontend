@@ -1,8 +1,8 @@
 import { createContext, useContext, useMemo, useState, type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useQuery } from '@tanstack/react-query';
-import { LoadingState } from '@dwp-frontend/design-system';
-import { axiosInstance } from '@dwp-frontend/shared-utils';
+import { LoadingState } from '@dwp-frontend/design-system/components/states/state-panels';
+import { axiosInstance } from '@dwp-frontend/shared-utils/axios-instance';
 import { productSurfaceReadScopeConfig } from '@dwp-frontend/shared-utils/api/product-surface-read-scope';
 import { useAuth } from '@dwp-frontend/shared-utils/auth/auth-provider';
 import { useProductSurfaceAuthority } from '@dwp-frontend/shared-utils/auth/product-surface-context-provider';

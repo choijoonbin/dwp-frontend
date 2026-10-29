@@ -4,7 +4,11 @@ import { resolve } from 'node:path';
 import { act, createElement, useLayoutEffect } from 'react';
 import { flushSync } from 'react-dom';
 import { createRoot, type Root } from 'react-dom/client';
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import i18n from 'i18next';
+import { initReactI18next } from 'react-i18next';
+import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
+
+import enHcm from '../../../../../../../../libs/shared-i18n/src/locales/en/hcm.json';
 
 import {
   CanonicalTimecardWorkspace,
@@ -59,6 +63,17 @@ import {
 describe('[SLICE:BASE-TFR-TIM-017] canonical timecard workspace', () => {
   let host: HTMLDivElement;
   let root: Root;
+
+  beforeAll(async () => {
+    await i18n.use(initReactI18next).init({
+      lng: 'en',
+      fallbackLng: 'en',
+      defaultNS: 'hcm',
+      ns: ['hcm'],
+      resources: { en: { hcm: enHcm } },
+      interpolation: { escapeValue: false },
+    });
+  });
 
   beforeEach(() => {
     host = document.createElement('div');

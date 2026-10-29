@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState, type FormEvent } from 'react';
+import { useTranslation } from 'react-i18next';
 import { FileSignature, RefreshCw, ShieldCheck } from 'lucide-react';
 import { HttpError, HttpTransportError } from '@dwp-frontend/shared-utils';
 import {
@@ -184,6 +185,7 @@ function IssueContractForm({
   createCommandIdentity?: () => Hrm011CommandIdentity;
   refresh: () => void;
 }>) {
+  const { t } = useTranslation('workforce');
   const commandFence = useRef(false);
   const completionFence = useRef(false);
   const [effectiveFrom, setEffectiveFrom] = useState(asOf.slice(0, 10));
@@ -292,11 +294,10 @@ function IssueContractForm({
     <Box component="form" onSubmit={issue} noValidate sx={{ mt: 2 }}>
       <Divider sx={{ mb: 2 }} />
       <Typography component="h3" variant="subtitle1" fontWeight="fontWeightBold">
-        Issue employment contract
+        {t('governedPeople.contracts.issue.title')}
       </Typography>
       <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
-        Review the immutable template and compensation snapshot before the HIGH-risk command is
-        submitted. The trusted owner performs final authorization and artifact generation.
+        {t('governedPeople.contracts.issue.description')}
       </Typography>
       <Box
         sx={{
@@ -309,7 +310,7 @@ function IssueContractForm({
         <DatePickerField
           required
           size="small"
-          label="Effective from"
+          label={t('governedPeople.contracts.issue.effectiveFrom')}
           value={effectiveFrom || null}
           disabled={!onIssueEmploymentContract || busy || completed || !delegationAvailable}
           onValueChange={(value) => {
@@ -319,7 +320,7 @@ function IssueContractForm({
         />
         <DatePickerField
           size="small"
-          label="Effective to (optional)"
+          label={t('governedPeople.contracts.issue.effectiveTo')}
           value={effectiveTo || null}
           disabled={!onIssueEmploymentContract || busy || completed || !delegationAvailable}
           onValueChange={(value) => {
@@ -339,37 +340,48 @@ function IssueContractForm({
             onClick={prepare}
             sx={{ minHeight: 44, '&:focus-visible': { outline: '3px solid', outlineOffset: 2 } }}
           >
-            Review issuance
+            {t('governedPeople.contracts.issue.review')}
           </ActionButton>
           {!onIssueEmploymentContract && (
             <Typography variant="caption" color="text.secondary" alignSelf="center">
-              The command delegate is intentionally withheld until central admission.
+              {t('governedPeople.contracts.issue.delegateWithheld')}
             </Typography>
           )}
         </Stack>
       ) : (
         <Paper
           component="section"
-          aria-label="Employment contract issuance confirmation"
+          aria-label={t('governedPeople.contracts.issue.confirmationAriaLabel')}
           variant="outlined"
           sx={{ mt: 2, p: 1.5, bgcolor: 'action.hover' }}
         >
           <Typography component="h4" variant="subtitle2" fontWeight="fontWeightBold">
-            Confirm immutable issuance snapshot
+            {t('governedPeople.contracts.issue.confirmationTitle')}
           </Typography>
           <Box component="dl" sx={{ m: 0, mt: 1, display: 'grid', gap: 0.75 }}>
             <Typography component="div" variant="body2" sx={{ overflowWrap: 'anywhere' }}>
-              Template: {contractMetadata?.key} · version {contractMetadata?.version}
+              {t('governedPeople.contracts.issue.template', {
+                key: contractMetadata?.key,
+                version: contractMetadata?.version,
+              })}
             </Typography>
             <Typography component="div" variant="body2" sx={{ overflowWrap: 'anywhere' }}>
-              Snapshot digest: {contractMetadata?.digest}
+              {t('governedPeople.contracts.issue.snapshotDigest', {
+                digest: contractMetadata?.digest,
+              })}
             </Typography>
             <Typography component="div" variant="body2">
-              Compensation basis: {compensationBasis?.amount} {compensationBasis?.currency}
+              {t('governedPeople.contracts.issue.compensationBasis', {
+                amount: compensationBasis?.amount,
+                currency: compensationBasis?.currency,
+              })}
             </Typography>
             <Typography component="div" variant="body2">
-              Effective period: {prepared.request.effectiveFrom} →{' '}
-              {prepared.request.effectiveTo ?? 'open-ended'}
+              {t('governedPeople.contracts.issue.effectivePeriod', {
+                effectiveFrom: prepared.request.effectiveFrom,
+                effectiveTo:
+                  prepared.request.effectiveTo ?? t('governedPeople.contracts.issue.openEnded'),
+              })}
             </Typography>
           </Box>
           <Stack direction={{ xs: 'column', sm: 'row' }} gap={1} sx={{ mt: 1.5 }}>
@@ -394,38 +406,52 @@ function IssueContractForm({
               onClick={() => setPrepared(null)}
               sx={{ minHeight: 44 }}
             >
-              Back
+              {t('governedPeople.common.back')}
             </ActionButton>
           </Stack>
         </Paper>
       )}
 
       {failure?.kind === 'STALE_VERSION' && (
-        <InlineFeedback severity="warning" title="The relationship version changed">
-          No command was retried. Refresh the current relationship before reviewing a new issuance
-          {failure.currentVersion === null ? '.' : ` (current version ${failure.currentVersion}).`}
+        <InlineFeedback severity="warning" title={t('governedPeople.contracts.failure.staleTitle')}>
+          {t('governedPeople.contracts.failure.staleDescription', {
+            currentVersion:
+              failure.currentVersion === null
+                ? ''
+                : t('governedPeople.contracts.failure.currentVersion', {
+                    version: failure.currentVersion,
+                  }),
+          })}
           <Box sx={{ mt: 1 }}>
             <ActionButton intent="quiet" size="small" onClick={refresh}>
-              Refresh relationship
+              {t('governedPeople.contracts.actions.refreshRelationship')}
             </ActionButton>
           </Box>
         </InlineFeedback>
       )}
       {failure?.kind === 'RETRYABLE_UNAVAILABLE' && (
-        <InlineFeedback severity="warning" title="Artifact service is temporarily unavailable">
-          Nothing was automatically retried. Use “Retry same command” to preserve the original
-          idempotency and correlation identity.
+        <InlineFeedback
+          severity="warning"
+          title={t('governedPeople.contracts.failure.retryableTitle')}
+        >
+          {t('governedPeople.contracts.failure.retryableDescription')}
         </InlineFeedback>
       )}
       {failure && !['STALE_VERSION', 'RETRYABLE_UNAVAILABLE'].includes(failure.kind) && (
-        <InlineFeedback severity="error" title="Employment contract was not issued">
-          The command was not retried. Review access and input before preparing a new request.
+        <InlineFeedback
+          severity="error"
+          title={t('governedPeople.contracts.failure.notIssuedTitle')}
+        >
+          {t('governedPeople.contracts.failure.notIssuedDescription')}
         </InlineFeedback>
       )}
       {receipt && (
-        <InlineFeedback severity="info" title="Employment contract command accepted">
+        <InlineFeedback severity="info" title={t('governedPeople.contracts.receipt.acceptedTitle')}>
           <span role="status" aria-live="polite">
-            Receipt {receipt.receiptId} · {receipt.status}
+            {t('governedPeople.contracts.receipt.identity', {
+              receiptId: receipt.receiptId,
+              status: receipt.status,
+            })}
           </span>
         </InlineFeedback>
       )}
@@ -442,10 +468,11 @@ function WorkList({
   selected: Hrm011Item;
   onSelect: (item: Hrm011Item) => void;
 }>) {
+  const { t } = useTranslation('workforce');
   return (
     <Paper component="section" variant="outlined" data-testid="hrm-011-work-list" sx={{ p: 1.25 }}>
       <Typography component="h2" variant="subtitle1" sx={{ px: 0.5, mb: 1 }}>
-        Contract-ready relationships
+        {t('governedPeople.contracts.list.title')}
       </Typography>
       <Box component="ul" sx={{ p: 0, m: 0, listStyle: 'none' }}>
         {items.map((item) => {
@@ -484,7 +511,10 @@ function WorkList({
                   {item.title}
                 </Typography>
                 <Typography component="span" variant="caption" color="text.secondary">
-                  {item.statusCode.replaceAll('_', ' ')} · version {item.resourceVersion}
+                  {t('governedPeople.contracts.list.itemIdentity', {
+                    status: item.statusCode.replaceAll('_', ' '),
+                    version: item.resourceVersion,
+                  })}
                 </Typography>
               </ActionButton>
             </Box>
@@ -514,6 +544,7 @@ function WorkDetail({
   createCommandIdentity?: () => Hrm011CommandIdentity;
   refresh: () => void;
 }>) {
+  const { t } = useTranslation('workforce');
   const deepLink = `${item.deepLink.route}?tab=overview&focus=${encodeURIComponent(
     item.deepLink.resourcePublicId
   )}`;
@@ -541,7 +572,7 @@ function WorkDetail({
         data-deep-link={deepLink}
         sx={{ display: 'block', mt: 1, overflowWrap: 'anywhere' }}
       >
-        Governed detail reference: {deepLink}
+        {t('governedPeople.contracts.detail.governedReference', { deepLink })}
       </Typography>
       <Divider sx={{ my: 1.5 }} />
       <Box
@@ -587,6 +618,7 @@ function ActiveWorkbench({
   onIssueEmploymentContract?: Hrm011IssueDelegate;
   createCommandIdentity?: () => Hrm011CommandIdentity;
 }>) {
+  const { t } = useTranslation('workforce');
   const theme = useTheme();
   const compactViewport = useMediaQuery(theme.breakpoints.down('sm'), { noSsr: true });
   const constrainedWorkflow = useMediaQuery(theme.breakpoints.down('lg'), { noSsr: true });
@@ -605,7 +637,7 @@ function ActiveWorkbench({
   if (query.loading && !projection) {
     return (
       <Typography role="status" aria-live="polite" data-runtime-state="loading">
-        Loading governed contract and compensation metadata…
+        {t('governedPeople.contracts.states.loading')}
       </Typography>
     );
   }
@@ -614,8 +646,8 @@ function ActiveWorkbench({
       <div data-testid="hrm-011-denied" data-runtime-state="denied">
         <GuidedEmptyState
           kind="permission"
-          title="This contract surface is unavailable"
-          description="The current access context cannot disclose this workbench."
+          title={t('governedPeople.contracts.states.deniedTitle')}
+          description={t('governedPeople.contracts.states.deniedDescription')}
           size="page"
         />
       </div>
@@ -625,8 +657,8 @@ function ActiveWorkbench({
     return (
       <div data-testid="hrm-011-unavailable" data-runtime-state="unavailable">
         <LocalErrorState
-          title="Contract metadata unavailable"
-          description="Owner data could not be loaded. No employment contract action was enabled."
+          title={t('governedPeople.contracts.states.unavailableTitle')}
+          description={t('governedPeople.contracts.states.unavailableDescription')}
           retryLabel="Retry"
           onRetry={query.refresh}
           retrying={query.fetching}
@@ -639,8 +671,8 @@ function ActiveWorkbench({
     return (
       <div data-testid="hrm-011-unavailable" data-runtime-state="unavailable">
         <LocalErrorState
-          title="Contract metadata unavailable"
-          description="The People owner returned no safe, disclosable relationship metadata."
+          title={t('governedPeople.contracts.states.unavailableTitle')}
+          description={t('governedPeople.contracts.states.noDisclosableMetadata')}
           retryLabel="Retry"
           onRetry={query.refresh}
           retrying={query.fetching}
@@ -689,18 +721,19 @@ function ActiveWorkbench({
           </GlyphSurface>
           <Box minWidth={0} flex={1}>
             <Typography variant="overline" color="text.secondary">
-              HR operations · governed contract issuance
+              {t('governedPeople.contracts.header.eyebrow')}
             </Typography>
             <Typography component="h1" variant="h5" sx={{ overflowWrap: 'anywhere' }}>
-              Contracts and compensation basis
+              {t('governedPeople.contracts.header.title')}
             </Typography>
             <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
-              Review authoritative relationship, template, and compensation snapshots before issuing
-              an employment contract.
+              {t('governedPeople.contracts.header.description')}
             </Typography>
             <Typography variant="caption" color="text.secondary" sx={{ mt: 1, display: 'block' }}>
-              Primary user: {HRM011_QUERY_CONTRACT.framing.primaryUser} · Operational question:{' '}
-              {HRM011_QUERY_CONTRACT.framing.operationalQuestion}
+              {t('governedPeople.contracts.header.framing', {
+                primaryUser: HRM011_QUERY_CONTRACT.framing.primaryUser,
+                operationalQuestion: HRM011_QUERY_CONTRACT.framing.operationalQuestion,
+              })}
             </Typography>
           </Box>
           <Stack direction="row" gap={0.75} flexWrap="wrap" useFlexGap alignItems="center">
@@ -718,27 +751,31 @@ function ActiveWorkbench({
               startIcon={<RefreshCw size={15} aria-hidden="true" />}
               onClick={query.refresh}
             >
-              Refresh
+              {t('governedPeople.common.refresh')}
             </ActionButton>
           </Stack>
         </Stack>
       </Paper>
 
       {!onIssueEmploymentContract && (
-        <InlineFeedback severity="info" title="Issuance is not centrally admitted">
-          This bounded feature can disclose sealed IAQ-008 data, but its command delegate and route
-          remain intentionally unmounted until central admission.
+        <InlineFeedback
+          severity="info"
+          title={t('governedPeople.contracts.states.notAdmittedTitle')}
+        >
+          {t('governedPeople.contracts.states.notAdmittedDescription')}
         </InlineFeedback>
       )}
       {query.stale && (
-        <InlineFeedback severity="warning" title="The disclosed snapshot is stale">
-          Owner data could not be refreshed. Contract issuance remains disabled until a current,
-          authorization-bound projection is returned.
+        <InlineFeedback severity="warning" title={t('governedPeople.contracts.states.staleTitle')}>
+          {t('governedPeople.contracts.states.staleDescription')}
         </InlineFeedback>
       )}
       {projection.queryState.state === 'PARTIAL' && (
-        <InlineFeedback severity="warning" title="Some authoritative inputs are unavailable">
-          Contract issuance is disabled for this partial projection.
+        <InlineFeedback
+          severity="warning"
+          title={t('governedPeople.contracts.states.partialTitle')}
+        >
+          {t('governedPeople.contracts.states.partialDescription')}
           <Box component="ul" sx={{ m: 0, pl: 2.5 }}>
             {projection.queryState.partialFailures.map((failure) => (
               <li key={`${failure.componentKey}:${failure.correlationId}`}>
@@ -752,8 +789,8 @@ function ActiveWorkbench({
       {projection.items.length === 0 ? (
         <GuidedEmptyState
           kind="no-results"
-          title="No contract-ready relationships"
-          description="No relationship meets the current governed filters and issuance criteria."
+          title={t('governedPeople.contracts.states.emptyTitle')}
+          description={t('governedPeople.contracts.states.emptyDescription')}
           size="page"
         />
       ) : selected ? (
@@ -794,14 +831,14 @@ function ActiveWorkbench({
           disabled={!query.canPrevious || query.fetching}
           onClick={query.previous}
         >
-          Previous
+          {t('governedPeople.common.previous')}
         </ActionButton>
         <ActionButton
           intent="quiet"
           disabled={!query.canNext || query.fetching}
           onClick={query.next}
         >
-          Next
+          {t('governedPeople.common.next')}
         </ActionButton>
       </Stack>
     </Stack>
@@ -816,14 +853,15 @@ export function Hrm011ContractsCompensationBasisWorkbench({
   onIssueEmploymentContract,
   createCommandIdentity,
 }: Hrm011ContractsCompensationBasisWorkbenchProps) {
+  const { t } = useTranslation('workforce');
   const rolloutAdmitted = gate.feature === HRM011_FEATURE && gate.enabled && gate.tenantEnrolled;
   if (!rolloutAdmitted) {
     return (
       <div data-testid="hrm-011-disabled" data-runtime-state="disabled">
         <GuidedEmptyState
           kind="permission"
-          title="Contract issuance workbench is not enabled"
-          description="The feature is off or this tenant is not enrolled. No owner request was sent."
+          title={t('governedPeople.contracts.states.notEnabledTitle')}
+          description={t('governedPeople.contracts.states.notEnabledDescription')}
           size="page"
         />
       </div>
@@ -837,8 +875,8 @@ export function Hrm011ContractsCompensationBasisWorkbench({
       <div data-testid="hrm-011-denied" data-runtime-state="denied">
         <GuidedEmptyState
           kind="permission"
-          title="This contract surface is unavailable"
-          description="The current access context cannot disclose this workbench."
+          title={t('governedPeople.contracts.states.deniedTitle')}
+          description={t('governedPeople.contracts.states.deniedDescription')}
           size="page"
         />
       </div>
@@ -848,8 +886,8 @@ export function Hrm011ContractsCompensationBasisWorkbench({
     return (
       <div data-testid="hrm-011-unavailable" data-runtime-state="unavailable">
         <LocalErrorState
-          title="Contract metadata unavailable"
-          description="The sealed IAQ-008 adapter is not mounted. No owner request was sent."
+          title={t('governedPeople.contracts.states.unavailableTitle')}
+          description={t('governedPeople.contracts.states.adapterNotMounted')}
           size="page"
         />
       </div>

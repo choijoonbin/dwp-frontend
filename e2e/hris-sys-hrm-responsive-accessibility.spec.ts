@@ -7,8 +7,7 @@ import { FULL_PRODUCT_PERMISSIONS, mockShellSession } from './support/shell-sess
 const journeys = [
   {
     module: 'SYS',
-    title:
-      'SYS reference configuration integrated runtime is responsive and accessible',
+    title: 'SYS reference configuration integrated runtime is responsive and accessible',
     path: '/hr/settings/reference-data',
     workspace: 'hris-reference-configuration-workspace',
     apiPattern: '**/api/platform/v1/hris/workbench/settings-reference**',
@@ -16,8 +15,7 @@ const journeys = [
   },
   {
     module: 'HRM',
-    title:
-      'HRM employee change integrated runtime is responsive and accessible',
+    title: 'HRM employee change integrated runtime is responsive and accessible',
     path: '/hr/operations/people/employee-change-requests',
     workspace: 'hris-employee-change-workspace',
     apiPattern: '**/api/people/v1/hris/workbench/operations/employee/change/requests**',
@@ -37,9 +35,7 @@ async function expectNoHorizontalOverflow(page: Page, path: string) {
     viewport: document.documentElement.clientWidth,
     content: document.documentElement.scrollWidth,
   }));
-  expect(geometry.content, `${path} must not overflow`).toBeLessThanOrEqual(
-    geometry.viewport + 1
-  );
+  expect(geometry.content, `${path} must not overflow`).toBeLessThanOrEqual(geometry.viewport + 1);
 }
 
 for (const journey of journeys) {

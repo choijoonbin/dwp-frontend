@@ -6,6 +6,17 @@ const frontendWorkflow = readFileSync('.github/workflows/frontend-quality.yml', 
 const fullWorkflow = readFileSync('.github/workflows/workplace-quality.yml', 'utf8');
 const packageJson = JSON.parse(readFileSync('package.json', 'utf8'));
 
+function workflowJob(workflow, jobName) {
+  const lines = workflow.split(/\r?\n/u);
+  const start = lines.findIndex((line) => line === `  ${jobName}:`);
+  assert.notEqual(start, -1, `workflow job ${jobName} must exist`);
+  let end = start + 1;
+  while (end < lines.length && !/^ {2}[A-Za-z0-9_-]+:\s*$/u.test(lines[end])) end += 1;
+  return lines.slice(start, end).join('\n');
+}
+
+const workplaceFullJob = workflowJob(fullWorkflow, 'workplace-full');
+
 test('pull-request Workplace smoke covers member and operator journeys on desktop and mobile', () => {
   const command = String(packageJson.scripts?.['test:e2e:workplace:smoke'] ?? '');
   for (const spec of [
@@ -28,8 +39,12 @@ test('pull-request Workplace smoke covers member and operator journeys on deskto
 test('nightly and manual Workplace gate runs the complete hermetic suite', () => {
   assert.match(fullWorkflow, /^ {2}schedule:/mu);
   assert.match(fullWorkflow, /^ {2}workflow_dispatch:/mu);
-  assert.match(fullWorkflow, /run: corepack yarn test:e2e:workplace/u);
-  assert.match(fullWorkflow, /PLAYWRIGHT_HTML_OUTPUT_DIR: playwright-report-workplace/u);
+  assert.match(
+    workplaceFullJob,
+    /run: corepack yarn playwright install --with-deps chromium webkit\b/u
+  );
+  assert.match(workplaceFullJob, /run: corepack yarn test:e2e:workplace/u);
+  assert.match(workplaceFullJob, /PLAYWRIGHT_HTML_OUTPUT_DIR: playwright-report-workplace/u);
   assert.match(fullWorkflow, /shard: 1\/3/u);
   assert.match(fullWorkflow, /shard: 2\/3/u);
   assert.match(fullWorkflow, /shard: 3\/3/u);

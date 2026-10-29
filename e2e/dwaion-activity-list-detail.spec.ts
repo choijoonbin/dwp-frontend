@@ -104,7 +104,7 @@ test('loaded server pages power URL-preserved client filtering and exact selecti
   await sourceAndAudit.click();
   await expect(sourceAndAudit).toHaveAttribute('aria-expanded', 'true');
   await expect(inspector.getByRole('heading', { name: 'Run source status' })).toBeVisible();
-  await expect(inspector.getByText('WORK_ITEM', { exact: true })).toBeVisible();
+  await expect(inspector.getByText('Work item', { exact: true })).toBeVisible();
   await expect(inspector.getByText('Linked to a Platform audit record')).toBeVisible();
   await expect(inspector.getByRole('heading', { name: 'Audit integrity evidence' })).toBeVisible();
   await expect(inspector.getByText('Matches the reported daily checkpoint')).toBeVisible();
@@ -355,13 +355,18 @@ test('a failed recent-window access revalidation removes cached run metadata', a
   );
 });
 
-test('server pages retain older lease attention and refresh both loaded pages with a new cursor', async ({
+test('server pages retain older lease attention while bounded refresh keeps loaded history', async ({
   page,
 }, testInfo) => {
   await page.clock.install({ time: new Date('2026-09-16T00:00:00Z') });
   await mockActivity(page, { askOnly: true });
   let revision = 1;
   const requests: URL[] = [];
+  const olderExpiredRun = () => ({
+    ...run(RUNNING_RUN, 'RUNNING', 'ALLOW', null, null),
+    activityTitle: `Older expired run ${revision}`,
+    lease: { status: 'EXPIRED' as const, expiresAt: '2026-09-04T00:02:00Z' },
+  });
   await page.route('**/api/agent/v1/runs?**', (route) => {
     const url = new URL(route.request().url());
     requests.push(url);
@@ -370,11 +375,7 @@ test('server pages retain older lease attention and refresh both loaded pages wi
       return route.fulfill({ status: 400, json: { detail: 'Cursor belongs to an old snapshot.' } });
     }
     const item = cursor
-      ? {
-          ...run(RUNNING_RUN, 'RUNNING', 'ALLOW', null, null),
-          activityTitle: `Older expired run ${revision}`,
-          lease: { status: 'EXPIRED', expiresAt: '2026-09-04T00:02:00Z' },
-        }
+      ? olderExpiredRun()
       : {
           ...run(COMPLETED_RUN, 'COMPLETED', 'ALLOW', 'COMPLETED', CONVERSATION),
           activityTitle: `Latest completed run ${revision}`,
@@ -389,6 +390,12 @@ test('server pages retain older lease attention and refresh both loaded pages wi
         hasMore: !cursor,
       },
     });
+  });
+  await page.route('**/api/agent/v1/runs/*', (route) => {
+    const runId = new URL(route.request().url()).pathname.split('/').at(-1);
+    return runId === RUNNING_RUN
+      ? route.fulfill({ json: { data: olderExpiredRun() } })
+      : route.fallback();
   });
   await page.goto('/dwaion/activity');
   await expect(page.getByText(/1 of 1 loaded runs/)).toBeVisible();
@@ -432,7 +439,7 @@ test('server pages retain older lease attention and refresh both loaded pages wi
   await expect(page.getByText(/2 of 2 loaded runs/)).toBeVisible();
   expect(
     requests.slice(requestsBeforeRefresh).map((url) => url.searchParams.get('cursor'))
-  ).toEqual([null, 'older-2']);
+  ).toEqual([null]);
   expect(new Set(requests.map((url) => url.searchParams.get('from'))).size).toBe(1);
   await expect(summary.getByRole('button', { name: /^In progress: 1/ })).toBeVisible();
   await expect(summary.getByRole('button', { name: /^Attention signals: 1/ })).toBeVisible();

@@ -1,6 +1,6 @@
 import { CALENDAR_NAVIGATION } from '../features/calendar/calendar-navigation';
 import { CALENDAR_PRODUCT_MANIFEST } from '../features/calendar/calendar-product-manifest';
-import { ProductAreaLayout } from './product-area-layout';
+import { ProductAreaLayout } from './product-area-layout-boundary';
 
 export function CalendarLayout() {
   return (

@@ -1,5 +1,6 @@
 import { ActionButton, LoadingState } from '@dwp-frontend/design-system';
 import type { ReactNode } from 'react';
+import { useTranslation } from 'react-i18next';
 import { AlertCircle, CheckCircle2, LockKeyhole, RefreshCw } from 'lucide-react';
 
 import Box from '@mui/material/Box';
@@ -76,6 +77,7 @@ export function HrisAutomationControlPlaneStatePanel({
   onRetry,
   onStepUp,
 }: HrisAutomationControlPlaneStatePanelProps) {
+  const { t } = useTranslation('hcm');
   const copy = STATE_COPY[state];
   const isAlert = ['partial', 'unavailable', 'forbidden', 'retry', 'step-up'].includes(state);
   const titleId = `hris-automation-control-plane-${state}-title`;
@@ -161,12 +163,12 @@ export function HrisAutomationControlPlaneStatePanel({
             onClick={onRetry}
             sx={{ minWidth: 44, minHeight: 44 }}
           >
-            Retry
+            {t('common.retry')}
           </ActionButton>
         ) : null}
         {state === 'step-up' ? (
           <ActionButton intent="primary" onClick={onStepUp} sx={{ minWidth: 44, minHeight: 44 }}>
-            Verify session
+            {t('administration.common.verifySession')}
           </ActionButton>
         ) : null}
       </Box>

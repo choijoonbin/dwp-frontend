@@ -17,6 +17,7 @@ import {
   ActionButton,
   ConfirmDialog,
   EmptyState,
+  InlineFeedback,
   PageCanvas,
   SelectField,
 } from '@dwp-frontend/design-system';
@@ -338,12 +339,14 @@ export function WorkplaceExceptionConsole() {
         </Alert>
       ) : null}
       {query.data?.summary.truncated ? (
-        <Alert severity="warning" data-testid="workplace-exception-coverage-warning">
-          {t('screen22.truncated', {
-            unresolved: query.data.summary.unresolvedCount,
-            returned: query.data.summary.returnedCount,
-          })}
-        </Alert>
+        <Box data-testid="workplace-exception-coverage-warning">
+          <InlineFeedback severity="warning">
+            {t('screen22.truncated', {
+              unresolved: query.data.summary.unresolvedCount,
+              returned: query.data.summary.returnedCount,
+            })}
+          </InlineFeedback>
+        </Box>
       ) : null}
       {capabilities.canManageWorkplaceAdmin && !elevated ? (
         <Alert severity="info">{t('screen22.stepUpRequired')}</Alert>
@@ -556,7 +559,9 @@ export function WorkplaceExceptionConsole() {
                     </Typography>
                   </Box>
                   {selected.status === 'MANUAL_REVIEW' ? (
-                    <Alert severity="error">{t('screen22.manualReviewRequired')}</Alert>
+                    <InlineFeedback severity="error">
+                      {t('screen22.manualReviewRequired')}
+                    </InlineFeedback>
                   ) : null}
                   <Box>
                     <Typography variant="overline">{t('screen22.rootCause')}</Typography>
@@ -583,7 +588,9 @@ export function WorkplaceExceptionConsole() {
                     />
                   ) : null}
                   {selected.action !== 'REPLAY_CONNECTOR' && !selected.actionHref ? (
-                    <Alert severity="warning">{t('screen22.ownerUnavailable')}</Alert>
+                    <InlineFeedback severity="warning">
+                      {t('screen22.ownerUnavailable')}
+                    </InlineFeedback>
                   ) : (
                     <ActionButton
                       intent={selected.action === 'REPLAY_CONNECTOR' ? 'primary' : 'secondary'}

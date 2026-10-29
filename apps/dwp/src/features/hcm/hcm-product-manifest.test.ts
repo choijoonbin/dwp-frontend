@@ -62,6 +62,14 @@ const HCM_AUTHORIZATION_ONLY_PAGE_KEYS = new Set([
   'route.hcm.team.delegation.page',
 ]);
 
+const HCM_PAGE_KEYS_OUTSIDE_HCM_ROUTER = [
+  'route.hcm.audit.evidence.page',
+  'route.hcm.configuration.settings-integrations.page',
+  'route.hcm.operations.exit-return.page',
+  'route.hcm.personal.performance-feedback.page',
+  'route.hcm.team.performance.page',
+] as const;
+
 function registryRoutes(): readonly RegistryRoute[] {
   const latestBundle = authorizationSource.bundles
     .filter((bundle) => bundle.bundleKey === 'product-surfaces')
@@ -168,12 +176,12 @@ describe('HCM W1b product manifest', () => {
     ]);
   });
 
-  it('binds the 47 default-OFF menu items within the 58 official HCM PAGE records', () => {
+  it('binds the 47 default-OFF menu items within the 65 official HCM PAGE records', () => {
     const routerRecords = PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE.filter(
       (route) => route.productId === 'hcm'
     );
     const registryRecords = registryRoutes().filter((route) => route.subject?.productKey === 'hcm');
-    expect(routerRecords).toHaveLength(58);
+    expect(routerRecords).toHaveLength(65);
 
     for (const surface of HCM_PRODUCT_MANIFEST.surfaces) {
       for (const item of surface.navigation.flatMap((group) => group.items)) {
@@ -209,11 +217,11 @@ describe('HCM W1b product manifest', () => {
       ])
     );
     expect(bySurfaceAndKind).toEqual({
-      'hcm.personal': { PAGE: 12, DATA: 6, ACTION: 8 },
-      'hcm.team': { PAGE: 6, DATA: 2, ACTION: 2 },
+      'hcm.personal': { PAGE: 13, DATA: 8, ACTION: 9 },
+      'hcm.team': { PAGE: 7, DATA: 3, ACTION: 2 },
       'hcm.utility': { PAGE: 1, DATA: 5, ACTION: 2 },
-      'hcm.operations': { PAGE: 27, DATA: 36, ACTION: 54 },
-      'hcm.management': { PAGE: 12, DATA: 13, ACTION: 47 },
+      'hcm.operations': { PAGE: 33, DATA: 44, ACTION: 59 },
+      'hcm.management': { PAGE: 15, DATA: 20, ACTION: 77 },
     });
     expect(
       records
@@ -233,8 +241,17 @@ describe('HCM W1b product manifest', () => {
       .map((route) => ({ path: route.pattern, routeContractKey: route.routeContractKey }))
       .sort((left, right) => left.routeContractKey.localeCompare(right.routeContractKey));
     expect(browserRoutes).toEqual(officialPages);
+    const officialPageKeys = new Set(officialPages.map((route) => route.routeContractKey));
+    expect(
+      records
+        .filter(
+          (route) => route.routeKind === 'PAGE' && !officialPageKeys.has(route.routeContractKey)
+        )
+        .map((route) => route.routeContractKey)
+        .sort()
+    ).toEqual([...HCM_PAGE_KEYS_OUTSIDE_HCM_ROUTER].sort());
     expect(records.filter((route) => route.routeKind === 'PAGE')).toHaveLength(
-      officialPages.length + 1
+      officialPages.length + HCM_PAGE_KEYS_OUTSIDE_HCM_ROUTER.length
     );
 
     for (const route of records) {

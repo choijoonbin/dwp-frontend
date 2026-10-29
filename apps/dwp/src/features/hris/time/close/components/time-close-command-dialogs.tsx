@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { FormDialog, FormField } from '@dwp-frontend/design-system';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
+import { useTranslation } from 'react-i18next';
 
 import type { ReactNode } from 'react';
 import type {
@@ -51,6 +52,7 @@ export function TimeCloseCommandDialogs({
   onReopen: (request: TimeReopenCommand) => void;
   onCreateHandoff: (request: PayrollTimeHandoffCommand) => void;
 }>) {
+  const { t } = useTranslation('hcm');
   const [asOf, setAsOf] = useState(instantNow);
   const [approvalReceiptId, setApprovalReceiptId] = useState('');
   const [reasonCode, setReasonCode] = useState('PERIOD_REOPEN_APPROVED');
@@ -78,26 +80,29 @@ export function TimeCloseCommandDialogs({
     (mode === 'REOPEN' && reopenValid) ||
     (mode === 'HANDOFF' && handoffValid);
   const title = {
-    VALIDATE: 'Validate period close',
-    CLOSE: 'Close this time period',
-    REOPEN: 'Reopen as a forward correction',
-    HANDOFF: 'Create Payroll handoff',
+    VALIDATE: t('hrisTime.i18nClosure.close.dialog.validateTitle'),
+    CLOSE: t('hrisTime.i18nClosure.close.dialog.closeTitle'),
+    REOPEN: t('hrisTime.i18nClosure.close.dialog.reopenTitle'),
+    HANDOFF: t('hrisTime.i18nClosure.close.dialog.handoffTitle'),
   }[mode ?? 'VALIDATE'];
   const submitLabel = {
-    VALIDATE: 'Validate period',
-    CLOSE: 'Close period',
-    REOPEN: 'Reopen period',
-    HANDOFF: 'Create handoff',
+    VALIDATE: t('hrisTime.i18nClosure.close.dialog.validateSubmit'),
+    CLOSE: t('hrisTime.i18nClosure.close.dialog.closeSubmit'),
+    REOPEN: t('hrisTime.i18nClosure.close.dialog.reopenSubmit'),
+    HANDOFF: t('hrisTime.i18nClosure.close.dialog.handoffSubmit'),
   }[mode ?? 'VALIDATE'];
 
   return (
     <FormDialog
       open={mode !== null}
       title={title}
-      description={`${period.title}. Aggregate version ${period.version ?? 'unavailable'} is rechecked before dispatch.`}
-      cancelLabel="Cancel"
+      description={t('hrisTime.i18nClosure.close.dialog.description', {
+        title: period.title,
+        version: period.version ?? t('hrisTime.i18nClosure.common.unavailable'),
+      })}
+      cancelLabel={t('hrisTime.i18nClosure.common.cancel')}
       submitLabel={submitLabel}
-      submittingLabel="Submitting…"
+      submittingLabel={t('hrisTime.i18nClosure.common.submitting')}
       submitDisabled={!valid || commandDisabled || busy}
       busy={busy}
       mobileFullScreen
@@ -116,23 +121,22 @@ export function TimeCloseCommandDialogs({
       <Stack gap={2}>
         {notice}
         <Typography variant="body2" color="text.secondary">
-          Validation and command results are immutable owner evidence. Refresh never rewrites a
-          prior blocker, result, event, or receipt.
+          {t('hrisTime.i18nClosure.close.dialog.immutableEvidence')}
         </Typography>
         {(mode === 'CLOSE' || mode === 'REOPEN') && (
           <FormField
             autoFocus
             fullWidth
             required
-            label="Approval receipt ID"
+            label={t('hrisTime.i18nClosure.close.dialog.approvalReceiptId')}
             value={approvalReceiptId}
             onChange={(event) => setApprovalReceiptId(event.target.value.trim())}
             errorMessage={
               approvalReceiptId.length > 0 && !approvalValid
-                ? 'Use the approved UUID for this exact period and version.'
+                ? t('hrisTime.i18nClosure.close.dialog.approvalReceiptHelp')
                 : undefined
             }
-            supportingText="Use the approved UUID for this exact period and version."
+            supportingText={t('hrisTime.i18nClosure.close.dialog.approvalReceiptHelp')}
             inputProps={{ maxLength: 36 }}
           />
         )}
@@ -140,15 +144,15 @@ export function TimeCloseCommandDialogs({
           <FormField
             fullWidth
             required
-            label="Reopen reason code"
+            label={t('hrisTime.i18nClosure.close.dialog.reopenReasonCode')}
             value={reasonCode}
             onChange={(event) => setReasonCode(event.target.value.toUpperCase())}
             errorMessage={
               reasonCode.length > 0 && !REASON.test(reasonCode)
-                ? 'Forward correction only; the closed result and prior events remain immutable.'
+                ? t('hrisTime.i18nClosure.close.dialog.reopenReasonHelp')
                 : undefined
             }
-            supportingText="Forward correction only; the closed result and prior events remain immutable."
+            supportingText={t('hrisTime.i18nClosure.close.dialog.reopenReasonHelp')}
             inputProps={{ maxLength: 80 }}
           />
         )}
@@ -158,12 +162,12 @@ export function TimeCloseCommandDialogs({
               autoFocus
               fullWidth
               required
-              label="Closed-time result ID"
+              label={t('hrisTime.i18nClosure.close.dialog.closedTimeResultId')}
               value={closedTimeResultId}
               onChange={(event) => setClosedTimeResultId(event.target.value.trim())}
               errorMessage={
                 closedTimeResultId.length > 0 && !UUID.test(closedTimeResultId)
-                  ? 'Enter a valid closed-time result UUID.'
+                  ? t('hrisTime.i18nClosure.close.dialog.closedTimeResultError')
                   : undefined
               }
               inputProps={{ maxLength: 36 }}
@@ -171,12 +175,12 @@ export function TimeCloseCommandDialogs({
             <FormField
               fullWidth
               required
-              label="Payroll entity ID"
+              label={t('hrisTime.i18nClosure.close.dialog.payrollEntityId')}
               value={payrollEntityId}
               onChange={(event) => setPayrollEntityId(event.target.value.trim())}
               errorMessage={
                 payrollEntityId.length > 0 && !UUID.test(payrollEntityId)
-                  ? 'Enter a valid Payroll entity UUID.'
+                  ? t('hrisTime.i18nClosure.close.dialog.payrollEntityError')
                   : undefined
               }
               inputProps={{ maxLength: 36 }}
@@ -184,12 +188,12 @@ export function TimeCloseCommandDialogs({
             <FormField
               fullWidth
               required
-              label="Pay period ID"
+              label={t('hrisTime.i18nClosure.close.dialog.payPeriodId')}
               value={payPeriodId}
               onChange={(event) => setPayPeriodId(event.target.value.trim())}
               errorMessage={
                 payPeriodId.length > 0 && !UUID.test(payPeriodId)
-                  ? 'Enter a valid pay period UUID.'
+                  ? t('hrisTime.i18nClosure.close.dialog.payPeriodError')
                   : undefined
               }
               inputProps={{ maxLength: 36 }}
@@ -198,8 +202,7 @@ export function TimeCloseCommandDialogs({
         )}
         {mode === 'VALIDATE' && (
           <Typography role="status" variant="body2">
-            Validation captures the blocker snapshot for the current version without closing or
-            partially mutating the period.
+            {t('hrisTime.i18nClosure.close.dialog.validationDescription')}
           </Typography>
         )}
       </Stack>

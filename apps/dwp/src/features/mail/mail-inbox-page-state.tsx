@@ -5,11 +5,11 @@ import {
   ActionIconButton,
   ErrorState,
   GuidedEmptyState,
+  InlineFeedback,
   LoadingState,
   PageCanvas,
 } from '@dwp-frontend/design-system';
 
-import Alert from '@mui/material/Alert';
 import Stack from '@mui/material/Stack';
 
 import { MailPageHeading } from './mail-components';
@@ -113,12 +113,12 @@ export function MailInboxHeading({
         }
       />
       {!canCreate && !canUpdate ? (
-        <Alert severity="info" sx={{ mt: 2 }}>
+        <InlineFeedback severity="info" role="alert" sx={{ mt: 2 }}>
           {t('permissions.readOnly', {
             defaultValue:
               'You have read-only mail access. Draft and message update actions are unavailable.',
           })}
-        </Alert>
+        </InlineFeedback>
       ) : null}
     </>
   );

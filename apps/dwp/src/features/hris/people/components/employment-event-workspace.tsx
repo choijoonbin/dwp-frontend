@@ -483,7 +483,7 @@ export function EmploymentEventWorkspace({
       cancelLabel={t('common.actions.close')}
       submitLabel={
         stale && stage
-          ? 'Refresh status'
+          ? t('governedPeople.employmentEvent.actions.refreshStatus')
           : employmentEventActionLabel(stage?.lifecycleState ?? null, Boolean(publishEvent))
       }
       submittingLabel="Working…"
@@ -506,7 +506,9 @@ export function EmploymentEventWorkspace({
           ) : null}
         </Stack>
         <Typography variant="body2" sx={{ overflowWrap: 'anywhere' }}>
-          Subject: {selection.subjectPublicId}
+          {t('governedPeople.employmentEvent.subject', {
+            subjectPublicId: selection.subjectPublicId,
+          })}
         </Typography>
 
         {failure ? (
@@ -517,7 +519,7 @@ export function EmploymentEventWorkspace({
                 <Stack direction={{ xs: 'column', sm: 'row' }} gap={0.5}>
                   {failure.receiptId && stage ? (
                     <ActionButton intent="quiet" size="small" onClick={() => void reconcile()}>
-                      Reconcile receipt
+                      {t('governedPeople.employmentEvent.actions.reconcileReceipt')}
                     </ActionButton>
                   ) : null}
                   {failure.kind === 'RESULT_UNKNOWN' && pendingCommand ? (
@@ -528,7 +530,7 @@ export function EmploymentEventWorkspace({
                       loadingLabel="Retrying exact command…"
                       onClick={() => void retryPendingCommand()}
                     >
-                      Retry exact command
+                      {t('governedPeople.employmentEvent.actions.retryExactCommand')}
                     </ActionButton>
                   ) : null}
                 </Stack>
@@ -543,52 +545,55 @@ export function EmploymentEventWorkspace({
             severity="warning"
             action={
               <ActionButton intent="quiet" size="small" onClick={() => void reconcile()}>
-                Reconcile receipt
+                {t('governedPeople.employmentEvent.actions.reconcileReceipt')}
               </ActionButton>
             }
           >
             {receiptDisposition === 'RESULT_UNKNOWN'
-              ? 'The command result is unknown. Reconcile this receipt; do not submit a duplicate.'
-              : 'The command is still processing. Refresh this receipt before continuing.'}
+              ? t('governedPeople.employmentEvent.receipt.resultUnknown')
+              : t('governedPeople.employmentEvent.receipt.processing')}
           </InlineFeedback>
         ) : null}
         {receiptDisposition === 'REJECTED' ? (
           <InlineFeedback severity="error">
-            The command receipt was rejected. No later action is enabled.
+            {t('governedPeople.employmentEvent.receipt.rejected')}
           </InlineFeedback>
         ) : null}
         {stage?.lifecycleState === 'PENDING_APPROVAL' ? (
           <InlineFeedback severity="info">
-            Approval is pending. Refresh the same event; do not create or submit a duplicate.
+            {t('governedPeople.employmentEvent.receipt.approvalPending')}
           </InlineFeedback>
         ) : null}
         {stage?.lifecycleState === 'APPROVED' && !publishEvent ? (
           <InlineFeedback severity="warning">
-            Approval is complete. Publishing remains unavailable until a current step-up authority
-            is supplied.
+            {t('governedPeople.employmentEvent.receipt.publishAuthorityRequired')}
           </InlineFeedback>
         ) : null}
         {stage?.lifecycleState === 'PUBLISHED' ? (
           <InlineFeedback severity="success">
-            The employment event was published to the assignment ledger.
+            {t('governedPeople.employmentEvent.receipt.published')}
           </InlineFeedback>
         ) : null}
 
         {!stage && selection.eventType === 'CONCURRENT_EMPLOYMENT' ? (
           assignments.isLoading ? (
-            <LoadingState label="Loading current worker ownership…" size="compact" />
+            <LoadingState
+              label={t('governedPeople.employmentEvent.assignment.loadingOwnership')}
+              size="compact"
+            />
           ) : assignments.isError ? (
             <InlineFeedback severity="warning">
-              Current assignment ownership is unavailable in this scope. The command is disabled.
+              {t('governedPeople.employmentEvent.assignment.ownershipUnavailable')}
             </InlineFeedback>
           ) : !sourceAssignment ? (
             <InlineFeedback severity="warning">
-              No disclosed worker assignment matches this event. The command is disabled.
+              {t('governedPeople.employmentEvent.assignment.noMatch')}
             </InlineFeedback>
           ) : workbenchStale ? (
             <InlineFeedback severity="warning">
-              The worker is now version {sourceAssignment.workerVersion}. Reopen the event from the
-              current workbench row.
+              {t('governedPeople.employmentEvent.assignment.stale', {
+                workerVersion: sourceAssignment.workerVersion,
+              })}
             </InlineFeedback>
           ) : null
         ) : null}
@@ -597,19 +602,19 @@ export function EmploymentEventWorkspace({
           <Stack gap={2}>
             <DatePickerField
               required
-              label="Relationship and assignment start"
+              label={t('governedPeople.employmentEvent.fields.relationshipStart')}
               value={relationshipStart}
               onValueChange={(value) => setRelationshipStart(value ?? '')}
             />
             <DatePickerField
-              label="Assignment end (exclusive)"
+              label={t('governedPeople.employmentEvent.fields.assignmentEndExclusive')}
               value={validToExclusive}
               minDate={relationshipStart}
               onValueChange={(value) => setValidToExclusive(value ?? '')}
             />
             {selection.eventType === 'HIRE' ? (
               <SelectField
-                label="Employment type"
+                label={t('governedPeople.employmentEvent.fields.employmentType')}
                 value={employmentType}
                 onValueChange={(value) => setEmploymentType(value as EmploymentType)}
                 options={['EMPLOYEE', 'CONTINGENT', 'INTERN', 'APPRENTICE'].map((value) => ({
@@ -619,7 +624,7 @@ export function EmploymentEventWorkspace({
               />
             ) : null}
             <SelectField
-              label="Primary assignment"
+              label={t('governedPeople.employmentEvent.fields.primaryAssignment')}
               value={String(primary)}
               onValueChange={(value) => setPrimary(value === 'true')}
               options={[
@@ -629,7 +634,7 @@ export function EmploymentEventWorkspace({
             />
             <FormField
               required
-              label="Full-time equivalent"
+              label={t('governedPeople.employmentEvent.fields.fullTimeEquivalent')}
               value={fte}
               inputProps={{ inputMode: 'decimal' }}
               onChange={(event) => setFte(event.target.value)}
@@ -637,7 +642,7 @@ export function EmploymentEventWorkspace({
             {OWNER_FIELDS.map(([field, label]) => (
               <Stack key={field} gap={1}>
                 <Typography component="h3" variant="subtitle2">
-                  {label} owner reference
+                  {t('governedPeople.employmentEvent.fields.ownerReference', { label })}
                 </Typography>
                 <FormField
                   required
@@ -664,7 +669,9 @@ export function EmploymentEventWorkspace({
           </Stack>
         ) : impact ? (
           <Stack gap={1}>
-            <Typography variant="subtitle2">Validation impact</Typography>
+            <Typography variant="subtitle2">
+              {t('governedPeople.employmentEvent.validation.title')}
+            </Typography>
             {impact.blockingIssues.map((issue) => (
               <InlineFeedback severity="error" key={issue}>
                 {issue}
@@ -677,7 +684,7 @@ export function EmploymentEventWorkspace({
             ))}
             {!impact.blockingIssues.length && !impact.warnings.length ? (
               <InlineFeedback severity="success">
-                No blocking assignment impact was found.
+                {t('governedPeople.employmentEvent.validation.clear')}
               </InlineFeedback>
             ) : null}
           </Stack>

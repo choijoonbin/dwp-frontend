@@ -1,4 +1,5 @@
 import type { HrisCommandReceipt } from '../../people/command-receipts/model/command-receipt';
+import { resolveCanonicalTimeZone } from '@dwp-frontend/shared-i18n';
 
 export const HRM009_FEATURE = 'HRIS_HRM_CERTIFICATE_WORKBENCH' as const;
 export const HRM009_ADAPTER_KIND = 'HRIS_HRM_009_STAGE_A_ENTRY_QUERY_V1' as const;
@@ -585,7 +586,8 @@ export function assertHrm009TrustedScope(value: unknown): Hrm009TrustedScope {
   let canonicalTimeZone: string;
   try {
     [canonicalLocale] = Intl.getCanonicalLocales(locale);
-    canonicalTimeZone = new Intl.DateTimeFormat('en', { timeZone }).resolvedOptions().timeZone;
+    canonicalTimeZone =
+      resolveCanonicalTimeZone(timeZone) ?? invalid('trustedScope.localeOrTimeZone');
   } catch {
     return invalid('trustedScope.localeOrTimeZone');
   }

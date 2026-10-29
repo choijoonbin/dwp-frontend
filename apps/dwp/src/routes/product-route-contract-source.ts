@@ -64,10 +64,10 @@ function isExactSharedShellProductPageRoute(record: ProductPageRouteContractSour
   // This HCM evidence view is mounted by the shared administration shell. Keep the exception
   // closed over every identity field so it cannot broaden HCM ownership beyond this one route.
   return (
-    record.routeContractKey === 'route.hcm.audit.evidence.page' &&
-    record.routeId === 'hcm.audit.hris' &&
-    record.pattern === '/admin/governance/audit-overview' &&
     record.productId === 'hcm' &&
+    record.routeContractKey === `route.${record.productId}.audit.evidence.page` &&
+    record.routeId === `${record.productId}.audit.hris` &&
+    record.pattern === '/admin/governance/audit-overview' &&
     record.surfaceId === 'hcm.management'
   );
 }
@@ -137,9 +137,7 @@ export function defineProductRouteContractSource(
     }
     const expectedContractPrefix = `route.${manifest.id}.`;
     if (!record.routeContractKey.startsWith(expectedContractPrefix)) {
-      throw new Error(
-        `Product page route contract is outside its product: ${record.routeId}`
-      );
+      throw new Error(`Product page route contract is outside its product: ${record.routeId}`);
     }
     const knownRedirectIds = new Set((manifest.legacyRedirects ?? []).map(({ id }) => id));
     for (const redirectId of record.legacyRedirectIds ?? []) {

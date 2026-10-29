@@ -16,10 +16,11 @@ import {
 import { useProductSurfaceScopeTransition } from '../features/shell/use-product-surface-scope-transition';
 import { ProductManagementLayout } from '../layouts/product-management-layout';
 import { ProductWorkLayout } from '../layouts/product-work-layout';
-import { ProductAreaLayout, type ProductAreaLayoutProps } from '../layouts/product-area-layout';
+import { ProductAreaLayout } from '../layouts/product-area-layout-boundary';
 import { buildProductCanaryLayoutRuntime } from './product-surface-canary-routes';
 
 import type { ReactNode } from 'react';
+import type { ProductAreaLayoutProps } from '../layouts/product-area-layout-contract';
 import type { ProductSurfaceRolloutMode } from '../features/shell/product-surface-canary-runtime';
 
 export type ConfiguredProductSurfacePresentation =

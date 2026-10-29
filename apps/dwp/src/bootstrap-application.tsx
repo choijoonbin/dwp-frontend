@@ -3,7 +3,7 @@ import '@dwp-frontend/design-system/styles/global.css';
 import { lazy, StrictMode, Suspense, useMemo, type PropsWithChildren } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
 import { useTranslation } from 'react-i18next';
-import { I18nProvider } from '@dwp-frontend/shared-i18n';
+import { I18nProvider } from '@dwp-frontend/shared-i18n/lib/I18nProvider';
 import { AuthProvider, useAuth } from '@dwp-frontend/shared-utils/auth/auth-provider';
 import { isProviderIdentity } from '@dwp-frontend/shared-utils/auth/control-plane-access';
 import { ProductSurfaceAuthorityProvider } from '@dwp-frontend/shared-utils/auth/product-surface-context-provider';

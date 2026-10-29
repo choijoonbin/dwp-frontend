@@ -27,7 +27,12 @@ function observeCriticalFailures(page: Page) {
   const runtimeErrors: string[] = [];
   const serverErrors: string[] = [];
 
-  page.on('pageerror', (error) => runtimeErrors.push(error.message));
+  page.on('pageerror', (error) => {
+    // WebKit promotes this standards-defined ResizeObserver delivery warning to pageerror while
+    // Chromium reports it only to the console. It does not indicate an application exception.
+    if (error.message === 'ResizeObserver loop completed with undelivered notifications.') return;
+    runtimeErrors.push(error.message);
+  });
   page.on('console', (message) => {
     if (message.type() === 'error') runtimeErrors.push(message.text());
   });

@@ -10,6 +10,7 @@ import {
 import {
   ActionButton,
   ErrorState,
+  foundationTokens,
   LoadingState,
   PageCanvas,
   useAppearance,
@@ -113,9 +114,9 @@ export function MessagingSettings() {
             title={t('settingsPage.presence.title')}
             description={t('settingsPage.presence.description')}
           >
-            <Typography variant="body2" color="text.secondary">
+            <Box component="p" sx={{ m: 0, typography: 'body2', color: 'text.secondary' }}>
               {t('settingsPage.presence.currentContract')}
-            </Typography>
+            </Box>
           </SettingsSection>
         </Stack>
       </Box>
@@ -140,7 +141,7 @@ function SettingsSection({
       sx={{
         border: 1,
         borderColor: 'divider',
-        borderRadius: 1,
+        borderRadius: foundationTokens.radius.surface + 'px',
         bgcolor: 'background.paper',
         p: { xs: 1.5, sm: 2 },
       }}
@@ -148,7 +149,7 @@ function SettingsSection({
       <Stack direction="row" spacing={1} alignItems="flex-start">
         <Box sx={{ color: 'primary.main', display: 'flex', pt: 0.2 }}>{icon}</Box>
         <Box sx={{ minWidth: 0 }}>
-          <Typography component="h2" variant="subtitle1" fontWeight={800}>
+          <Typography component="h2" variant="subtitle1" fontWeight="fontWeightBold">
             {title}
           </Typography>
           <Typography variant="body2" color="text.secondary">
@@ -280,9 +281,9 @@ function MessagingAccessibilitySettings() {
             personalPreference.update({ accessibility: { highContrast } })
           }
         />
-        <Typography variant="caption" color="text.secondary">
+        <Box component="p" sx={{ m: 0, typography: 'caption', color: 'text.secondary' }}>
           {t('settingsPage.accessibility.highContrastDescription')}
-        </Typography>
+        </Box>
       </Box>
       <Box>
         <PreferenceSwitch
@@ -293,9 +294,9 @@ function MessagingAccessibilitySettings() {
             personalPreference.update({ accessibility: { reduceMotion } })
           }
         />
-        <Typography variant="caption" color="text.secondary">
+        <Box component="p" sx={{ m: 0, typography: 'caption', color: 'text.secondary' }}>
           {t('settingsPage.accessibility.reduceMotionDescription')}
-        </Typography>
+        </Box>
       </Box>
     </Stack>
   );
@@ -317,7 +318,7 @@ function PreferenceChoice({
   const { t } = useTranslation('messaging');
   return (
     <Box>
-      <Typography variant="body2" fontWeight={780}>
+      <Typography variant="body2" fontWeight="fontWeightBold">
         {label}
       </Typography>
       <ToggleButtonGroup
@@ -397,9 +398,9 @@ function ShortcutList() {
               py: 0.35,
               border: 1,
               borderColor: 'divider',
-              borderRadius: 0.75,
+              borderRadius: foundationTokens.radius.compact + 'px',
               bgcolor: 'action.hover',
-              fontFamily: 'monospace',
+              fontFamily: foundationTokens.font.mono,
               fontSize: 'caption.fontSize',
               whiteSpace: 'nowrap',
             }}

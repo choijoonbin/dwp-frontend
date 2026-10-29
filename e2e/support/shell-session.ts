@@ -38,8 +38,26 @@ import {
   integrityPage,
   scimPage,
 } from './shell-session-contracts';
+import {
+  CATALOG_ASSURANCE_FINDING_FIXTURE,
+  CATALOG_ASSURANCE_FIXTURE,
+  CATALOG_ENTITIES_FIXTURE,
+  CATALOG_RELATION_FIXTURE,
+  NAVIGATION_REVISION_FIXTURE,
+  NAVIGATION_TREE_FIXTURE,
+  NAVIGATION_VALIDATION_FIXTURE,
+} from './shell-session-governance-fixtures';
 import { AUDIT_POLICY_REVISION_PAGE } from './audit-control-fixtures';
 export { fulfillSuccess } from './shell-session-contracts';
+export {
+  CATALOG_ASSURANCE_FINDING_FIXTURE,
+  CATALOG_ASSURANCE_FIXTURE,
+  CATALOG_ENTITIES_FIXTURE,
+  CATALOG_RELATION_FIXTURE,
+  NAVIGATION_REVISION_FIXTURE,
+  NAVIGATION_TREE_FIXTURE,
+  NAVIGATION_VALIDATION_FIXTURE,
+} from './shell-session-governance-fixtures';
 import type { Page } from '@playwright/test';
 import type { LocalizationRevision, PreferenceExceptionRequest } from '@dwp-frontend/shared-utils';
 import type { MockHomeSurface, ShellSessionOptions } from './shell-session-contracts';
@@ -241,161 +259,6 @@ export const FULL_PRODUCT_PERMISSIONS = [
     effect: 'ALLOW' as const,
   })),
 ];
-export const NAVIGATION_TREE_FIXTURE = [
-  {
-    navigationItemId: 1,
-    navigationKey: 'workspace',
-    itemType: 'GROUP',
-    parentNavigationItemId: null,
-    registryEntryKey: null,
-    route: null,
-    iconKey: 'layout-grid',
-    requiredResourceKey: null,
-    requiredPermissionCode: 'VIEW',
-    sortOrder: 0,
-    lifecycleState: 'ACTIVE',
-    version: 1,
-    labels: [
-      { locale: 'ko', label: '워크스페이스', description: '개인 업무 공간' },
-      { locale: 'en', label: 'Workspace', description: 'Personal work area' },
-    ],
-    children: [
-      {
-        navigationItemId: 2,
-        navigationKey: 'work',
-        itemType: 'APP',
-        parentNavigationItemId: 1,
-        registryEntryKey: 'DWP_WORK',
-        route: '/work',
-        iconKey: 'briefcase',
-        requiredResourceKey: 'APP.WORK',
-        requiredPermissionCode: 'VIEW',
-        sortOrder: 0,
-        lifecycleState: 'ACTIVE',
-        version: 1,
-        labels: [
-          { locale: 'ko', label: '업무', description: '우선 업무와 승인' },
-          { locale: 'en', label: 'Work', description: 'Priorities and approvals' },
-        ],
-        children: [],
-      },
-    ],
-  },
-] as const;
-
-export const NAVIGATION_VALIDATION_FIXTURE = {
-  valid: true,
-  errorCount: 0,
-  warningCount: 0,
-  issues: [],
-  checkedAt: '2026-08-11T00:15:00Z',
-};
-export const NAVIGATION_REVISION_FIXTURE = {
-  navigationRevisionId: '61000000-0000-0000-0000-000000000001',
-  revisionNumber: 1,
-  lifecycleState: 'PUBLISHED',
-  baselineRevisionId: null,
-  baselineTreeHash: 'navigation-baseline-fixture',
-  tree: NAVIGATION_TREE_FIXTURE,
-  validation: NAVIGATION_VALIDATION_FIXTURE,
-  diff: { added: 0, removed: 0, changed: 0, reordered: 0, lifecycleChanged: 0 },
-  changeSummary: 'Initial governed navigation baseline',
-  version: 1,
-  createdAt: '2026-08-10T00:00:00Z',
-  createdBy: 1,
-  updatedAt: '2026-08-11T00:15:00Z',
-  publishedAt: '2026-08-11T00:15:00Z',
-  publishedBy: 1,
-};
-export const CATALOG_ENTITIES_FIXTURE = [
-  {
-    ref: 'APP:DWP_WORK',
-    kind: 'APP',
-    key: 'DWP_WORK',
-    name: 'DWP Work',
-    description: 'Governed priorities and approvals workspace.',
-    ownerRef: 'SERVICE:dwp-platform-server',
-    lifecycleState: 'ACTIVE',
-    riskTier: 'MEDIUM',
-    scope: 'TENANT',
-    revision: 1,
-    metadata: {},
-  },
-  {
-    ref: 'SERVICE:dwp-platform-server',
-    kind: 'SERVICE',
-    key: 'dwp-platform-server',
-    name: 'DWP Platform Service',
-    description: 'Tenant experience and workspace control plane.',
-    ownerRef: 'TEAM:platform',
-    lifecycleState: 'ACTIVE',
-    riskTier: 'HIGH',
-    scope: 'GLOBAL_PRODUCT',
-    revision: 1,
-    metadata: {},
-  },
-] as const;
-export const CATALOG_RELATION_FIXTURE = {
-  relationId: null,
-  sourceRef: 'SERVICE:dwp-platform-server',
-  targetRef: 'APP:DWP_WORK',
-  relationType: 'PRODUCES',
-  relationOrigin: 'DISCOVERED',
-  criticality: 'OPERATIONAL',
-  evidenceRef: 'workspace registry',
-  metadata: {},
-  lifecycleState: 'ACTIVE',
-  version: 0,
-} as const;
-
-export const CATALOG_ASSURANCE_FINDING_FIXTURE = {
-  findingId: '71000000-0000-0000-0000-000000000001',
-  entityRef: 'APP:DWP_WORK',
-  findingCode: 'OWNER_MISSING',
-  severity: 'HIGH',
-  lifecycleState: 'OPEN',
-  ruleKey: 'DWP_CATALOG_IMPACT',
-  ruleVersion: 1,
-  evidence: {
-    entityRef: 'APP:DWP_WORK',
-    entityRevision: 1,
-    lifecycleState: 'ACTIVE',
-    signal: 'ownerRef',
-    value: null,
-    directDependentCount: 0,
-    ruleKey: 'DWP_CATALOG_IMPACT',
-    ruleVersion: 1,
-  },
-  evidenceSha256: 'a'.repeat(64),
-  firstDetectedAt: '2026-08-11T00:20:00Z',
-  lastDetectedAt: '2026-08-12T00:20:00Z',
-  dispositionReason: null,
-  dispositionEvidenceRef: null,
-  disposedBy: null,
-  disposedAt: null,
-  version: 0,
-} as const;
-export const CATALOG_ASSURANCE_FIXTURE = {
-  openCount: 1,
-  criticalCount: 0,
-  ownerMissingCount: 1,
-  deprecationImpactCount: 0,
-  activeRule: {
-    ruleKey: 'DWP_CATALOG_IMPACT',
-    ruleVersion: 1,
-    definition: {
-      maximumTraversalDepth: 8,
-      criticalDirectBlocks: true,
-      retireWithDirectDependentsBlocks: true,
-      criticalityWeights: { INFORMATIONAL: 1, OPERATIONAL: 2, CRITICAL: 4 },
-    },
-    contentSha256: 'b'.repeat(64),
-  },
-  findings: [CATALOG_ASSURANCE_FINDING_FIXTURE],
-  findingsLimit: 100,
-  findingsHasMore: false,
-  generatedAt: '2026-08-12T00:20:00Z',
-} as const;
 const PROVIDER_TENANT_FIXTURE = {
   tenantId: 'tenant-skax',
   organizationId: 'organization-skax',
@@ -1317,6 +1180,13 @@ export async function mockShellSession(
         body: ': connected\n\n',
       });
     }
+    if (path === '/api/platform/v1/mail/events') {
+      return route.fulfill({
+        status: 200,
+        headers: { 'Content-Type': 'text/event-stream', 'Cache-Control': 'no-cache' },
+        body: ': connected\n\n',
+      });
+    }
     if (path === '/api/notifications/v1/me/delivery-profile') {
       return fulfillSuccess(route, {
         channels: {
@@ -2133,7 +2003,16 @@ export async function mockShellSession(
     const approvalFixture = resolveApprovalShellFixture(new URL(request.url()));
     if (approvalFixture !== undefined) return fulfillSuccess(route, approvalFixture);
     const hcmFixture = resolveHcmShellFixture(path);
-    if (hcmFixture !== undefined) return fulfillSuccess(route, hcmFixture);
+    if (hcmFixture !== undefined) {
+      if (hcmFixture.mode === 'raw') {
+        return route.fulfill({
+          status: 200,
+          contentType: 'application/json',
+          body: JSON.stringify(hcmFixture.data),
+        });
+      }
+      return fulfillSuccess(route, hcmFixture.data);
+    }
     const sessionDisplayName =
       options.displayName ?? (provider ? 'Provider Admin' : 'Tenant Admin');
     const sessionEmail =

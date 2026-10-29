@@ -1,3 +1,5 @@
+import { resolveZonedDateKey } from '@dwp-frontend/shared-i18n';
+
 export const TIME_CLOSE_ENTRY_MODES = ['COMMAND_CENTER', 'DAILY_CLOSE', 'MONTHLY_CLOSE'] as const;
 
 export type TimeCloseEntryMode = (typeof TIME_CLOSE_ENTRY_MODES)[number];
@@ -679,12 +681,7 @@ function isValidTimeZone(value: unknown): value is string {
   ) {
     return false;
   }
-  try {
-    new Intl.DateTimeFormat('en-US', { timeZone: value }).format(0);
-    return true;
-  } catch {
-    return false;
-  }
+  return resolveZonedDateKey(0, value) !== null;
 }
 
 export function assertTimeCloseScope(scope: TimeCloseScope): void {

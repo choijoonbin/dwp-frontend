@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react';
-import { useLanguage, resolveSupportedLocale } from '@dwp-frontend/shared-i18n';
+import { resolveSupportedLocale } from '@dwp-frontend/shared-i18n/lib/locales';
+import { useLanguage } from '@dwp-frontend/shared-i18n/lib/useLanguage';
 import { useAuth } from '@dwp-frontend/shared-utils/auth/auth-provider';
 
 export function UserLocaleSync() {

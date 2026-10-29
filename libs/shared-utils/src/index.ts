@@ -107,6 +107,7 @@ export * from './api/people-admin-api';
 export * from './api/assignment-proposal-api';
 export * from './api/hr-api';
 export * from './api/approval-api';
+export * from './api/approval-hris-separation-waiver-api';
 export * from './api/approval-delegation-api';
 export * from './api/approval-policy-create-api';
 export * from './api/approval-form-workspace-api';

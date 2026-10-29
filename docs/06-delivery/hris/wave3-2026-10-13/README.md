@@ -31,8 +31,8 @@ Phase A records both pre-start Control conditions as fulfilled:
    argv and their three JUnit XML hashes/counts seal 24 passing tests with zero
    failures, errors, or skips. This is limited exactly to
    `CONTRACT_ABI_IMPLEMENTED_TESTED_REGISTERED_GRANTED; owner runtime provider
-   wiring intentionally fail-closed and remains post-result Central
-   integration`.
+wiring intentionally fail-closed and remains post-result Central
+integration`.
 
 The HRM owner runtime provider/verifier remains fail closed. Wiring and testing
 that runtime projection is explicitly tracked by the existing post-result

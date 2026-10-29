@@ -1,6 +1,6 @@
 import { MEETINGS_NAVIGATION } from '../features/meetings/meetings-navigation';
 import { MEETINGS_PRODUCT_MANIFEST } from '../features/meetings/meetings-product-manifest';
-import { ProductAreaLayout } from './product-area-layout';
+import { ProductAreaLayout } from './product-area-layout-boundary';
 
 export function MeetingsLayout() {
   return (

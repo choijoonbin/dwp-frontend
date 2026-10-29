@@ -13,6 +13,7 @@ import {
   ActionIconButton,
   InlineFeedback,
   SelectField,
+  foundationTokens,
 } from '@dwp-frontend/design-system';
 
 import Box from '@mui/material/Box';
@@ -132,12 +133,21 @@ export function CalendarEventRemindersEditor({
     <Box
       component="section"
       aria-labelledby={titleId}
-      sx={{ border: 1, borderColor: 'divider', borderRadius: 1, overflow: 'hidden' }}
+      sx={{
+        border: 1,
+        borderColor: 'divider',
+        borderRadius: foundationTokens.radius.control + 'px',
+        overflow: 'hidden',
+      }}
     >
       <Stack direction="row" spacing={1} alignItems="center" sx={{ px: 2, py: 1.5 }}>
         <BellRing size={17} aria-hidden="true" />
         <Box sx={{ minWidth: 0, flex: 1 }}>
-          <Typography id={titleId} component="h3" fontWeight={700}>
+          <Typography
+            id={titleId}
+            component="h3"
+            fontWeight={foundationTokens.home.typography.weightBold}
+          >
             {t('event.reminders.title')}
           </Typography>
           <Typography variant="caption" color="text.secondary">

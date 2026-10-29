@@ -57,6 +57,12 @@ export const EMPLOYEE_CHANGE_API_CONTRACTS = [
   },
 ] as const;
 
+export const HCM_EMPLOYEE_CHANGE_MUTATION_API_CONTRACTS = [
+  EMPLOYEE_CHANGE_API_CONTRACTS[1],
+  EMPLOYEE_CHANGE_API_CONTRACTS[2],
+  EMPLOYEE_CHANGE_API_CONTRACTS[3],
+] as const;
+
 export type EmployeeChangeCreateCommand = Readonly<{
   request: EmployeeChangeCreateRequest;
   expectedTargetVersion: number;

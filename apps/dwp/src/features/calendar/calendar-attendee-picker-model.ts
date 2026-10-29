@@ -1,5 +1,5 @@
 import type { PersonSummary } from '@dwp-frontend/shared-utils';
-import type { CalendarEditorAttendee } from './calendar-event-editor-model';
+import type { CalendarEditorAttendee } from './calendar-attendee-contract';
 
 const EMAIL_LOCAL = /^[A-Za-z0-9!#$%&'*+/=?^_`{|}~.-]+$/;
 const EMAIL_DOMAIN_LABEL = /^[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?$/;

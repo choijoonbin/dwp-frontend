@@ -1,4 +1,5 @@
 import { useCallback, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { BriefcaseBusiness, Building2, RefreshCw, ShieldCheck } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import {
@@ -117,12 +118,13 @@ function FailureState({
   retrying: boolean;
   onRetry: () => void;
 }) {
+  const { t } = useTranslation('workforce');
   if (failure.kind === 'PERMISSION_DENIED') {
     return (
       <GuidedEmptyState
         kind="permission"
-        title="Organization access is unavailable"
-        description="This view cannot disclose whether an organization or position exists. Ask an administrator to check your organization-view duty."
+        title={t('governedPeople.organizationPositions.failure.permissionTitle')}
+        description={t('governedPeople.organizationPositions.failure.permissionDescription')}
         size="page"
       />
     );
@@ -131,8 +133,8 @@ function FailureState({
     return (
       <GuidedEmptyState
         kind="empty"
-        title="No organization graph is available"
-        description="The requested root is not available in your authorized population for this effective time."
+        title={t('governedPeople.organizationPositions.failure.notFoundTitle')}
+        description={t('governedPeople.organizationPositions.failure.notFoundDescription')}
         actionLabel="Try again"
         onAction={onRetry}
         size="page"
@@ -175,6 +177,7 @@ function OrganizationCard({
   selected: boolean;
   onSelect: () => void;
 }) {
+  const { t } = useTranslation('workforce');
   return (
     <Paper
       component="li"
@@ -216,7 +219,10 @@ function OrganizationCard({
               display="block"
               sx={{ overflowWrap: 'anywhere' }}
             >
-              Level {node.depth} · {node.organizationPublicId}
+              {t('governedPeople.organizationPositions.card.level', {
+                depth: node.depth,
+                organizationPublicId: node.organizationPublicId,
+              })}
             </Typography>
           </Box>
         </Stack>
@@ -234,6 +240,7 @@ function PositionCard({
   selected: boolean;
   onSelect: () => void;
 }) {
+  const { t } = useTranslation('workforce');
   return (
     <Paper
       component="li"
@@ -271,7 +278,10 @@ function PositionCard({
               {position.positionKey} · {position.status}
             </Typography>
             <Typography component="span" variant="caption" color="text.secondary" display="block">
-              {position.positionType} · {position.budgetedFte} FTE
+              {t('governedPeople.organizationPositions.card.positionFte', {
+                positionType: position.positionType,
+                budgetedFte: position.budgetedFte,
+              })}
             </Typography>
           </Box>
         </Stack>
@@ -289,6 +299,7 @@ function SelectionInspector({
   selection?: CanonicalSelection;
   onClose: () => void;
 }) {
+  const { t } = useTranslation('workforce');
   if (!selection) return null;
   const organization =
     selection.kind === 'organization'
@@ -304,7 +315,7 @@ function SelectionInspector({
     <Paper
       component="aside"
       variant="outlined"
-      aria-label="Selected organization graph item"
+      aria-label={t('governedPeople.organizationPositions.inspector.ariaLabel')}
       sx={{ p: { xs: 1.5, sm: 2 }, minWidth: 0, alignSelf: 'start' }}
     >
       <Stack gap={1.25}>
@@ -318,7 +329,11 @@ function SelectionInspector({
         </Box>
         {organization ? (
           <>
-            <Typography variant="body2">Reporting level: {organization.depth}</Typography>
+            <Typography variant="body2">
+              {t('governedPeople.organizationPositions.inspector.reportingLevel', {
+                depth: organization.depth,
+              })}
+            </Typography>
             <Typography variant="caption" color="text.secondary" sx={{ overflowWrap: 'anywhere' }}>
               {organization.organizationPublicId}
             </Typography>
@@ -326,12 +341,30 @@ function SelectionInspector({
         ) : null}
         {position ? (
           <Stack gap={0.5}>
-            <Typography variant="body2">Key: {position.positionKey}</Typography>
-            <Typography variant="body2">Status: {position.status}</Typography>
-            <Typography variant="body2">Criticality: {position.criticality}</Typography>
-            <Typography variant="body2">Budgeted FTE: {position.budgetedFte}</Typography>
             <Typography variant="body2">
-              Incumbents: {position.incumbentPersonPublicIds.length}
+              {t('governedPeople.organizationPositions.inspector.key', {
+                positionKey: position.positionKey,
+              })}
+            </Typography>
+            <Typography variant="body2">
+              {t('governedPeople.organizationPositions.inspector.status', {
+                status: position.status,
+              })}
+            </Typography>
+            <Typography variant="body2">
+              {t('governedPeople.organizationPositions.inspector.criticality', {
+                criticality: position.criticality,
+              })}
+            </Typography>
+            <Typography variant="body2">
+              {t('governedPeople.organizationPositions.inspector.budgetedFte', {
+                budgetedFte: position.budgetedFte,
+              })}
+            </Typography>
+            <Typography variant="body2">
+              {t('governedPeople.organizationPositions.inspector.incumbents', {
+                count: position.incumbentPersonPublicIds.length,
+              })}
             </Typography>
             <Typography variant="caption" color="text.secondary" sx={{ overflowWrap: 'anywhere' }}>
               {position.positionPublicId}
@@ -339,7 +372,7 @@ function SelectionInspector({
           </Stack>
         ) : null}
         <ActionButton intent="secondary" onClick={onClose}>
-          Return to graph
+          {t('governedPeople.organizationPositions.inspector.returnToGraph')}
         </ActionButton>
       </Stack>
     </Paper>
@@ -361,14 +394,17 @@ function GraphContent({
   onSelect: (selection: CanonicalSelection) => void;
   onClearSelection: () => void;
 }) {
+  const { t } = useTranslation('workforce');
   const depths = [...new Set(graph.nodes.map((node) => node.depth))];
   const partial = !graph.positionsIncluded;
   return (
     <Stack gap={1.5} data-graph-state={partial ? 'partial' : 'complete'}>
       {partial ? (
-        <InlineFeedback title="Organization-only projection" severity="info">
-          Position details were not requested. Turn on positions to request the authorized position
-          projection.
+        <InlineFeedback
+          title={t('governedPeople.organizationPositions.graph.organizationOnlyTitle')}
+          severity="info"
+        >
+          {t('governedPeople.organizationPositions.graph.organizationOnlyDescription')}
         </InlineFeedback>
       ) : null}
       <Stack direction="row" gap={1} flexWrap="wrap" useFlexGap>
@@ -377,7 +413,7 @@ function GraphContent({
           aria-pressed={mode === 'organizations'}
           onClick={() => onModeChange('organizations')}
         >
-          Organizations
+          {t('governedPeople.organizationPositions.graph.organizations')}
         </ActionButton>
         <ActionButton
           intent={mode === 'positions' ? 'primary' : 'secondary'}
@@ -385,7 +421,7 @@ function GraphContent({
           disabled={!graph.positionsIncluded}
           onClick={() => onModeChange('positions')}
         >
-          Positions
+          {t('governedPeople.organizationPositions.graph.positions')}
         </ActionButton>
       </Stack>
 
@@ -418,7 +454,7 @@ function GraphContent({
                   sx={{ listStyle: 'none', minWidth: { xs: 0, md: 240 } }}
                 >
                   <Typography variant="overline" color="text.secondary">
-                    Reporting level {depth}
+                    {t('governedPeople.organizationPositions.graph.reportingLevel', { depth })}
                   </Typography>
                   <Stack component="ul" gap={1} sx={{ m: 0, p: 0 }}>
                     {graph.nodes
@@ -469,8 +505,10 @@ function GraphContent({
           ) : (
             <GuidedEmptyState
               kind="empty"
-              title="No positions at this effective time"
-              description="The authorized reporting graph is available, but it has no effective positions in this scope."
+              title={t('governedPeople.organizationPositions.graph.emptyPositionsTitle')}
+              description={t(
+                'governedPeople.organizationPositions.graph.emptyPositionsDescription'
+              )}
               size="standard"
             />
           )}
@@ -488,6 +526,7 @@ export function HrisOrganizationPositionsBranch({
   adapter: HrisOrganizationPositionsQueryAdapter;
   now?: string;
 }) {
+  const { t } = useTranslation('workforce');
   const [searchParams, setSearchParams] = useSearchParams();
   const [defaultAsOf] = useState(() => canonicalNow(now));
   const serializedSearch = searchParams.toString();
@@ -537,13 +576,13 @@ export function HrisOrganizationPositionsBranch({
     <Paper
       component="section"
       variant="outlined"
-      aria-label="Organization graph controls"
+      aria-label={t('governedPeople.organizationPositions.controls.ariaLabel')}
       sx={{ p: 1.5 }}
     >
       <Stack direction={{ xs: 'column', md: 'row' }} gap={1.25} alignItems={{ md: 'center' }}>
         <FormField
           size="small"
-          label="Root organization UUID"
+          label={t('governedPeople.organizationPositions.controls.rootOrganization')}
           value={root}
           errorMessage={
             root && !UUID.test(root) ? 'Enter a canonical organization UUID.' : undefined
@@ -561,7 +600,7 @@ export function HrisOrganizationPositionsBranch({
         />
         <FormField
           size="small"
-          label="Effective instant"
+          label={t('governedPeople.organizationPositions.controls.effectiveInstant')}
           value={asOf}
           errorMessage={
             root && !request ? 'Use an RFC 3339 instant with an explicit offset.' : undefined
@@ -579,7 +618,7 @@ export function HrisOrganizationPositionsBranch({
         />
         <SelectField<number>
           size="small"
-          label="Reporting depth"
+          label={t('governedPeople.organizationPositions.controls.reportingDepth')}
           value={Number.isInteger(depth) && depth >= 0 && depth <= 12 ? depth : ''}
           options={DEPTH_OPTIONS}
           onValueChange={(value) =>
@@ -605,10 +644,14 @@ export function HrisOrganizationPositionsBranch({
                   position: null,
                 })
               }
-              inputProps={{ 'aria-label': 'Include authorized positions' }}
+              inputProps={{
+                'aria-label': t(
+                  'governedPeople.organizationPositions.controls.includePositionsAriaLabel'
+                ),
+              }}
             />
           }
-          label="Include positions"
+          label={t('governedPeople.organizationPositions.controls.includePositions')}
         />
         <ActionButton
           intent="secondary"
@@ -618,7 +661,7 @@ export function HrisOrganizationPositionsBranch({
           onClick={() => void graphQuery.refetch()}
           disabled={!request || !validAdapter}
         >
-          Refresh
+          {t('governedPeople.common.refresh')}
         </ActionButton>
       </Stack>
     </Paper>
@@ -628,8 +671,8 @@ export function HrisOrganizationPositionsBranch({
   if (!validAdapter) {
     content = (
       <LocalErrorState
-        title="Organization graph adapter is unavailable"
-        description="The canonical read adapter did not pass its sealed contract."
+        title={t('governedPeople.organizationPositions.states.adapterUnavailableTitle')}
+        description={t('governedPeople.organizationPositions.states.adapterUnavailableDescription')}
         size="page"
       />
     );
@@ -637,24 +680,24 @@ export function HrisOrganizationPositionsBranch({
     content = (
       <GuidedEmptyState
         kind="first-use"
-        title="Choose a root organization"
-        description="Enter an authorized organization UUID to inspect its reporting structure at an effective time."
+        title={t('governedPeople.organizationPositions.states.chooseRootTitle')}
+        description={t('governedPeople.organizationPositions.states.chooseRootDescription')}
         size="page"
       />
     );
   } else if (!request) {
     content = (
       <LocalErrorState
-        title="Check the organization graph filters"
-        description="Use a canonical organization UUID, an RFC 3339 instant with an explicit offset, and a depth from 0 through 12."
+        title={t('governedPeople.organizationPositions.states.invalidFiltersTitle')}
+        description={t('governedPeople.organizationPositions.states.invalidFiltersDescription')}
         size="page"
       />
     );
   } else if (graphQuery.isPending) {
     content = (
       <LoadingState
-        label="Loading authorized organization structure"
-        description="Checking reporting organizations and explicitly requested positions."
+        label={t('governedPeople.organizationPositions.states.loadingLabel')}
+        description={t('governedPeople.organizationPositions.states.loadingDescription')}
         variant="skeleton"
         skeletonRows={4}
         size="page"
@@ -672,8 +715,8 @@ export function HrisOrganizationPositionsBranch({
     content = (
       <GuidedEmptyState
         kind="empty"
-        title="No organization structure at this effective time"
-        description="No authorized reporting nodes were returned. Change the effective time or root organization."
+        title={t('governedPeople.organizationPositions.states.emptyTitle')}
+        description={t('governedPeople.organizationPositions.states.emptyDescription')}
         actionLabel="Try again"
         onAction={() => void graphQuery.refetch()}
         size="page"
@@ -684,7 +727,7 @@ export function HrisOrganizationPositionsBranch({
       <Stack gap={1.25}>
         {graphFailure ? (
           <InlineFeedback
-            title="Showing the last authorized snapshot"
+            title={t('governedPeople.organizationPositions.states.staleTitle')}
             severity="warning"
             action={
               <ActionButton
@@ -693,11 +736,11 @@ export function HrisOrganizationPositionsBranch({
                 loading={graphQuery.isFetching}
                 onClick={() => void graphQuery.refetch()}
               >
-                Refresh
+                {t('governedPeople.common.refresh')}
               </ActionButton>
             }
           >
-            The refresh failed, so this structure may be stale.
+            {t('governedPeople.organizationPositions.states.staleDescription')}
           </InlineFeedback>
         ) : null}
         <GraphContent
@@ -732,17 +775,21 @@ export function HrisOrganizationPositionsBranch({
           <ShieldCheck size={22} aria-hidden="true" />
           <Box minWidth={0} flex={1}>
             <Typography variant="overline" color="text.secondary">
-              HR operations · reporting hierarchy
+              {t('governedPeople.organizationPositions.header.eyebrow')}
             </Typography>
-            <Typography component="h2" variant="h5" sx={{ overflowWrap: 'anywhere' }}>
-              Organization and positions
+            <Typography component="h1" variant="h5" sx={{ overflowWrap: 'anywhere' }}>
+              {t('governedPeople.organizationPositions.header.title')}
             </Typography>
             <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
-              Inspect the authorized effective-dated reporting graph. This view is read-only.
+              {t('governedPeople.organizationPositions.header.description')}
             </Typography>
           </Box>
           <Stack direction="row" gap={0.75} flexWrap="wrap" useFlexGap>
-            <Chip size="small" variant="outlined" label="Reporting" />
+            <Chip
+              size="small"
+              variant="outlined"
+              label={t('governedPeople.organizationPositions.header.reporting')}
+            />
             {visibleGraph ? (
               <Chip size="small" variant="outlined" label={visibleGraph.effectiveDate} />
             ) : null}

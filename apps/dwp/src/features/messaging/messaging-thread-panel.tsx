@@ -1,7 +1,12 @@
 import { useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { MessageSquareReply, X } from 'lucide-react';
-import { ActionButton, ActionIconButton } from '@dwp-frontend/design-system';
+import {
+  ActionButton,
+  ActionIconButton,
+  InlineFeedback,
+  LoadingState,
+} from '@dwp-frontend/design-system';
 
 import Box from '@mui/material/Box';
 import Alert from '@mui/material/Alert';
@@ -176,7 +181,7 @@ export function MessagingThreadPanel({
       >
         {!thread ? (
           loadError ? (
-            <Alert
+            <InlineFeedback
               severity="error"
               action={
                 onRetryLoad ? (
@@ -187,13 +192,14 @@ export function MessagingThreadPanel({
               }
             >
               {t('thread.loadError')}
-            </Alert>
+            </InlineFeedback>
           ) : (
-            <Stack spacing={1} aria-label={t('thread.loading')} aria-busy="true">
-              <Skeleton variant="rounded" height={92} />
-              <Skeleton variant="rounded" height={72} />
-              <Skeleton variant="rounded" height={72} />
-            </Stack>
+            <LoadingState
+              embedded
+              variant="skeleton"
+              label={t('thread.loading')}
+              skeletonHeights={[92, 72, 72]}
+            />
           )
         ) : (
           <>

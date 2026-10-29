@@ -2,7 +2,7 @@ import { lazy, Suspense } from 'react';
 
 import { APPROVAL_NAVIGATION } from '../features/approvals/approval-navigation';
 import { APPROVAL_PRODUCT_MANIFEST } from '../features/approvals/approval-product-manifest';
-import { ProductAreaLayout } from './product-area-layout';
+import { ProductAreaLayout } from './product-area-layout-boundary';
 
 import type { ProductSurfaceLayoutRuntime } from '../components/product-surface-controls';
 import type { ProductAreaNavigationItemChildrenContext } from './product-area-layout';

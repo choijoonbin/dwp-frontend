@@ -1,11 +1,9 @@
 import { Outlet } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import {
-  getMessagingPrivacyPreference,
-  isAppReadEntitled,
-  useAuth,
-  usePermissions,
-} from '@dwp-frontend/shared-utils';
+import { getMessagingPrivacyPreference } from '@dwp-frontend/shared-utils/api/messaging-privacy-api';
+import { isAppReadEntitled } from '@dwp-frontend/shared-utils/auth/app-entitlements';
+import { useAuth } from '@dwp-frontend/shared-utils/auth/auth-provider';
+import { usePermissions } from '@dwp-frontend/shared-utils/auth/use-permissions';
 
 import { useMessagingPresenceHeartbeat } from './use-messaging-presence-heartbeat';
 

@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { Building2, DatabaseZap } from 'lucide-react';
-import { ActionButton } from '@dwp-frontend/design-system';
+import { ActionButton, foundationTokens } from '@dwp-frontend/design-system';
 
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
@@ -39,12 +39,22 @@ export function CalendarSchedulingEvidence({
     <Box
       component="section"
       aria-label={t('schedulingAssistant.evidenceTitle')}
-      sx={{ mt: 2, border: 1, borderColor: 'divider', borderRadius: 1, overflow: 'hidden' }}
+      sx={{
+        mt: 2,
+        border: 1,
+        borderColor: 'divider',
+        borderRadius: foundationTokens.radius.control,
+        overflow: 'hidden',
+      }}
     >
       <Box sx={{ p: 1.5 }}>
         <Stack direction="row" spacing={0.75} alignItems="center">
           <DatabaseZap size={16} aria-hidden="true" />
-          <Typography component="h3" variant="subtitle2" fontWeight={800}>
+          <Typography
+            component="h3"
+            variant="subtitle2"
+            fontWeight={foundationTokens.home.typography.weightHeavy}
+          >
             {t('schedulingAssistant.sourcesTitle')}
           </Typography>
         </Stack>
@@ -63,7 +73,11 @@ export function CalendarSchedulingEvidence({
                   spacing={0.75}
                   alignItems={{ xs: 'flex-start', sm: 'center' }}
                 >
-                  <Typography variant="body2" fontWeight={700} sx={{ flex: 1 }}>
+                  <Typography
+                    variant="body2"
+                    fontWeight={foundationTokens.home.typography.weightBold}
+                    sx={{ flex: 1 }}
+                  >
                     {i18n.exists(sourceTypeKey, { ns: 'calendar' })
                       ? t(sourceTypeKey)
                       : t('schedulingAssistant.sourceTypeFallback')}
@@ -95,7 +109,11 @@ export function CalendarSchedulingEvidence({
       <Box sx={{ p: 1.5 }}>
         <Stack direction="row" spacing={0.75} alignItems="center">
           <Building2 size={16} aria-hidden="true" />
-          <Typography component="h3" variant="subtitle2" fontWeight={800}>
+          <Typography
+            component="h3"
+            variant="subtitle2"
+            fontWeight={foundationTokens.home.typography.weightHeavy}
+          >
             {t('schedulingAssistant.recommendedRooms')}
           </Typography>
         </Stack>
@@ -111,7 +129,10 @@ export function CalendarSchedulingEvidence({
                   sx={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr) auto', gap: 1 }}
                 >
                   <Box sx={{ minWidth: 0 }}>
-                    <Typography variant="body2" fontWeight={700}>
+                    <Typography
+                      variant="body2"
+                      fontWeight={foundationTokens.home.typography.weightBold}
+                    >
                       {room.room.name} · {t('resources.capacity', { count: room.room.capacity })}
                     </Typography>
                     <Typography variant="caption" color="text.secondary">

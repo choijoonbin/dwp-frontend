@@ -5,6 +5,18 @@ import test from 'node:test';
 const workflow = readFileSync('.github/workflows/frontend-quality.yml', 'utf8');
 const packageJson = JSON.parse(readFileSync('package.json', 'utf8'));
 
+function workflowJobSource(jobName) {
+  const marker = `\n  ${jobName}:\n`;
+  const start = workflow.indexOf(marker);
+  assert.notEqual(start, -1, `Missing ${jobName} workflow job`);
+  const remainder = workflow.slice(start + marker.length);
+  const nextJobOffset = remainder.search(/\n {2}[a-z0-9][a-z0-9-]*:\n/u);
+  return workflow.slice(
+    start,
+    nextJobOffset === -1 ? undefined : start + marker.length + nextJobOffset
+  );
+}
+
 const requiredMailSpecs = [
   'mail-address-book.spec.ts',
   'mail-admin.spec.ts',
@@ -30,6 +42,11 @@ test('Mail CI gate runs every behavior spec on Chromium desktop and mobile', () 
   assert.match(command, /--workers=1/u);
   assert.match(workflow, /^ {2}mail-quality:/mu);
   assert.match(workflow, /run: corepack yarn test:e2e:mail/u);
+});
+
+test('Mail CI gate installs the browsers required by its desktop and mobile projects', () => {
+  const mailJob = workflowJobSource('mail-quality');
+  assert.match(mailJob, /run: corepack yarn playwright install --with-deps chromium webkit/u);
 });
 
 test('Mail has a required Darwin pixel-baseline step', () => {

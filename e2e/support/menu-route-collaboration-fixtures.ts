@@ -10,11 +10,16 @@ import type {
   DwaionRetentionPolicy,
   DwaionSafetyPolicy,
   MessagingAdminOverview,
+  MessagingActivityResponse,
   MessagingConversationPage,
   MessagingDisplayPreference,
   MessagingHome,
+  MessagingLaterPage,
+  MessagingPeoplePage,
   MessagingPerson,
+  MessagingPrivacyPreference,
   MessagingSavedItemPage,
+  MessagingThreadListResponse,
   VideoMeetingAdminOverview,
   VideoMeetingAdminPolicy,
   VideoMeetingHome,
@@ -261,6 +266,48 @@ const resolveMeetingFixture = (path: string): MenuRouteFixtureResolution | null 
 
 const resolveMessagingFixture = (path: string): MenuRouteFixtureResolution | null => {
   switch (path) {
+    case '/api/messaging/v1/privacy-preferences':
+      return {
+        data: {
+          readReceiptsEnabled: true,
+          presenceSharingEnabled: false,
+          version: 0,
+        } satisfies MessagingPrivacyPreference,
+      };
+    case '/api/messaging/v1/activity':
+      return {
+        data: { generatedAt: OBSERVED_AT, items: [] } satisfies MessagingActivityResponse,
+      };
+    case '/api/messaging/v1/threads':
+      return {
+        data: { generatedAt: OBSERVED_AT, items: [] } satisfies MessagingThreadListResponse,
+      };
+    case '/api/messaging/v1/later':
+      return {
+        data: {
+          items: [],
+          total: 0,
+          page: 0,
+          pageSize: 30,
+          generatedAt: OBSERVED_AT,
+        } satisfies MessagingLaterPage,
+      };
+    case '/api/messaging/v1/people/page':
+      return {
+        data: {
+          items: [],
+          total: 0,
+          hasMore: false,
+          nextCursor: null,
+          nextOffset: null,
+          presence: {
+            authority: 'LIVE',
+            evaluatedAt: OBSERVED_AT,
+            leaseTtlSeconds: 75,
+            refreshAfterSeconds: 15,
+          },
+        } satisfies MessagingPeoplePage,
+      };
     case '/api/messaging/v1/home':
       return {
         data: {

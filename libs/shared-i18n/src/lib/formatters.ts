@@ -19,6 +19,15 @@ export type ZonedClock = {
   minute: number;
 };
 
+export type ZonedDateTimeParts = Readonly<{
+  year: string;
+  month: string;
+  day: string;
+  hour: string;
+  minute: string;
+  second: string;
+}>;
+
 export type ZonedDateKey = string;
 
 export type CivilDateFormatOptions = Omit<
@@ -90,6 +99,15 @@ export function formatCivilDate(
 
 export function resolveSystemTimeZone(fallback = ''): string {
   return Intl.DateTimeFormat().resolvedOptions().timeZone || fallback;
+}
+
+/** Resolve an IANA time-zone identifier to the runtime's canonical form. */
+export function resolveCanonicalTimeZone(value: string): string | null {
+  try {
+    return new Intl.DateTimeFormat('en', { timeZone: value }).resolvedOptions().timeZone;
+  } catch {
+    return null;
+  }
 }
 
 function asDate(value: DateValue): Date {
@@ -193,6 +211,39 @@ export function resolveZonedClock(value: DateValue, timeZone: string): ZonedCloc
     const minute = Number(valueOf('minute'));
     if (!day || !Number.isInteger(hour) || !Number.isInteger(minute)) return null;
     return { day, hour, minute };
+  } catch {
+    return null;
+  }
+}
+
+/** Resolve stable Gregorian wall-clock parts for an instant in an explicit IANA time zone. */
+export function resolveZonedDateTimeParts(
+  value: DateValue,
+  timeZone: string
+): ZonedDateTimeParts | null {
+  try {
+    const parts = new Intl.DateTimeFormat('en-US', {
+      timeZone,
+      calendar: 'gregory',
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+      hourCycle: 'h23',
+    }).formatToParts(asDate(value));
+    const valueOf = (type: Intl.DateTimeFormatPartTypes) =>
+      parts.find((part) => part.type === type)?.value ?? '';
+    const result = {
+      year: valueOf('year'),
+      month: valueOf('month'),
+      day: valueOf('day'),
+      hour: valueOf('hour'),
+      minute: valueOf('minute'),
+      second: valueOf('second'),
+    };
+    return Object.values(result).every(Boolean) ? result : null;
   } catch {
     return null;
   }

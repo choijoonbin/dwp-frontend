@@ -40,6 +40,45 @@ export const PAYROLL_FOUNDATION_SETTINGS_ACTION_CONTRACTS = Object.freeze({
   ProductActionRouteContractKey
 >);
 
+export const HCM_PAYROLL_FOUNDATION_SETTINGS_MUTATION_API_CONTRACTS = [
+  {
+    apiFunction: 'createPayrollFoundationAtBase',
+    routeContractKey: PAYROLL_FOUNDATION_SETTINGS_ACTION_CONTRACTS.create,
+    method: 'POST',
+    path: `${PAYROLL_FOUNDATION_SETTINGS_API_BASE}/configurations`,
+  },
+  {
+    apiFunction: 'updatePayrollFoundationAtBase',
+    routeContractKey: PAYROLL_FOUNDATION_SETTINGS_ACTION_CONTRACTS.update,
+    method: 'PUT',
+    path: `${PAYROLL_FOUNDATION_SETTINGS_API_BASE}/configurations/{configurationId}`,
+  },
+  {
+    apiFunction: 'simulatePayrollFoundationAtBase',
+    routeContractKey: PAYROLL_FOUNDATION_SETTINGS_ACTION_CONTRACTS.simulate,
+    method: 'POST',
+    path: `${PAYROLL_FOUNDATION_SETTINGS_API_BASE}/configurations/{configurationId}/simulations`,
+  },
+  {
+    apiFunction: 'publishPayrollFoundationAtBase',
+    routeContractKey: PAYROLL_FOUNDATION_SETTINGS_ACTION_CONTRACTS.publish,
+    method: 'POST',
+    path: `${PAYROLL_FOUNDATION_SETTINGS_API_BASE}/configurations/{configurationId}/publish`,
+  },
+  {
+    apiFunction: 'reversePayrollFoundationAtBase',
+    routeContractKey: PAYROLL_FOUNDATION_SETTINGS_ACTION_CONTRACTS.reverse,
+    method: 'POST',
+    path: `${PAYROLL_FOUNDATION_SETTINGS_API_BASE}/configurations/{configurationId}/reversals`,
+  },
+  {
+    apiFunction: 'reconcilePayrollFoundationReceiptAtBase',
+    routeContractKey: PAYROLL_FOUNDATION_SETTINGS_ACTION_CONTRACTS.reconcile,
+    method: 'POST',
+    path: `${PAYROLL_FOUNDATION_SETTINGS_API_BASE}/receipts/{commandId}/reconcile`,
+  },
+] as const;
+
 export const payrollFoundationSettingsDataSource = createPayrollFoundationDataSource(
   PAYROLL_FOUNDATION_SETTINGS_API_BASE
 );

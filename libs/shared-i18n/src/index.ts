@@ -14,11 +14,14 @@ export {
   formatNumber,
   formatRelativeTime,
   resolveSystemTimeZone,
+  resolveCanonicalTimeZone,
   resolveZonedDateKey,
   resolveZonedClock,
+  resolveZonedDateTimeParts,
   type ZonedDateKey,
   type CivilDateFormatOptions,
   type ZonedClock,
+  type ZonedDateTimeParts,
 } from './lib/formatters';
 export {
   DISPLAY_DOMAINS,

@@ -1414,5 +1414,350 @@
         "issueResolved": "Reconciliation decision saved."
       }
     }
+  },
+  "governedPeople": {
+    "common": {
+      "back": "Back",
+      "cancel": "Cancel",
+      "next": "Next",
+      "page": "Page {{page}}",
+      "previous": "Previous",
+      "refresh": "Refresh"
+    },
+    "employmentEvent": {
+      "subject": "Subject: {{subjectPublicId}}",
+      "actions": {
+        "reconcileReceipt": "Reconcile receipt",
+        "refreshStatus": "Refresh status",
+        "retryExactCommand": "Retry exact command"
+      },
+      "assignment": {
+        "loadingOwnership": "Loading current worker ownership…",
+        "noMatch": "No disclosed worker assignment matches this event. The command is disabled.",
+        "ownershipUnavailable": "Current assignment ownership is unavailable in this scope. The command is disabled.",
+        "stale": "The worker is now version {{workerVersion}}. Reopen the event from the current workbench row."
+      },
+      "fields": {
+        "assignmentEndExclusive": "Assignment end (exclusive)",
+        "employmentType": "Employment type",
+        "fullTimeEquivalent": "Full-time equivalent",
+        "ownerReference": "{{label}} owner reference",
+        "primaryAssignment": "Primary assignment",
+        "relationshipStart": "Relationship and assignment start"
+      },
+      "receipt": {
+        "approvalPending": "Approval is pending. Refresh the same event; do not create or submit a duplicate.",
+        "processing": "The command is still processing. Refresh this receipt before continuing.",
+        "publishAuthorityRequired": "Approval is complete. Publishing remains unavailable until a current step-up authority is supplied.",
+        "published": "The employment event was published to the assignment ledger.",
+        "rejected": "The command receipt was rejected. No later action is enabled.",
+        "resultUnknown": "The command result is unknown. Reconcile this receipt; do not submit a duplicate."
+      },
+      "validation": {
+        "clear": "No blocking assignment impact was found.",
+        "title": "Validation impact"
+      }
+    },
+    "organizationPositions": {
+      "card": {
+        "level": "Level {{depth}} · {{organizationPublicId}}",
+        "positionFte": "{{positionType}} · {{budgetedFte}} FTE"
+      },
+      "controls": {
+        "ariaLabel": "Organization graph controls",
+        "effectiveInstant": "Effective instant",
+        "includePositions": "Include positions",
+        "includePositionsAriaLabel": "Include authorized positions",
+        "reportingDepth": "Reporting depth",
+        "rootOrganization": "Root organization UUID"
+      },
+      "failure": {
+        "notFoundDescription": "The requested root is not available in your authorized population for this effective time.",
+        "notFoundTitle": "No organization graph is available",
+        "permissionDescription": "This view cannot disclose whether an organization or position exists. Ask an administrator to check your organization-view duty.",
+        "permissionTitle": "Organization access is unavailable"
+      },
+      "graph": {
+        "emptyPositionsDescription": "The authorized reporting graph is available, but it has no effective positions in this scope.",
+        "emptyPositionsTitle": "No positions at this effective time",
+        "organizationOnlyDescription": "Position details were not requested. Turn on positions to request the authorized position projection.",
+        "organizationOnlyTitle": "Organization-only projection",
+        "organizations": "Organizations",
+        "positions": "Positions",
+        "reportingLevel": "Reporting level {{depth}}"
+      },
+      "header": {
+        "description": "Inspect the authorized effective-dated reporting graph. This view is read-only.",
+        "eyebrow": "HR operations · reporting hierarchy",
+        "reporting": "Reporting",
+        "title": "Organization and positions"
+      },
+      "inspector": {
+        "ariaLabel": "Selected organization graph item",
+        "budgetedFte": "Budgeted FTE: {{budgetedFte}}",
+        "criticality": "Criticality: {{criticality}}",
+        "incumbents": "Incumbents: {{count}}",
+        "key": "Key: {{positionKey}}",
+        "reportingLevel": "Reporting level: {{depth}}",
+        "returnToGraph": "Return to graph",
+        "status": "Status: {{status}}"
+      },
+      "states": {
+        "adapterUnavailableDescription": "The canonical read adapter did not pass its sealed contract.",
+        "adapterUnavailableTitle": "Organization graph adapter is unavailable",
+        "chooseRootDescription": "Enter an authorized organization UUID to inspect its reporting structure at an effective time.",
+        "chooseRootTitle": "Choose a root organization",
+        "emptyDescription": "No authorized reporting nodes were returned. Change the effective time or root organization.",
+        "emptyTitle": "No organization structure at this effective time",
+        "invalidFiltersDescription": "Use a canonical organization UUID, an RFC 3339 instant with an explicit offset, and a depth from 0 through 12.",
+        "invalidFiltersTitle": "Check the organization graph filters",
+        "loadingDescription": "Checking reporting organizations and explicitly requested positions.",
+        "loadingLabel": "Loading authorized organization structure",
+        "staleDescription": "The refresh failed, so this structure may be stale.",
+        "staleTitle": "Showing the last authorized snapshot"
+      },
+      "workspace": {
+        "adapterUnavailableDescription": "The canonical read adapter is not available. No organization request was sent.",
+        "adapterUnavailableTitle": "Organization graph is unavailable",
+        "unavailableDescription": "This governed view is not available in the current context.",
+        "unavailableTitle": "Organization and positions are unavailable"
+      }
+    },
+    "certificates": {
+      "detail": {
+        "governedReference": "Governed detail reference: {{deepLink}}"
+      },
+      "focus": {
+        "description": "Choose one disclosed metadata record, confirm its governed context, then prepare the issuance request.",
+        "fieldLabel": "Certificate metadata focus",
+        "selectedAriaLabel": "Selected certificate metadata",
+        "title": "Certificate issuance focus"
+      },
+      "header": {
+        "framing": "Primary user: {{primaryUser}} · Operational question: {{operationalQuestion}} · Archetype: {{archetype}}"
+      },
+      "request": {
+        "asOf": "As-of instant (ISO 8601)",
+        "certificateType": "Certificate type",
+        "delegateWithheld": "The command delegate is intentionally withheld for this read-only Stage-A mount.",
+        "notAcceptedDescription": "No certificate request was sent or retried by this component.",
+        "notAcceptedTitle": "Certificate request was not accepted",
+        "personPublicId": "Person public ID",
+        "purpose": "Purpose is fixed to {{purposeCode}}. The People owner derives self or operations authority from trusted identity and requires high step-up before mutation.",
+        "receipt": "Receipt {{receiptId}} · {{status}}",
+        "receiptAcceptedTitle": "Certificate command receipt accepted",
+        "reviewAndSend": "Review and send request",
+        "types": {
+          "career": "Career certificate",
+          "employment": "Employment certificate",
+          "income": "Income certificate"
+        }
+      },
+      "states": {
+        "adapterNotMounted": "The sealed read adapter is not mounted. No owner request was sent.",
+        "deniedDescription": "The current access context cannot disclose this workbench.",
+        "deniedTitle": "This certificate surface is unavailable",
+        "loading": "Loading governed certificate metadata…",
+        "noDisclosableMetadata": "The People owner returned no disclosable metadata for this request.",
+        "notEnabledDescription": "The feature is off or this tenant is not enrolled. No owner request was sent.",
+        "notEnabledTitle": "Certificate workbench is not enabled",
+        "partialTitle": "Some governed metadata is unavailable",
+        "readOnlyDescription": "This mount discloses request status and certificate/document metadata only. Certificate submission is disabled. Download, revoke, verification, expiry, access-audit, and download-audit are not supported in this stage.",
+        "readOnlyTitle": "Stage-A is read only",
+        "staleDescription": "Owner data could not be refreshed. All certificate actions remain disabled until a current authorization-bound snapshot is returned.",
+        "staleTitle": "The disclosed metadata is stale",
+        "unavailableDescription": "Owner data could not be loaded. No certificate action was enabled.",
+        "unavailableTitle": "Certificate metadata unavailable"
+      }
+    },
+    "employeeChange": {
+      "actions": {
+        "apply": "Apply approved change",
+        "applyDisconnected": "Apply remains closed until the shared step-up command coordinator is connected.",
+        "newRequest": "New request",
+        "submit": "Submit for approval"
+      },
+      "create": {
+        "action": "Create request",
+        "changeType": "Change type",
+        "effectiveDate": "Effective date",
+        "evidenceReferences": "Evidence references (JSON)",
+        "expectedTargetVersion": "Expected target version",
+        "incompleteTitle": "Request draft is incomplete",
+        "patchOperations": "Patch operations (JSON)",
+        "patchSchemaKey": "Patch schema key",
+        "targetAggregatePublicId": "Target aggregate public ID",
+        "targetAggregateType": "Target aggregate type",
+        "targetPersonPublicId": "Target person public ID",
+        "title": "Create employee-change request"
+      },
+      "detail": {
+        "approvalStatus": "Approval status: {{value}}",
+        "changeSummary": "Change summary: {{value}}",
+        "employment": "Employment: {{value}}",
+        "version": "Request version {{version}}"
+      },
+      "disabled": {
+        "description": "People 360 and assignment proposals remain separate owner surfaces. No protected data is requested while this feature is disabled.",
+        "state": "Feature state: OFF",
+        "title": "Dedicated employee-change request family"
+      },
+      "empty": {
+        "description": "No requests are visible in the governed population scope.",
+        "title": "No employee-change requests"
+      },
+      "list": {
+        "title": "Requests"
+      },
+      "receipt": {
+        "identity": "Receipt {{receiptId}} · correlation {{correlationId}}",
+        "openRequests": "Open employee-change requests",
+        "recover": "Recover receipt"
+      },
+      "states": {
+        "authorityUnavailableDescription": "The employee-change workbench is closed until governed authority is restored.",
+        "authorityUnavailableTitle": "Authority is unavailable",
+        "commandFailedTitle": "Employee-change command failed",
+        "loading": "Loading employee-change requests…",
+        "partialDescription": "Review the available items carefully and refresh before running a command.",
+        "partialTitle": "Some request evidence is unavailable",
+        "staleDescription": "Refresh before submitting or applying a request.",
+        "staleTitle": "Workbench evidence is stale",
+        "unavailableDescription": "The governed workbench could not be loaded. No cached protected data is shown.",
+        "unavailableTitle": "Employee-change requests are unavailable"
+      }
+    },
+    "delegation": {
+      "actions": {
+        "create": "Create delegation",
+        "refreshAuthority": "Refresh authority",
+        "revoke": "Revoke delegation",
+        "revoking": "Revoking…",
+        "submit": "Submit to Approval owner",
+        "submitting": "Submitting…"
+      },
+      "create": {
+        "delegateUserId": "Delegate user ID",
+        "endsAt": "Ends at",
+        "reason": "Reason",
+        "startsAt": "Starts at",
+        "title": "Governed delegation window"
+      },
+      "detail": {
+        "identity": "Delegation {{delegationId}} · subject revision {{version}}",
+        "period": "{{startsAt}} – {{endsAt}}"
+      },
+      "disabled": {
+        "description": "Review Approval-owned delegation windows for the authorized manager population."
+      },
+      "header": {
+        "description": "Inspect governed windows for the authorized population and submit owner-managed create or revoke commands.",
+        "liveAuthority": "Approval owner · live authority",
+        "title": "Manager delegation"
+      },
+      "list": {
+        "identity": "{{direction}} · {{scopeType}} · v{{version}}"
+      },
+      "states": {
+        "confirmedDescription": "{{ownerOutcome}} The owner projection replaced the prior list; no local receipt was created.",
+        "confirmedTitle": "Owner-confirmed delegation outcome",
+        "emptyDescription": "No Approval delegation exists for the authorized population and window.",
+        "emptyTitle": "No delegations are available",
+        "loading": "Loading Approval delegations",
+        "ownerUnavailableDescription": "No cached delegation selection or command is shown. Confirm authority, then retry the exact owner query.",
+        "pendingDescription": "Awaiting the Approval owner. No optimistic success has been applied.",
+        "pendingTitle": "Delegation command pending",
+        "rejectedDescription": "The owner rejected or could not confirm the command. Refresh authority before retrying.",
+        "rejectedTitle": "Delegation command rejected"
+      }
+    },
+    "hrm007": {
+      "detail": {
+        "actionsUnavailable": "Existing lifecycle actions remain unavailable until their owner binding is mounted.",
+        "open": "Open governed detail"
+      },
+      "list": {
+        "title": "Disclosed work"
+      },
+      "states": {
+        "adapterNotMounted": "The sealed read adapter is not mounted. No owner request was sent.",
+        "deniedDescription": "The current access context cannot disclose this workbench.",
+        "deniedTitle": "This governed workbench is unavailable",
+        "loading": "Loading governed workbench…",
+        "noDisclosableData": "The owner returned no disclosable data for this request.",
+        "notEnabledDescription": "The feature is off or this tenant is not enrolled. No owner request was sent.",
+        "notEnabledTitle": "This governed workbench is not enabled",
+        "partialTitle": "Some governed data is unavailable",
+        "staleDescription": "Owner data could not be refreshed. Review remains read-only and all delegated actions are disabled until a current authorization-bound snapshot is returned.",
+        "staleTitle": "The disclosed snapshot is stale",
+        "unavailableDescription": "Owner data could not be loaded. No lifecycle action was enabled.",
+        "unavailableTitle": "Governed workbench unavailable"
+      }
+    },
+    "contracts": {
+      "actions": {
+        "refreshRelationship": "Refresh relationship"
+      },
+      "detail": {
+        "governedReference": "Governed detail reference: {{deepLink}}"
+      },
+      "failure": {
+        "currentVersion": " (current version {{version}})",
+        "notIssuedDescription": "The command was not retried. Review access and input before preparing a new request.",
+        "notIssuedTitle": "Employment contract was not issued",
+        "retryableDescription": "Nothing was automatically retried. Use “Retry same command” to preserve the original idempotency and correlation identity.",
+        "retryableTitle": "Artifact service is temporarily unavailable",
+        "staleDescription": "No command was retried. Refresh the current relationship before reviewing a new issuance{{currentVersion}}.",
+        "staleTitle": "The relationship version changed"
+      },
+      "header": {
+        "description": "Review authoritative relationship, template, and compensation snapshots before issuing an employment contract.",
+        "eyebrow": "HR operations · governed contract issuance",
+        "framing": "Primary user: {{primaryUser}} · Operational question: {{operationalQuestion}}",
+        "title": "Contracts and compensation basis"
+      },
+      "issue": {
+        "compensationBasis": "Compensation basis: {{amount}} {{currency}}",
+        "confirmationAriaLabel": "Employment contract issuance confirmation",
+        "confirmationTitle": "Confirm immutable issuance snapshot",
+        "delegateWithheld": "The command delegate is intentionally withheld until central admission.",
+        "description": "Review the immutable template and compensation snapshot before the HIGH-risk command is submitted. The trusted owner performs final authorization and artifact generation.",
+        "effectiveFrom": "Effective from",
+        "effectivePeriod": "Effective period: {{effectiveFrom}} → {{effectiveTo}}",
+        "effectiveTo": "Effective to (optional)",
+        "openEnded": "open-ended",
+        "review": "Review issuance",
+        "snapshotDigest": "Snapshot digest: {{digest}}",
+        "template": "Template: {{key}} · version {{version}}",
+        "title": "Issue employment contract"
+      },
+      "list": {
+        "itemIdentity": "{{status}} · version {{version}}",
+        "title": "Contract-ready relationships"
+      },
+      "receipt": {
+        "acceptedTitle": "Employment contract command accepted",
+        "identity": "Receipt {{receiptId}} · {{status}}"
+      },
+      "states": {
+        "adapterNotMounted": "The sealed IAQ-008 adapter is not mounted. No owner request was sent.",
+        "deniedDescription": "The current access context cannot disclose this workbench.",
+        "deniedTitle": "This contract surface is unavailable",
+        "emptyDescription": "No relationship meets the current governed filters and issuance criteria.",
+        "emptyTitle": "No contract-ready relationships",
+        "loading": "Loading governed contract and compensation metadata…",
+        "noDisclosableMetadata": "The People owner returned no safe, disclosable relationship metadata.",
+        "notAdmittedDescription": "This bounded feature can disclose sealed IAQ-008 data, but its command delegate and route remain intentionally unmounted until central admission.",
+        "notAdmittedTitle": "Issuance is not centrally admitted",
+        "notEnabledDescription": "The feature is off or this tenant is not enrolled. No owner request was sent.",
+        "notEnabledTitle": "Contract issuance workbench is not enabled",
+        "partialDescription": "Contract issuance is disabled for this partial projection.",
+        "partialTitle": "Some authoritative inputs are unavailable",
+        "staleDescription": "Owner data could not be refreshed. Contract issuance remains disabled until a current, authorization-bound projection is returned.",
+        "staleTitle": "The disclosed snapshot is stale",
+        "unavailableDescription": "Owner data could not be loaded. No employment contract action was enabled.",
+        "unavailableTitle": "Contract metadata unavailable"
+      }
+    }
   }
 }

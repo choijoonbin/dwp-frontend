@@ -6262,6 +6262,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/approvals/v1/hris/separation-waiver-tasks/{taskId}/approve": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["approval_approveHrisSeparationWaiver"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/approvals/v1/requests": {
         parameters: {
             query?: never;
@@ -47297,7 +47313,7 @@ export interface components {
             sourceRevisions: components["schemas"]["gateway_SourceRevisions"];
         };
         /** @enum {string} */
-        gateway_Decision: "ALLOWED" | "APP_DENIED" | "SURFACE_DENIED" | "ROUTE_DENIED" | "SCOPE_SELECTION_REQUIRED" | "SCOPE_INVALID" | "EXPIRED" | "ACTIVATION_REQUIRED" | "STEP_UP_REQUIRED" | "SOD_CONFLICT" | "SUPPORT_SCOPE_DENIED" | "AUTHORITY_UNAVAILABLE";
+        gateway_Decision: "ALLOWED" | "APP_DENIED" | "SURFACE_DENIED" | "ROUTE_DENIED" | "SCOPE_SELECTION_REQUIRED" | "SCOPE_INVALID" | "EXPIRED" | "ACTIVATION_REQUIRED" | "STEP_UP_REQUIRED" | "OWNER_RECEIPT_AUTH_REQUIRED" | "SOD_CONFLICT" | "SUPPORT_SCOPE_DENIED" | "AUTHORITY_UNAVAILABLE";
         gateway_EffectiveContext: {
             accessMode: components["schemas"]["gateway_AccessMode"];
             accessSource: components["schemas"]["gateway_AccessSource"];
@@ -47432,6 +47448,7 @@ export interface components {
             productRelationship?: string;
             support?: string;
             targetPopulation?: string;
+            tenantControl?: string;
         };
         meeting_AccessTicketCommand: {
             /** Format: int64 */
@@ -92939,6 +92956,41 @@ export interface operations {
             };
         };
     };
+    approval_approveHrisSeparationWaiver: {
+        parameters: {
+            query?: {
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
+            header: {
+                "Idempotency-Key": string;
+                "X-Correlation-ID": string;
+                "X-DWP-Step-Up-Challenge": string;
+                "X-DWP-Expected-Decision-Revision": string;
+                "X-DWP-Expected-Object-Version": number;
+            };
+            path: {
+                taskId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["approval_DecisionRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["approval_ApiResponseTaskDetail"];
+                };
+            };
+        };
+    };
     approval_requests: {
         parameters: {
             query?: {
@@ -104707,10 +104759,10 @@ export interface operations {
             };
             header: {
                 "Idempotency-Key": string;
+                "X-DWP-Step-Up-Challenge": string;
+                "X-DWP-Expected-Decision-Revision": string;
                 "X-DWP-Expected-Object-Version": number;
                 "X-Correlation-ID"?: string;
-                /** @description Required and fail-closed for product-authorization rollout states 110/111; optional for backward-compatible baseline/shadow states 000/100. */
-                "X-DWP-Expected-Decision-Revision"?: string;
             };
             path: {
                 runId: string;
@@ -104759,7 +104811,10 @@ export interface operations {
     };
     payroll_settingsPayrollFoundationConfigurations: {
         parameters: {
-            query?: never;
+            query?: {
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
             header: {
                 "X-Purpose-Code": "PAYROLL_CONFIGURATION";
             };
@@ -104779,11 +104834,15 @@ export interface operations {
     };
     payroll_settingsPayrollFoundationCreateConfiguration: {
         parameters: {
-            query?: never;
+            query?: {
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
             header: {
                 "Idempotency-Key": string;
                 "X-Correlation-ID"?: string;
-                "X-DWP-Expected-Decision-Revision": string;
+                /** @description Required and fail-closed for product-authorization rollout states 110/111; optional for backward-compatible baseline/shadow states 000/100. */
+                "X-DWP-Expected-Decision-Revision"?: string;
                 "X-Purpose-Code": "PAYROLL_CONFIGURATION";
             };
             path?: never;
@@ -104806,7 +104865,10 @@ export interface operations {
     };
     payroll_settingsPayrollFoundationConfiguration: {
         parameters: {
-            query?: never;
+            query?: {
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
             header: {
                 "X-Purpose-Code": "PAYROLL_CONFIGURATION";
             };
@@ -104828,11 +104890,15 @@ export interface operations {
     };
     payroll_settingsPayrollFoundationUpdateConfiguration: {
         parameters: {
-            query?: never;
+            query?: {
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
             header: {
                 "Idempotency-Key": string;
                 "X-Correlation-ID"?: string;
-                "X-DWP-Expected-Decision-Revision": string;
+                /** @description Required and fail-closed for product-authorization rollout states 110/111; optional for backward-compatible baseline/shadow states 000/100. */
+                "X-DWP-Expected-Decision-Revision"?: string;
                 "X-Purpose-Code": "PAYROLL_CONFIGURATION";
             };
             path: {
@@ -104857,11 +104923,15 @@ export interface operations {
     };
     payroll_settingsPayrollFoundationPublishConfiguration: {
         parameters: {
-            query?: never;
+            query?: {
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
             header: {
                 "Idempotency-Key": string;
                 "X-Correlation-ID"?: string;
-                "X-DWP-Expected-Decision-Revision": string;
+                /** @description Required and fail-closed for product-authorization rollout states 110/111; optional for backward-compatible baseline/shadow states 000/100. */
+                "X-DWP-Expected-Decision-Revision"?: string;
                 "X-DWP-Step-Up-Challenge": string;
                 "X-Purpose-Code": "PAYROLL_CONFIGURATION";
             };
@@ -104887,11 +104957,15 @@ export interface operations {
     };
     payroll_settingsPayrollFoundationReverseConfiguration: {
         parameters: {
-            query?: never;
+            query?: {
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
             header: {
                 "Idempotency-Key": string;
                 "X-Correlation-ID"?: string;
-                "X-DWP-Expected-Decision-Revision": string;
+                /** @description Required and fail-closed for product-authorization rollout states 110/111; optional for backward-compatible baseline/shadow states 000/100. */
+                "X-DWP-Expected-Decision-Revision"?: string;
                 "X-DWP-Step-Up-Challenge": string;
                 "X-Purpose-Code": "PAYROLL_CONFIGURATION";
             };
@@ -104917,11 +104991,15 @@ export interface operations {
     };
     payroll_settingsPayrollFoundationSimulateConfiguration: {
         parameters: {
-            query?: never;
+            query?: {
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
             header: {
                 "Idempotency-Key": string;
                 "X-Correlation-ID"?: string;
-                "X-DWP-Expected-Decision-Revision": string;
+                /** @description Required and fail-closed for product-authorization rollout states 110/111; optional for backward-compatible baseline/shadow states 000/100. */
+                "X-DWP-Expected-Decision-Revision"?: string;
                 "X-Purpose-Code": "PAYROLL_CONFIGURATION";
             };
             path: {
@@ -104946,7 +105024,10 @@ export interface operations {
     };
     payroll_settingsPayrollFoundationConfigurationVersions: {
         parameters: {
-            query?: never;
+            query?: {
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
             header: {
                 "X-Purpose-Code": "PAYROLL_CONFIGURATION";
             };
@@ -104968,7 +105049,10 @@ export interface operations {
     };
     payroll_settingsPayrollFoundationCommandReceipt: {
         parameters: {
-            query?: never;
+            query?: {
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
             header: {
                 "X-Purpose-Code": "PAYROLL_CONFIGURATION";
             };
@@ -104990,9 +105074,13 @@ export interface operations {
     };
     payroll_settingsPayrollFoundationReconcileCommand: {
         parameters: {
-            query?: never;
+            query?: {
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
             header: {
-                "X-DWP-Expected-Decision-Revision": string;
+                /** @description Required and fail-closed for product-authorization rollout states 110/111; optional for backward-compatible baseline/shadow states 000/100. */
+                "X-DWP-Expected-Decision-Revision"?: string;
                 "X-Purpose-Code": "PAYROLL_CONFIGURATION";
             };
             path: {
@@ -107180,7 +107268,8 @@ export interface operations {
             header: {
                 "Idempotency-Key": string;
                 "If-Match": string;
-                "X-DWP-Expected-Decision-Revision": string;
+                /** @description Required and fail-closed for product-authorization rollout states 110/111; optional for backward-compatible baseline/shadow states 000/100. */
+                "X-DWP-Expected-Decision-Revision"?: string;
             };
             path: {
                 reviewId: string;
@@ -107233,7 +107322,8 @@ export interface operations {
             header: {
                 "Idempotency-Key": string;
                 "If-Match": string;
-                "X-DWP-Expected-Decision-Revision": string;
+                /** @description Required and fail-closed for product-authorization rollout states 110/111; optional for backward-compatible baseline/shadow states 000/100. */
+                "X-DWP-Expected-Decision-Revision"?: string;
             };
             path: {
                 reviewId: string;
@@ -138944,13 +139034,17 @@ export interface operations {
     };
     time_hrisTimeClosePeriod: {
         parameters: {
-            query?: never;
+            query?: {
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
             header: {
                 "Idempotency-Key": string;
                 "If-Match": string;
                 "X-Correlation-ID": string;
                 "X-Purpose-Code": "WORK_TIME_PERIOD_CLOSURE";
-                "X-DWP-Expected-Decision-Revision": string;
+                /** @description Required and fail-closed for product-authorization rollout states 110/111; optional for backward-compatible baseline/shadow states 000/100. */
+                "X-DWP-Expected-Decision-Revision"?: string;
                 "X-DWP-Step-Up-Challenge": string;
             };
             path: {
@@ -139095,13 +139189,17 @@ export interface operations {
     };
     time_hrisTimeCreatePayrollHandoff: {
         parameters: {
-            query?: never;
+            query?: {
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
             header: {
                 "Idempotency-Key": string;
                 "If-Match": string;
                 "X-Correlation-ID": string;
                 "X-Purpose-Code": "CLOSED_TIME_PAYROLL_TRANSFER";
-                "X-DWP-Expected-Decision-Revision": string;
+                /** @description Required and fail-closed for product-authorization rollout states 110/111; optional for backward-compatible baseline/shadow states 000/100. */
+                "X-DWP-Expected-Decision-Revision"?: string;
             };
             path: {
                 periodId: string;
@@ -139245,13 +139343,17 @@ export interface operations {
     };
     time_hrisTimeReopenPeriod: {
         parameters: {
-            query?: never;
+            query?: {
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
             header: {
                 "Idempotency-Key": string;
                 "If-Match": string;
                 "X-Correlation-ID": string;
                 "X-Purpose-Code": "WORK_TIME_PERIOD_CLOSURE";
-                "X-DWP-Expected-Decision-Revision": string;
+                /** @description Required and fail-closed for product-authorization rollout states 110/111; optional for backward-compatible baseline/shadow states 000/100. */
+                "X-DWP-Expected-Decision-Revision"?: string;
                 "X-DWP-Step-Up-Challenge": string;
             };
             path: {
@@ -139396,13 +139498,17 @@ export interface operations {
     };
     time_hrisTimeValidateClosePeriod: {
         parameters: {
-            query?: never;
+            query?: {
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
             header: {
                 "Idempotency-Key": string;
                 "If-Match": string;
                 "X-Correlation-ID": string;
                 "X-Purpose-Code": "WORK_TIME_PERIOD_CLOSURE";
-                "X-DWP-Expected-Decision-Revision": string;
+                /** @description Required and fail-closed for product-authorization rollout states 110/111; optional for backward-compatible baseline/shadow states 000/100. */
+                "X-DWP-Expected-Decision-Revision"?: string;
             };
             path: {
                 periodId: string;
@@ -139773,6 +139879,8 @@ export interface operations {
                 correlationId: string;
                 asOf?: string | null;
                 cursor?: string | null;
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
             };
             header?: never;
             path?: never;
@@ -139917,6 +140025,8 @@ export interface operations {
                 correlationId: string;
                 asOf?: string | null;
                 cursor?: string | null;
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
             };
             header?: never;
             path?: never;
@@ -140139,6 +140249,8 @@ export interface operations {
                 correlationId: string;
                 asOf?: string | null;
                 cursor?: string | null;
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
             };
             header?: never;
             path?: never;
@@ -140330,7 +140442,10 @@ export interface operations {
     };
     time_hrisTimeGetPayrollHandoff: {
         parameters: {
-            query?: never;
+            query?: {
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
             header: {
                 "X-Correlation-ID": string;
                 "X-Purpose-Code": "CLOSED_TIME_PAYROLL_TRANSFER";
@@ -140506,7 +140621,8 @@ export interface operations {
             header: {
                 "Idempotency-Key": string;
                 "If-Match": string;
-                "X-DWP-Expected-Decision-Revision": string;
+                /** @description Required and fail-closed for product-authorization rollout states 110/111; optional for backward-compatible baseline/shadow states 000/100. */
+                "X-DWP-Expected-Decision-Revision"?: string;
             };
             path: {
                 timecardId: string;
@@ -140539,7 +140655,8 @@ export interface operations {
             header: {
                 "Idempotency-Key": string;
                 "If-Match": string;
-                "X-DWP-Expected-Decision-Revision": string;
+                /** @description Required and fail-closed for product-authorization rollout states 110/111; optional for backward-compatible baseline/shadow states 000/100. */
+                "X-DWP-Expected-Decision-Revision"?: string;
             };
             path: {
                 timecardId: string;
@@ -140572,7 +140689,8 @@ export interface operations {
             header: {
                 "Idempotency-Key": string;
                 "If-Match": string;
-                "X-DWP-Expected-Decision-Revision": string;
+                /** @description Required and fail-closed for product-authorization rollout states 110/111; optional for backward-compatible baseline/shadow states 000/100. */
+                "X-DWP-Expected-Decision-Revision"?: string;
             };
             path: {
                 timecardId: string;

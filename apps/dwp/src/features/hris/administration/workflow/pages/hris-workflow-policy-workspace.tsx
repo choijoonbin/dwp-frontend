@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { CheckCircle2, RefreshCw, ShieldCheck } from 'lucide-react';
 import { ActionButton, InlineFeedback, FormField, LoadingState } from '@dwp-frontend/design-system';
@@ -56,6 +57,7 @@ function denied(error: unknown): boolean {
 }
 
 function DisabledWorkflow({ invalid }: Readonly<{ invalid: boolean }>) {
+  const { t } = useTranslation('hcm');
   return (
     <Stack
       data-testid="hris-workflow-policy-workspace"
@@ -66,18 +68,24 @@ function DisabledWorkflow({ invalid }: Readonly<{ invalid: boolean }>) {
     >
       <InlineFeedback
         severity={invalid ? 'error' : 'info'}
-        title={invalid ? 'Workflow policy access is unavailable' : 'Workflow policy is off'}
+        title={t(
+          invalid
+            ? 'administration.workflow.disabled.invalidTitle'
+            : 'administration.workflow.disabled.offTitle'
+        )}
       >
-        {invalid
-          ? 'The HCM page and Approval read evidence no longer match the same tenant, actor, scope or authority revision. No Approval owner request was started.'
-          : 'This default-off HRIS adapter is not enrolled for the tenant. No Approval policy request was started.'}
+        {t(
+          invalid
+            ? 'administration.workflow.disabled.invalidDescription'
+            : 'administration.workflow.disabled.offDescription'
+        )}
       </InlineFeedback>
       <Paper variant="outlined" sx={{ p: { xs: 1.5, sm: 2 } }}>
         <Typography component="h1" variant="h5" sx={{ overflowWrap: 'anywhere' }}>
-          Approval workflow policy
+          {t('administration.workflow.title')}
         </Typography>
         <Typography color="text.secondary" sx={{ mt: 1, overflowWrap: 'anywhere' }}>
-          Review the Approval-owned policy catalog and publish an independently reviewed version.
+          {t('administration.workflow.description')}
         </Typography>
       </Paper>
     </Stack>
@@ -97,6 +105,7 @@ function ActiveWorkflow({
   dataSource: HrisWorkflowPolicyDataSource;
   commandRunner?: HrisApprovalCommandRunner;
 }>) {
+  const { t } = useTranslation('hcm');
   const queryClient = useQueryClient();
   const scopeIdentity = approvalAdapterScopeIdentity(admission);
   const authorityRef = useRef({ admission, scopeIdentity });
@@ -165,7 +174,9 @@ function ActiveWorkflow({
       queryClient.setQueryData(queryKey, result);
       void queryClient.invalidateQueries({ queryKey, exact: true });
       setReviewComment('');
-      setOwnerOutcome(`Owner confirmed publication for ${snapshot.policyId}.`);
+      setOwnerOutcome(
+        t('administration.workflow.publish.ownerConfirmed', { policyId: snapshot.policyId })
+      );
     },
   });
 
@@ -187,23 +198,26 @@ function ActiveWorkflow({
         <Stack direction={{ xs: 'column', sm: 'row' }} gap={1.5} justifyContent="space-between">
           <Box minWidth={0}>
             <Typography component="h1" variant="h5" sx={{ overflowWrap: 'anywhere' }}>
-              Approval workflow policy
+              {t('administration.workflow.title')}
             </Typography>
             <Typography color="text.secondary" sx={{ mt: 0.75, overflowWrap: 'anywhere' }}>
-              Compare the Approval-owned catalog and publish only the current independently reviewed
-              version.
+              {t('administration.workflow.activeDescription')}
             </Typography>
           </Box>
-          <Chip size="small" variant="outlined" label="Approval owner · live authority" />
+          <Chip
+            size="small"
+            variant="outlined"
+            label={t('administration.workflow.liveAuthority')}
+          />
         </Stack>
       </Paper>
 
       {policies.isLoading ? (
-        <Stack aria-busy="true" aria-label="Loading Approval workflow policies" gap={1}>
+        <Stack aria-busy="true" aria-label={t('administration.workflow.loading')} gap={1}>
           <LoadingState
             embedded
             variant="skeleton"
-            label="Loading Approval workflow policies"
+            label={t('administration.workflow.loading')}
             skeletonHeights={[96, 320]}
             skeletonGap={1}
           />
@@ -211,16 +225,17 @@ function ActiveWorkflow({
       ) : policies.isError ? (
         <InlineFeedback
           severity={denied(policies.error) ? 'error' : 'warning'}
-          title={
-            denied(policies.error) ? 'Policy access is unavailable' : 'Policy owner unavailable'
-          }
+          title={t(
+            denied(policies.error)
+              ? 'administration.workflow.error.accessTitle'
+              : 'administration.workflow.error.ownerTitle'
+          )}
         >
-          No cached policy selection or command is shown. Confirm authority, then retry the exact
-          owner query.
+          {t('administration.workflow.error.description')}
         </InlineFeedback>
       ) : rows.length === 0 ? (
-        <InlineFeedback severity="info" title="No policies are available">
-          The authorized Approval policy catalog is empty. Publish controls remain unavailable.
+        <InlineFeedback severity="info" title={t('administration.workflow.empty.title')}>
+          {t('administration.workflow.empty.description')}
         </InlineFeedback>
       ) : (
         <Box
@@ -258,11 +273,18 @@ function ActiveWorkflow({
                       <Chip
                         size="small"
                         color={policy.pendingReview ? 'warning' : 'default'}
-                        label={policy.pendingReview ? 'Review pending' : policy.lifecycleState}
+                        label={
+                          policy.pendingReview
+                            ? t('administration.workflow.review.pending')
+                            : policy.lifecycleState
+                        }
                       />
                     </Stack>
                     <Typography variant="caption" color="text.secondary">
-                      {policy.policyKey} · v{policy.version}
+                      {t('administration.workflow.policyVersionShort', {
+                        policyKey: policy.policyKey,
+                        version: policy.version,
+                      })}
                     </Typography>
                   </ButtonBase>
                 </Box>
@@ -278,27 +300,37 @@ function ActiveWorkflow({
                     {policyName(selected)}
                   </Typography>
                   <Typography variant="body2" color="text.secondary">
-                    {selected.policyType} · {selected.enforcementMode} · version {selected.version}
+                    {t('administration.workflow.policyVersion', {
+                      policyType: selected.policyType,
+                      enforcementMode: selected.enforcementMode,
+                      version: selected.version,
+                    })}
                   </Typography>
                 </Box>
                 <InlineFeedback
                   severity={selected.pendingReview ? 'warning' : 'info'}
-                  title={
-                    selected.pendingReview ? 'Independent review required' : 'No publishable review'
-                  }
+                  title={t(
+                    selected.pendingReview
+                      ? 'administration.workflow.review.requiredTitle'
+                      : 'administration.workflow.review.noneTitle'
+                  )}
                 >
                   {selected.pendingReview
-                    ? selected.pendingChangeReason || 'Review the pending owner policy change.'
-                    : 'The Approval owner has no pending reviewed version for this policy.'}
+                    ? selected.pendingChangeReason ||
+                      t('administration.workflow.review.requiredDescription')
+                    : t('administration.workflow.review.noneDescription')}
                 </InlineFeedback>
                 {makerBlocked ? (
-                  <InlineFeedback severity="warning" title="Four-eyes separation applies">
-                    The submitting actor cannot publish this pending policy version.
+                  <InlineFeedback
+                    severity="warning"
+                    title={t('administration.workflow.review.fourEyesTitle')}
+                  >
+                    {t('administration.workflow.review.fourEyesDescription')}
                   </InlineFeedback>
                 ) : null}
                 <FormField
                   fullWidth={false}
-                  label="Review comment"
+                  label={t('administration.workflow.review.comment')}
                   value={reviewComment}
                   onChange={(event) => setReviewComment(event.target.value)}
                   multiline
@@ -327,7 +359,11 @@ function ActiveWorkflow({
                       })
                     }
                   >
-                    {publish.isPending ? 'Publishing…' : 'Publish reviewed version'}
+                    {t(
+                      publish.isPending
+                        ? 'administration.workflow.publish.publishing'
+                        : 'administration.workflow.publish.action'
+                    )}
                   </ActionButton>
                   <ActionButton
                     intent="quiet"
@@ -335,7 +371,7 @@ function ActiveWorkflow({
                     disabled={policies.isFetching || publish.isPending}
                     onClick={() => void policies.refetch()}
                   >
-                    Refresh authority
+                    {t('administration.workflow.refreshAuthority')}
                   </ActionButton>
                 </Stack>
               </Stack>
@@ -345,23 +381,22 @@ function ActiveWorkflow({
       )}
 
       {publish.isPending ? (
-        <InlineFeedback severity="info" title="Publication pending">
-          Awaiting the Approval owner. No optimistic success has been applied.
+        <InlineFeedback severity="info" title={t('administration.workflow.publish.pendingTitle')}>
+          {t('administration.workflow.publish.pendingDescription')}
         </InlineFeedback>
       ) : null}
       {publish.isError ? (
-        <InlineFeedback severity="error" title="Publication rejected">
-          The owner rejected or could not confirm the command. Refresh authority before retrying.
+        <InlineFeedback severity="error" title={t('administration.workflow.publish.rejectedTitle')}>
+          {t('administration.workflow.publish.rejectedDescription')}
         </InlineFeedback>
       ) : null}
       {ownerOutcome ? (
         <InlineFeedback
           severity="success"
-          title="Owner-confirmed publication"
+          title={t('administration.workflow.publish.confirmedTitle')}
           icon={<CheckCircle2 size={18} />}
         >
-          {ownerOutcome} The returned owner projection replaced the prior selection; no local
-          receipt was created.
+          {ownerOutcome} {t('administration.workflow.publish.confirmedDescription')}
         </InlineFeedback>
       ) : null}
     </Stack>

@@ -1,8 +1,12 @@
 // @vitest-environment jsdom
 import { act, createElement } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import i18n from 'i18next';
+import { initReactI18next } from 'react-i18next';
+import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 import { HttpTransportError } from '@dwp-frontend/shared-utils';
+
+import enHcm from '../../../../../../../../libs/shared-i18n/src/locales/en/hcm.json';
 
 import {
   TIME_INTERPRETATION_API_CONTRACTS,
@@ -204,6 +208,17 @@ function buttonByText(container: ParentNode, label: string): HTMLButtonElement {
 }
 
 describe('[SLICE:BASE-TFR-TIM-010] deterministic time interpretation', () => {
+  beforeAll(async () => {
+    await i18n.use(initReactI18next).init({
+      lng: 'en',
+      fallbackLng: 'en',
+      defaultNS: 'hcm',
+      ns: ['hcm'],
+      resources: { en: { hcm: enHcm } },
+      interpolation: { escapeValue: false },
+    });
+  });
+
   it('prepares only a closed worker population and civil-date period for the production adapter', () => {
     expect(
       buildTimeInterpretationRunRequest(

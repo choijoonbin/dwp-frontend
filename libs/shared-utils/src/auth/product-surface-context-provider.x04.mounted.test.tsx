@@ -13,7 +13,7 @@ import {
 } from './product-surface-context-provider';
 import { parseProductSurfaceAuthoritySnapshot } from './product-surface-authority-model';
 
-import type { ProductSurfaceContextListData } from '../api/auth-api';
+import type { ProductSurfaceContextListDataV2 } from './product-surface-authority-model';
 import type { ProductSurfaceAuthorityContextValue } from './product-surface-context-provider';
 
 const authApi = vi.hoisted(() => ({
@@ -59,7 +59,7 @@ const publicQueryKey = ['x04-public', 'catalog'] as const;
 
 let activeObservation: Observation | null = null;
 
-function authorityEnvelope(revision: string): ProductSurfaceContextListData {
+function authorityEnvelope(revision: string): ProductSurfaceContextListDataV2 {
   return {
     contractVersion: '2',
     decisionRevision: revision,
@@ -68,7 +68,7 @@ function authorityEnvelope(revision: string): ProductSurfaceContextListData {
       policy: `policy-${revision}`,
       productRelationship: `relationship-${revision}`,
       targetPopulation: `population-${revision}`,
-      support: `support-${revision}`,
+      support: null,
       tenantControl: `tenant-control-${revision}`,
     },
     activeAccessMode: 'NORMAL',

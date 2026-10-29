@@ -52,6 +52,93 @@ export const AUTOMATION_CONTROL_PLANE_OPERATION_BINDINGS = Object.freeze([
   ['POST', `${AUTOMATION_RUN_BASE_PATH}/{runId}/cancel`],
 ] as const);
 
+export const HCM_AUTOMATION_MUTATION_API_CONTRACTS = [
+  {
+    apiFunction: 'executeAutomationCommand:CREATE_DEFINITION',
+    routeContractKey: 'route.hcm.configuration.automation-definition-create.action',
+    method: 'POST',
+    path: AUTOMATION_BASE_PATH,
+  },
+  {
+    apiFunction: 'executeAutomationCommand:QUEUE_RUN',
+    routeContractKey: 'route.hcm.configuration.automation-run-queue.action',
+    method: 'POST',
+    path: `${AUTOMATION_BASE_PATH}/{automationId}/runs`,
+  },
+  {
+    apiFunction: 'executeAutomationCommand:RETRY_RUN',
+    routeContractKey: 'route.hcm.configuration.automation-run-retry.action',
+    method: 'POST',
+    path: `${AUTOMATION_RUN_BASE_PATH}/{runId}/retry`,
+  },
+  {
+    apiFunction: 'executeAutomationCommand:CREATE_VERSION',
+    routeContractKey: 'route.hcm.configuration.automation-version-create.action',
+    method: 'POST',
+    path: `${AUTOMATION_BASE_PATH}/{automationId}/versions`,
+  },
+  {
+    apiFunction: 'executeAutomationCommand:VALIDATE_VERSION',
+    routeContractKey: 'route.hcm.configuration.automation-version-validate.action',
+    method: 'POST',
+    path: `${AUTOMATION_BASE_PATH}/{automationId}/versions/{version}/validate`,
+  },
+  {
+    apiFunction: 'executeAutomationCommand:SUBMIT_VERSION',
+    routeContractKey: 'route.hcm.configuration.automation-version-submit.action',
+    method: 'POST',
+    path: `${AUTOMATION_BASE_PATH}/{automationId}/versions/{version}/submit`,
+  },
+  {
+    apiFunction: 'executeAutomationCommand:APPROVE_VERSION',
+    routeContractKey: 'route.hcm.configuration.automation-version-approve.action',
+    method: 'POST',
+    path: `${AUTOMATION_BASE_PATH}/{automationId}/versions/{version}/approve`,
+  },
+  {
+    apiFunction: 'executeAutomationCommand:ACTIVATE_VERSION',
+    routeContractKey: 'route.hcm.configuration.automation-version-activate.action',
+    method: 'POST',
+    path: `${AUTOMATION_BASE_PATH}/{automationId}/versions/{version}/activate`,
+  },
+  {
+    apiFunction: 'executeAutomationCommand:CREATE_SCHEDULE',
+    routeContractKey: 'route.hcm.configuration.automation-schedule-create.action',
+    method: 'POST',
+    path: `${AUTOMATION_BASE_PATH}/{automationId}/schedules`,
+  },
+  {
+    apiFunction: 'executeAutomationCommand:SUBMIT_SCHEDULE',
+    routeContractKey: 'route.hcm.configuration.automation-schedule-submit.action',
+    method: 'POST',
+    path: `${AUTOMATION_SCHEDULE_BASE_PATH}/{scheduleId}/submit`,
+  },
+  {
+    apiFunction: 'executeAutomationCommand:APPROVE_SCHEDULE',
+    routeContractKey: 'route.hcm.configuration.automation-schedule-approve.action',
+    method: 'POST',
+    path: `${AUTOMATION_SCHEDULE_BASE_PATH}/{scheduleId}/approve`,
+  },
+  {
+    apiFunction: 'executeAutomationCommand:ACTIVATE_SCHEDULE',
+    routeContractKey: 'route.hcm.configuration.automation-schedule-activate.action',
+    method: 'POST',
+    path: `${AUTOMATION_SCHEDULE_BASE_PATH}/{scheduleId}/activate`,
+  },
+  {
+    apiFunction: 'executeAutomationCommand:SUSPEND_SCHEDULE',
+    routeContractKey: 'route.hcm.configuration.automation-schedule-suspend.action',
+    method: 'POST',
+    path: `${AUTOMATION_SCHEDULE_BASE_PATH}/{scheduleId}/suspend`,
+  },
+  {
+    apiFunction: 'executeAutomationCommand:CANCEL_RUN',
+    routeContractKey: 'route.hcm.configuration.automation-run-cancel.action',
+    method: 'POST',
+    path: `${AUTOMATION_RUN_BASE_PATH}/{runId}/cancel`,
+  },
+] as const;
+
 type ResolvedAutomationCommand = Readonly<{
   path: string;
   originatingAction: (typeof AUTOMATION_ACTION_KEYS)[keyof typeof AUTOMATION_ACTION_KEYS];
@@ -178,7 +265,7 @@ export async function executeAutomationCommand(
   validateCommandAuthority(authority, resolved);
   const governed = resolved.highRisk
     ? productSurfaceHighRiskMutationConfig(authority.governance, {
-        objectVersionHeader: false,
+        objectVersionHeader: true,
       })
     : productSurfaceGovernedMutationConfig(authority.governance, {
         objectVersionHeader: false,
@@ -446,7 +533,6 @@ function resolved(
 function browserSafeGovernedHeaders(headers: Readonly<Record<string, string>>) {
   const safeHeaders = { ...headers };
   delete safeHeaders['X-DWP-Step-Up-Challenge'];
-  delete safeHeaders['X-DWP-Expected-Object-Version'];
   return safeHeaders;
 }
 

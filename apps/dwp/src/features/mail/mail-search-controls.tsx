@@ -16,10 +16,10 @@ import {
   ConfirmDialog,
   FormDialog,
   FormField,
+  InlineFeedback,
   SelectField,
 } from '@dwp-frontend/design-system';
 
-import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
 import Collapse from '@mui/material/Collapse';
@@ -393,9 +393,9 @@ export function MailSearchControls({
             sx={{ gridColumn: '1 / -1' }}
           >
             {invalidDateRange ? (
-              <Alert severity="error" sx={{ flex: 1 }}>
+              <InlineFeedback severity="error" sx={{ flex: 1 }}>
                 {t('secondary.search.invalidDateRange')}
-              </Alert>
+              </InlineFeedback>
             ) : (
               <Typography variant="body2" color="text.secondary">
                 {advancedDirty

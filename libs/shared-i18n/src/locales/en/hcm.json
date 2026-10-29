@@ -3,7 +3,636 @@
     "loadError": "Information could not be loaded",
     "retry": "Retry"
   },
+  "administration": {
+    "common": {
+      "verifySession": "Verify session"
+    },
+    "integration": {
+      "loadingWorkbenchAuthority": "Loading governed workbench authority…",
+      "loadingCertificateAuthority": "Loading governed certificate authority…",
+      "approvalOwnerScopeUnavailable": "Approval owner scope is unavailable for this HR workspace.",
+      "loadingCrossProductAuthority": "Loading cross-product authority…",
+      "approvalOwnerAccessUnavailable": "Approval owner access is unavailable for this HR workspace."
+    },
+    "operations": {
+      "notAvailable": "Not yet available",
+      "refresh": "Refresh projection",
+      "loading": {
+        "exceptions": "Loading HRIS operations exceptions",
+        "summary": "Loading HRIS operations summary",
+        "workspace": "Loading HRIS operations workspace"
+      },
+      "projection": {
+        "partialTitle": "Some owner projections are unavailable",
+        "partialDescription": "Available exceptions remain read only. Source status below identifies which owner projection could not be confirmed.",
+        "staleTitle": "Owner projections are stale",
+        "staleDescription": "The last confirmed projection is shown for investigation only. Last successful refresh: {{refreshedAt}}.",
+        "unavailableTitle": "Operations projection could not be confirmed",
+        "unavailableDescription": "No owner exception or cached detail is shown."
+      },
+      "summary": {
+        "title": "Customer and process impact",
+        "meta": "{{count}} authorized exceptions · As of {{asOf}}",
+        "open": "Open",
+        "acknowledged": "Acknowledged",
+        "resolved": "Resolved",
+        "highImpact": "High impact"
+      },
+      "filters": {
+        "ownerModule": "Owner module",
+        "allModules": "All modules",
+        "severity": "Severity",
+        "allSeverities": "All severities",
+        "ownerState": "Owner state",
+        "allStates": "All states"
+      },
+      "list": {
+        "title": "Authorized exceptions",
+        "page": "Stable owner ordering · page {{page}}",
+        "emptyTitle": "No exceptions in this scope",
+        "emptyDescription": "The current authorized scope and filters returned no owner exception. No recovery action is available from this workspace.",
+        "lastObserved": "Last observed {{observedAt}} · {{count}} occurrences"
+      },
+      "pagination": {
+        "previous": "Previous",
+        "next": "Next"
+      },
+      "receipt": {
+        "loading": "Loading existing command receipt",
+        "deniedTitle": "Receipt is not available",
+        "deniedDescription": "The receipt is absent or outside the current originating-command and tenant scope. No cached receipt is shown.",
+        "unavailableTitle": "Receipt could not be confirmed",
+        "unavailableDescription": "The existing receipt reader is unavailable. No command is retried from this workspace.",
+        "title": "Existing command receipt · {{profile}}"
+      },
+      "detail": {
+        "title": "Redacted exception detail",
+        "select": "Select an authorized exception to inspect it.",
+        "loading": "Loading redacted exception detail",
+        "deniedTitle": "Exception detail is not available",
+        "deniedDescription": "The selected object is absent or outside the current tenant, package, purpose or field scope. No cached detail is shown.",
+        "unavailableTitle": "Exception detail could not be confirmed",
+        "unavailableDescription": "Keep the current selection and retry the workspace refresh. No owner action is exposed.",
+        "revision": "{{module}} · {{type}} · revision {{revision}}",
+        "firstObserved": "First observed",
+        "lastObserved": "Last observed",
+        "correlation": "Correlation",
+        "continueInvestigation": "Continue investigation in owning workspace",
+        "evidenceReferences": "Redacted evidence references",
+        "inspectReceipt": "Inspect existing receipt {{receiptId}}",
+        "readOnlyTitle": "Read and deep-link only",
+        "readOnlyDescription": "Recovery remains with the owning domain. This workspace never retries, suppresses, resolves or automates an exception.",
+        "noAuthorizedDetail": "No authorized detail is available."
+      },
+      "badges": {
+        "tenantScoped": "Tenant scoped",
+        "readOnly": "Read only"
+      },
+      "producer": {
+        "emptyTitle": "No live owner producer is onboarded",
+        "emptyDescription": "The SYS consumer and read surface are installed, but cross-service producer delivery remains an external gate. No production exception completeness is claimed."
+      },
+      "disabled": {
+        "title": "HRIS operations exception center is unavailable",
+        "description": "The module is installed but remains default-off for this tenant. No entry, exception, projection or receipt request has been started.",
+        "featureOff": "Feature state: OFF",
+        "boundary": "Recovery commands and owner automation remain in their owning domains and are never mounted here."
+      }
+    },
+    "workflow": {
+      "title": "Approval workflow policy",
+      "description": "Review the Approval-owned policy catalog and publish an independently reviewed version.",
+      "activeDescription": "Compare the Approval-owned catalog and publish only the current independently reviewed version.",
+      "liveAuthority": "Approval owner · live authority",
+      "loading": "Loading Approval workflow policies",
+      "refreshAuthority": "Refresh authority",
+      "policyVersionShort": "{{policyKey}} · v{{version}}",
+      "policyVersion": "{{policyType}} · {{enforcementMode}} · version {{version}}",
+      "disabled": {
+        "invalidTitle": "Workflow policy access is unavailable",
+        "offTitle": "Workflow policy is off",
+        "invalidDescription": "The HCM page and Approval read evidence no longer match the same tenant, actor, scope or authority revision. No Approval owner request was started.",
+        "offDescription": "This default-off HRIS adapter is not enrolled for the tenant. No Approval policy request was started."
+      },
+      "error": {
+        "accessTitle": "Policy access is unavailable",
+        "ownerTitle": "Policy owner unavailable",
+        "description": "No cached policy selection or command is shown. Confirm authority, then retry the exact owner query."
+      },
+      "empty": {
+        "title": "No policies are available",
+        "description": "The authorized Approval policy catalog is empty. Publish controls remain unavailable."
+      },
+      "review": {
+        "pending": "Review pending",
+        "requiredTitle": "Independent review required",
+        "noneTitle": "No publishable review",
+        "requiredDescription": "Review the pending owner policy change.",
+        "noneDescription": "The Approval owner has no pending reviewed version for this policy.",
+        "fourEyesTitle": "Four-eyes separation applies",
+        "fourEyesDescription": "The submitting actor cannot publish this pending policy version.",
+        "comment": "Review comment"
+      },
+      "publish": {
+        "publishing": "Publishing…",
+        "action": "Publish reviewed version",
+        "pendingTitle": "Publication pending",
+        "pendingDescription": "Awaiting the Approval owner. No optimistic success has been applied.",
+        "rejectedTitle": "Publication rejected",
+        "rejectedDescription": "The owner rejected or could not confirm the command. Refresh authority before retrying.",
+        "confirmedTitle": "Owner-confirmed publication",
+        "ownerConfirmed": "Owner confirmed publication for {{policyId}}.",
+        "confirmedDescription": "The returned owner projection replaced the prior selection; no local receipt was created."
+      }
+    },
+    "reference": {
+      "title": "Reference configuration",
+      "description": "Compare lifecycle evidence before approving, publishing, retiring, or rolling back.",
+      "loadingWorkspace": "Loading reference-configuration evidence…",
+      "loadingDetail": "Loading immutable version evidence…",
+      "restrictedTitle": "Reference configuration is restricted",
+      "restrictedDescription": "Your current scope cannot read this workbench. Request the configuration-reader duty.",
+      "unavailableTitle": "Reference configuration is unavailable",
+      "unavailableDescription": "No lifecycle command has been submitted. Retry the owner projection when it is available.",
+      "partialTitle": "Some configuration evidence is unavailable",
+      "partialDescription": "Available versions remain visible. Refresh before making a lifecycle decision.",
+      "refresh": "Refresh",
+      "evidenceState": "Evidence: {{state}}",
+      "lifecycleStatus": "Lifecycle status",
+      "allStates": "All states",
+      "emptyTitle": "No configuration versions match this scope",
+      "emptyDescription": "Clear the lifecycle filter or create the first version from an existing owner reference.",
+      "listAriaLabel": "Reference configurations",
+      "detailAriaLabel": "Selected configuration evidence",
+      "version": "Version",
+      "versionValue": "v{{version}} · revision {{revision}}",
+      "effectiveFrom": "Effective from",
+      "effectiveTo": "Effective to",
+      "openEnded": "Open ended",
+      "ownerEvidence": "Owner evidence — content is not copied here",
+      "configurationId": "Configuration {{configurationId}}",
+      "digest": "SHA-256 {{digest}}",
+      "availableDecisions": "Available lifecycle decisions",
+      "commandAuthorityUnavailableTitle": "Lifecycle command authority is unavailable",
+      "commandAuthorityUnavailableDescription": "Control has not injected the governed command owner. All lifecycle decisions remain disabled and no request will be sent.",
+      "commandRunningDescription": "Waiting for the immutable command receipt from the command owner.",
+      "commandSucceededDescription": "Immutable receipt {{receiptId}} · aggregate revision {{revision}}",
+      "staleTitle": "Lifecycle evidence is stale",
+      "staleDescription": "Refresh owner evidence before retrying this decision.",
+      "commandFailedDescription": "No successful receipt was recorded by this workspace.",
+      "noTransition": "This immutable version has no available transition.",
+      "selectConfiguration": "Select a configuration to inspect its evidence.",
+      "lastProjection": "Last owner projection: {{asOf}} · {{version}}"
+    },
+    "navigation": {
+      "copy": {
+        "title": "HRIS navigation policy",
+        "description": "Review the tenant baseline and legal-entity restrictions, then publish one immutable policy revision.",
+        "refresh": "Refresh",
+        "scope": "Scope",
+        "tenant": "Tenant baseline",
+        "legalEntity": "Legal-entity restriction",
+        "lifecycle": "Lifecycle",
+        "rollout": "Rollout mode",
+        "impactTitle": "Publication impact",
+        "impactDescription": "Visibility never grants authority. A menu without exact PAGE authority is always removed.",
+        "recoveryTitle": "Recovery and audit",
+        "recoveryDescription": "Restore creates a new revision pinned to a prior digest; it never mutates published history.",
+        "groupsTitle": "HR Operations menu composition",
+        "defaultNode": "Default menu",
+        "moveUp": "Move up",
+        "moveDown": "Move down",
+        "loadingTitle": "Loading navigation-policy evidence",
+        "emptyTitle": "No navigation policy has been published yet",
+        "deniedTitle": "Navigation-policy access is restricted",
+        "deniedDescription": "This scope does not have the configuration-administrator PAGE authority.",
+        "unavailableTitle": "Navigation-policy service is unavailable",
+        "staleTitle": "Policy evidence is stale",
+        "partialTitle": "Some policy evidence is unavailable",
+        "commandUnavailable": "Changes are disabled because the centrally governed command authority is not connected."
+      },
+      "editor": {
+        "catalogSummary": "7 groups · 17 canonical nodes · HRIS-WB-HR-OPERATIONS",
+        "rollout": {
+          "off": "OFF",
+          "shadow": "SHADOW",
+          "enforced": "ENFORCED"
+        },
+        "tenantDisabled": "Tenant disabled"
+      },
+      "unavailableDescription": "No policy command was submitted. Retry after the owner projection becomes available.",
+      "emptyDescription": "Start with the complete canonical catalog. Publishing remains unavailable until validation and independent approval are complete.",
+      "staleDescription": "Refresh the owner projection before editing or making a lifecycle decision.",
+      "partialDescription": "The visible evidence is read-only. Refresh before creating or advancing a revision.",
+      "evidenceSummary": "Policy evidence summary",
+      "evidenceState": "Evidence: {{state}}",
+      "enabledNodes": "{{count}}/17 nodes enabled",
+      "unsavedDraft": "Unsaved draft",
+      "effectiveFormula": "Effective = canonical IA ∩ installed configuration ∩ tenant baseline ∩ legal overlay ∩ PAGE authority",
+      "highRiskBoundary": "Approve, publish, and restore require step-up and an actor other than the author.",
+      "validationIssues": "{{count}} validation issue(s)",
+      "commandsUnavailable": "Governed commands unavailable",
+      "commandRunning": "Waiting for the immutable owner receipt. Repeated clicks are suppressed.",
+      "commandReceipt": "Receipt {{receiptId}} · revision {{revision}} · object version {{objectVersion}}",
+      "restoreTarget": "Restore target",
+      "restoreRevision": "Revision {{revision}} · {{digest}}",
+      "decisionJustification": "Decision justification",
+      "decisionJustificationHelp": "Required for approve, publish, and restore. Stored with the immutable audit receipt.",
+      "actionsAriaLabel": "Navigation policy lifecycle actions",
+      "disabled": {
+        "title": "HRIS navigation policy is not activated",
+        "description": "The studio is installed but remains feature-off. No tenant policy is loaded and no command can be submitted.",
+        "governedTitle": "Activation remains centrally governed",
+        "governedDescription": "Control must bind the PAGE policy, trusted scope, route, and command authority before enabling this tenant."
+      },
+      "scopeRequired": {
+        "title": "A legal-entity selector is required",
+        "description": "Control did not provide a legal-entity public identifier for server-side ownership verification. No policy data was requested."
+      },
+      "runtime": {
+        "invalidTitle": "Invalid legal-entity selector",
+        "invalidDescription": "The requested legal-entity public ID is not a single UUID. No policy data was requested.",
+        "scopeTitle": "Policy scope",
+        "scopeDescription": "Choose the tenant baseline or request a legal-entity restriction. The browser value is only a selector; the People owner revalidates it against the authenticated scope before returning or changing policy data.",
+        "tenantBaseline": "Tenant baseline",
+        "legalEntityRestriction": "Legal-entity restriction",
+        "legalEntityPublicId": "Legal-entity public ID",
+        "uuidHelp": "UUID requested for server-side People ownership verification",
+        "applyScope": "Apply scope"
+      }
+    },
+    "automation": {
+      "eyebrow": "HRIS governance",
+      "title": "Automation control plane",
+      "scope": "Scope: {{scope}}",
+      "asOf": "As of {{asOf}}",
+      "noSnapshot": "No verified snapshot",
+      "refreshEvidence": "Refresh automation evidence",
+      "newDefinition": "New definition",
+      "partial": {
+        "title": "Some automation evidence is restricted or stale",
+        "description": "Confirmed catalog facts remain visible, but all commands are disabled until a fresh, complete authorization projection is available."
+      },
+      "context": {
+        "label": "Automation evidence context",
+        "tenantScope": "Tenant scope",
+        "snapshot": "Snapshot",
+        "authorizationRevision": "Authorization revision",
+        "fieldVisibility": "Field visibility",
+        "fieldVisibilityValue": "{{visible}} visible · {{restricted}} restricted",
+        "currentEvidence": "Current evidence",
+        "readOnly": "Read only"
+      },
+      "summaryAriaLabel": "Automation governance summary",
+      "filter": {
+        "ariaLabel": "Filter automation catalog",
+        "searchLabel": "Search catalog",
+        "searchPlaceholder": "Automation key, handler, lifecycle…",
+        "resultLabel": "{{filtered}} of {{total}} resources",
+        "resourceType": "Resource type",
+        "allResources": "All resources",
+        "definitions": "Definitions",
+        "versions": "Versions",
+        "schedules": "Schedules",
+        "emptyTitle": "No catalog resources match these filters",
+        "emptyDescription": "Clear the search or select another resource type. No lifecycle command was submitted.",
+        "clear": "Clear filters"
+      },
+      "state": {
+        "noProjectionTitle": "Automation evidence is unavailable",
+        "noProjectionDescription": "The declared state has no trusted owner projection. No command can be submitted.",
+        "loadingTitle": "Loading automation governance",
+        "loadingDescription": "Confirming definitions, schedules, runs, and current authorization.",
+        "emptyTitle": "No automation definitions in this scope",
+        "emptyDescription": "Create definition identity and metadata first. Versions, schedules, and activation remain separate governed steps.",
+        "createFirst": "Create first definition",
+        "restrictedTitle": "Automation governance is restricted",
+        "restrictedDescription": "The current session does not have the required page, feature, or operation decision.",
+        "stepUpTitle": "Additional verification is required",
+        "stepUpDescription": "Verify this session before reviewing or submitting a high-impact automation decision.",
+        "retryTitle": "Automation evidence could not be refreshed",
+        "retryDescription": "The previous verified view was not replaced and no command was submitted.",
+        "retryRefresh": "Retry refresh",
+        "unavailableTitle": "Automation governance is unavailable",
+        "unavailableDescription": "Trusted catalog evidence is unavailable or beyond its stale boundary. No command can be submitted.",
+        "requestIdHelp": "Use the correlation ID from the failed owner response when contacting support."
+      },
+      "catalog": {
+        "ariaLabel": "Automation resource catalog",
+        "resource": "Resource",
+        "state": "State",
+        "context": "Context",
+        "nextEvent": "Next event",
+        "action": "Action",
+        "review": "Review"
+      },
+      "inspector": {
+        "detail": "{{resource}} governance detail",
+        "lifecycle": "Lifecycle",
+        "targetFacts": "Target facts",
+        "restrictedFacts": "Restricted — commands suppressed",
+        "visibleFacts": "Visible and verified",
+        "nextActions": "Authorized next actions",
+        "noActions": "No action is available for the current lifecycle, eligibility, caller, and visible-fact intersection."
+      },
+      "run": {
+        "title": "Run evidence",
+        "identity": "Run {{runId}} · Definition {{definitionId}} · Version {{version}}",
+        "items": "Items",
+        "succeeded": "Succeeded",
+        "failed": "Failed",
+        "retryEligible": "Retry eligible",
+        "attempts": "Attempts",
+        "noAttempts": "No attempts recorded",
+        "attempt": "Attempt {{attempt}} · {{state}}",
+        "attemptItems": "{{mode}} · {{count}} items",
+        "noItems": "No item receipts recorded",
+        "checkpoints": "Checkpoints",
+        "noCheckpoints": "No checkpoints committed",
+        "checkpoint": "Attempt {{attempt}} · checkpoint {{checkpoint}}",
+        "checkpointItems": "{{count}} items · {{committedAt}}"
+      }
+    },
+    "integrationControl": {
+      "eyebrow": "HRIS governance",
+      "title": "Integration control plane",
+      "scope": "Scope: {{scope}}",
+      "asOf": "As of {{asOf}}",
+      "noSnapshot": "No verified snapshot",
+      "refreshEvidence": "Refresh integration evidence",
+      "newConnector": "New connector",
+      "partial": {
+        "resultUnknownTitle": "The latest command outcome is not confirmed",
+        "restrictedTitle": "Some integration evidence is restricted or stale",
+        "description": "Verified connector facts remain visible, but every command is withheld until current, complete owner evidence is available. Reconciliation never mutates the original result-unknown receipt."
+      },
+      "context": {
+        "label": "Integration evidence context",
+        "tenantScope": "Tenant scope",
+        "projection": "Projection",
+        "hrisSettings": "HRIS settings",
+        "dwpControl": "DWP control",
+        "snapshot": "Snapshot",
+        "injectedSnapshot": "Injected owner snapshot",
+        "evidenceState": "Evidence state",
+        "currentEvidence": "Current evidence",
+        "readOnly": "Read only"
+      },
+      "summaryAriaLabel": "Integration governance summary",
+      "filter": {
+        "ariaLabel": "Filter connector evidence",
+        "searchLabel": "Search connectors",
+        "searchPlaceholder": "Connector, policy, status…",
+        "resultLabel": "{{filtered}} of {{total}} connectors",
+        "emptyTitle": "No connectors match this search",
+        "emptyDescription": "Clear the search to return to the verified owner projection. No command was submitted.",
+        "clear": "Clear search"
+      },
+      "state": {
+        "noProjectionTitle": "Integration evidence is unavailable",
+        "noProjectionDescription": "The declared state has no trusted owner projection. No command can be submitted.",
+        "loadingTitle": "Loading integration governance",
+        "loadingDescription": "Confirming connector policy, effective status, and current authorization.",
+        "emptyTitle": "No connector definitions in this scope",
+        "emptyDescription": "Create a connector definition first. Validation, approval, activation, and provider execution remain separate governed steps.",
+        "createFirst": "Create first connector",
+        "restrictedTitle": "Integration governance is restricted",
+        "restrictedDescription": "The current session has no valid feature, route, or operation decision.",
+        "stepUpTitle": "Additional verification is required",
+        "stepUpDescription": "Verify this session before submitting a high-impact integration decision.",
+        "retryTitle": "Integration evidence could not be refreshed",
+        "retryDescription": "The previous verified view was not replaced and no command was submitted.",
+        "retryRefresh": "Retry refresh",
+        "unavailableTitle": "Integration governance is unavailable",
+        "unavailableDescription": "Trusted owner evidence is unavailable. No connector command can be submitted.",
+        "requestIdHelp": "Use the correlation ID from the failed owner response when contacting support.",
+        "reconcileTitle": "Command outcome requires reconciliation",
+        "reconcileDescription": "No verified read snapshot is available. Use the original correlation and provider receipt evidence; never redispatch blindly."
+      },
+      "catalog": {
+        "ariaLabel": "Connector governance evidence",
+        "connector": "Connector",
+        "status": "Status",
+        "policyContext": "Policy context",
+        "action": "Action",
+        "revision": "Revision {{revision}}",
+        "review": "Review"
+      },
+      "inspector": {
+        "detail": "Connector governance detail",
+        "effectiveStatus": "Effective status",
+        "statusRevision": "Status revision",
+        "targetFacts": "Target facts",
+        "restrictedFacts": "Restricted — commands suppressed",
+        "visibleFacts": "Visible and verified",
+        "nextActions": "Authorized next actions",
+        "commandsWithheld": "Commands are withheld until current, complete owner evidence is available.",
+        "noActions": "No action is available from the current owner-policy intersection."
+      },
+      "execution": {
+        "title": "Execution evidence",
+        "identity": "Execution {{executionId}} · Mapping version {{mappingVersion}}",
+        "commandsWithheld": "Commands withheld",
+        "outcomeTitle": "Provider outcome requires evidence",
+        "outcomeDescription": "Reconcile with the original provider key and receipt evidence. Blind redispatch is not available.",
+        "source": "Source",
+        "accepted": "Accepted",
+        "rejected": "Rejected",
+        "selected": "Selected"
+      }
+    }
+  },
   "hrisTime": {
+    "i18nClosure": {
+      "common": {
+        "cancel": "Cancel",
+        "masked": "Masked",
+        "noneExposed": "None exposed",
+        "notLoaded": "Not loaded",
+        "openEnded": "Open ended",
+        "pending": "Pending",
+        "submitting": "Submitting…",
+        "unavailable": "Unavailable"
+      },
+      "close": {
+        "center": {
+          "aggregateVersion": "Aggregate version",
+          "blockedDescription": "Resolve {{count}} blocker(s), then validate a fresh aggregate version.",
+          "blockedTitle": "Close is blocked",
+          "blockers": "Blockers",
+          "checkStatus": "Check status",
+          "closePeriod": "Close period",
+          "closeRevision": "Close revision",
+          "closeStatus": "Close status",
+          "commandReceipt": "Command receipt",
+          "createHandoff": "Create handoff",
+          "emptyDescription": "The owner returned an explicit empty result. Adjust the authority scope or effective date outside this workbench.",
+          "emptyTitle": "No close periods match this scope",
+          "filterPeriods": "Filter periods",
+          "freshness": "Freshness: {{value}}",
+          "handoffId": "Handoff ID",
+          "immutableResult": "Immutable result",
+          "impact": "Impact",
+          "loadMore": "Load more periods",
+          "loading": "Loading authorized time close evidence…",
+          "outcome": "Outcome",
+          "ownerFacts": "Owner facts are read-only. Commands create new immutable attempts and results.",
+          "partialDescription": "A refresh component failed. The verified period snapshot is preserved.",
+          "partialTitle": "Some close evidence is unavailable",
+          "payloadDigest": "Payload digest",
+          "payrollHandoffStatus": "Payroll handoff status",
+          "periodId": "Period ID",
+          "periodMeta": "{{start}} — {{end}} · v{{version}}",
+          "periods": "Periods",
+          "receiverReceipt": "Receiver receipt",
+          "refreshEvidence": "Refresh evidence",
+          "refreshFailedDescription": "The last authorized snapshot remains visible as stale evidence. Commands stay bound to its version and may be disabled until a successful refresh.",
+          "refreshFailedTitle": "Latest refresh could not be verified",
+          "reopen": "Reopen",
+          "selectPeriodDescription": "Choose a period to inspect blockers, immutable receipt evidence, and allowed actions.",
+          "selectPeriodTitle": "Select a period",
+          "snapshot": "Snapshot: {{value}}",
+          "unavailableDescription": "No prior period facts or actions are exposed for the current authority scope.",
+          "unavailableTitle": "Time close evidence is unavailable",
+          "validate": "Validate"
+        },
+        "dialog": {
+          "approvalReceiptHelp": "Use the approved UUID for this exact period and version.",
+          "approvalReceiptId": "Approval receipt ID",
+          "closeSubmit": "Close period",
+          "closeTitle": "Close this time period",
+          "closedTimeResultError": "Enter a valid closed-time result UUID.",
+          "closedTimeResultId": "Closed-time result ID",
+          "description": "{{title}}. Aggregate version {{version}} is rechecked before dispatch.",
+          "handoffSubmit": "Create handoff",
+          "handoffTitle": "Create Payroll handoff",
+          "immutableEvidence": "Validation and command results are immutable owner evidence. Refresh never rewrites a prior blocker, result, event, or receipt.",
+          "payPeriodError": "Enter a valid pay period UUID.",
+          "payPeriodId": "Pay period ID",
+          "payrollEntityError": "Enter a valid Payroll entity UUID.",
+          "payrollEntityId": "Payroll entity ID",
+          "reopenReasonCode": "Reopen reason code",
+          "reopenReasonHelp": "Forward correction only; the closed result and prior events remain immutable.",
+          "reopenSubmit": "Reopen period",
+          "reopenTitle": "Reopen as a forward correction",
+          "validateSubmit": "Validate period",
+          "validateTitle": "Validate period close",
+          "validationDescription": "Validation captures the blocker snapshot for the current version without closing or partially mutating the period."
+        },
+        "notice": {
+          "checkReceipt": "Check receipt",
+          "conflictDescription": "Refresh the owner snapshot before any new command. Your entered values remain in this dialog.",
+          "conflictTitle": "The aggregate changed",
+          "deniedDescription": "The owner denied this exact period action without disclosing adjacent scope facts.",
+          "deniedTitle": "Authority is no longer available",
+          "handoffErrorDescription": "No prior or adjacent handoff status was substituted.",
+          "handoffErrorTitle": "Handoff status could not be verified",
+          "immutableResultSuffix": " · immutable result {{value}}",
+          "outcomeUnprovenDescription": "Reuse the same idempotency key or reconcile the known receipt.",
+          "outcomeUnprovenTitle": "Owner outcome is not yet proven",
+          "ownerReceipt": "Owner receipt: {{status}}",
+          "reconcileReceipt": "Reconcile receipt",
+          "refreshRequiredDescription": "The stale CAS value is frozen. Refresh successfully to bind a new command identity to the current aggregate version.",
+          "refreshRequiredTitle": "Refresh required before another command",
+          "rejectedDescription": "Review the immutable approval, reason, and result identifiers before trying again.",
+          "rejectedTitle": "The command was rejected",
+          "replayExact": "Replay exact command",
+          "unknownDescription": "Preserve this draft and command identity while replay or receipt reconciliation confirms the durable outcome.",
+          "unknownTitle": "Command result is unknown"
+        }
+      },
+      "timecard": {
+        "dialog": {
+          "approve": "Approve",
+          "auditComment": "Restricted audit comment (optional)",
+          "auditCommentHelp": "{{count}}/1000. This comment is not included in the domain event.",
+          "correctionDescription": "Period {{start}} to {{end}}. Positive and negative minute adjustments are appended to the ledger.",
+          "correctionReasonCode": "Correction reason code",
+          "correctionSubmit": "Record correction",
+          "correctionTitle": "Record an immutable correction",
+          "decision": "Decision",
+          "decisionDescription": "The worker, submitter, and latest correction maker cannot decide this timecard. Authority is re-evaluated at dispatch.",
+          "decisionReasonCode": "Decision reason code",
+          "decisionSubmit": "Record decision",
+          "decisionTitle": "Record an independent decision",
+          "ledgerDescription": "Existing ledger rows are never replaced. Use a negative value to reverse minutes and a positive value to add minutes.",
+          "minuteAdjustment": "Minute adjustment",
+          "minuteHelp": "Enter a whole number from -1440 to 1440, excluding zero.",
+          "payCode": "Pay code",
+          "reject": "Reject",
+          "requireCorrection": "Require correction",
+          "submitAction": "Submit timecard",
+          "submitDescription": "Submission moves the current OPEN version to SUBMITTED. The server rechecks authority and version before accepting it.",
+          "submitReasonCode": "Submission reason code (optional)",
+          "submitTitle": "Submit this timecard",
+          "workDate": "Work date"
+        },
+        "notice": {
+          "checkReceipt": "Check existing receipt",
+          "receipt": "Receipt {{id}} · {{status}}",
+          "refresh": "Refresh canonical timecard",
+          "retryExact": "Retry exact command"
+        },
+        "summary": {
+          "aggregateVersion": "Aggregate version",
+          "currentState": "Current state",
+          "ledgerRevision": "Ledger revision",
+          "recordedTotal": "Recorded total",
+          "state": "State",
+          "stateModelDescription": "Commands are available only for the current server state. Closed and superseded records stay read only.",
+          "stateModelTitle": "Canonical state model",
+          "stateValue": "State: {{value}}",
+          "states": {
+            "APPROVED": "Approved",
+            "CLOSED": "Closed",
+            "CORRECTION_REQUIRED": "Correction required",
+            "LOCKED": "Locked",
+            "OPEN": "Open",
+            "REJECTED": "Rejected",
+            "SUBMITTED": "Submitted",
+            "SUPERSEDED": "Superseded"
+          },
+          "title": "Timecard summary",
+          "workerReference": "Worker reference"
+        },
+        "workspace": {
+          "actionsDescription": "Actions are shown only when the exact owner binding, current population and canonical state allow them. The owner re-evaluates authority when each command is dispatched.",
+          "actionsTitle": "Available actions",
+          "description": "Review owner-confirmed totals, state, version and durable command outcomes for timecard {{id}}.",
+          "loading": "Loading canonical timecard",
+          "ownerBoundDescription": "This route-neutral workspace uses only the five sealed Time PEPs. It does not read, write or fall back to the active legacy timecard implementation.",
+          "ownerBoundTitle": "Owner-bound canonical record",
+          "readOnly": "This timecard is read only for the current state and authorization scope.",
+          "recordCorrection": "Record correction",
+          "recordDecision": "Record independent decision",
+          "refresh": "Refresh",
+          "refreshFailedDescription": "{{detail}} This view is stale and all commands remain disabled. Your draft is preserved.",
+          "refreshFailedTitle": "Refresh failed — showing the last verified timecard",
+          "refreshing": "Refreshing canonical timecard",
+          "retryRefresh": "Retry canonical refresh",
+          "submit": "Submit timecard",
+          "title": "Canonical timecard"
+        }
+      },
+      "interpretation": {
+        "agendaAriaLabel": "Time interpretation agenda",
+        "evidenceAriaLabel": "Time interpretation evidence",
+        "invalidDescription": "Use unique worker UUIDs and a valid date range of period start through period end.",
+        "invalidTitle": "Run scope is invalid",
+        "periodEnd": "Period end",
+        "periodStart": "Period start",
+        "prepareRun": "Prepare exact run",
+        "preparedDescription": "The governed command is enabled only when the selected result also advertises the exact TIM interpretation action.",
+        "preparedTitle": "Run scope is prepared",
+        "rule": "Rule",
+        "run": "Run",
+        "scopeDescription": "Enter the exact worker population and civil-date period before enabling the governed run command.",
+        "scopeTitle": "Interpretation run scope",
+        "traceAriaLabel": "Deterministic interpretation trace",
+        "workerIds": "Worker public IDs",
+        "workerIdsHelp": "Separate UUIDs with commas, spaces, or new lines. Duplicate IDs are rejected."
+      }
+    },
     "boundary": {
       "title": "Time-card command boundary",
       "scheduleConnected": "Editable dates come from the connected company work schedule. Card version and HRIS authority are revalidated for every command.",
@@ -1657,6 +2286,124 @@
         "hcm-personal-assistant": "HR assistant",
         "hcm-settings-ai-governance": "AI governance"
       }
+    }
+  },
+  "hrisPerformance": {
+    "reviewWorkspace": {
+      "retry": "Try again",
+      "formSectionsAriaLabel": "Review form sections",
+      "formNavigation": "Form navigation",
+      "loadingTitle": "Loading assigned review",
+      "loadingDescription": "Checking the current assignment and protected review fields.",
+      "emptyTitle": "Select an assigned review",
+      "emptyDescription": "Open a review assignment to load its governed form.",
+      "deniedTitle": "Review unavailable",
+      "deniedDescription": "This review is absent or outside your current assignment.",
+      "unavailableTitle": "Review could not be loaded",
+      "unavailableDescription": "The assigned review is temporarily unavailable.",
+      "draftSaved": "Draft saved.",
+      "submitted": "Review submitted",
+      "unsavedChanges": "Unsaved changes.",
+      "draftCurrent": "Draft is current.",
+      "eyebrow": "Assigned performance review",
+      "noDueDate": "No due date",
+      "contextLabel": "Assigned review context",
+      "template": "Template",
+      "version": "Version",
+      "questions": "Questions",
+      "partiallyAvailable": "Partially available",
+      "assignmentVerified": "Assignment verified",
+      "reloadLatest": "Reload latest review",
+      "commandsDisconnectedTitle": "Draft actions are not connected",
+      "commandsDisconnectedDescription": "The review stays read-only until the governed command executor is available.",
+      "partialTitle": "Some review data may be stale",
+      "partialDescription": "Your loaded draft remains visible. Reload before making a final submission.",
+      "conflictTitle": "Review changed",
+      "commandIncompleteTitle": "Review action incomplete",
+      "retrySameRequest": "Retry same request",
+      "reloadLatestDraft": "Reload latest draft",
+      "validationSummary_one": "Complete {{count}} review item",
+      "validationSummary_other": "Complete {{count}} review items",
+      "submissionAriaLabel": "Review submission",
+      "submissionRecorded": "Submission {{submissionNo}} was recorded at {{submittedAt}}.",
+      "finalAcknowledgement": "I understand that submission is final and uses the saved draft.",
+      "saveDraft": "Save draft",
+      "submitReview": "Submit review",
+      "discardTitle": "Discard unsaved changes?",
+      "discardDescription": "Reloading replaces your unsaved answers with the latest authoritative draft.",
+      "keepEditing": "Keep editing",
+      "discardAndReload": "Discard changes and reload"
+    },
+    "reviewAnswer": {
+      "requiredLabel": "{{label}} (required)",
+      "minimum": "Minimum {{value}}",
+      "maximum": "Maximum {{value}}",
+      "clearFor": "Clear response for {{label}}",
+      "clear": "Clear response",
+      "unsupported": "This review item cannot be displayed safely."
+    },
+    "compensationPlanning": {
+      "refresh": "Refresh",
+      "reconcileResult": "Reconcile result",
+      "commandFeedback": "Command feedback",
+      "pendingCommandTitle": "Command awaiting a durable result",
+      "pendingCommandDescription": "{{command}} will be replayed with the same sealed idempotency identity.",
+      "cycleVersion": "{{effectiveFrom}} · v{{version}}",
+      "boundProposalVersion": "{{proposalId}} · v{{version}}",
+      "impactSummary": "{{cycleLabel}} {{cycleCode}} · {{sourceVersion}} v{{version}}; {{submittedCount}} {{submittedSuffix}}. {{impactRevalidation}}",
+      "ledger": {
+        "allocate": "ALLOCATE",
+        "reverse": "REVERSE"
+      },
+      "state": {
+        "LOADING": {
+          "title": "Loading compensation plans",
+          "description": "Revalidating scope and owner data."
+        },
+        "EMPTY": {
+          "title": "No compensation cycles yet",
+          "description": "Create a governed cycle to begin planning."
+        },
+        "READY": { "title": "", "description": "" },
+        "DENIED": {
+          "title": "Access unavailable",
+          "description": "Your current duty or population scope does not allow this view."
+        },
+        "STEP_UP_REQUIRED": {
+          "title": "Verification required",
+          "description": "Complete fresh verification to continue this high-risk action."
+        },
+        "STALE_VERSION": {
+          "title": "This plan changed",
+          "description": "Refresh the plan before making another change."
+        },
+        "RESULT_UNKNOWN": {
+          "title": "Result needs reconciliation",
+          "description": "Retry the same sealed command to learn its durable result."
+        },
+        "ERROR": {
+          "title": "Compensation planning is unavailable",
+          "description": "Refresh this governed projection or use the correlation reference with support."
+        }
+      },
+      "evidence": {
+        "title": "Durable audit evidence",
+        "receipt": "Receipt: {{value}}",
+        "aggregateVersion": "Aggregate version: {{value}}",
+        "digest": "Digest: {{value}}",
+        "snapshot": "Snapshot: {{snapshotId}} · revision {{revision}}",
+        "sourceVersion": "Source version: {{sourceVersion}} · lines {{lineCount}}",
+        "published": "Published: {{value}}"
+      }
+    },
+    "feedback": {
+      "sortIdAscending": "ID ↑",
+      "sortIdDescending": "ID ↓"
+    }
+  },
+  "hrisPayroll": {
+    "calculationReceipt": {
+      "requestPopulation": "Request {{requestDigest}} · Population {{populationDigest}}"
     }
   },
   "myProfile": {

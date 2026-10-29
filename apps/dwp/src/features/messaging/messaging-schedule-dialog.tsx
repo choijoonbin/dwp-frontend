@@ -1,16 +1,22 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useInfiniteQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { ActionButton, ContentDialog, FormField } from '@dwp-frontend/design-system';
+import {
+  ActionButton,
+  ContentDialog,
+  dayjs,
+  foundationTokens,
+  InlineFeedback,
+  LoadingState,
+  LocalDateTimePickerField,
+} from '@dwp-frontend/design-system';
 import { formatDate, resolveSystemTimeZone } from '@dwp-frontend/shared-i18n';
 import {
   cancelMessagingScheduledMessage,
   getMessagingScheduledMessages,
 } from '@dwp-frontend/shared-utils';
 
-import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
-import CircularProgress from '@mui/material/CircularProgress';
 import Divider from '@mui/material/Divider';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
@@ -124,20 +130,23 @@ export function MessagingScheduleDialog({
         }}
       >
         <Stack spacing={2}>
-          {attachmentBlocked && <Alert severity="warning">{t('schedule.attachmentBlocked')}</Alert>}
-          {!bodyReady && <Alert severity="info">{t('schedule.bodyRequired')}</Alert>}
-          {error && <Alert severity="error">{t('schedule.error')}</Alert>}
-          <FormField
+          {attachmentBlocked && (
+            <InlineFeedback severity="warning">{t('schedule.attachmentBlocked')}</InlineFeedback>
+          )}
+          {!bodyReady && (
+            <InlineFeedback severity="info">{t('schedule.bodyRequired')}</InlineFeedback>
+          )}
+          {error && <InlineFeedback severity="error">{t('schedule.error')}</InlineFeedback>}
+          <LocalDateTimePickerField
             autoFocus
             required
-            type="datetime-local"
             label={t('schedule.timeLabel')}
             value={localValue}
             disabled={busy}
-            inputProps={{ min: localDateTimeValue(new Date(Date.now() + 60_000)) }}
+            minDateTime={dayjs.utc(localDateTimeValue(new Date(Date.now() + 60_000)))}
             errorMessage={timeError}
             supportingText={t('schedule.timeZone', { timeZone })}
-            onChange={(event) => setLocalValue(event.target.value)}
+            onValueChange={(value) => setLocalValue(value ?? '')}
           />
           <Stack direction="row" justifyContent="flex-end" spacing={1}>
             <ActionButton intent="quiet" disabled={busy} onClick={onClose}>
@@ -162,14 +171,14 @@ export function MessagingScheduleDialog({
             </Typography>
           </Box>
           {scheduledQuery.isPending ? (
-            <Stack direction="row" spacing={1} alignItems="center">
-              <CircularProgress size={16} />
-              <Typography variant="body2" color="text.secondary">
-                {t('schedule.pendingLoading')}
-              </Typography>
-            </Stack>
+            <LoadingState
+              embedded
+              size="compact"
+              spinnerSize={16}
+              label={t('schedule.pendingLoading')}
+            />
           ) : scheduledQuery.isError && !scheduledQuery.data ? (
-            <Alert
+            <InlineFeedback
               severity="error"
               action={
                 <ActionButton intent="quiet" size="small" onClick={() => scheduledQuery.refetch()}>
@@ -178,7 +187,7 @@ export function MessagingScheduleDialog({
               }
             >
               {t('schedule.pendingError')}
-            </Alert>
+            </InlineFeedback>
           ) : scheduledItems.length === 0 ? (
             <Typography variant="body2" color="text.secondary">
               {t('schedule.pendingEmpty')}
@@ -192,7 +201,12 @@ export function MessagingScheduleDialog({
                   spacing={1}
                   alignItems={{ xs: 'stretch', sm: 'center' }}
                   justifyContent="space-between"
-                  sx={{ p: 1.25, border: 1, borderColor: 'divider', borderRadius: 1.5 }}
+                  sx={{
+                    p: 1.25,
+                    border: 1,
+                    borderColor: 'divider',
+                    borderRadius: foundationTokens.radius.surface + 'px',
+                  }}
                 >
                   <Box sx={{ minWidth: 0 }}>
                     <Typography variant="caption" color="text.secondary" noWrap>
@@ -229,10 +243,10 @@ export function MessagingScheduleDialog({
                 </Stack>
               ))}
               {cancelMutation.isError && (
-                <Alert severity="error">{t('schedule.cancelError')}</Alert>
+                <InlineFeedback severity="error">{t('schedule.cancelError')}</InlineFeedback>
               )}
               {scheduledQuery.isFetchNextPageError && (
-                <Alert severity="error">{t('schedule.pendingMoreError')}</Alert>
+                <InlineFeedback severity="error">{t('schedule.pendingMoreError')}</InlineFeedback>
               )}
               {scheduledQuery.hasNextPage && (
                 <ActionButton

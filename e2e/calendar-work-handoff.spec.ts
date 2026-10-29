@@ -2,11 +2,8 @@ import { expect, test, type Locator } from '@playwright/test';
 import { createHash } from 'node:crypto';
 
 import { CALENDAR_EVENT_FIXTURE } from './support/product-area-fixtures';
-import {
-  FULL_PRODUCT_PERMISSIONS,
-  fulfillSuccess,
-  mockShellSession,
-} from './support/shell-session';
+import { mockCalendarShellSession as mockShellSession } from './support/calendar-shell-session';
+import { FULL_PRODUCT_PERMISSIONS, fulfillSuccess } from './support/shell-session';
 
 const WORK_HANDOFF_PERMISSIONS = [
   ...FULL_PRODUCT_PERMISSIONS,
@@ -394,7 +391,12 @@ test('a real-time reload rehydrates the exact Work link receipt without a second
   expect(linkAttempts.length - linksBeforeReload).toBe(1);
   expect(linkAttempts[1]).toEqual(linkAttempts[0]);
   expect(linkAttempts[1]?.url.endsWith(`/${handoffId}`)).toBe(true);
-  expect(await page.evaluate(() => window.sessionStorage.length)).toBe(0);
+  expect(
+    await page.evaluate(() => ({
+      documentHandoff: window.sessionStorage.getItem('dwp.calendar.work-document-handoff.v1'),
+      recovery: window.sessionStorage.getItem('dwp.calendar.work-handoff-recovery.v1'),
+    }))
+  ).toEqual({ documentHandoff: null, recovery: null });
 });
 
 test('unknown Calendar response replays the same handoff idempotency key', async ({ page }) => {

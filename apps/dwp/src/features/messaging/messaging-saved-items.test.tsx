@@ -7,6 +7,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { MessagingSavedItems } from './messaging-saved-items';
 
+import type * as DesignSystem from '@dwp-frontend/design-system';
 import type { Root } from 'react-dom/client';
 
 const api = vi.hoisted(() => ({
@@ -24,6 +25,30 @@ vi.mock('@dwp-frontend/shared-utils', () => ({
 vi.mock('@dwp-frontend/shared-i18n', async (importOriginal) => ({
   ...((await importOriginal()) as Record<string, unknown>),
   resolveSystemTimeZone: () => 'America/New_York',
+}));
+vi.mock('@dwp-frontend/design-system', async (importOriginal) => ({
+  ...(await importOriginal<typeof DesignSystem>()),
+  LocalDateTimePickerField: ({
+    label,
+    value,
+    disabled,
+    errorMessage,
+    supportingText,
+    onValueChange,
+  }: DesignSystem.LocalDateTimePickerFieldProps) => (
+    <label>
+      <span>{label}</span>
+      <input
+        data-testid="local-date-time"
+        aria-label={label}
+        aria-invalid={Boolean(errorMessage)}
+        value={value ?? ''}
+        disabled={disabled}
+        onChange={(event) => onValueChange(event.target.value)}
+      />
+      <span>{errorMessage ?? supportingText}</span>
+    </label>
+  ),
 }));
 vi.mock('react-i18next', () => ({
   useTranslation: () => ({
@@ -59,7 +84,7 @@ async function render({ openSnooze = true }: { openSnooze?: boolean } = {}) {
 }
 
 async function enterLocalTime(value: string) {
-  const input = document.body.querySelector<HTMLInputElement>('input[type="datetime-local"]');
+  const input = document.body.querySelector<HTMLInputElement>('[data-testid="local-date-time"]');
   expect(input).not.toBeNull();
   await act(async () => {
     const setter = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value')?.set;

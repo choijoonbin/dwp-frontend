@@ -1,7 +1,8 @@
 import { useCallback, type ComponentProps } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ActionButton } from '@dwp-frontend/design-system';
+import { ActionButton } from '@dwp-frontend/design-system/components/actions/action-button';
 import { LocalErrorState } from '@dwp-frontend/design-system/components/states/state-panels';
+import { foundationTokens } from '@dwp-frontend/design-system/foundation/tokens';
 import { useToast } from '@dwp-frontend/shared-utils/toast/toast-store';
 
 import Stack from '@mui/material/Stack';
@@ -76,7 +77,7 @@ export function NotificationSupportReference({ error }: { error: unknown | reado
       <Typography
         variant="caption"
         color="text.secondary"
-        sx={{ fontFamily: 'monospace', overflowWrap: 'anywhere' }}
+        sx={{ fontFamily: foundationTokens.font.mono, overflowWrap: 'anywhere' }}
       >
         {t('support.idLabel', { supportId })}
       </Typography>

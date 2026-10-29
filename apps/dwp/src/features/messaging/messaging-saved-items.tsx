@@ -30,7 +30,9 @@ import {
   FormField,
   GuidedEmptyState,
   LoadingState,
+  LocalDateTimePickerField,
   PageCanvas,
+  dayjs,
 } from '@dwp-frontend/design-system';
 
 import Avatar from '@mui/material/Avatar';
@@ -38,7 +40,6 @@ import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
 import InputAdornment from '@mui/material/InputAdornment';
 import Stack from '@mui/material/Stack';
-import TextField from '@mui/material/TextField';
 import ToggleButton from '@mui/material/ToggleButton';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import Typography from '@mui/material/Typography';
@@ -199,7 +200,7 @@ export function MessagingSavedItems() {
 
       <Box component="section" aria-labelledby="messaging-later-results" sx={{ mt: 2.5 }}>
         <Stack spacing={1.25}>
-          <TextField
+          <FormField
             size="small"
             value={search}
             onChange={(event) => updateUrl({ q: event.target.value, page: '0' })}
@@ -488,19 +489,18 @@ export function MessagingSavedItems() {
           }}
         >
           <Stack spacing={2}>
-            <FormField
+            <LocalDateTimePickerField
               autoFocus
               required
-              type="datetime-local"
               label={t('laterPage.snoozeDialog.timeLabel')}
               value={snoozeValue}
               disabled={updateMutation.isPending}
-              inputProps={{ min: localDateTimeValue(new Date(Date.now() + 60_000)) }}
+              minDateTime={dayjs.utc(localDateTimeValue(new Date(Date.now() + 60_000)))}
               errorMessage={snoozeError}
               supportingText={t('laterPage.snoozeDialog.timeZone', {
                 timeZone: snoozeTimeZone,
               })}
-              onChange={(event) => setSnoozeValue(event.target.value)}
+              onValueChange={(value) => setSnoozeValue(value ?? '')}
             />
             <Stack direction="row" justifyContent="flex-end" spacing={1}>
               <ActionButton

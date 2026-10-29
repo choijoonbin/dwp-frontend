@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Link as RouterLink, useSearchParams } from 'react-router-dom';
 import { BriefcaseBusiness, RefreshCw, Settings2, UsersRound } from 'lucide-react';
 import { useQueryClient } from '@tanstack/react-query';
@@ -165,10 +166,11 @@ function WorkbenchList({
   selected: Hrm007Item;
   onSelect: (item: Hrm007Item) => void;
 }>) {
+  const { t } = useTranslation('workforce');
   return (
     <Paper component="section" variant="outlined" sx={{ p: 1.25, minWidth: 0 }}>
       <Typography component="h2" variant="subtitle1" sx={{ px: 0.5, mb: 1 }}>
-        Disclosed work
+        {t('governedPeople.hrm007.list.title')}
       </Typography>
       <Box component="ul" sx={{ p: 0, m: 0, listStyle: 'none' }}>
         {items.map((item) => {
@@ -234,6 +236,7 @@ function WorkbenchDetail({
   actionsEnabled: boolean;
   onDelegateAction?: Hrm007ActionDelegate;
 }>) {
+  const { t } = useTranslation('workforce');
   const contract = HRM007_QUERY_CONTRACTS[queryId];
   return (
     <Paper component="section" variant="outlined" sx={{ p: { xs: 1.5, sm: 2 }, minWidth: 0 }}>
@@ -264,7 +267,7 @@ function WorkbenchDetail({
       </Box>
       <Stack direction={{ xs: 'column', sm: 'row' }} gap={1} sx={{ mt: 2 }} flexWrap="wrap">
         <Link component={RouterLink} to={deepLink} underline="hover" sx={{ alignSelf: 'center' }}>
-          Open governed detail
+          {t('governedPeople.hrm007.detail.open')}
         </Link>
         {item.availableActions.map((action) => (
           <ActionButton
@@ -282,7 +285,7 @@ function WorkbenchDetail({
       </Stack>
       {item.availableActions.length > 0 && !onDelegateAction && (
         <Typography variant="caption" color="text.secondary" sx={{ mt: 1, display: 'block' }}>
-          Existing lifecycle actions remain unavailable until their owner binding is mounted.
+          {t('governedPeople.hrm007.detail.actionsUnavailable')}
         </Typography>
       )}
     </Paper>
@@ -438,6 +441,7 @@ function ProjectionWorkspace({
   canPrevious: boolean;
   onDelegateAction?: Hrm007ActionDelegate;
 }>) {
+  const { t } = useTranslation('workforce');
   const [searchParams, setSearchParams] = useSearchParams();
   const requestedFocus = searchParams.get('focus');
   const selected =
@@ -491,20 +495,19 @@ function ProjectionWorkspace({
               startIcon={<RefreshCw size={15} aria-hidden="true" />}
               onClick={onRefresh}
             >
-              Refresh
+              {t('governedPeople.common.refresh')}
             </ActionButton>
           </Stack>
         </Stack>
       </Paper>
 
       {stale && (
-        <InlineFeedback severity="warning" title="The disclosed snapshot is stale">
-          Owner data could not be refreshed. Review remains read-only and all delegated actions are
-          disabled until a current authorization-bound snapshot is returned.
+        <InlineFeedback severity="warning" title={t('governedPeople.hrm007.states.staleTitle')}>
+          {t('governedPeople.hrm007.states.staleDescription')}
         </InlineFeedback>
       )}
       {projection.queryState.state === 'PARTIAL' && (
-        <InlineFeedback severity="warning" title="Some governed data is unavailable">
+        <InlineFeedback severity="warning" title={t('governedPeople.hrm007.states.partialTitle')}>
           <Box component="ul" sx={{ m: 0, pl: 2.5 }}>
             {projection.queryState.partialFailures.map((failure) => (
               <li key={`${failure.componentKey}:${failure.correlationId}`}>
@@ -557,14 +560,14 @@ function ProjectionWorkspace({
 
       <Stack direction="row" gap={1} justifyContent="flex-end">
         <ActionButton intent="quiet" disabled={!canPrevious || fetching} onClick={onPrevious}>
-          Previous
+          {t('governedPeople.common.previous')}
         </ActionButton>
         <ActionButton
           intent="quiet"
           disabled={!projection.queryState.nextCursor || fetching}
           onClick={onNext}
         >
-          Next
+          {t('governedPeople.common.next')}
         </ActionButton>
       </Stack>
     </Stack>
@@ -593,6 +596,7 @@ function ActiveHrm007Workbench({
   onTerminalFailure,
 }: AdmittedHrm007WorkbenchProps &
   Readonly<{ onTerminalFailure: (failure: Hrm007TerminalFailure) => void }>) {
+  const { t } = useTranslation('workforce');
   const queryClient = useQueryClient();
   const actionFence = useRef(false);
   const initialCursor = options?.cursor ?? null;
@@ -622,8 +626,8 @@ function ActiveHrm007Workbench({
       <div data-testid="hrm-007-denied" data-runtime-state="denied">
         <GuidedEmptyState
           kind="permission"
-          title="This governed workbench is unavailable"
-          description="The current access context cannot disclose this workbench."
+          title={t('governedPeople.hrm007.states.deniedTitle')}
+          description={t('governedPeople.hrm007.states.deniedDescription')}
           size="page"
         />
       </div>
@@ -632,7 +636,7 @@ function ActiveHrm007Workbench({
   if (query.isPending && !query.data) {
     return (
       <Typography role="status" aria-live="polite" data-runtime-state="loading">
-        Loading governed workbench…
+        {t('governedPeople.hrm007.states.loading')}
       </Typography>
     );
   }
@@ -640,8 +644,8 @@ function ActiveHrm007Workbench({
     return (
       <div data-testid="hrm-007-unavailable" data-runtime-state="unavailable">
         <LocalErrorState
-          title="Governed workbench unavailable"
-          description="Owner data could not be loaded. No lifecycle action was enabled."
+          title={t('governedPeople.hrm007.states.unavailableTitle')}
+          description={t('governedPeople.hrm007.states.unavailableDescription')}
           retryLabel="Retry"
           onRetry={() =>
             onTerminalFailure({ kind: concealError ? 'concealed' : 'unavailable', queryKey })
@@ -656,8 +660,8 @@ function ActiveHrm007Workbench({
     return (
       <div data-testid="hrm-007-unavailable" data-runtime-state="unavailable">
         <LocalErrorState
-          title="Governed workbench unavailable"
-          description="Owner data could not be loaded. No lifecycle action was enabled."
+          title={t('governedPeople.hrm007.states.unavailableTitle')}
+          description={t('governedPeople.hrm007.states.unavailableDescription')}
           retryLabel="Retry"
           onRetry={() => void query.refetch()}
           retrying={query.isFetching}
@@ -670,8 +674,8 @@ function ActiveHrm007Workbench({
     return (
       <div data-testid="hrm-007-unavailable" data-runtime-state="unavailable">
         <LocalErrorState
-          title="Governed workbench unavailable"
-          description="The owner returned no disclosable data for this request."
+          title={t('governedPeople.hrm007.states.unavailableTitle')}
+          description={t('governedPeople.hrm007.states.noDisclosableData')}
           retryLabel="Retry"
           onRetry={() => void query.refetch()}
           retrying={query.isFetching}
@@ -734,6 +738,7 @@ function ActiveHrm007Workbench({
 }
 
 function AdmittedHrm007Workbench(props: AdmittedHrm007WorkbenchProps) {
+  const { t } = useTranslation('workforce');
   const queryClient = useQueryClient();
   const [terminalFailure, setTerminalFailure] = useState<Hrm007TerminalFailure | null>(null);
   useEffect(() => {
@@ -753,8 +758,8 @@ function AdmittedHrm007Workbench(props: AdmittedHrm007WorkbenchProps) {
       <div data-testid="hrm-007-denied" data-runtime-state="denied">
         <GuidedEmptyState
           kind="permission"
-          title="This governed workbench is unavailable"
-          description="The current access context cannot disclose this workbench."
+          title={t('governedPeople.hrm007.states.deniedTitle')}
+          description={t('governedPeople.hrm007.states.deniedDescription')}
           size="page"
         />
       </div>
@@ -764,8 +769,8 @@ function AdmittedHrm007Workbench(props: AdmittedHrm007WorkbenchProps) {
     return (
       <div data-testid="hrm-007-unavailable" data-runtime-state="unavailable">
         <LocalErrorState
-          title="Governed workbench unavailable"
-          description="Owner data could not be loaded. No lifecycle action was enabled."
+          title={t('governedPeople.hrm007.states.unavailableTitle')}
+          description={t('governedPeople.hrm007.states.unavailableDescription')}
           retryLabel="Retry"
           onRetry={() => setTerminalFailure(null)}
           retrying={false}
@@ -797,6 +802,7 @@ export function Hrm007Workbench({
   options,
   onDelegateAction,
 }: Hrm007WorkbenchProps) {
+  const { t } = useTranslation('workforce');
   const trustedAdmission = Boolean(
     admission?.kind === 'TRUSTED_PRODUCT_SURFACE_PAGE' &&
     admission.feature === HRM007_FEATURE &&
@@ -808,8 +814,9 @@ export function Hrm007Workbench({
       <div data-testid="hrm-007-disabled" data-runtime-state="disabled">
         <GuidedEmptyState
           kind="permission"
-          title="This governed workbench is not enabled"
-          description="The feature is off or this tenant is not enrolled. No owner request was sent."
+          title={t('governedPeople.hrm007.states.notEnabledTitle')}
+          description={t('governedPeople.hrm007.states.notEnabledDescription')}
+          titleComponent="h1"
           size="page"
         />
       </div>
@@ -836,8 +843,8 @@ export function Hrm007Workbench({
       <div data-testid="hrm-007-denied" data-runtime-state="denied">
         <GuidedEmptyState
           kind="permission"
-          title="This governed workbench is unavailable"
-          description="The current access context cannot disclose this workbench."
+          title={t('governedPeople.hrm007.states.deniedTitle')}
+          description={t('governedPeople.hrm007.states.deniedDescription')}
           size="page"
         />
       </div>
@@ -847,8 +854,8 @@ export function Hrm007Workbench({
     return (
       <div data-testid="hrm-007-unavailable" data-runtime-state="unavailable">
         <LocalErrorState
-          title="Governed workbench unavailable"
-          description="The sealed read adapter is not mounted. No owner request was sent."
+          title={t('governedPeople.hrm007.states.unavailableTitle')}
+          description={t('governedPeople.hrm007.states.adapterNotMounted')}
           size="page"
         />
       </div>

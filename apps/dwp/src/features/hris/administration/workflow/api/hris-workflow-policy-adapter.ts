@@ -15,6 +15,5 @@ export type HrisWorkflowPolicyDataSource = Readonly<{
 
 export const hrisWorkflowPolicyDataSource: HrisWorkflowPolicyDataSource = Object.freeze({
   list: (contextScopeKey, signal) => getApprovalPolicies(contextScopeKey, signal),
-  publish: (policyId, input, execution) =>
-    publishApprovalPolicy(policyId, input, execution),
+  publish: (policyId, input, execution) => publishApprovalPolicy(policyId, input, execution),
 });

@@ -1,3 +1,5 @@
+import { resolveSupportedLocale } from '@dwp-frontend/shared-i18n';
+
 export type PayrollPopulationCopy = Readonly<{
   eyebrow: string;
   title: string;
@@ -248,5 +250,5 @@ const KO: PayrollPopulationCopy = Object.freeze({
 });
 
 export function payrollPopulationCopy(language?: string): PayrollPopulationCopy {
-  return language?.toLowerCase().startsWith('ko') ? KO : EN;
+  return resolveSupportedLocale(language) === 'ko' ? KO : EN;
 }

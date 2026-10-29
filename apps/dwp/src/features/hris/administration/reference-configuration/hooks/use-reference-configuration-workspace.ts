@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { resolveSystemTimeZone } from '@dwp-frontend/shared-i18n';
 
 import { useProductSurfaceRequestScope } from '../../../../../components/use-product-surface-request-scope';
 import {
@@ -34,7 +35,7 @@ export function useReferenceConfigurationWorkspace() {
       fields: ['POLICY_VERSION', 'REFERENCE_DATA', 'EFFECTIVE_STATUS'],
       freshness: 'FRESH_ONLY',
       locale: navigator.language || 'en',
-      timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC',
+      timeZone: resolveSystemTimeZone('UTC'),
       correlationId,
     }),
     [correlationId, statusFilter]

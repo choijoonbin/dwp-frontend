@@ -8,6 +8,7 @@ import {
   FormField,
   InlineFeedback,
   SelectField,
+  foundationTokens,
 } from '@dwp-frontend/design-system';
 
 import Box from '@mui/material/Box';
@@ -175,10 +176,21 @@ export function CalendarSchedulingPollCreator({
       component="section"
       aria-labelledby="calendar-poll-creator-title"
       data-testid="calendar-scheduling-poll-creator"
-      sx={{ border: 1, borderColor: 'divider', borderRadius: 1, overflow: 'hidden', mb: 2 }}
+      sx={{
+        border: 1,
+        borderColor: 'divider',
+        borderRadius: foundationTokens.radius.control,
+        overflow: 'hidden',
+        mb: 2,
+      }}
     >
       <Box sx={{ px: 2, py: 1.5 }}>
-        <Typography id="calendar-poll-creator-title" component="h2" variant="h6" fontWeight={750}>
+        <Typography
+          id="calendar-poll-creator-title"
+          component="h2"
+          variant="h6"
+          fontWeight={foundationTokens.home.typography.weightEmphasis}
+        >
           {t('polls.creator.title')}
         </Typography>
         <Typography variant="body2" color="text.secondary">
@@ -246,13 +258,21 @@ export function CalendarSchedulingPollCreator({
           />
 
           <Stack component="fieldset" spacing={1.5} sx={{ m: 0, p: 0, border: 0 }}>
-            <Typography component="legend" fontWeight={750}>
+            <Typography
+              component="legend"
+              fontWeight={foundationTokens.home.typography.weightEmphasis}
+            >
               {t('polls.creator.candidatesLabel')}
             </Typography>
             {candidates.map((candidate, index) => (
               <Box
                 key={candidate.candidateId}
-                sx={{ border: 1, borderColor: 'divider', borderRadius: 1, p: 1.5 }}
+                sx={{
+                  border: 1,
+                  borderColor: 'divider',
+                  borderRadius: foundationTokens.radius.control,
+                  p: 1.5,
+                }}
               >
                 <Stack
                   direction="row"
@@ -261,7 +281,7 @@ export function CalendarSchedulingPollCreator({
                   gap={1}
                   sx={{ mb: 1.25 }}
                 >
-                  <Typography fontWeight={700}>
+                  <Typography fontWeight={foundationTokens.home.typography.weightBold}>
                     {t('polls.candidateLabel', { count: index + 1 })}
                   </Typography>
                   <ActionButton
@@ -359,7 +379,10 @@ export function CalendarSchedulingPollCreator({
         </DwpDateTimeProvider>
 
         <Stack component="fieldset" spacing={1.5} sx={{ m: 0, p: 0, border: 0 }}>
-          <Typography component="legend" fontWeight={750}>
+          <Typography
+            component="legend"
+            fontWeight={foundationTokens.home.typography.weightEmphasis}
+          >
             {t('polls.creator.participantsLabel')}
           </Typography>
           <CalendarAttendeePicker
@@ -391,7 +414,11 @@ export function CalendarSchedulingPollCreator({
 
         {showValidation && !validation.valid ? (
           <Box role="alert" aria-labelledby="calendar-poll-validation-title">
-            <Typography id="calendar-poll-validation-title" fontWeight={750} color="error.main">
+            <Typography
+              id="calendar-poll-validation-title"
+              fontWeight={foundationTokens.home.typography.weightEmphasis}
+              color="error.main"
+            >
               {t('polls.creator.validationTitle')}
             </Typography>
             <Box component="ul" sx={{ mt: 0.5, mb: 0, pl: 2.5 }}>

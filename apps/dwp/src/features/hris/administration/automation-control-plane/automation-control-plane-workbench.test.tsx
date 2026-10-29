@@ -3,6 +3,11 @@ import { act } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
+vi.mock('react-i18next', async () => {
+  const { hcmTestUseTranslation } = await import('../../../../test-utils/hcm-i18n-test-stub');
+  return { useTranslation: hcmTestUseTranslation };
+});
+
 import { AutomationControlPlaneWorkbench } from './automation-control-plane-workbench';
 import {
   automationCatalogFixture,

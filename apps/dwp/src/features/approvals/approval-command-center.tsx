@@ -59,6 +59,11 @@ import { useApprovalCommandTaskSearch } from './use-approval-command-task-search
 import { useApprovalTaskDocuments } from './use-approval-task-documents';
 import { authorizedApprovalWorkReturnTarget } from './approval-return-target';
 import { useApprovalBatchPreflight } from './use-approval-batch-preflight';
+import { ApprovalHighRiskCommandDialog } from './approval-high-risk-command-dialog';
+import { assertApprovalTaskUsesStandardDecisionRoute } from './approval-hris-separation-waiver-command';
+import { useApprovalHrisSeparationWaiverDecision } from './use-approval-hris-separation-waiver-decision';
+import { invalidateApprovalCommandWork } from './approval-command-center-cache';
+import { useApprovalCommandCenterHeight } from './use-approval-command-center-height';
 
 import type {
   ApprovalBatchResult,
@@ -109,31 +114,7 @@ export function ApprovalCommandCenter() {
   const [comment, setComment] = useState('');
   const [batchDialogOpen, setBatchDialogOpen] = useState(false);
   const [batchResult, setBatchResult] = useState<ApprovalBatchResult>();
-  const [desktopWorkspaceHeight, setDesktopWorkspaceHeight] = useState<number>();
-
-  useEffect(() => {
-    if (mobile) {
-      setDesktopWorkspaceHeight(undefined);
-      return undefined;
-    }
-    let frame = 0;
-    const measure = () => {
-      window.cancelAnimationFrame(frame);
-      frame = window.requestAnimationFrame(() => {
-        const top = commandCenterRef.current?.getBoundingClientRect().top;
-        if (top === undefined) return;
-        setDesktopWorkspaceHeight(Math.max(520, Math.floor(window.innerHeight - top - 24)));
-      });
-    };
-    measure();
-    window.addEventListener('resize', measure);
-    window.visualViewport?.addEventListener('resize', measure);
-    return () => {
-      window.cancelAnimationFrame(frame);
-      window.removeEventListener('resize', measure);
-      window.visualViewport?.removeEventListener('resize', measure);
-    };
-  }, [mobile]);
+  const desktopWorkspaceHeight = useApprovalCommandCenterHeight(commandCenterRef, mobile);
 
   const filter: ApprovalQueueFilter = parseApprovalQueueFilter(searchParams.get('queue'));
   const requestedPage = Number(searchParams.get('page') ?? '0');
@@ -355,19 +336,21 @@ export function ApprovalCommandCenter() {
   const runClaim = useApprovalGovernedMutation('route.approvals.work.task-claim.action');
 
   const invalidateApprovalWork = async (taskId?: string) => {
-    const invalidations = [
-      queryClient.invalidateQueries({ queryKey: ['approvals', 'command-tasks'] }),
-      queryClient.invalidateQueries({ queryKey: ['approvals', 'command-queue-counts'] }),
-      queryClient.invalidateQueries({ queryKey: ['approvals', 'tasks'] }),
-      queryClient.invalidateQueries({ queryKey: ['approvals', 'home'] }),
-    ];
-    if (taskId) {
-      invalidations.push(
-        queryClient.invalidateQueries({ queryKey: ['approvals', 'command-task', taskId] }),
-        queryClient.invalidateQueries({ queryKey: ['approvals', 'task', taskId] })
-      );
-    }
-    await Promise.all(invalidations);
+    await invalidateApprovalCommandWork(queryClient, taskId);
+  };
+
+  const completeDecision = async (taskId: string, sourceScopeIdentity: string) => {
+    if (scopeIdentityRef.current !== sourceScopeIdentity) return;
+    setConfirmation(undefined);
+    setDecisionRecovery(undefined);
+    setComment('');
+    setSelectedBatchIds((current) => current.filter((candidate) => candidate !== taskId));
+    setSelectedTaskId(undefined);
+    const next = new URLSearchParams(searchParams);
+    next.delete('task');
+    setSearchParams(next, { replace: true });
+    await invalidateApprovalWork(taskId);
+    toast.success(t('inbox.decisionSaved'));
   };
 
   const decide = useMutation({
@@ -399,6 +382,7 @@ export function ApprovalCommandCenter() {
       ) {
         throw new HttpError('approval decision authority changed', 403);
       }
+      if (input.decision === 'APPROVE') assertApprovalTaskUsesStandardDecisionRoute(latest);
       return runDecision((execution) => {
         assertCurrentAuthority(input, 'decide');
         return decideApprovalTask(
@@ -414,17 +398,7 @@ export function ApprovalCommandCenter() {
       });
     },
     onSuccess: async (_result, input) => {
-      if (scopeIdentityRef.current !== input.scopeIdentity) return;
-      setConfirmation(undefined);
-      setDecisionRecovery(undefined);
-      setComment('');
-      setSelectedBatchIds((current) => current.filter((taskId) => taskId !== input.taskId));
-      setSelectedTaskId(undefined);
-      const next = new URLSearchParams(searchParams);
-      next.delete('task');
-      setSearchParams(next, { replace: true });
-      await invalidateApprovalWork(input.taskId);
-      toast.success(t('inbox.decisionSaved'));
+      await completeDecision(input.taskId, input.scopeIdentity);
     },
     onError: (error, input) => {
       if (
@@ -446,6 +420,27 @@ export function ApprovalCommandCenter() {
       });
       toast.error(t('inbox.decisionError'));
     },
+  });
+
+  const hrisHigh = useApprovalHrisSeparationWaiverDecision({
+    confirmation,
+    confirmationReady,
+    selected,
+    comment,
+    decisionPending: decide.isPending,
+    contextScopeKey: requestScope.contextScopeKey,
+    requestScopeCacheKey: requestScope.cacheKey,
+    isCurrentScope: (candidate) => scopeIdentityRef.current === candidate,
+    isSelectedTask: (taskId) => selectedTaskIdRef.current === taskId,
+    assertCurrentAuthority: (input) => assertCurrentAuthority(input, 'decide'),
+    submitRegular: (input) => decide.mutate(input),
+    clearConfirmation: () => setConfirmation(undefined),
+    completeDecision,
+    recover: (kind, taskId, sourceScope) => {
+      if (scopeIdentityRef.current !== sourceScope) return;
+      setDecisionRecovery({ kind, command: 'DECISION', decision: 'APPROVE', taskId });
+    },
+    reportError: () => toast.error(t('inbox.decisionError')),
   });
 
   const claim = useMutation({
@@ -534,6 +529,7 @@ export function ApprovalCommandCenter() {
         },
         approveTask: async (latest) => {
           if (scopeIdentityRef.current !== input.scopeIdentity) throw new Error('scope changed');
+          assertApprovalTaskUsesStandardDecisionRoute(latest);
           await runDecision((execution) => {
             assertCurrentAuthority(
               {
@@ -627,7 +623,8 @@ export function ApprovalCommandCenter() {
 
   const showQueue = !mobile || mobileQueueMode || !selectedTaskId;
   const showDetail = !mobile || (!mobileQueueMode && Boolean(selectedTaskId));
-  const busy = decide.isPending || claim.isPending || batchApprove.isPending;
+  const highBlocked = hrisHigh.controller.busy || hrisHigh.controller.open;
+  const busy = decide.isPending || claim.isPending || batchApprove.isPending || highBlocked;
   const selectionMode = !mobile || mobileSelectionMode;
   const activeDecisionRecovery =
     decisionRecovery?.taskId === selectedTaskId ? decisionRecovery : undefined;
@@ -885,7 +882,7 @@ export function ApprovalCommandCenter() {
                   (detail.isError || detail.failureCount > 0 || tasks.failureCount > 0)
                 }
                 mobile={mobile}
-                decisionBusy={decide.isPending || batchApprove.isPending}
+                decisionBusy={decide.isPending || batchApprove.isPending || highBlocked}
                 claimBusy={claim.isPending}
                 verifiedAt={detail.dataUpdatedAt}
                 onRevalidateDocument={async () => {
@@ -943,9 +940,11 @@ export function ApprovalCommandCenter() {
         decisionTarget={selected}
         verifiedAt={detail.dataUpdatedAt}
         comment={comment}
-        decisionBusy={decide.isPending}
+        decisionBusy={decide.isPending || hrisHigh.controller.busy}
         decisionSubmitDisabled={
-          !confirmationReady || (decision !== 'APPROVE' && comment.trim().length < 8)
+          !confirmationReady ||
+          hrisHigh.controller.open ||
+          (decision !== 'APPROVE' && comment.trim().length < 8)
         }
         batchOpen={batchDialogOpen}
         batchSelectedCount={selectedBatchIds.length}
@@ -961,10 +960,7 @@ export function ApprovalCommandCenter() {
         batchPreflightRefreshing={batchPreflightRefreshing}
         onDecisionClose={() => setConfirmation(undefined)}
         onCommentChange={setComment}
-        onDecisionSubmit={() => {
-          if (!confirmation || !confirmationReady || decide.isPending) return;
-          decide.mutate({ ...confirmation, comment: comment.trim() || undefined });
-        }}
+        onDecisionSubmit={() => void hrisHigh.submit()}
         onBatchClose={() => setBatchDialogOpen(false)}
         onBatchSubmit={() => {
           if (
@@ -982,6 +978,7 @@ export function ApprovalCommandCenter() {
           void Promise.all([tasks.refetch(), batch.refetch()]);
         }}
       />
+      <ApprovalHighRiskCommandDialog controller={hrisHigh.controller} />
     </Paper>
   );
 }

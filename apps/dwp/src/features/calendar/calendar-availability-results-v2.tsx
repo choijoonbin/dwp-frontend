@@ -1,9 +1,8 @@
 import { useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CalendarCheck2 } from 'lucide-react';
-import { GuidedEmptyState } from '@dwp-frontend/design-system';
+import { GuidedEmptyState, InlineFeedback, foundationTokens } from '@dwp-frontend/design-system';
 
-import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
 import Divider from '@mui/material/Divider';
 import Stack from '@mui/material/Stack';
@@ -57,7 +56,7 @@ export function CalendarAvailabilityResultsV2({
           ref={resultsHeadingRef}
           component="h2"
           variant="h6"
-          fontWeight={800}
+          fontWeight={foundationTokens.home.typography.weightHeavy}
           tabIndex={-1}
         >
           {t('schedulingAssistant.resultsTitle')}
@@ -69,7 +68,7 @@ export function CalendarAvailabilityResultsV2({
         </Typography>
       </Box>
       {evidenceBlocked ? (
-        <Alert severity="warning" role="status">
+        <InlineFeedback severity="warning" role="status">
           {t(
             state === 'PARTIAL'
               ? 'schedulingAssistant.partialBlocked'
@@ -77,15 +76,22 @@ export function CalendarAvailabilityResultsV2({
                 ? 'schedulingAssistant.staleResults'
                 : 'schedulingAssistant.unknownBlocked'
           )}
-        </Alert>
+        </InlineFeedback>
       ) : null}
       {applyError ? (
-        <Alert severity="error" role="alert">
+        <InlineFeedback severity="error" role="alert">
           {t('schedulingAssistant.hardRecheckBlocked')}
-        </Alert>
+        </InlineFeedback>
       ) : null}
 
-      <Box sx={{ bgcolor: 'background.paper', border: 1, borderColor: 'divider', borderRadius: 1 }}>
+      <Box
+        sx={{
+          bgcolor: 'background.paper',
+          border: 1,
+          borderColor: 'divider',
+          borderRadius: foundationTokens.radius.control + 'px',
+        }}
+      >
         <Box sx={{ p: { xs: 1.5, sm: 2 } }}>
           <CalendarSchedulingMatrix
             evaluation={evaluation}
@@ -147,11 +153,15 @@ export function CalendarAvailabilityResultsV2({
                       '&:focus-visible': { outline: '2px solid', outlineColor: 'primary.main' },
                     }}
                   >
-                    <Typography aria-hidden="true" fontWeight={800} color="primary.main">
+                    <Typography
+                      aria-hidden="true"
+                      fontWeight={foundationTokens.home.typography.weightHeavy}
+                      color="primary.main"
+                    >
                       {index + 1}
                     </Typography>
                     <Box sx={{ minWidth: 0 }}>
-                      <Typography fontWeight={700}>
+                      <Typography fontWeight={foundationTokens.home.typography.weightBold}>
                         {calendarDate(candidate.startsAt, language, true, timeZone)} ·{' '}
                         {calendarTime(candidate.startsAt, language, timeZone)}–
                         {calendarTime(candidate.endsAt, language, timeZone)}

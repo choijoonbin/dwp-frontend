@@ -45,6 +45,25 @@ function detail(taskId: string, overrides: Partial<ApprovalTaskDetail> = {}): Ap
   };
 }
 
+function hrisPayload(requestId: string) {
+  return {
+    schemaName: 'SeparationWaiverApprovalRequestV1',
+    schemaVersion: 1,
+    approvalRequestId: requestId,
+    casePublicId: '10000000-0000-4000-8000-000000000001',
+    taskPublicId: '10000000-0000-4000-8000-000000000002',
+    taskType: 'TERMINATION',
+    caseMakerPublicId: '10000000-0000-4000-8000-000000000003',
+    requestedByActorPublicId: '10000000-0000-4000-8000-000000000004',
+    reasonCode: 'LEGAL_HOLD',
+    taskOwnerRevision: 3,
+    taskVersion: 2,
+    requestedAt: '2026-09-15T00:00:00Z',
+    payloadSha256: 'a'.repeat(64),
+    correlationId: '10000000-0000-4000-8000-000000000005',
+  };
+}
+
 describe('approval batch preflight', () => {
   it('separates eligible, excluded, and uncertain work without inferring authority', () => {
     const selectedTaskIds = [
@@ -153,5 +172,38 @@ describe('approval batch preflight', () => {
       ineligibleTaskIds: ['denied'],
       remainingTaskIds: [],
     });
+  });
+
+  it('excludes dedicated HIGH approvals and malformed HRIS sources from generic batches', () => {
+    const requestId = '10000000-0000-4000-8000-000000000000';
+    const queueTasks = [task('high'), task('malformed'), task('ordinary')];
+    const high = detail('high', {
+      task: { ...task('high'), requestId },
+      payload: hrisPayload(requestId),
+    });
+    const malformed = detail('malformed', {
+      task: { ...task('malformed'), requestId },
+      payload: { ...hrisPayload(requestId), correlationId: 'not-a-uuid' },
+    });
+    const ordinary = detail('ordinary', {
+      payload: { approvalRequestId: 'ordinary-form-value', payloadSha256: 'display-only' },
+    });
+
+    const result = buildApprovalBatchPreflight({
+      selectedTaskIds: queueTasks.map(({ taskId }) => taskId),
+      queueTasks,
+      inspections: [
+        { taskId: 'high', state: 'READY', detail: high },
+        { taskId: 'malformed', state: 'READY', detail: malformed },
+        { taskId: 'ordinary', state: 'READY', detail: ordinary },
+      ],
+    });
+
+    expect(result.entries.map(({ taskId, outcome, reason }) => [taskId, outcome, reason])).toEqual([
+      ['high', 'EXCLUDED', 'HIGH_RISK_CONFIRMATION_REQUIRED'],
+      ['malformed', 'EXCLUDED', 'DETAIL_UNAVAILABLE'],
+      ['ordinary', 'ELIGIBLE', undefined],
+    ]);
+    expect(approvalBatchEligibleTaskIds(result)).toEqual(['ordinary']);
   });
 });

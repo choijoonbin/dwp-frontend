@@ -2,6 +2,7 @@ import {
   HRIS_INTEGRATION_CONTROL_PLANE_PROJECTIONS,
   HRIS_INTEGRATION_CONTROL_PLANE_STATES,
 } from './integration-control-plane-contract';
+import { formatDate } from '@dwp-frontend/shared-i18n';
 import {
   INTEGRATION_ACTION_KEYS,
   INTEGRATION_COMMAND_TYPE_BY_ACTION,
@@ -316,11 +317,11 @@ export function integrationActionLabel(action: IntegrationActionKey): string {
 export function formatIntegrationTimestamp(value: string): string {
   const time = Date.parse(value);
   if (!Number.isFinite(time)) return 'Unavailable';
-  return new Intl.DateTimeFormat('en', {
+  return formatDate(time, {
     dateStyle: 'medium',
     timeStyle: 'short',
     timeZone: 'UTC',
-  }).format(time);
+  });
 }
 
 function parseProjectionItem(

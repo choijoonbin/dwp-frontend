@@ -3,6 +3,7 @@ import {
   AUTOMATION_CATALOG_FIELDS,
   AUTOMATION_RESOURCE_TYPES,
 } from './automation-control-plane-types';
+import { formatDate } from '@dwp-frontend/shared-i18n';
 
 import type { HrisAutomationControlPlaneState } from './automation-control-plane-contract';
 import type {
@@ -491,11 +492,11 @@ export function isProjectedRestriction(value: unknown): value is MaskedField | O
 }
 
 export function formatAutomationTimestamp(value: string): string {
-  return new Intl.DateTimeFormat('en', {
+  return formatDate(value, {
     dateStyle: 'medium',
     timeStyle: 'short',
     timeZone: 'UTC',
-  }).format(new Date(value));
+  });
 }
 
 function parseCatalogItem(value: unknown): AutomationCatalogItem {

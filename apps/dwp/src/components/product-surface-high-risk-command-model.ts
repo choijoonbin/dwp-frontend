@@ -35,6 +35,7 @@ export type ApprovalHighRiskCommandDescriptor = Readonly<{
     | 'APPROVAL_SIGNATURE_REQUEST'
     | 'SIGNATURE_POLICY'
     | 'EXTERNAL_SIGNATURE_REQUEST'
+    | 'HRIS_SEPARATION_WAIVER_TASK'
     | 'OUTBOX_EVENT'
     | 'OPERATION_BATCH'
     | 'APPROVAL_TASK'

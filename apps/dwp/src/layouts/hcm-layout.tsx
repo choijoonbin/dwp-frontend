@@ -5,7 +5,7 @@ import {
   HRIS_TASK_NAVIGATION_LAYOUT_PROPS,
   useHrisNavigationPolicyShellProjection,
 } from '../features/hris/shell/navigation-policy';
-import { ProductAreaLayout } from './product-area-layout';
+import { ProductAreaLayout } from './product-area-layout-boundary';
 
 import type { HcmLegacySurfaceId } from '../features/hcm/hcm-surface-access';
 

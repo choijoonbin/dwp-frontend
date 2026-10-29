@@ -7,6 +7,8 @@ import {
   ShieldCheck,
 } from 'lucide-react';
 import { ActionButton, InlineFeedback, FormField, LoadingState } from '@dwp-frontend/design-system';
+import { formatDate } from '@dwp-frontend/shared-i18n';
+import { useTranslation } from 'react-i18next';
 
 import Box from '@mui/material/Box';
 import ButtonBase from '@mui/material/ButtonBase';
@@ -82,12 +84,12 @@ export type HrisOperationsWorkspaceViewProps = Readonly<{
   copy?: HrisOperationsWorkspaceCopy;
 }>;
 
-function timestamp(value: string | null | undefined): string {
-  if (!value) return 'Not yet available';
+function timestamp(value: string | null | undefined, unavailable: string): string {
+  if (!value) return unavailable;
   const date = new Date(value);
   return Number.isFinite(date.getTime())
-    ? new Intl.DateTimeFormat(undefined, { dateStyle: 'medium', timeStyle: 'short' }).format(date)
-    : 'Not yet available';
+    ? formatDate(date, { dateStyle: 'medium', timeStyle: 'short' })
+    : unavailable;
 }
 
 function severityColor(severity: HrisOperationalExceptionDetail['severity']) {
@@ -120,12 +122,13 @@ function StateNotice({
 }
 
 function LoadingWorkspace() {
+  const { t } = useTranslation('hcm');
   return (
-    <Stack gap={2} aria-label="Loading HRIS operations exceptions" aria-busy="true">
+    <Stack gap={2} aria-label={t('administration.operations.loading.exceptions')} aria-busy="true">
       <LoadingState
         embedded
         variant="skeleton"
-        label="Loading HRIS operations summary"
+        label={t('administration.operations.loading.summary')}
         skeletonRows={1}
         skeletonHeight={112}
       />
@@ -140,14 +143,14 @@ function LoadingWorkspace() {
         <LoadingState
           embedded
           variant="skeleton"
-          label="Loading HRIS operations workspace"
+          label={t('administration.operations.loading.workspace')}
           skeletonRows={1}
           skeletonHeight={340}
         />
         <LoadingState
           embedded
           variant="skeleton"
-          label="Loading HRIS operations workspace"
+          label={t('administration.operations.loading.workspace')}
           skeletonRows={1}
           skeletonHeight={340}
         />
@@ -157,19 +160,29 @@ function LoadingWorkspace() {
 }
 
 function ProjectionNotice({ entry }: Readonly<{ entry: HrisOperationsEntry }>) {
+  const { t } = useTranslation('hcm');
   if (entry.projectionState === 'PARTIAL') {
     return (
-      <InlineFeedback severity="warning" title="Some owner projections are unavailable">
-        Available exceptions remain read only. Source status below identifies which owner projection
-        could not be confirmed.
+      <InlineFeedback
+        severity="warning"
+        title={t('administration.operations.projection.partialTitle')}
+      >
+        {t('administration.operations.projection.partialDescription')}
       </InlineFeedback>
     );
   }
   if (entry.projectionState === 'STALE') {
     return (
-      <InlineFeedback severity="warning" title="Owner projections are stale">
-        The last confirmed projection is shown for investigation only. Last successful refresh:{' '}
-        {timestamp(entry.lastSuccessfulRefreshAt)}.
+      <InlineFeedback
+        severity="warning"
+        title={t('administration.operations.projection.staleTitle')}
+      >
+        {t('administration.operations.projection.staleDescription', {
+          refreshedAt: timestamp(
+            entry.lastSuccessfulRefreshAt,
+            t('administration.operations.notAvailable')
+          ),
+        })}
       </InlineFeedback>
     );
   }
@@ -177,11 +190,12 @@ function ProjectionNotice({ entry }: Readonly<{ entry: HrisOperationsEntry }>) {
 }
 
 function SummaryPanel({ entry }: Readonly<{ entry: HrisOperationsEntry }>) {
+  const { t } = useTranslation('hcm');
   const metrics = [
-    ['Open', entry.counts.open],
-    ['Acknowledged', entry.counts.acknowledged],
-    ['Resolved', entry.counts.resolved],
-    ['High impact', entry.counts.highImpact],
+    [t('administration.operations.summary.open'), entry.counts.open],
+    [t('administration.operations.summary.acknowledged'), entry.counts.acknowledged],
+    [t('administration.operations.summary.resolved'), entry.counts.resolved],
+    [t('administration.operations.summary.highImpact'), entry.counts.highImpact],
   ] as const;
   return (
     <Paper component="section" variant="outlined" sx={{ p: { xs: 1.5, sm: 2 }, minWidth: 0 }}>
@@ -194,11 +208,13 @@ function SummaryPanel({ entry }: Readonly<{ entry: HrisOperationsEntry }>) {
         >
           <Box minWidth={0}>
             <Typography component="h2" variant="subtitle1" fontWeight="fontWeightBold">
-              Customer and process impact
+              {t('administration.operations.summary.title')}
             </Typography>
             <Typography variant="body2" color="text.secondary" sx={{ overflowWrap: 'anywhere' }}>
-              {entry.counts.total} authorized exception{entry.counts.total === 1 ? '' : 's'} · As of{' '}
-              {timestamp(entry.asOf)}
+              {t('administration.operations.summary.meta', {
+                count: entry.counts.total,
+                asOf: timestamp(entry.asOf, t('administration.operations.notAvailable')),
+              })}
             </Typography>
           </Box>
           <Stack direction="row" gap={0.75} flexWrap="wrap" useFlexGap>
@@ -259,13 +275,14 @@ function Filters({
   queryState: HrisOperationsQueryState;
   onChange: (patch: Partial<HrisOperationsQueryState>) => void;
 }>) {
+  const { t } = useTranslation('hcm');
   return (
     <Stack direction={{ xs: 'column', sm: 'row' }} gap={1} minWidth={0}>
       <FormField
         fullWidth={false}
         select
         size="small"
-        label="Owner module"
+        label={t('administration.operations.filters.ownerModule')}
         value={queryState.ownerModule}
         onChange={(event) =>
           onChange({
@@ -275,7 +292,7 @@ function Filters({
         }
         sx={{ minWidth: { sm: 145 } }}
       >
-        <MenuItem value="ALL">All modules</MenuItem>
+        <MenuItem value="ALL">{t('administration.operations.filters.allModules')}</MenuItem>
         {HRIS_OPERATION_MODULES.map((module) => (
           <MenuItem key={module} value={module}>
             {module}
@@ -286,7 +303,7 @@ function Filters({
         fullWidth={false}
         select
         size="small"
-        label="Severity"
+        label={t('administration.operations.filters.severity')}
         value={queryState.severity}
         onChange={(event) =>
           onChange({
@@ -296,7 +313,7 @@ function Filters({
         }
         sx={{ minWidth: { sm: 145 } }}
       >
-        <MenuItem value="ALL">All severities</MenuItem>
+        <MenuItem value="ALL">{t('administration.operations.filters.allSeverities')}</MenuItem>
         {HRIS_OPERATION_SEVERITIES.map((severity) => (
           <MenuItem key={severity} value={severity}>
             {severity}
@@ -307,7 +324,7 @@ function Filters({
         fullWidth={false}
         select
         size="small"
-        label="Owner state"
+        label={t('administration.operations.filters.ownerState')}
         value={queryState.state}
         onChange={(event) =>
           onChange({
@@ -317,7 +334,7 @@ function Filters({
         }
         sx={{ minWidth: { sm: 155 } }}
       >
-        <MenuItem value="ALL">All states</MenuItem>
+        <MenuItem value="ALL">{t('administration.operations.filters.allStates')}</MenuItem>
         {HRIS_OPERATION_PUBLIC_STATES.map((state) => (
           <MenuItem key={state} value={state}>
             {state}
@@ -347,23 +364,23 @@ function ExceptionList({
   onPrevious: () => void;
   onNext: () => void;
 }>) {
+  const { t } = useTranslation('hcm');
   return (
     <Paper component="section" variant="outlined" sx={{ minWidth: 0, overflow: 'hidden' }}>
       <Stack gap={0} minWidth={0}>
         <Box sx={{ p: 1.5 }}>
           <Typography component="h2" variant="subtitle1" fontWeight="fontWeightBold">
-            Authorized exceptions
+            {t('administration.operations.list.title')}
           </Typography>
           <Typography variant="caption" color="text.secondary">
-            Stable owner ordering · page {pageIndex + 1}
+            {t('administration.operations.list.page', { page: pageIndex + 1 })}
           </Typography>
         </Box>
         <Divider />
         {page.items.length === 0 ? (
           <Box sx={{ p: 2 }}>
-            <InlineFeedback severity="info" title="No exceptions in this scope">
-              The current authorized scope and filters returned no owner exception. No recovery
-              action is available from this workspace.
+            <InlineFeedback severity="info" title={t('administration.operations.list.emptyTitle')}>
+              {t('administration.operations.list.emptyDescription')}
             </InlineFeedback>
           </Box>
         ) : (
@@ -418,8 +435,13 @@ function ExceptionList({
                         color="text.secondary"
                         sx={{ overflowWrap: 'anywhere' }}
                       >
-                        Last observed {timestamp(item.lastObservedAt)} · {item.occurrenceCount}{' '}
-                        occurrence{item.occurrenceCount === 1 ? '' : 's'}
+                        {t('administration.operations.list.lastObserved', {
+                          observedAt: timestamp(
+                            item.lastObservedAt,
+                            t('administration.operations.notAvailable')
+                          ),
+                          count: item.occurrenceCount,
+                        })}
                       </Typography>
                     </Stack>
                   </ButtonBase>
@@ -436,7 +458,7 @@ function ExceptionList({
             onClick={onPrevious}
             startIcon={<ArrowLeft size={15} aria-hidden="true" />}
           >
-            Previous
+            {t('administration.operations.pagination.previous')}
           </ActionButton>
           <ActionButton
             intent="quiet"
@@ -445,7 +467,7 @@ function ExceptionList({
             onClick={onNext}
             endIcon={<ArrowRight size={15} aria-hidden="true" />}
           >
-            Next
+            {t('administration.operations.pagination.next')}
           </ActionButton>
         </Stack>
       </Stack>
@@ -464,28 +486,31 @@ function ReceiptPanel({
   denied: boolean;
   unavailable: boolean;
 }>) {
+  const { t } = useTranslation('hcm');
   if (loading)
     return (
       <LoadingState
         embedded
         variant="skeleton"
-        label="Loading existing command receipt"
+        label={t('administration.operations.receipt.loading')}
         skeletonRows={1}
         skeletonHeight={92}
       />
     );
   if (denied) {
     return (
-      <InlineFeedback severity="error" title="Receipt is not available">
-        The receipt is absent or outside the current originating-command and tenant scope. No cached
-        receipt is shown.
+      <InlineFeedback severity="error" title={t('administration.operations.receipt.deniedTitle')}>
+        {t('administration.operations.receipt.deniedDescription')}
       </InlineFeedback>
     );
   }
   if (unavailable) {
     return (
-      <InlineFeedback severity="warning" title="Receipt could not be confirmed">
-        The existing receipt reader is unavailable. No command is retried from this workspace.
+      <InlineFeedback
+        severity="warning"
+        title={t('administration.operations.receipt.unavailableTitle')}
+      >
+        {t('administration.operations.receipt.unavailableDescription')}
       </InlineFeedback>
     );
   }
@@ -493,12 +518,15 @@ function ReceiptPanel({
   return (
     <Paper variant="outlined" sx={{ p: 1.5, minWidth: 0 }} data-testid="hris-operations-receipt">
       <Stack gap={0.5} minWidth={0}>
-        <Typography variant="overline">Existing command receipt · {receipt.profile}</Typography>
+        <Typography variant="overline">
+          {t('administration.operations.receipt.title', { profile: receipt.profile })}
+        </Typography>
         <Typography variant="body2" fontWeight="fontWeightBold" sx={{ overflowWrap: 'anywhere' }}>
           {receipt.receipt.commandType}
         </Typography>
         <Typography variant="caption" color="text.secondary" sx={{ overflowWrap: 'anywhere' }}>
-          {receipt.receipt.status} · {timestamp(receipt.receipt.createdAt)} ·{' '}
+          {receipt.receipt.status} ·{' '}
+          {timestamp(receipt.receipt.createdAt, t('administration.operations.notAvailable'))} ·{' '}
           {receipt.receipt.receiptId}
         </Typography>
       </Stack>
@@ -531,38 +559,48 @@ function ExceptionDetail({
   receiptUnavailable: boolean;
   onInspectReceipt: (receiptId: string) => void;
 }>) {
+  const { t } = useTranslation('hcm');
   return (
     <Paper component="section" variant="outlined" sx={{ p: { xs: 1.5, sm: 2 }, minWidth: 0 }}>
       <Stack gap={1.5} minWidth={0}>
         <Stack direction="row" gap={1} alignItems="center">
           <FileSearch size={18} aria-hidden="true" />
           <Typography component="h2" variant="subtitle1" fontWeight="fontWeightBold">
-            Redacted exception detail
+            {t('administration.operations.detail.title')}
           </Typography>
         </Stack>
         <Divider />
         {selectedId === null ? (
           <Typography color="text.secondary">
-            Select an authorized exception to inspect it.
+            {t('administration.operations.detail.select')}
           </Typography>
         ) : loading ? (
-          <Stack gap={1} aria-label="Loading redacted exception detail" aria-busy="true">
+          <Stack
+            gap={1}
+            aria-label={t('administration.operations.detail.loading')}
+            aria-busy="true"
+          >
             <LoadingState
               embedded
               variant="skeleton"
-              label="Loading redacted exception detail"
+              label={t('administration.operations.detail.loading')}
               skeletonHeights={[42, 120]}
               skeletonGap={1}
             />
           </Stack>
         ) : denied ? (
-          <InlineFeedback severity="error" title="Exception detail is not available">
-            The selected object is absent or outside the current tenant, package, purpose or field
-            scope. No cached detail is shown.
+          <InlineFeedback
+            severity="error"
+            title={t('administration.operations.detail.deniedTitle')}
+          >
+            {t('administration.operations.detail.deniedDescription')}
           </InlineFeedback>
         ) : unavailable ? (
-          <InlineFeedback severity="warning" title="Exception detail could not be confirmed">
-            Keep the current selection and retry the workspace refresh. No owner action is exposed.
+          <InlineFeedback
+            severity="warning"
+            title={t('administration.operations.detail.unavailableTitle')}
+          >
+            {t('administration.operations.detail.unavailableDescription')}
           </InlineFeedback>
         ) : detail ? (
           <Stack gap={1.5} minWidth={0} data-testid="hris-operations-exception-detail">
@@ -571,7 +609,11 @@ function ExceptionDetail({
                 {hrisOperationSummary(detail)}
               </Typography>
               <Typography variant="body2" color="text.secondary" sx={{ overflowWrap: 'anywhere' }}>
-                {detail.ownerModule} · {detail.type} · revision {detail.sourceRevision}
+                {t('administration.operations.detail.revision', {
+                  module: detail.ownerModule,
+                  type: detail.type,
+                  revision: detail.sourceRevision,
+                })}
               </Typography>
             </Box>
             <Stack direction="row" gap={0.75} flexWrap="wrap" useFlexGap>
@@ -593,21 +635,21 @@ function ExceptionDetail({
               }}
             >
               <Typography component="dt" variant="body2">
-                First observed
+                {t('administration.operations.detail.firstObserved')}
               </Typography>
               <Typography component="dd" variant="body2">
-                {timestamp(detail.firstObservedAt)}
+                {timestamp(detail.firstObservedAt, t('administration.operations.notAvailable'))}
               </Typography>
               <Typography component="dt" variant="body2">
-                Last observed
+                {t('administration.operations.detail.lastObserved')}
               </Typography>
               <Typography component="dd" variant="body2">
-                {timestamp(detail.lastObservedAt)}
+                {timestamp(detail.lastObservedAt, t('administration.operations.notAvailable'))}
               </Typography>
               {detail.fieldDecisions.RECOVERY_METADATA === 'VIEW' && detail.correlationId && (
                 <>
                   <Typography component="dt" variant="body2">
-                    Correlation
+                    {t('administration.operations.detail.correlation')}
                   </Typography>
                   <Typography component="dd" variant="body2">
                     {detail.correlationId}
@@ -623,14 +665,14 @@ function ExceptionDetail({
                 endIcon={<ArrowUpRight size={16} aria-hidden="true" />}
                 sx={{ alignSelf: 'flex-start', whiteSpace: 'normal' }}
               >
-                Continue investigation in owning workspace
+                {t('administration.operations.detail.continueInvestigation')}
               </ActionButton>
             )}
             {detail.fieldDecisions.RECOVERY_METADATA === 'VIEW' &&
               detail.evidenceRefs.length > 0 && (
                 <Box minWidth={0}>
                   <Typography component="h3" variant="subtitle2" sx={{ mb: 0.75 }}>
-                    Redacted evidence references
+                    {t('administration.operations.detail.evidenceReferences')}
                   </Typography>
                   <Stack component="ul" gap={0.75} sx={{ listStyle: 'none', p: 0, m: 0 }}>
                     {detail.evidenceRefs.map((evidenceRef) => {
@@ -649,7 +691,9 @@ function ExceptionDetail({
                                 overflowWrap: 'anywhere',
                               }}
                             >
-                              Inspect existing receipt {candidateReceiptId}
+                              {t('administration.operations.detail.inspectReceipt', {
+                                receiptId: candidateReceiptId,
+                              })}
                             </ActionButton>
                           ) : (
                             <Typography
@@ -674,13 +718,17 @@ function ExceptionDetail({
                 unavailable={receiptUnavailable}
               />
             )}
-            <InlineFeedback severity="info" title="Read and deep-link only">
-              Recovery remains with the owning domain. This workspace never retries, suppresses,
-              resolves or automates an exception.
+            <InlineFeedback
+              severity="info"
+              title={t('administration.operations.detail.readOnlyTitle')}
+            >
+              {t('administration.operations.detail.readOnlyDescription')}
             </InlineFeedback>
           </Stack>
         ) : (
-          <Typography color="text.secondary">No authorized detail is available.</Typography>
+          <Typography color="text.secondary">
+            {t('administration.operations.detail.noAuthorizedDetail')}
+          </Typography>
         )}
       </Stack>
     </Paper>
@@ -691,6 +739,7 @@ export function HrisOperationsWorkspaceView({
   copy = HRIS_OPERATIONS_DEFAULT_COPY,
   ...props
 }: HrisOperationsWorkspaceViewProps) {
+  const { t } = useTranslation('hcm');
   const noLiveOwnerProducer =
     props.loadState === 'UNAVAILABLE' &&
     props.entry?.projectionState === 'UNAVAILABLE' &&
@@ -718,15 +767,22 @@ export function HrisOperationsWorkspaceView({
           </Typography>
         </Box>
         <Stack direction="row" gap={0.75} flexWrap="wrap" useFlexGap>
-          <Chip icon={<ShieldCheck size={15} />} label="Tenant scoped" variant="outlined" />
-          <Chip label="Read only" color="info" variant="outlined" />
+          <Chip
+            icon={<ShieldCheck size={15} />}
+            label={t('administration.operations.badges.tenantScoped')}
+            variant="outlined"
+          />
+          <Chip
+            label={t('administration.operations.badges.readOnly')}
+            color="info"
+            variant="outlined"
+          />
         </Stack>
       </Stack>
 
       {noLiveOwnerProducer ? (
-        <InlineFeedback severity="info" title="No live owner producer is onboarded">
-          The SYS consumer and read surface are installed, but cross-service producer delivery
-          remains an external gate. No production exception completeness is claimed.
+        <InlineFeedback severity="info" title={t('administration.operations.producer.emptyTitle')}>
+          {t('administration.operations.producer.emptyDescription')}
         </InlineFeedback>
       ) : props.loadState === 'PERMISSION' || props.loadState === 'UNAVAILABLE' ? (
         <StateNotice state={props.loadState} copy={copy} />
@@ -749,7 +805,7 @@ export function HrisOperationsWorkspaceView({
               startIcon={<RefreshCw size={16} aria-hidden="true" />}
               sx={{ alignSelf: { xs: 'stretch', lg: 'center' } }}
             >
-              Refresh projection
+              {t('administration.operations.refresh')}
             </ActionButton>
           </Stack>
           <Box
@@ -790,8 +846,11 @@ export function HrisOperationsWorkspaceView({
           </Box>
         </>
       ) : (
-        <InlineFeedback severity="warning" title="Operations projection could not be confirmed">
-          No owner exception or cached detail is shown.
+        <InlineFeedback
+          severity="warning"
+          title={t('administration.operations.projection.unavailableTitle')}
+        >
+          {t('administration.operations.projection.unavailableDescription')}
         </InlineFeedback>
       )}
     </Stack>

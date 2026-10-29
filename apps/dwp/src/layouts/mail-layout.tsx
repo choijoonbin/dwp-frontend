@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { getMailHome } from '@dwp-frontend/shared-utils';
+import { getMailHome } from '@dwp-frontend/shared-utils/api/mail-api';
 
 import {
   mailNavigationForAccountAvailability,
@@ -11,7 +11,7 @@ import {
 } from '../features/mail/mail-navigation-more';
 import { resolveMailProductAreaMobileShell } from '../features/mail/mail-mobile-navigation';
 import { MAIL_PRODUCT_MANIFEST } from '../features/mail/mail-product-manifest';
-import { ProductAreaLayout } from './product-area-layout';
+import { ProductAreaLayout } from './product-area-layout-boundary';
 
 export function MailLayout() {
   const accountAvailability = useQuery({

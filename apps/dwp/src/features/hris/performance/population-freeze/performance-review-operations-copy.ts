@@ -1,3 +1,5 @@
+import { resolveSupportedLocale } from '@dwp-frontend/shared-i18n';
+
 export type PerformanceReviewOperationsCopy = Readonly<{
   eyebrow: string;
   title: string;
@@ -149,5 +151,5 @@ const KO: PerformanceReviewOperationsCopy = {
 export function getPerformanceReviewOperationsCopy(
   language?: string
 ): PerformanceReviewOperationsCopy {
-  return language?.toLowerCase().startsWith('ko') ? KO : EN;
+  return resolveSupportedLocale(language) === 'ko' ? KO : EN;
 }

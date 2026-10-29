@@ -61,6 +61,28 @@ export function run(value, arguments_ = [], environment = {}) {
   );
 }
 
+export function runWithSchema(value, schema) {
+  const schemaPath = join(value.directory, 'schema.json');
+  writeFileSync(schemaPath, `${JSON.stringify(schema, null, 2)}\n`);
+  return run(value, ['--schema', schemaPath]);
+}
+
+export function allItems(manifest) {
+  return [
+    ...manifest.productionGates,
+    ...manifest.decisions,
+    ...manifest.products,
+    ...manifest.exitCriteria,
+  ];
+}
+
+export const closureReference = 'architecture/product-surface-internal-closure.v1.generated.json';
+
+export const productExternalBlockers = (productId) => [
+  `EXTERNAL_${productId.toUpperCase()}_PRODUCT_SECURITY_OWNER_APPROVAL`,
+  `EXTERNAL_${productId.toUpperCase()}_IMMUTABLE_RELEASE_ATTESTATION`,
+];
+
 function canonicalChecksum(value) {
   const canonicalize = (candidate) => {
     if (Array.isArray(candidate)) return candidate.map(canonicalize);

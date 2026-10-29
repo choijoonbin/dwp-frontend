@@ -56,8 +56,8 @@ jobs:
       - name: Install dependencies
         run: corepack yarn install --immutable
 
-      - name: Install Playwright Chromium
-        run: corepack yarn playwright install --with-deps chromium
+      - name: Install Playwright Chromium and WebKit
+        run: corepack yarn playwright install --with-deps chromium webkit
 
       - name: Run complete hermetic Workplace suite
         run: corepack yarn test:e2e:workplace --shard=${{ matrix.shard }}

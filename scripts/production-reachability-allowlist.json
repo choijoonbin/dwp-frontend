@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "maximumEntries": 70,
+  "maximumEntries": 56,
   "entries": [
     {
       "path": "apps/dwp/src/features/hris/administration/automation-control-plane/automation-control-plane-child-surface.tsx",
@@ -153,31 +153,7 @@
       "removalCondition": "Remove this exact entry when the owning feature is mounted through its approved PAGE/data contracts and trusted route admission, or when its source-completion implementation is retired."
     },
     {
-      "path": "apps/dwp/src/features/hris/payroll/statutory-insurance/statutory-insurance-api.ts",
-      "owner": "HRIS Integration Control / PAY-003 Statutory Insurance",
-      "reason": "PAY-003 Statutory Insurance source-completion module, exercised by its feature/slice tests; STATUTORY_INSURANCE_DEFAULT_ENABLED is false and the enrolled tenant list is empty in statutory-insurance-contract.ts. It is intentionally absent from production routing.",
-      "removalCondition": "Remove this exact entry when the owning feature is mounted through its approved PAGE/data contracts and trusted route admission, or when its source-completion implementation is retired."
-    },
-    {
-      "path": "apps/dwp/src/features/hris/payroll/statutory-insurance/statutory-insurance-contract.ts",
-      "owner": "HRIS Integration Control / PAY-003 Statutory Insurance",
-      "reason": "PAY-003 Statutory Insurance source-completion module, exercised by its feature/slice tests; STATUTORY_INSURANCE_DEFAULT_ENABLED is false and the enrolled tenant list is empty in statutory-insurance-contract.ts. It is intentionally absent from production routing.",
-      "removalCondition": "Remove this exact entry when the owning feature is mounted through its approved PAGE/data contracts and trusted route admission, or when its source-completion implementation is retired."
-    },
-    {
       "path": "apps/dwp/src/features/hris/payroll/statutory-insurance/statutory-insurance-copy.ts",
-      "owner": "HRIS Integration Control / PAY-003 Statutory Insurance",
-      "reason": "PAY-003 Statutory Insurance source-completion module, exercised by its feature/slice tests; STATUTORY_INSURANCE_DEFAULT_ENABLED is false and the enrolled tenant list is empty in statutory-insurance-contract.ts. It is intentionally absent from production routing.",
-      "removalCondition": "Remove this exact entry when the owning feature is mounted through its approved PAGE/data contracts and trusted route admission, or when its source-completion implementation is retired."
-    },
-    {
-      "path": "apps/dwp/src/features/hris/payroll/statutory-insurance/statutory-insurance-query-contract.ts",
-      "owner": "HRIS Integration Control / PAY-003 Statutory Insurance",
-      "reason": "PAY-003 Statutory Insurance source-completion module, exercised by its feature/slice tests; STATUTORY_INSURANCE_DEFAULT_ENABLED is false and the enrolled tenant list is empty in statutory-insurance-contract.ts. It is intentionally absent from production routing.",
-      "removalCondition": "Remove this exact entry when the owning feature is mounted through its approved PAGE/data contracts and trusted route admission, or when its source-completion implementation is retired."
-    },
-    {
-      "path": "apps/dwp/src/features/hris/payroll/statutory-insurance/statutory-insurance-validation.ts",
       "owner": "HRIS Integration Control / PAY-003 Statutory Insurance",
       "reason": "PAY-003 Statutory Insurance source-completion module, exercised by its feature/slice tests; STATUTORY_INSURANCE_DEFAULT_ENABLED is false and the enrolled tenant list is empty in statutory-insurance-contract.ts. It is intentionally absent from production routing.",
       "removalCondition": "Remove this exact entry when the owning feature is mounted through its approved PAGE/data contracts and trusted route admission, or when its source-completion implementation is retired."
@@ -192,18 +168,6 @@
       "path": "apps/dwp/src/features/hris/payroll/statutory-insurance/use-statutory-insurance-workbenches.ts",
       "owner": "HRIS Integration Control / PAY-003 Statutory Insurance",
       "reason": "PAY-003 Statutory Insurance source-completion module, exercised by its feature/slice tests; STATUTORY_INSURANCE_DEFAULT_ENABLED is false and the enrolled tenant list is empty in statutory-insurance-contract.ts. It is intentionally absent from production routing.",
-      "removalCondition": "Remove this exact entry when the owning feature is mounted through its approved PAGE/data contracts and trusted route admission, or when its source-completion implementation is retired."
-    },
-    {
-      "path": "apps/dwp/src/features/hris/people/contracts-compensation-basis/contracts-compensation-basis-api.ts",
-      "owner": "HRIS Integration Control / HRM-011 Contract Compensation",
-      "reason": "HRM-011 Contract Compensation source-completion module, exercised by its feature/slice tests; HRM011_DEFAULT_GATE is disabled with zero tenant enrollment in contracts-compensation-basis-workbench.tsx. It is intentionally absent from production routing.",
-      "removalCondition": "Remove this exact entry when the owning feature is mounted through its approved PAGE/data contracts and trusted route admission, or when its source-completion implementation is retired."
-    },
-    {
-      "path": "apps/dwp/src/features/hris/people/contracts-compensation-basis/contracts-compensation-basis-contract.ts",
-      "owner": "HRIS Integration Control / HRM-011 Contract Compensation",
-      "reason": "HRM-011 Contract Compensation source-completion module, exercised by its feature/slice tests; HRM011_DEFAULT_GATE is disabled with zero tenant enrollment in contracts-compensation-basis-workbench.tsx. It is intentionally absent from production routing.",
       "removalCondition": "Remove this exact entry when the owning feature is mounted through its approved PAGE/data contracts and trusted route admission, or when its source-completion implementation is retired."
     },
     {
@@ -232,18 +196,6 @@
     },
     {
       "path": "apps/dwp/src/features/hris/people/data-quality/components/data-quality-inspector.tsx",
-      "owner": "HRIS Integration Control / HRM-012 Data Quality",
-      "reason": "HRM-012 Data Quality source-completion module, exercised by its feature/slice tests; the workbench is built for source-completion verification and is absent from production page admission. It is intentionally absent from production routing.",
-      "removalCondition": "Remove this exact entry when the owning feature is mounted through its approved PAGE/data contracts and trusted route admission, or when its source-completion implementation is retired."
-    },
-    {
-      "path": "apps/dwp/src/features/hris/people/data-quality/data-quality-api.ts",
-      "owner": "HRIS Integration Control / HRM-012 Data Quality",
-      "reason": "HRM-012 Data Quality source-completion module, exercised by its feature/slice tests; the workbench is built for source-completion verification and is absent from production page admission. It is intentionally absent from production routing.",
-      "removalCondition": "Remove this exact entry when the owning feature is mounted through its approved PAGE/data contracts and trusted route admission, or when its source-completion implementation is retired."
-    },
-    {
-      "path": "apps/dwp/src/features/hris/people/data-quality/data-quality-contract.ts",
       "owner": "HRIS Integration Control / HRM-012 Data Quality",
       "reason": "HRM-012 Data Quality source-completion module, exercised by its feature/slice tests; the workbench is built for source-completion verification and is absent from production page admission. It is intentionally absent from production routing.",
       "removalCondition": "Remove this exact entry when the owning feature is mounted through its approved PAGE/data contracts and trusted route admission, or when its source-completion implementation is retired."
@@ -297,30 +249,6 @@
       "removalCondition": "Remove this exact entry when the owning feature is mounted through its approved PAGE/data contracts and trusted route admission, or when its source-completion implementation is retired."
     },
     {
-      "path": "apps/dwp/src/features/hris/performance/feedback/per008-axios-adapter.ts",
-      "owner": "HRIS Integration Control / PER-008 Feedback",
-      "reason": "PER-008 Feedback source-completion module, exercised by its feature/slice tests; PER008_FEATURE_DEFAULT_ENABLED is false in per008-model.ts. It is intentionally absent from production routing.",
-      "removalCondition": "Remove this exact entry when the owning feature is mounted through its approved PAGE/data contracts and trusted route admission, or when its source-completion implementation is retired."
-    },
-    {
-      "path": "apps/dwp/src/features/hris/performance/feedback/per008-client.ts",
-      "owner": "HRIS Integration Control / PER-008 Feedback",
-      "reason": "PER-008 Feedback source-completion module, exercised by its feature/slice tests; PER008_FEATURE_DEFAULT_ENABLED is false in per008-model.ts. It is intentionally absent from production routing.",
-      "removalCondition": "Remove this exact entry when the owning feature is mounted through its approved PAGE/data contracts and trusted route admission, or when its source-completion implementation is retired."
-    },
-    {
-      "path": "apps/dwp/src/features/hris/performance/feedback/per008-contract.ts",
-      "owner": "HRIS Integration Control / PER-008 Feedback",
-      "reason": "PER-008 Feedback source-completion module, exercised by its feature/slice tests; PER008_FEATURE_DEFAULT_ENABLED is false in per008-model.ts. It is intentionally absent from production routing.",
-      "removalCondition": "Remove this exact entry when the owning feature is mounted through its approved PAGE/data contracts and trusted route admission, or when its source-completion implementation is retired."
-    },
-    {
-      "path": "apps/dwp/src/features/hris/performance/feedback/per008-model.ts",
-      "owner": "HRIS Integration Control / PER-008 Feedback",
-      "reason": "PER-008 Feedback source-completion module, exercised by its feature/slice tests; PER008_FEATURE_DEFAULT_ENABLED is false in per008-model.ts. It is intentionally absent from production routing.",
-      "removalCondition": "Remove this exact entry when the owning feature is mounted through its approved PAGE/data contracts and trusted route admission, or when its source-completion implementation is retired."
-    },
-    {
       "path": "apps/dwp/src/features/hris/performance/feedback/per008-personal-workspace.tsx",
       "owner": "HRIS Integration Control / PER-008 Feedback",
       "reason": "PER-008 Feedback source-completion module, exercised by its feature/slice tests; PER008_FEATURE_DEFAULT_ENABLED is false in per008-model.ts. It is intentionally absent from production routing.",
@@ -357,12 +285,6 @@
       "removalCondition": "Remove when the governed HRIS work explorer route is added with its product-surface authorization contract."
     },
     {
-      "path": "apps/dwp/src/features/hris/time/close/api/time-close-api.ts",
-      "owner": "HRIS Integration Control / TIM-007 Time Close",
-      "reason": "TIM-007 Time Close source-completion module, exercised by its feature/slice tests; the three close pages remain CATALOG_ONLY in the governed HRIS page catalog. It is intentionally absent from production routing.",
-      "removalCondition": "Remove this exact entry when the owning feature is mounted through its approved PAGE/data contracts and trusted route admission, or when its source-completion implementation is retired."
-    },
-    {
       "path": "apps/dwp/src/features/hris/time/close/components/time-close-command-center.tsx",
       "owner": "HRIS Integration Control / TIM-007 Time Close",
       "reason": "TIM-007 Time Close source-completion module, exercised by its feature/slice tests; the three close pages remain CATALOG_ONLY in the governed HRIS page catalog. It is intentionally absent from production routing.",
@@ -388,12 +310,6 @@
     },
     {
       "path": "apps/dwp/src/features/hris/time/close/index.ts",
-      "owner": "HRIS Integration Control / TIM-007 Time Close",
-      "reason": "TIM-007 Time Close source-completion module, exercised by its feature/slice tests; the three close pages remain CATALOG_ONLY in the governed HRIS page catalog. It is intentionally absent from production routing.",
-      "removalCondition": "Remove this exact entry when the owning feature is mounted through its approved PAGE/data contracts and trusted route admission, or when its source-completion implementation is retired."
-    },
-    {
-      "path": "apps/dwp/src/features/hris/time/close/model/time-close-model.ts",
       "owner": "HRIS Integration Control / TIM-007 Time Close",
       "reason": "TIM-007 Time Close source-completion module, exercised by its feature/slice tests; the three close pages remain CATALOG_ONLY in the governed HRIS page catalog. It is intentionally absent from production routing.",
       "removalCondition": "Remove this exact entry when the owning feature is mounted through its approved PAGE/data contracts and trusted route admission, or when its source-completion implementation is retired."

@@ -18,27 +18,39 @@ export const PER008_ROUTES = {
 export const PER008_CREATE_ACTION_KEY = 'hris.action.per.create-feedback-request';
 export const PER008_SUBMIT_ACTION_KEY = 'hris.action.per.submit-feedback-response';
 export const PER008_TEAM_SORTS = [
-  'performanceAssignment:ASC', 'dueStatus:ASC', 'limitedProfile:ASC',
-  'performanceAssignment:DESC', 'dueStatus:DESC', 'limitedProfile:DESC',
-  'itemPublicId:ASC', 'itemPublicId:DESC',
+  'performanceAssignment:ASC',
+  'dueStatus:ASC',
+  'limitedProfile:ASC',
+  'performanceAssignment:DESC',
+  'dueStatus:DESC',
+  'limitedProfile:DESC',
+  'itemPublicId:ASC',
+  'itemPublicId:DESC',
 ] as const;
 
 export type Per008TeamSort = (typeof PER008_TEAM_SORTS)[number];
 export type Per008QueryState = 'COMPLETE' | 'EMPTY' | 'PARTIAL' | 'UNAVAILABLE';
 export type Per008ProtectedState = Per008QueryState | 'LOADING' | 'DENIED' | 'STALE' | 'SUPPRESSED';
 export type Per008Freshness = 'CURRENT' | 'STALE' | 'UNAVAILABLE';
-export type Per008RequestState = 'DRAFT' | 'OPEN' | 'CLOSED' | 'AGGREGATED' | 'RELEASED' | 'CANCELLED';
+export type Per008RequestState =
+  'DRAFT' | 'OPEN' | 'CLOSED' | 'AGGREGATED' | 'RELEASED' | 'CANCELLED';
 export type Per008AssignmentState = 'ASSIGNED' | 'SUBMITTED' | 'DECLINED' | 'CANCELLED';
 export type Per008AnonymityMode = 'IDENTIFIED' | 'MASKED' | 'ANONYMOUS_AGGREGATE';
 export type Per008AnswerType = 'TEXT' | 'NUMBER' | 'SINGLE_CHOICE' | 'MULTI_CHOICE';
 
 export type Per008ViewField<T> = Readonly<{ decision: 'VIEW'; value: T }>;
 export type Per008MaskedField = Readonly<{
-  decision: 'MASK'; value: null; maskReason: string; maskedDisplayKey: string;
+  decision: 'MASK';
+  value: null;
+  maskReason: string;
+  maskedDisplayKey: string;
 }>;
 export type Per008Field<T> = Per008ViewField<T> | Per008MaskedField;
 export type Per008ReferenceValue = Readonly<{
-  publicId: string; code: string; label: string; revision: number;
+  publicId: string;
+  code: string;
+  label: string;
+  revision: number;
 }>;
 export type Per008StatusValue = Readonly<{ code: string; revision: number }>;
 export type Per008FeedbackActionTarget = Readonly<{
@@ -53,17 +65,22 @@ type Per008BaseAction = Readonly<{
   idempotencyPolicy: 'REQUIRED_IDEMPOTENCY_KEY';
   stepUpPolicy: 'OWNER_PEP_RISK_POLICY_DECISION_REQUIRED';
 }>;
-export type Per008PriorAction = Per008BaseAction & Readonly<{
-  actionKey: 'hris.action.per.create-goal' | 'hris.action.per.submit-goal' |
-    'hris.action.per.save-review-draft' | 'hris.action.per.submit-review';
-  method: 'POST' | 'PATCH';
-  hrefTemplate: string;
-}>;
-export type Per008CreateAction = Per008BaseAction & Readonly<{
-  actionKey: typeof PER008_CREATE_ACTION_KEY;
-  method: 'POST';
-  hrefTemplate: typeof PER008_ROUTES.createRequest;
-}>;
+export type Per008PriorAction = Per008BaseAction &
+  Readonly<{
+    actionKey:
+      | 'hris.action.per.create-goal'
+      | 'hris.action.per.submit-goal'
+      | 'hris.action.per.save-review-draft'
+      | 'hris.action.per.submit-review';
+    method: 'POST' | 'PATCH';
+    hrefTemplate: string;
+  }>;
+export type Per008CreateAction = Per008BaseAction &
+  Readonly<{
+    actionKey: typeof PER008_CREATE_ACTION_KEY;
+    method: 'POST';
+    hrefTemplate: typeof PER008_ROUTES.createRequest;
+  }>;
 export type Per008TeamAction = Per008PriorAction | Per008CreateAction;
 
 export type Per008TeamItem = Readonly<{
@@ -87,7 +104,10 @@ export type Per008QueryMetadata = Readonly<{
   nextCursor: string | null;
   fieldDecisionSummary: Readonly<{ viewCount: number; maskedCount: number; omittedCount: number }>;
   partialFailures: readonly Readonly<{
-    componentKey: string; errorCode: string; correlationId: string; retryable: boolean;
+    componentKey: string;
+    errorCode: string;
+    correlationId: string;
+    retryable: boolean;
   }>[];
   correlationId: string;
   cachePolicy: Readonly<{
@@ -104,8 +124,14 @@ export type Per008TeamProjection = Readonly<{
   items: readonly Per008TeamItem[];
 }>;
 
-export type Per008ReferenceFilter = Readonly<{ codes?: readonly string[]; publicIds?: readonly string[] }>;
-export type Per008StatusFilter = Readonly<{ codes?: readonly string[]; minimumRevision?: number | null }>;
+export type Per008ReferenceFilter = Readonly<{
+  codes?: readonly string[];
+  publicIds?: readonly string[];
+}>;
+export type Per008StatusFilter = Readonly<{
+  codes?: readonly string[];
+  minimumRevision?: number | null;
+}>;
 export type Per008TeamQuery = Readonly<{
   limit: number;
   filter: Readonly<{
@@ -127,31 +153,40 @@ export type Per008RequestSubject = Readonly<{
   subjectWorkerPublicId: string;
   subjectAssignmentPublicId: string;
 }>;
-export type Per008RequestOptions = Per008RequestSubject & Readonly<{
-  schemaKey: 'Per008FeedbackRequestOptionsV1';
-  templates: readonly Readonly<{
-    templateVersionId: string;
-    label: string;
-    schemaKey: 'dwp.hris.performance.review-form.v1';
-    schemaVersion: 1;
-    templateContentHash: string;
-  }>[];
-  anonymityModes: readonly Per008AnonymityMode[];
-  thresholdLimits: Readonly<{ minimum: number; maximum: number }>;
-  windowLimits: Readonly<{
-    earliestOpensAt: string; latestClosesAt: string; maximumDurationDays: number;
+export type Per008RequestOptions = Per008RequestSubject &
+  Readonly<{
+    schemaKey: 'Per008FeedbackRequestOptionsV1';
+    templates: readonly Readonly<{
+      templateVersionId: string;
+      label: string;
+      schemaKey: 'dwp.hris.performance.review-form.v1';
+      schemaVersion: 1;
+      templateContentHash: string;
+    }>[];
+    anonymityModes: readonly Per008AnonymityMode[];
+    thresholdLimits: Readonly<{ minimum: number; maximum: number }>;
+    windowLimits: Readonly<{
+      earliestOpensAt: string;
+      latestClosesAt: string;
+      maximumDurationDays: number;
+    }>;
+    correlationId: string;
   }>;
-  correlationId: string;
-}>;
-export type Per008CreateFeedbackRequestCommand = Per008RequestSubject & Readonly<{
-  templateVersionId: string;
-  anonymityMode: Per008AnonymityMode;
-  minimumReleaseCount: number;
-  opensAt: string;
-  closesAt: string;
-}>;
+export type Per008CreateFeedbackRequestCommand = Per008RequestSubject &
+  Readonly<{
+    templateVersionId: string;
+    anonymityMode: Per008AnonymityMode;
+    minimumReleaseCount: number;
+    opensAt: string;
+    closesAt: string;
+  }>;
 export type Per008FeedbackRequestReceipt = Readonly<{
-  receiptId: string; requestId: string; state: 'DRAFT'; version: number; occurredAt: string; replayed: boolean;
+  receiptId: string;
+  requestId: string;
+  state: 'DRAFT';
+  version: number;
+  occurredAt: string;
+  replayed: boolean;
 }>;
 
 export type Per008AssignedFeedbackListItem = Readonly<{
@@ -205,7 +240,8 @@ export type Per008FeedbackResponseCommand = Readonly<{
   expectedRequestVersion: number;
   templateContentHash: string;
   response: Readonly<{
-    schemaKey: 'PerformanceFeedbackResponse.v1'; answers: readonly Per008FeedbackAnswer[];
+    schemaKey: 'PerformanceFeedbackResponse.v1';
+    answers: readonly Per008FeedbackAnswer[];
   }>;
 }>;
 export type Per008FeedbackSubmissionReceipt = Readonly<{

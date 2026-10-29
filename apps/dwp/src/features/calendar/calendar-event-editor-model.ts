@@ -12,6 +12,7 @@ import {
   calendarDedupedAttendees,
   calendarExternalAttendee,
 } from './calendar-attendee-picker-model';
+import type { CalendarEditorAttendee as CalendarEditorAttendeeContract } from './calendar-attendee-contract';
 
 import type {
   CalendarAttendeeInput,
@@ -108,13 +109,7 @@ export function protectWorkCalendarEventDraft(
   };
 }
 
-export type CalendarEditorAttendee = Pick<
-  PersonSummary,
-  'personId' | 'displayName' | 'workEmail'
-> & {
-  userId?: number | null;
-  type: Exclude<CalendarAttendeeType, 'RESOURCE'>;
-};
+export type CalendarEditorAttendee = CalendarEditorAttendeeContract;
 
 export type CalendarInitialAttendee = Pick<
   PersonSummary,

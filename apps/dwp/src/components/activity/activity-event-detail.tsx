@@ -52,7 +52,7 @@ import {
   consumeActivitySourceReturnFocus,
   recordActivitySourceReturnFocus,
 } from './activity-source-focus-handoff';
-import { usableActivityQueryData } from '../../features/activity/activity-query-state';
+import { usableActivityQueryData } from './activity-query-contract';
 
 import type { ActivityDetailField } from './activity-detail-model';
 

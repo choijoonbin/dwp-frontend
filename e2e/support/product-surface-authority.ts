@@ -749,12 +749,15 @@ export async function mockApprovalProductSurfaceAuthority(
 
   await page.route('**/api/auth/product-surface-contexts', (route) =>
     success(route, {
-      contractVersion: 'product-surfaces/v3',
+      contractVersion: '2',
       decisionRevision: decisionRevision(),
       sourceRevisions: {
         auth: `auth-${revision}`,
         policy: 'policy-v2',
         productRelationship: `relationship-${revision}`,
+        targetPopulation: 'target-population-approvals-v2',
+        support: null,
+        tenantControl: 'tenant-control-approvals-v2',
       },
       activeAccessMode: 'NORMAL',
       generatedAt: options.generatedAt ?? GENERATED_AT,

@@ -18,7 +18,9 @@ import {
   DwpDateTimeProvider,
   FormDialog,
   FormField,
+  InlineFeedback,
   SelectField,
+  foundationTokens,
 } from '@dwp-frontend/design-system';
 
 import Alert from '@mui/material/Alert';
@@ -529,9 +531,11 @@ export function RoomBookingDialog({
         )}
         {!policyAvailable && <Alert severity="error">{t('booking.policyUnavailable')}</Alert>}
         {recurrencePolicyLocked ? (
-          <Alert severity="warning" data-testid="room-booking-recurrence-policy-locked">
-            {t('booking.recurrencePolicyLocked')}
-          </Alert>
+          <Box data-testid="room-booking-recurrence-policy-locked">
+            <InlineFeedback severity="warning">
+              {t('booking.recurrencePolicyLocked')}
+            </InlineFeedback>
+          </Box>
         ) : null}
         {room && (
           <Stack
@@ -635,42 +639,45 @@ export function RoomBookingDialog({
                 />
               ) : null}
               {recurrence !== 'NONE' && !recurrencePreview.error ? (
-                <Alert
-                  severity="info"
+                <Box
                   data-testid="room-booking-recurrence-preview"
                   sx={{ gridColumn: { md: '1 / -1' } }}
                 >
-                  <Typography fontWeight={750}>{t('booking.recurrencePreviewTitle')}</Typography>
-                  <Typography variant="body2">
-                    {t('booking.recurrencePreviewSummary', {
-                      count: recurrencePreview.dates.length,
-                      first: recurrencePreview.dates[0],
-                      last: recurrencePreview.dates.at(-1),
-                      timeZone: room?.timeZone,
-                    })}
-                  </Typography>
-                  <Stack direction="row" gap={0.75} flexWrap="wrap" sx={{ mt: 1 }}>
-                    {recurrencePreview.dates.slice(0, 4).map((date) => (
-                      <Chip key={date} size="small" variant="outlined" label={date} />
-                    ))}
-                    {recurrencePreview.dates.length > 4 ? (
-                      <Chip
-                        size="small"
-                        label={t('booking.recurrencePreviewMore', {
-                          count: recurrencePreview.dates.length - 4,
-                        })}
-                      />
-                    ) : null}
-                  </Stack>
-                  <Typography
-                    variant="caption"
-                    color="text.secondary"
-                    display="block"
-                    sx={{ mt: 1 }}
-                  >
-                    {t('booking.recurrenceConflictNotice')}
-                  </Typography>
-                </Alert>
+                  <InlineFeedback severity="info">
+                    <Typography fontWeight={foundationTokens.home.typography.weightEmphasis}>
+                      {t('booking.recurrencePreviewTitle')}
+                    </Typography>
+                    <Typography variant="body2">
+                      {t('booking.recurrencePreviewSummary', {
+                        count: recurrencePreview.dates.length,
+                        first: recurrencePreview.dates[0],
+                        last: recurrencePreview.dates.at(-1),
+                        timeZone: room?.timeZone,
+                      })}
+                    </Typography>
+                    <Stack direction="row" gap={0.75} flexWrap="wrap" sx={{ mt: 1 }}>
+                      {recurrencePreview.dates.slice(0, 4).map((date) => (
+                        <Chip key={date} size="small" variant="outlined" label={date} />
+                      ))}
+                      {recurrencePreview.dates.length > 4 ? (
+                        <Chip
+                          size="small"
+                          label={t('booking.recurrencePreviewMore', {
+                            count: recurrencePreview.dates.length - 4,
+                          })}
+                        />
+                      ) : null}
+                    </Stack>
+                    <Typography
+                      variant="caption"
+                      color="text.secondary"
+                      display="block"
+                      sx={{ mt: 1 }}
+                    >
+                      {t('booking.recurrenceConflictNotice')}
+                    </Typography>
+                  </InlineFeedback>
+                </Box>
               ) : null}
             </Box>
           ) : null}

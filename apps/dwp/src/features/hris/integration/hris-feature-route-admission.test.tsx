@@ -4,6 +4,11 @@ import { createRoot, type Root } from 'react-dom/client';
 import { MemoryRouter } from 'react-router-dom';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
+vi.mock('react-i18next', async () => {
+  const { hcmTestUseTranslation } = await import('../../../test-utils/hcm-i18n-test-stub');
+  return { useTranslation: hcmTestUseTranslation };
+});
+
 const state = vi.hoisted(() => ({
   pageDecision: null as unknown,
   authorityStatus: 'ready' as 'ready' | 'authority-unavailable',

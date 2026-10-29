@@ -3,8 +3,12 @@ import { act } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
 import { MemoryRouter, useLocation } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { createInstance } from 'i18next';
+import { I18nextProvider, initReactI18next } from 'react-i18next';
 import { HttpError } from '@dwp-frontend/shared-utils';
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
+
+import enWorkforce from '../../../../../../../libs/shared-i18n/src/locales/en/workforce.json';
 
 import type * as SharedUtils from '@dwp-frontend/shared-utils';
 
@@ -41,12 +45,7 @@ const managementScope = vi.hoisted(() => ({
   },
 }));
 
-vi.mock('react-i18next', () => ({
-  useTranslation: () => ({
-    t: (key: string) => key,
-    i18n: { language: 'en', resolvedLanguage: 'en' },
-  }),
-}));
+const organizationPositionsI18n = createInstance();
 
 vi.mock('@dwp-frontend/shared-utils', async (importOriginal) => ({
   ...(await importOriginal<typeof SharedUtils>()),
@@ -186,12 +185,14 @@ async function renderWorkspace({
 }) {
   await act(async () => {
     root.render(
-      <QueryClientProvider client={client}>
-        <MemoryRouter initialEntries={[entry]}>
-          <HrisOrganizationPositionsWorkspace gate={gate} adapter={source} now={AS_OF} />
-          <LocationProbe />
-        </MemoryRouter>
-      </QueryClientProvider>
+      <I18nextProvider i18n={organizationPositionsI18n}>
+        <QueryClientProvider client={client}>
+          <MemoryRouter initialEntries={[entry]}>
+            <HrisOrganizationPositionsWorkspace gate={gate} adapter={source} now={AS_OF} />
+            <LocationProbe />
+          </MemoryRouter>
+        </QueryClientProvider>
+      </I18nextProvider>
     );
   });
 }
@@ -203,6 +204,17 @@ async function shown(text: string) {
 }
 
 describe('HRIS organization positions runtime', () => {
+  beforeAll(async () => {
+    await organizationPositionsI18n.use(initReactI18next).init({
+      lng: 'en',
+      fallbackLng: 'en',
+      defaultNS: 'workforce',
+      ns: ['workforce'],
+      resources: { en: { workforce: enWorkforce } },
+      interpolation: { escapeValue: false },
+    });
+  });
+
   beforeEach(() => {
     Object.assign(globalThis, { IS_REACT_ACT_ENVIRONMENT: true });
     Object.defineProperty(window, 'innerWidth', { configurable: true, value: 320 });
@@ -298,6 +310,7 @@ describe('HRIS organization positions runtime', () => {
     const returnButton = [...document.querySelectorAll('button')].find(
       (button) => button.textContent?.trim() === 'Return to graph'
     );
+    expect(returnButton).toBeDefined();
     await act(async () => returnButton?.click());
     const location = document.querySelector('[data-testid="location-search"]')?.textContent ?? '';
     expect(location).toContain('tab=overview');

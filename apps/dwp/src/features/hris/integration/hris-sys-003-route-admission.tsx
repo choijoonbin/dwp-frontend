@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useAuth } from '@dwp-frontend/shared-utils/auth/auth-provider';
 import { useProductSurfaceAuthority } from '@dwp-frontend/shared-utils/auth/product-surface-context-provider';
 
@@ -244,6 +245,7 @@ type ApprovalReadState =
     }>;
 
 function HrisSys003RouteAdmission({ workspace }: Readonly<{ workspace: Sys003Workspace }>) {
+  const { t } = useTranslation('hcm');
   const auth = useAuth();
   const pageDecision = useOptionalAllowedExactProductRoute();
   const authority = useProductSurfaceAuthority();
@@ -466,7 +468,7 @@ function HrisSys003RouteAdmission({ workspace }: Readonly<{ workspace: Sys003Wor
   if (pageEvidence && !ownerContextScopeKey) {
     return (
       <Typography role="alert" data-runtime-state="denied">
-        Approval owner scope is unavailable for this HR workspace.
+        {t('administration.integration.approvalOwnerScopeUnavailable')}
       </Typography>
     );
   }
@@ -476,14 +478,14 @@ function HrisSys003RouteAdmission({ workspace }: Readonly<{ workspace: Sys003Wor
   ) {
     return (
       <Typography role="status" aria-live="polite" data-runtime-state="loading">
-        Loading cross-product authority…
+        {t('administration.integration.loadingCrossProductAuthority')}
       </Typography>
     );
   }
   if (readState?.state === 'denied' && readState.identity === identity) {
     return (
       <Typography role="alert" data-runtime-state="denied">
-        Approval owner access is unavailable for this HR workspace.
+        {t('administration.integration.approvalOwnerAccessUnavailable')}
       </Typography>
     );
   }

@@ -371,7 +371,7 @@ describe('rollout 110/111 exact navigation targets', () => {
       registeredRoutes: REGISTERED_PRODUCT_PAGE_ROUTE_CATALOG,
       rolloutMode: 'surface-ui',
     });
-    expect(targetPaths).toHaveLength(22);
+    expect(targetPaths).toHaveLength(25);
     expect(targetPaths.filter((path) => targets?.has(path))).toEqual(targetPaths);
 
     const personalRoute = REGISTERED_PRODUCT_PAGE_ROUTE_CATALOG.find(

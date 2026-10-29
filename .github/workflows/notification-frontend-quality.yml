@@ -91,13 +91,18 @@ jobs:
         uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
         with:
           node-version-file: .node-version
-          cache: yarn
-          cache-dependency-path: yarn.lock
 
       - name: Enable Corepack and activate Yarn
         run: |
           corepack enable
           corepack prepare yarn@4.17.1 --activate
+
+      - name: Restore Yarn cache
+        uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version-file: .node-version
+          cache: yarn
+          cache-dependency-path: yarn.lock
 
       - name: Install dependencies
         run: corepack yarn install --immutable
@@ -202,13 +207,18 @@ jobs:
         uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
         with:
           node-version-file: .node-version
-          cache: yarn
-          cache-dependency-path: yarn.lock
 
       - name: Enable Corepack and activate Yarn
         run: |
           corepack enable
           corepack prepare yarn@4.17.1 --activate
+
+      - name: Restore Yarn cache
+        uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version-file: .node-version
+          cache: yarn
+          cache-dependency-path: yarn.lock
 
       - name: Install dependencies
         run: corepack yarn install --immutable

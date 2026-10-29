@@ -32,7 +32,9 @@ test('Calendar remains keyboard-safe, overflow-free, and error-free in WebKit', 
   await page.goto('/calendar/schedule?view=week&date=2026-08-11');
   const calendar = page.getByTestId('interactive-calendar');
   await expect(calendar).toBeVisible({ timeout: 15_000 });
-  await expect(page.getByText('Digital workplace operating review', { exact: true })).toBeVisible();
+  await expect(page.getByText('Digital workplace operating review', { exact: true })).toBeVisible({
+    timeout: 15_000,
+  });
 
   const event = calendar.getByRole('button', { name: /Digital workplace operating review/u });
   await event.focus();

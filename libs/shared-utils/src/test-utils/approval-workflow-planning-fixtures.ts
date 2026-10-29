@@ -122,7 +122,7 @@ export function planningAuthorityFixture(
       policy: 'fixture-policy-revision',
       productRelationship: 'fixture-relationship-revision',
       targetPopulation: 'fixture-population-revision',
-      support: 'fixture-support-revision',
+      support: null,
       tenantControl: 'fixture-tenant-control-revision',
     },
     activeAccessMode: 'NORMAL',

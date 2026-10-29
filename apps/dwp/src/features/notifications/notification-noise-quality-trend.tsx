@@ -12,11 +12,18 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
+import { alpha } from '@mui/material/styles';
 
 import type {
   NotificationNoiseTimeRange,
   NotificationNoiseTrendPoint,
 } from './notification-noise-quality-model';
+
+const TREND_MARKER_RADIUS = `${foundationTokens.radius.control / 2}px`;
+
+function highMutePattern(color: string) {
+  return `repeating-linear-gradient(135deg, transparent 0 3px, ${alpha(color, 0.35)} 3px 5px)`;
+}
 
 function trendRate(value: number | null, locale: 'en' | 'ko') {
   return value == null
@@ -71,7 +78,12 @@ export function NotificationNoiseQualityTrend({
         <Stack direction="row" gap={0.5} alignItems="center">
           <Box
             aria-hidden="true"
-            sx={{ width: 14, height: 8, borderRadius: 0.5, bgcolor: 'primary.main' }}
+            sx={{
+              width: 14,
+              height: 8,
+              borderRadius: TREND_MARKER_RADIUS,
+              bgcolor: 'primary.main',
+            }}
           />
           <Typography variant="caption">{t('noiseQuality.trend.normalLegend')}</Typography>
         </Stack>
@@ -81,10 +93,9 @@ export function NotificationNoiseQualityTrend({
             sx={{
               width: 14,
               height: 8,
-              borderRadius: 0.5,
+              borderRadius: TREND_MARKER_RADIUS,
               bgcolor: 'warning.main',
-              backgroundImage:
-                'repeating-linear-gradient(135deg, transparent 0 3px, rgba(0, 0, 0, 0.35) 3px 5px)',
+              backgroundImage: (theme) => highMutePattern(theme.palette.common.black),
             }}
           />
           <Typography variant="caption">{t('noiseQuality.trend.highMuteLegend')}</Typography>
@@ -127,7 +138,7 @@ export function NotificationNoiseQualityTrend({
                       : 'primary.main',
                   backgroundImage:
                     point.muteRate != null && point.muteRate >= 0.25
-                      ? 'repeating-linear-gradient(135deg, transparent 0 3px, rgba(0, 0, 0, 0.35) 3px 5px)'
+                      ? (theme) => highMutePattern(theme.palette.common.black)
                       : 'none',
                   borderRadius: foundationTokens.radius.compact,
                 }}

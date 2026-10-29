@@ -628,17 +628,14 @@ describe('BASE-TFR-PER-008 unmounted feedback slice', () => {
     const secondPage = inboxPage('Personal page two', ID.assignment2, ID.request2, null);
     const clientA = {
       loadMyAssignments: vi.fn().mockResolvedValueOnce(firstPage).mockResolvedValueOnce(secondPage),
-      loadAssignment: vi
-        .fn()
-        .mockImplementation((assignmentId: string) =>
-          Promise.resolve({
-            ...detail,
-            feedbackAssignmentId: assignmentId,
-            feedbackRequestId: assignmentId === ID.assignment2 ? ID.request2 : ID.request,
-            requestTitle:
-              assignmentId === ID.assignment2 ? 'Personal page two' : 'Personal page one',
-          })
-        ),
+      loadAssignment: vi.fn().mockImplementation((assignmentId: string) =>
+        Promise.resolve({
+          ...detail,
+          feedbackAssignmentId: assignmentId,
+          feedbackRequestId: assignmentId === ID.assignment2 ? ID.request2 : ID.request,
+          requestTitle: assignmentId === ID.assignment2 ? 'Personal page two' : 'Personal page one',
+        })
+      ),
       loadRequestOptions: vi.fn(),
       createFeedbackRequest: vi.fn(),
       submitResponse: vi.fn(),
@@ -790,12 +787,10 @@ describe('BASE-TFR-PER-008 unmounted feedback slice', () => {
     const contextFactory = vi.fn().mockReturnValue(context);
     const client = {
       loadTeamPerformance: vi.fn().mockResolvedValue(teamProjection()),
-      loadRequestOptions: vi
-        .fn()
-        .mockResolvedValue({
-          ...options,
-          windowLimits: { ...options.windowLimits, maximumDurationDays: 7 },
-        }),
+      loadRequestOptions: vi.fn().mockResolvedValue({
+        ...options,
+        windowLimits: { ...options.windowLimits, maximumDurationDays: 7 },
+      }),
       createFeedbackRequest: create,
     };
     await act(async () =>

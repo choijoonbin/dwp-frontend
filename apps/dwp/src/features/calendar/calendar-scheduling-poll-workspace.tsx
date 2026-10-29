@@ -4,7 +4,7 @@ import { ListChecks, Plus, RefreshCw } from 'lucide-react';
 import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { getCalendars, HttpError, useAuth } from '@dwp-frontend/shared-utils';
 import { resolveIdempotentMutationIntent } from '@dwp-frontend/shared-utils/api/idempotent-mutation-intent';
-import { ActionButton, InlineFeedback } from '@dwp-frontend/design-system';
+import { ActionButton, InlineFeedback, foundationTokens } from '@dwp-frontend/design-system';
 
 import Box from '@mui/material/Box';
 import Divider from '@mui/material/Divider';
@@ -428,7 +428,11 @@ export function CalendarSchedulingPollWorkspace({
       sx={{ maxWidth: 1280, mx: 'auto' }}
     >
       <Stack spacing={0.5} sx={{ mb: 2 }}>
-        <Typography component="h1" variant="h5" fontWeight={800}>
+        <Typography
+          component="h1"
+          variant="h5"
+          fontWeight={foundationTokens.home.typography.weightHeavy}
+        >
           {t('polls.workspace.title')}
         </Typography>
         <Typography color="text.secondary">{t('polls.workspace.description')}</Typography>
@@ -441,10 +445,18 @@ export function CalendarSchedulingPollWorkspace({
         alignItems={{ sm: 'center' }}
         justifyContent="space-between"
         gap={1}
-        sx={{ border: 1, borderColor: 'divider', borderRadius: 1, p: 1.5, mb: 2 }}
+        sx={{
+          border: 1,
+          borderColor: 'divider',
+          borderRadius: foundationTokens.radius.control,
+          p: 1.5,
+          mb: 2,
+        }}
       >
         <Box>
-          <Typography fontWeight={700}>{t('polls.workspace.createTitle')}</Typography>
+          <Typography fontWeight={foundationTokens.home.typography.weightBold}>
+            {t('polls.workspace.createTitle')}
+          </Typography>
           <Typography variant="body2" color="text.secondary">
             {t(
               creationDraft ? 'polls.workspace.createReady' : 'polls.workspace.createFromSchedule'
@@ -516,11 +528,18 @@ export function CalendarSchedulingPollWorkspace({
             <Box
               component="nav"
               aria-label={t('polls.workspace.listLabel')}
-              sx={{ border: 1, borderColor: 'divider', borderRadius: 1, overflow: 'hidden' }}
+              sx={{
+                border: 1,
+                borderColor: 'divider',
+                borderRadius: foundationTokens.radius.control,
+                overflow: 'hidden',
+              }}
             >
               <Stack direction="row" alignItems="center" gap={1} sx={{ px: 1.5, py: 1.25 }}>
                 <ListChecks size={18} aria-hidden="true" />
-                <Typography fontWeight={750}>{t('polls.workspace.listTitle')}</Typography>
+                <Typography fontWeight={foundationTokens.home.typography.weightEmphasis}>
+                  {t('polls.workspace.listTitle')}
+                </Typography>
               </Stack>
               <Divider />
               {pollItems.length ? (
@@ -535,7 +554,11 @@ export function CalendarSchedulingPollWorkspace({
                       sx={{ justifyContent: 'flex-start', textAlign: 'left' }}
                     >
                       <Box sx={{ minWidth: 0 }}>
-                        <Typography noWrap fontWeight={700} variant="body2">
+                        <Typography
+                          noWrap
+                          fontWeight={foundationTokens.home.typography.weightBold}
+                          variant="body2"
+                        >
                           {item.poll.title}
                         </Typography>
                         <Typography variant="caption" color="text.secondary">

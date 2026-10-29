@@ -3,6 +3,11 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import { MemoryRouter } from 'react-router-dom';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
+vi.mock('react-i18next', async () => {
+  const { hcmTestUseTranslation } = await import('../../../../../test-utils/hcm-i18n-test-stub');
+  return { useTranslation: hcmTestUseTranslation };
+});
+
 const observed = vi.hoisted(() => ({ workspaceProps: undefined as unknown }));
 
 vi.mock('../pages/hris-navigation-policy-workspace', () => ({

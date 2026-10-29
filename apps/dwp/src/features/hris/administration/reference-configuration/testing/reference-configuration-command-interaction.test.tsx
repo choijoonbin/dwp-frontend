@@ -159,9 +159,7 @@ describe('ReferenceConfigurationStudio command-owner boundary', () => {
     action: ReferenceConfigurationLifecycleAction;
     aggregateVersion: number;
     commandOwner?: { execute(input: ReferenceConfigurationCommandInput): Promise<unknown> };
-    onCommitted?: (
-      receipt: ReferenceConfigurationCommandReceipt
-    ) => void | Promise<void>;
+    onCommitted?: (receipt: ReferenceConfigurationCommandReceipt) => void | Promise<void>;
   }) {
     await act(async () => {
       root.render(

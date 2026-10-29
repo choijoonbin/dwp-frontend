@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useId, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   ActionButton,
   DatePickerField,
@@ -214,6 +215,7 @@ export function Per008TeamPerformanceView({
   onPreviousPage,
   onNextPage,
 }: TeamViewProps) {
+  const { t } = useTranslation('hcm');
   const labels = teamCopy[locale];
   const common = per008Copy[locale];
   const filterHintId = useId();
@@ -349,8 +351,12 @@ export function Per008TeamPerformanceView({
             disabled={commandBusy}
             onChange={(event) => setSort(event.target.value as Per008TeamQuery['sort'][number])}
           >
-            <MenuItem value="itemPublicId:ASC">ID ↑</MenuItem>
-            <MenuItem value="itemPublicId:DESC">ID ↓</MenuItem>
+            <MenuItem value="itemPublicId:ASC">
+              {t('hrisPerformance.feedback.sortIdAscending', { defaultValue: 'ID ↑' })}
+            </MenuItem>
+            <MenuItem value="itemPublicId:DESC">
+              {t('hrisPerformance.feedback.sortIdDescending', { defaultValue: 'ID ↓' })}
+            </MenuItem>
             <MenuItem value="performanceAssignment:ASC">{labels.assignment} ↑</MenuItem>
             <MenuItem value="performanceAssignment:DESC">{labels.assignment} ↓</MenuItem>
             <MenuItem value="dueStatus:ASC">{labels.due} ↑</MenuItem>

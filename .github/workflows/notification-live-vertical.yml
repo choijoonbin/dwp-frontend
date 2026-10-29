@@ -104,6 +104,17 @@ jobs:
         uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
         with:
           node-version-file: dwp-frontend/.node-version
+
+      - name: Enable Corepack and activate Yarn
+        working-directory: dwp-frontend
+        run: |
+          corepack enable
+          corepack prepare yarn@4.17.1 --activate
+
+      - name: Restore Yarn cache
+        uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version-file: dwp-frontend/.node-version
           cache: yarn
           cache-dependency-path: dwp-frontend/yarn.lock
 
@@ -122,8 +133,6 @@ jobs:
           YARN_ENABLE_HARDENED_MODE: '1'
         run: |
           set -Eeuo pipefail
-          corepack enable
-          corepack prepare yarn@4.17.1 --activate
           corepack yarn install --immutable
           corepack yarn playwright install --with-deps chromium
 

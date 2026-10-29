@@ -1,6 +1,7 @@
 import { useId } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CalendarClock, UsersRound } from 'lucide-react';
+import { foundationTokens } from '@dwp-frontend/design-system';
 
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
@@ -54,7 +55,12 @@ export function CalendarSchedulingMatrix({
       <Stack direction="row" spacing={1} alignItems="flex-start">
         <UsersRound size={17} aria-hidden="true" />
         <Box>
-          <Typography id={titleId} component="h3" variant="subtitle2" fontWeight={800}>
+          <Typography
+            id={titleId}
+            component="h3"
+            variant="subtitle2"
+            fontWeight={foundationTokens.home.typography.weightHeavy}
+          >
             {t('schedulingAssistant.matrixTitle')}
           </Typography>
           <Typography variant="caption" color="text.secondary">
@@ -64,7 +70,12 @@ export function CalendarSchedulingMatrix({
       </Stack>
       <TableContainer
         tabIndex={0}
-        sx={{ mt: 1, border: 1, borderColor: 'divider', borderRadius: 1 }}
+        sx={{
+          mt: 1,
+          border: 1,
+          borderColor: 'divider',
+          borderRadius: foundationTokens.radius.control,
+        }}
       >
         <Table
           size="small"
@@ -78,7 +89,10 @@ export function CalendarSchedulingMatrix({
                 <TableCell key={candidate.candidateId} align="center">
                   <Stack spacing={0.25} alignItems="center">
                     <CalendarClock size={14} aria-hidden="true" />
-                    <Typography variant="caption" fontWeight={800}>
+                    <Typography
+                      variant="caption"
+                      fontWeight={foundationTokens.home.typography.weightHeavy}
+                    >
                       {calendarDate(candidate.startsAt, language, false, timeZone)}
                     </Typography>
                     <Typography variant="caption" color="text.secondary">
@@ -94,7 +108,11 @@ export function CalendarSchedulingMatrix({
             {participants.map((participant) => (
               <TableRow key={`${participant.role}:${participant.clientRef}`}>
                 <TableCell component="th" scope="row">
-                  <Typography variant="body2" fontWeight={700} noWrap>
+                  <Typography
+                    variant="body2"
+                    fontWeight={foundationTokens.home.typography.weightBold}
+                    noWrap
+                  >
                     {participantLabels?.[participant.clientRef] ??
                       t(`schedulingAssistant.roles.${participant.role}`)}
                   </Typography>

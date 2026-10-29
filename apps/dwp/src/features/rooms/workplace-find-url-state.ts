@@ -1,5 +1,5 @@
-import type { WorkplaceResourceType } from '@dwp-frontend/shared-utils';
-import { resolveZonedClock } from '@dwp-frontend/shared-i18n';
+import { resolveZonedClock } from '@dwp-frontend/shared-i18n/lib/formatters';
+import type { WorkplaceResourceType } from '@dwp-frontend/shared-utils/api/workplace-api';
 import type { WorkplaceDiscoverySort } from './workplace-discovery-model';
 
 const WORKPLACE_FIND_URL_VERSION = '1' as const;

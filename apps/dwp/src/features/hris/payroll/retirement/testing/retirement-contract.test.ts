@@ -95,9 +95,9 @@ describe('PAY-004 IAQ-049 contract', () => {
       ['itemPublicId:ASC', 'itemPublicId:DESC'],
       [7, 'itemPublicId:ASC'],
     ]) {
-      expect(() =>
-        assertPay004QueryRequest({ ...sealedRequest, sort: invalidSort })
-      ).toThrow('request.sort');
+      expect(() => assertPay004QueryRequest({ ...sealedRequest, sort: invalidSort })).toThrow(
+        'request.sort'
+      );
     }
   });
 
@@ -126,9 +126,7 @@ describe('PAY-004 IAQ-049 contract', () => {
       maskedCount: 0,
       omittedCount: 3,
     };
-    expect(() => selectPay004Projection(allOmittedWire)).toThrow(
-      'items[0].fieldGroups'
-    );
+    expect(() => selectPay004Projection(allOmittedWire)).toThrow('items[0].fieldGroups');
   });
 
   it('fails closed for non-canonical UUIDs, action injection and deep-link widening', () => {
@@ -160,9 +158,7 @@ describe('PAY-004 IAQ-049 contract', () => {
   it('fails closed for unknown case and policy lifecycle values', () => {
     const unknownTopLevelStatus = pay004ProjectionWire();
     unknownTopLevelStatus.items[0]!.statusCode = 'UNKNOWN';
-    expect(() => selectPay004Projection(unknownTopLevelStatus)).toThrow(
-      'items[0].statusCode'
-    );
+    expect(() => selectPay004Projection(unknownTopLevelStatus)).toThrow('items[0].statusCode');
 
     const unknownCaseStatus = pay004ProjectionWire();
     unknownCaseStatus.items[0]!.fieldGroups.CASE_STATUS = {

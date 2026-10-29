@@ -28,6 +28,27 @@ export const PAYROLL_APPROVE_PATH = '/api/payroll/v1/runs/{runId}/approvals' as 
 export const PAYROLL_FINALIZE_PATH = '/api/payroll/v1/runs/{runId}/finalize' as const;
 export const PAYROLL_COMMAND_RECEIPT_PATH = '/api/payroll/v1/command-receipts/{receiptId}' as const;
 
+export const HCM_PAYROLL_CALCULATION_MUTATION_API_CONTRACTS = [
+  {
+    apiFunction: 'calculatePayrollRun',
+    routeContractKey: 'route.hcm.operations.payroll-run-calculate.action',
+    method: 'POST',
+    path: PAYROLL_CALCULATE_PATH,
+  },
+  {
+    apiFunction: 'approvePayrollRun',
+    routeContractKey: 'route.hcm.operations.payroll-run-approve.action',
+    method: 'POST',
+    path: PAYROLL_APPROVE_PATH,
+  },
+  {
+    apiFunction: 'finalizePayrollRun',
+    routeContractKey: 'route.hcm.operations.payroll-run-finalize.action',
+    method: 'POST',
+    path: PAYROLL_FINALIZE_PATH,
+  },
+] as const;
+
 export type PayrollCalculationReadScope = Readonly<{
   contextScopeKey?: string;
   correlationId: string;

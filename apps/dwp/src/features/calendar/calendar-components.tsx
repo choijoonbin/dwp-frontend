@@ -14,10 +14,14 @@ import {
   Video,
   X,
 } from 'lucide-react';
-import { ActionButton, ActionIconButton } from '@dwp-frontend/design-system';
+import {
+  ActionButton,
+  ActionIconButton,
+  InlineFeedback,
+  foundationTokens,
+} from '@dwp-frontend/design-system';
 import { formatDate, resolveSupportedLocale } from '@dwp-frontend/shared-i18n';
 
-import Alert from '@mui/material/Alert';
 import Avatar from '@mui/material/Avatar';
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
@@ -162,7 +166,7 @@ export function CalendarPageHeading({
             <Typography
               variant="caption"
               color="primary.main"
-              fontWeight={600}
+              fontWeight={foundationTokens.home.typography.weightSemibold}
               sx={{ display: 'block', mb: 0.35, letterSpacing: '0.025em' }}
             >
               {eyebrow}
@@ -175,7 +179,7 @@ export function CalendarPageHeading({
                 ? { xs: '1.35rem', sm: '1.55rem' }
                 : { xs: '1.65rem', sm: '1.9rem' },
               lineHeight: 1.18,
-              fontWeight: 700,
+              fontWeight: foundationTokens.home.typography.weightBold,
               letterSpacing: '-0.035em',
             }}
           >
@@ -381,7 +385,7 @@ export function CalendarEventDrawer({
             id="calendar-event-drawer-title"
             component="h2"
             variant="h5"
-            fontWeight={700}
+            fontWeight={foundationTokens.home.typography.weightBold}
             sx={{ mt: 2 }}
           >
             {event.title}
@@ -393,31 +397,33 @@ export function CalendarEventDrawer({
         <Box sx={{ p: 2.5, overflowY: 'auto', flex: 1 }}>
           <Stack spacing={2.5}>
             {event.restrictionReason && (
-              <Alert severity="info" variant="outlined">
+              <InlineFeedback severity="info">
                 {t(`event.restrictions.${event.restrictionReason}`, {
                   defaultValue: t('event.restrictionFallback'),
                 })}
-              </Alert>
+              </InlineFeedback>
             )}
             {event.externalProvider && event.externalSourceUrl && (
-              <Alert severity="info" variant="outlined">
+              <InlineFeedback severity="info">
                 <Link
                   href={event.externalSourceUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  sx={{ fontWeight: 700 }}
+                  sx={{ fontWeight: foundationTokens.home.typography.weightBold }}
                 >
                   {t('external.openSource')}
                 </Link>
                 <Typography variant="body2" sx={{ mt: 0.5 }}>
                   {t('external.readOnly')}
                 </Typography>
-              </Alert>
+              </InlineFeedback>
             )}
             <Stack direction="row" spacing={1.5}>
               <CalendarDays size={19} />
               <Box>
-                <Typography fontWeight={700}>{calendarDate(event.startsAt, language)}</Typography>
+                <Typography fontWeight={foundationTokens.home.typography.weightBold}>
+                  {calendarDate(event.startsAt, language)}
+                </Typography>
                 <Typography variant="body2" color="text.secondary">
                   {calendarTime(event.startsAt, language)} – {calendarTime(event.endsAt, language)}
                   {' · '}
@@ -429,7 +435,9 @@ export function CalendarEventDrawer({
               <Stack direction="row" spacing={1.5}>
                 <MapPin size={19} />
                 <Box>
-                  <Typography fontWeight={700}>{event.location}</Typography>
+                  <Typography fontWeight={foundationTokens.home.typography.weightBold}>
+                    {event.location}
+                  </Typography>
                   {event.resource && (
                     <Typography variant="body2" color="text.secondary">
                       {event.resource.site}
@@ -490,7 +498,9 @@ export function CalendarEventDrawer({
                     {event.organizerName.slice(0, 1)}
                   </Avatar>
                   <Box>
-                    <Typography fontWeight={700}>{event.organizerName}</Typography>
+                    <Typography fontWeight={foundationTokens.home.typography.weightBold}>
+                      {event.organizerName}
+                    </Typography>
                     <Typography variant="caption" color="text.secondary">
                       {event.organizerEmail ?? t('event.internalOrganizer')}
                     </Typography>
@@ -542,7 +552,10 @@ export function CalendarEventDrawer({
                   sx={{ mb: 1 }}
                 >
                   <Box sx={{ minWidth: 0 }}>
-                    <Typography variant="subtitle2" fontWeight={700}>
+                    <Typography
+                      variant="subtitle2"
+                      fontWeight={foundationTokens.home.typography.weightBold}
+                    >
                       {t('event.responseTitle')}
                     </Typography>
                     <Typography variant="caption" color="text.secondary">

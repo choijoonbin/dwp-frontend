@@ -11,6 +11,22 @@ import {
   hrDomainOperationsFixture,
 } from './product-area-fixtures';
 
+const OBSERVED_AT = '2026-08-11T00:20:00Z';
+const EMPTY_QUERY_STATE = {
+  state: 'EMPTY',
+  scopeDecisionRevision: 'scope:menu-route:1',
+  freshness: 'CURRENT',
+  nextCursor: null,
+  fieldDecisionSummary: { viewCount: 0, maskedCount: 0, omittedCount: 0 },
+  partialFailures: [],
+  correlationId: '10000000-0000-4000-8000-000000000001',
+  cachePolicy: {
+    authorizationDecisionRevision: 'decision:menu-route:1',
+    invalidationEvent: 'dwp.hris.access.assignment.changed.v1',
+    maxAgeSeconds: 0,
+  },
+} as const;
+
 const EXACT_HCM_FIXTURES: Readonly<Record<string, unknown>> = {
   '/api/people/v1/hr/home': HR_HOME_FIXTURE,
   '/api/people/v1/hr/time': HR_TIME_FIXTURE,
@@ -64,6 +80,57 @@ const EXACT_HCM_FIXTURES: Readonly<Record<string, unknown>> = {
   '/api/people/v1/hris/performance/cycles': {
     cycles: [],
     allowedActions: ['CREATE_DRAFT'],
+  },
+  '/api/people/v1/hris/workbench/self-service/employment-documents': {
+    asOf: OBSERVED_AT,
+    documents: [],
+  },
+  '/api/people/v1/hris/workbench/operations/employment/assignments': {
+    asOf: OBSERVED_AT,
+    assignments: [],
+  },
+  '/api/time/v1/hris/workbench/clock-ingestion': {
+    projectionVersion: '1',
+    asOf: OBSERVED_AT,
+    variantKey: 'CLOCK_INGESTION',
+    queryState: EMPTY_QUERY_STATE,
+    items: [],
+  },
+  '/api/time/v1/hris/workbench/time-exceptions': {
+    projectionVersion: '1',
+    asOf: OBSERVED_AT,
+    variantKey: 'EXCEPTIONS',
+    queryState: EMPTY_QUERY_STATE,
+    items: [],
+  },
+  '/api/time/v1/hris/workbench/time-interpretation': {
+    projectionVersion: '1',
+    asOf: OBSERVED_AT,
+    variantKey: 'INTERPRETATION',
+    queryState: EMPTY_QUERY_STATE,
+    items: [],
+  },
+  '/api/people/v1/hris/performance/workbench/review-operations': {
+    projectionVersion: '1',
+    asOf: OBSERVED_AT,
+    variantKey: 'REVIEW_OPERATIONS',
+    queryState: EMPTY_QUERY_STATE,
+    items: [],
+  },
+  '/api/people/v1/hris/performance/compensation-planning/cycles': {
+    items: [],
+    nextCursor: null,
+    hasMore: false,
+    asOf: OBSERVED_AT,
+    scopeRevision: 1,
+    fieldPolicyRevision: 1,
+  },
+  '/api/payroll/v1/workbench/settings-payroll': {
+    projectionVersion: '1',
+    asOf: OBSERVED_AT,
+    variantKey: 'PAYROLL',
+    queryState: EMPTY_QUERY_STATE,
+    items: [],
   },
   '/api/auth/hris/product-access/snapshot': {
     tenantId: 1,
@@ -128,16 +195,34 @@ const EXACT_HCM_FIXTURES: Readonly<Record<string, unknown>> = {
   },
 };
 
-export function resolveHcmShellFixture(path: string): unknown | undefined {
+const RAW_HCM_FIXTURE_PATHS = new Set([
+  '/api/people/v1/hris/workbench/self-service/employment-documents',
+  '/api/people/v1/hris/workbench/operations/employment/assignments',
+]);
+
+export type HcmShellFixtureResolution = Readonly<{
+  data: unknown;
+  mode: 'raw' | 'success-envelope';
+}>;
+
+export function resolveHcmShellFixture(path: string): HcmShellFixtureResolution | undefined {
   const exactFixture = EXACT_HCM_FIXTURES[path];
-  if (exactFixture !== undefined) return exactFixture;
+  if (exactFixture !== undefined) {
+    return {
+      data: exactFixture,
+      mode: RAW_HCM_FIXTURE_PATHS.has(path) ? 'raw' : 'success-envelope',
+    };
+  }
 
   const operationsMatch = path.match(
     /^\/api\/people\/v1\/hr\/operations\/(time|absence|benefits|pay|talent)$/iu
   );
   if (!operationsMatch) return undefined;
 
-  return hrDomainOperationsFixture(
-    operationsMatch[1].toUpperCase() as Parameters<typeof hrDomainOperationsFixture>[0]
-  );
+  return {
+    data: hrDomainOperationsFixture(
+      operationsMatch[1].toUpperCase() as Parameters<typeof hrDomainOperationsFixture>[0]
+    ),
+    mode: 'success-envelope',
+  };
 }

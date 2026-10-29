@@ -1,8 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { Building2, PencilLine } from 'lucide-react';
-import { ActionButton } from '@dwp-frontend/design-system';
+import { ActionButton, InlineFeedback } from '@dwp-frontend/design-system';
 
-import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
 import ButtonBase from '@mui/material/ButtonBase';
 import Chip from '@mui/material/Chip';
@@ -169,7 +168,12 @@ export function NotificationPolicyDetail({
             <Typography component="dt" variant="caption" color="text.secondary">
               {label}
             </Typography>
-            <Typography component="dd" variant="body2" fontWeight={700} sx={{ m: 0, mt: 0.35 }}>
+            <Typography
+              component="dd"
+              variant="body2"
+              fontWeight="fontWeightBold"
+              sx={{ m: 0, mt: 0.35 }}
+            >
               {value}
             </Typography>
           </Box>
@@ -211,9 +215,13 @@ export function NotificationPolicyDetail({
       )}
 
       {policy.source === 'PROVIDER_POLICY' && (
-        <Alert severity="info" icon={<Building2 size={18} />} sx={{ mt: 2 }}>
+        <InlineFeedback
+          severity="info"
+          icon={<Building2 size={18} aria-hidden="true" />}
+          sx={{ mt: 2 }}
+        >
           {t('admin.policies.providerInheritance')}
-        </Alert>
+        </InlineFeedback>
       )}
     </Box>
   );

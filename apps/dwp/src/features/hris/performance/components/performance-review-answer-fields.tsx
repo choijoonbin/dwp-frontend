@@ -1,4 +1,5 @@
 import { ActionButton, FormField } from '@dwp-frontend/design-system';
+import { useTranslation } from 'react-i18next';
 
 import Box from '@mui/material/Box';
 import FormControl from '@mui/material/FormControl';
@@ -8,6 +9,8 @@ import FormLabel from '@mui/material/FormLabel';
 import Radio from '@mui/material/Radio';
 import RadioGroup from '@mui/material/RadioGroup';
 import Typography from '@mui/material/Typography';
+
+import { translatePerformance } from '../performance-i18n';
 
 import type {
   PerformanceReviewAnswer,
@@ -33,8 +36,16 @@ export function PerformanceReviewAnswerField({
   disabled,
   onChange,
 }: PerformanceReviewAnswerFieldProps) {
+  const { t } = useTranslation('hcm');
   const controlId = 'performance-review-item-' + String(item.sequence);
-  const label = item.label + (item.required ? ' (required)' : '');
+  const label = item.required
+    ? translatePerformance(
+        t,
+        'hrisPerformance.reviewAnswer.requiredLabel',
+        '{{label}} (required)',
+        { label: item.label }
+      )
+    : item.label;
 
   if (item.kind === 'TEXT' && item.answerConstraints.kind === 'TEXT') {
     const value = answer?.kind === 'TEXT' ? answer.textValue : '';
@@ -76,8 +87,16 @@ export function PerformanceReviewAnswerField({
   if (item.kind === 'DECIMAL' && item.answerConstraints.kind === 'DECIMAL') {
     const value = answer?.kind === 'DECIMAL' ? answer.decimalValue : '';
     const range = [
-      item.answerConstraints.minimum === null ? null : 'Minimum ' + item.answerConstraints.minimum,
-      item.answerConstraints.maximum === null ? null : 'Maximum ' + item.answerConstraints.maximum,
+      item.answerConstraints.minimum === null
+        ? null
+        : translatePerformance(t, 'hrisPerformance.reviewAnswer.minimum', 'Minimum {{value}}', {
+            value: item.answerConstraints.minimum,
+          }),
+      item.answerConstraints.maximum === null
+        ? null
+        : translatePerformance(t, 'hrisPerformance.reviewAnswer.maximum', 'Maximum {{value}}', {
+            value: item.answerConstraints.maximum,
+          }),
     ]
       .filter(Boolean)
       .join(' · ');
@@ -168,11 +187,16 @@ export function PerformanceReviewAnswerField({
             type="button"
             size="small"
             disabled={disabled || value === ''}
-            aria-label={'Clear response for ' + item.label}
+            aria-label={translatePerformance(
+              t,
+              'hrisPerformance.reviewAnswer.clearFor',
+              'Clear response for {{label}}',
+              { label: item.label }
+            )}
             onClick={() => onChange(null)}
             sx={{ alignSelf: 'flex-start', mt: 0.5 }}
           >
-            Clear response
+            {t('hrisPerformance.reviewAnswer.clear', { defaultValue: 'Clear response' })}
           </ActionButton>
         )}
         {issue && <FormHelperText id={errorId}>{issue.message}</FormHelperText>}
@@ -232,11 +256,16 @@ export function PerformanceReviewAnswerField({
             type="button"
             size="small"
             disabled={disabled || value === ''}
-            aria-label={'Clear response for ' + item.label}
+            aria-label={translatePerformance(
+              t,
+              'hrisPerformance.reviewAnswer.clearFor',
+              'Clear response for {{label}}',
+              { label: item.label }
+            )}
             onClick={() => onChange(null)}
             sx={{ alignSelf: 'flex-start', mt: 0.5 }}
           >
-            Clear response
+            {t('hrisPerformance.reviewAnswer.clear', { defaultValue: 'Clear response' })}
           </ActionButton>
         )}
         {issue && <FormHelperText id={errorId}>{issue.message}</FormHelperText>}
@@ -246,7 +275,11 @@ export function PerformanceReviewAnswerField({
 
   return (
     <Box role="alert" id={controlId}>
-      <Typography color="error">This review item cannot be displayed safely.</Typography>
+      <Typography color="error">
+        {t('hrisPerformance.reviewAnswer.unsupported', {
+          defaultValue: 'This review item cannot be displayed safely.',
+        })}
+      </Typography>
     </Box>
   );
 }

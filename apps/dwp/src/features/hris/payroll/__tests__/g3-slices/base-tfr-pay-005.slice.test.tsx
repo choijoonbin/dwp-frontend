@@ -55,7 +55,10 @@ import {
 } from '../../statutory-insurance';
 
 import type {
+  EntryQueryState,
   SocialInsuranceOwnerBinding,
+  SocialInsuranceItem,
+  SocialInsuranceProjection,
   StatutoryInsuranceDataSource,
   StatutoryInsuranceTrustedAdmission,
 } from '../../statutory-insurance';
@@ -75,6 +78,12 @@ const DECISION_REVISION = 'authorization-revision-57';
 
 type ProjectionState = 'COMPLETE' | 'EMPTY' | 'PARTIAL' | 'UNAVAILABLE';
 
+type MutableWire<T> = T extends readonly (infer Item)[]
+  ? MutableWire<Item>[]
+  : T extends object
+    ? { -readonly [Key in keyof T]: MutableWire<T[Key]> }
+    : T;
+
 function queryState(
   state: ProjectionState,
   viewCount: number,
@@ -82,7 +91,7 @@ function queryState(
   freshness: 'CURRENT' | 'STALE' | 'UNAVAILABLE' = state === 'UNAVAILABLE'
     ? 'UNAVAILABLE'
     : 'CURRENT'
-) {
+): MutableWire<EntryQueryState> {
   return {
     state,
     scopeDecisionRevision: 'population-scope-revision-57',
@@ -109,7 +118,7 @@ function queryState(
   };
 }
 
-function item(taxAmount = '0.0000') {
+function item(taxAmount = '0.0000'): MutableWire<SocialInsuranceItem> {
   return {
     itemPublicId: ids.workerResult,
     title:
@@ -140,7 +149,7 @@ function item(taxAmount = '0.0000') {
   };
 }
 
-function completeWire(taxAmount = '0.0000') {
+function completeWire(taxAmount = '0.0000'): MutableWire<SocialInsuranceProjection> {
   return {
     projectionVersion: '1',
     asOf: '2026-10-28T08:00:00Z',
@@ -152,13 +161,12 @@ function completeWire(taxAmount = '0.0000') {
 
 function partialWire() {
   const result = completeWire();
-  delete (result.items[0]!.fieldGroups as Partial<(typeof result.items)[0]['fieldGroups']>)
-    .TAX_RESULT;
+  delete result.items[0]!.fieldGroups.TAX_RESULT;
   result.queryState = queryState('PARTIAL', 2, 1);
   return result;
 }
 
-function noItemsWire(state: 'EMPTY' | 'UNAVAILABLE') {
+function noItemsWire(state: 'EMPTY' | 'UNAVAILABLE'): MutableWire<SocialInsuranceProjection> {
   return {
     projectionVersion: '1',
     asOf: '2026-10-28T08:00:00Z',
@@ -295,7 +303,7 @@ describe('[SLICE:BASE-TFR-PAY-005] typed tax-result contribution', () => {
     const socialOnly = structuredClone(mixed.items[0]!);
     socialOnly.itemPublicId = ids.secondWorkerResult;
     socialOnly.deepLink.resourcePublicId = ids.secondWorkerResult;
-    delete (socialOnly.fieldGroups as Partial<typeof socialOnly.fieldGroups>).TAX_RESULT;
+    delete socialOnly.fieldGroups.TAX_RESULT;
     mixed.items.push(socialOnly);
     mixed.queryState = queryState('PARTIAL', 5, 1);
     const mixedProjection = parseSocialInsuranceProjection(mixed);
@@ -322,9 +330,7 @@ describe('[SLICE:BASE-TFR-PAY-005] typed tax-result contribution', () => {
       maskReason: 'FIELD_POLICY',
       maskedDisplayKey: 'payroll.tax.masked',
     };
-    delete (
-      policyOmitted.items[0]!.fieldGroups as Partial<(typeof policyOmitted.items)[0]['fieldGroups']>
-    ).POLICY_VERSION;
+    delete policyOmitted.items[0]!.fieldGroups.POLICY_VERSION;
     policyOmitted.queryState.fieldDecisionSummary = {
       viewCount: 1,
       maskedCount: 1,

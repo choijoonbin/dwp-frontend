@@ -7,6 +7,7 @@ import { getMessagingSharedAssets } from '@dwp-frontend/shared-utils';
 import {
   ActionButton,
   ErrorState,
+  FormField,
   GuidedEmptyState,
   LoadingState,
   PageCanvas,
@@ -16,7 +17,6 @@ import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
 import InputAdornment from '@mui/material/InputAdornment';
 import Stack from '@mui/material/Stack';
-import TextField from '@mui/material/TextField';
 import ToggleButton from '@mui/material/ToggleButton';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import Typography from '@mui/material/Typography';
@@ -87,7 +87,8 @@ export function MessagingFiles() {
           alignItems={{ xs: 'stretch', sm: 'center' }}
           justifyContent="space-between"
         >
-          <TextField
+          <FormField
+            fullWidth={false}
             size="small"
             value={queryText}
             onChange={(event) => updateParam('q', event.target.value)}
@@ -205,7 +206,7 @@ export function MessagingFiles() {
                     <Stack direction="row" spacing={0.75} alignItems="center" flexWrap="wrap">
                       <Typography
                         variant="body2"
-                        fontWeight={800}
+                        fontWeight="fontWeightBold"
                         sx={{ overflowWrap: 'anywhere' }}
                       >
                         {title}

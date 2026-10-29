@@ -318,6 +318,7 @@ describe('[SLICE:BASE-TFR-TIM-007] canonical time close and payroll handoff', ()
     );
     expect(post.mock.calls[1]?.[2].headers).toMatchObject({
       'If-Match': '"7"',
+      'X-DWP-Expected-Object-Version': '7',
       'X-DWP-Step-Up-Challenge': 'fresh-close-challenge',
     });
     expect(post.mock.calls[1]?.[1]).toEqual({
@@ -347,6 +348,7 @@ describe('[SLICE:BASE-TFR-TIM-007] canonical time close and payroll handoff', ()
       'X-DWP-Step-Up-Challenge',
       'fresh-close-challenge'
     );
+    expect(post.mock.calls[2]?.[2].headers).toHaveProperty('X-DWP-Expected-Object-Version', '7');
 
     await source.createHandoff(
       snapshot,

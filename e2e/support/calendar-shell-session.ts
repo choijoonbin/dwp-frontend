@@ -8,11 +8,15 @@ import {
 } from './product-area-fixtures';
 
 import type {
+  CalendarBookingAppointment,
+  CalendarBookingPage,
+  CalendarBookingSecurityCapabilities,
   CalendarDelegation,
   CalendarInsightPeriod,
   CalendarInsights,
   CalendarInsightsMetrics,
   CalendarRestoreEventResponse,
+  CalendarSchedulingPollPage,
   CalendarSettings,
   CalendarTeamAvailabilitySnapshot,
   UpdateCalendarSettingsInput,
@@ -246,6 +250,38 @@ async function mockCalendarProjectionContracts(page: Page) {
   );
 }
 
+async function mockCalendarSchedulingAndBookingContracts(page: Page) {
+  const schedulingPolls = {
+    items: [],
+    nextUpdatedAt: null,
+    nextPollId: null,
+    hasMore: false,
+  } satisfies CalendarSchedulingPollPage;
+  const bookingCapabilities = {
+    authenticatedBookingEnabled: true,
+    externalPublicBookingEnabled: false,
+    externalPublicBookingReason: 'disabled',
+    holdTtlSeconds: 300,
+  } satisfies CalendarBookingSecurityCapabilities;
+
+  await page.route('**/api/platform/v1/calendar/scheduling-polls**', (route) => {
+    if (route.request().method() !== 'GET') return route.fallback();
+    return fulfillSuccess(route, schedulingPolls);
+  });
+  await page.route('**/api/platform/v1/calendar/booking/capabilities', (route) => {
+    if (route.request().method() !== 'GET') return route.fallback();
+    return fulfillSuccess(route, bookingCapabilities);
+  });
+  await page.route('**/api/platform/v1/calendar/booking/pages', (route) => {
+    if (route.request().method() !== 'GET') return route.fallback();
+    return fulfillSuccess(route, [] satisfies CalendarBookingPage[]);
+  });
+  await page.route('**/api/platform/v1/calendar/booking/appointments', (route) => {
+    if (route.request().method() !== 'GET') return route.fallback();
+    return fulfillSuccess(route, [] satisfies CalendarBookingAppointment[]);
+  });
+}
+
 async function mockCalendarSettingsContracts(page: Page) {
   let settings: CalendarSettings = structuredClone(CALENDAR_SETTINGS_FIXTURE);
   let delegations: CalendarDelegation[] = structuredClone(CALENDAR_DELEGATIONS_FIXTURE);
@@ -320,4 +356,5 @@ export async function mockCalendarShellSession(...args: Parameters<typeof mockBa
   await mockCalendarSharingContracts(args[0]);
   await mockCalendarTeamAvailabilityContract(args[0]);
   await mockCalendarProjectionContracts(args[0]);
+  await mockCalendarSchedulingAndBookingContracts(args[0]);
 }

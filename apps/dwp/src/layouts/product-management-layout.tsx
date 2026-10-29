@@ -1,5 +1,5 @@
 import { ProductSurfaceAccessState } from '../components/product-surface-access-state';
-import { ProductAreaLayout } from './product-area-layout';
+import { ProductAreaLayout } from './product-area-layout-boundary';
 
 import type { ProductSurfaceLayoutRuntime } from '../components/product-surface-controls';
 import type { ProductAreaLayoutProps } from './product-area-layout';

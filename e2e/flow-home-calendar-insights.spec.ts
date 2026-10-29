@@ -6,6 +6,13 @@ import {
   fulfillSuccess,
   mockShellSession,
 } from './support/shell-session';
+import { routeHomeWave4ShadowRuntime } from './support/home-wave4-runtime-fixtures';
+import {
+  DEFAULT_HOME_PREFERENCE,
+  flowWidgetRegistryEffectiveCatalog,
+  routeDefaultHomeViews,
+} from './support/flow-home-runtime-fixtures';
+import { widgetRegistryReadiness } from './support/widget-registry';
 
 type InsightState = 'unavailable' | 'restricted' | 'empty';
 type Locale = 'en' | 'ko';
@@ -31,6 +38,14 @@ async function mockInsightState(page: Page, locale: Locale, state: InsightState)
     permissions: FULL_PRODUCT_PERMISSIONS,
     appearance: { mode: 'light', density: 'standard', highContrast: false, reduceMotion: true },
   });
+  await routeHomeWave4ShadowRuntime(page, 'FLOW_V1');
+  await routeDefaultHomeViews(page);
+  await page.route('**/api/platform/v1/widget-catalog/readiness', (route) =>
+    fulfillSuccess(route, widgetRegistryReadiness('SHADOW'))
+  );
+  await page.route('**/api/platform/v1/widget-catalog/effective**', (route) =>
+    fulfillSuccess(route, flowWidgetRegistryEffectiveCatalog())
+  );
   const overview = createHomeOverviewFixture(['WORKSPACE_MEMBER']);
   let recovered = false;
   let overviewRequests = 0;
@@ -74,19 +89,13 @@ async function mockInsightState(page: Page, locale: Locale, state: InsightState)
       effectiveExperienceVariant: 'FLOW_V1',
       advancedPersonalizationEnabled: false,
       composerEnabled: false,
-      homePreferenceStore: 'LEGACY',
+      homePreferenceStore: 'VIEWS',
       version: 7,
     })
   );
   await page.route('**/api/platform/v1/home-preferences**', (route) => {
     if (route.request().method() !== 'GET') return route.fallback();
-    return fulfillSuccess(route, {
-      schemaVersion: 5,
-      surfaceKey: 'workspace-home',
-      customized: false,
-      layout: { appLayout: null, presentation: 'balanced', widgets: [] },
-      version: 0,
-    });
+    return fulfillSuccess(route, DEFAULT_HOME_PREFERENCE);
   });
   return {
     recover: () => {

@@ -1,6 +1,11 @@
 import { useId, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { DatePickerField, FormField, SelectField } from '@dwp-frontend/design-system';
+import {
+  DatePickerField,
+  FormField,
+  foundationTokens,
+  SelectField,
+} from '@dwp-frontend/design-system';
 
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
@@ -80,7 +85,12 @@ export function CalendarRecurrenceFields({
 
           {form.recurrence === 'WEEKLY' && (
             <Box component="fieldset" sx={{ m: 0, p: 0, border: 0, minWidth: 0 }}>
-              <Typography component="legend" variant="caption" fontWeight={700} sx={{ mb: 0.75 }}>
+              <Typography
+                component="legend"
+                variant="caption"
+                fontWeight={foundationTokens.home.typography.weightBold}
+                sx={{ mb: 0.75 }}
+              >
                 {t('event.recurrenceDaysLabel')}
               </Typography>
               <ToggleButtonGroup

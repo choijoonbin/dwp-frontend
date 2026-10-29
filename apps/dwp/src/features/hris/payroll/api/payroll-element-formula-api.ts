@@ -65,6 +65,39 @@ export const PAYROLL_ELEMENT_FORMULA_OPERATION_BINDINGS = Object.freeze([
   },
 ] as const);
 
+export const HCM_PAYROLL_ELEMENT_FORMULA_MUTATION_API_CONTRACTS = [
+  {
+    apiFunction: 'createPayrollElementVersion',
+    routeContractKey: 'route.hcm.configuration.payroll-element-version-create.action',
+    method: 'POST',
+    path: PAYROLL_ELEMENT_VERSIONS_PATH,
+  },
+  {
+    apiFunction: 'createPayrollFormulaVersion',
+    routeContractKey: 'route.hcm.configuration.payroll-formula-version-create.action',
+    method: 'POST',
+    path: PAYROLL_FORMULA_VERSIONS_PATH,
+  },
+  {
+    apiFunction: 'validatePayrollFormula',
+    routeContractKey: 'route.hcm.configuration.payroll-formula-validate.action',
+    method: 'POST',
+    path: '/api/payroll/v1/formulas/{formulaId}/validations',
+  },
+  {
+    apiFunction: 'simulatePayrollFormula',
+    routeContractKey: 'route.hcm.configuration.payroll-formula-simulate.action',
+    method: 'POST',
+    path: '/api/payroll/v1/formulas/{formulaId}/simulations',
+  },
+  {
+    apiFunction: 'publishPayrollFormula',
+    routeContractKey: 'route.hcm.configuration.payroll-formula-publish.action',
+    method: 'POST',
+    path: '/api/payroll/v1/formulas/{formulaId}/publish',
+  },
+] as const;
+
 export type PayrollConfigurationWorkbenchQuery = Readonly<{
   limit?: number;
   cursor?: string;
@@ -263,7 +296,7 @@ async function mutate<T extends object>(
   validateAuthority(authority, expectedVersion);
   const governed = highRisk
     ? productSurfaceHighRiskMutationConfig(authority.governance, {
-        objectVersionHeader: expectedVersion !== undefined,
+        objectVersionHeader: true,
       })
     : productSurfaceGovernedMutationConfig(authority.governance, {
         objectVersionHeader: expectedVersion !== undefined,

@@ -31,6 +31,7 @@ const calendarSpecs = [
 
 test('Frontend quality keeps every Calendar behavior and accessibility spec mandatory', () => {
   const source = jobSource('calendar-quality');
+  assert.match(source, /playwright install --with-deps chromium webkit/u);
   for (const spec of calendarSpecs) {
     assert.match(source, new RegExp(spec.replaceAll('.', '\\.'), 'u'), `${spec} must run in CI`);
   }
@@ -47,6 +48,7 @@ test('Frontend quality keeps every Calendar behavior and accessibility spec mand
 
 test('approved Darwin Calendar pixel baselines remain mandatory and immutable in CI', () => {
   const source = jobSource('calendar-visual-baselines');
+  assert.match(source, /playwright install chromium webkit/u);
   assert.match(source, /e2e\/calendar-home-flow\.spec\.ts/u);
   assert.match(source, /e2e\/calendar-visual-quality\.spec\.ts/u);
   assert.match(source, /--project=chromium\b/u);

@@ -574,16 +574,15 @@
       "Skeleton": 2
     },
     "apps/dwp/src/features/calendar/calendar-availability.tsx": {
-      "RawTypography": 9,
-      "RawRadius": 6,
-      "Alert": 4,
+      "RawTypography": 3,
+      "RawRadius": 2,
+      "Alert": 1,
       "Skeleton": 2
     },
     "apps/dwp/src/features/calendar/calendar-components.tsx": {
       "HardcodedColor": 10,
       "RawRadius": 1,
-      "RawTypography": 15,
-      "Alert": 1
+      "RawTypography": 8
     },
     "apps/dwp/src/features/calendar/calendar-delegation-dialog.tsx": {
       "Alert": 2,
@@ -629,10 +628,10 @@
       "Alert": 2
     },
     "apps/dwp/src/features/calendar/calendar-scheduling-assistant.tsx": {
-      "RawRadius": 2,
+      "RawRadius": 1,
       "RawTypography": 2,
       "Alert": 7,
-      "CircularProgress": 2
+      "CircularProgress": 1
     },
     "apps/dwp/src/features/calendar/calendar-settings.tsx": {
       "RawRadius": 6,
@@ -1214,9 +1213,9 @@
       "Skeleton": 3
     },
     "apps/dwp/src/features/mail/mail-inbox.tsx": {
-      "Alert": 3,
       "RawRadius": 1,
-      "LinearProgress": 1
+      "LinearProgress": 1,
+      "Alert": 2
     },
     "apps/dwp/src/features/mail/mail-lifecycle-undo.tsx": {
       "Alert": 1
@@ -1391,10 +1390,9 @@
       "Skeleton": 2
     },
     "apps/dwp/src/features/messaging/messaging-admin.tsx": {
-      "Alert": 3,
       "Skeleton": 3,
       "RawRadius": 3,
-      "HardcodedColor": 5,
+      "Alert": 1,
       "RawTypography": 2
     },
     "apps/dwp/src/features/messaging/messaging-attachment-drafts.tsx": {
@@ -1408,7 +1406,7 @@
     "apps/dwp/src/features/messaging/messaging-components.tsx": {
       "RawTypography": 9,
       "RawRadius": 3,
-      "HardcodedColor": 8,
+      "HardcodedColor": 2,
       "RawShadow": 1
     },
     "apps/dwp/src/features/messaging/messaging-composer.tsx": {
@@ -1423,7 +1421,7 @@
       "Alert": 1
     },
     "apps/dwp/src/features/messaging/messaging-conversation-settings.tsx": {
-      "Alert": 2
+      "Alert": 1
     },
     "apps/dwp/src/features/messaging/messaging-conversation-workspace.tsx": {
       "Skeleton": 2,
@@ -1434,7 +1432,7 @@
       "Alert": 1
     },
     "apps/dwp/src/features/messaging/messaging-display-preference-panel.tsx": {
-      "Alert": 2,
+      "Alert": 1,
       "RawTypography": 2
     },
     "apps/dwp/src/features/messaging/messaging-expression-picker.tsx": {
@@ -1462,7 +1460,6 @@
     },
     "apps/dwp/src/features/messaging/messaging-members-dialog.tsx": {
       "Skeleton": 2,
-      "Alert": 1,
       "RawTypography": 5
     },
     "apps/dwp/src/features/messaging/messaging-mention-menu.tsx": {
@@ -1487,9 +1484,6 @@
       "Alert": 1
     },
     "apps/dwp/src/features/messaging/messaging-saved-items.tsx": {
-      "RawRadius": 1,
-      "Skeleton": 1,
-      "Alert": 1,
       "RawTypography": 3
     },
     "apps/dwp/src/features/messaging/messaging-search-palette.tsx": {
@@ -1510,9 +1504,6 @@
     "apps/dwp/src/features/messaging/messaging-typing-indicator.tsx": {
       "RawMotion": 2
     },
-    "apps/dwp/src/features/notifications/notification-admin.tsx": {
-      "Alert": 1
-    },
     "apps/dwp/src/features/notifications/notification-bulk-undo-banner.tsx": {
       "Alert": 1
     },
@@ -1523,8 +1514,7 @@
       "RawTypography": 1
     },
     "apps/dwp/src/features/notifications/notification-policy-studio.tsx": {
-      "RawTypography": 1,
-      "Alert": 7
+      "Alert": 6
     },
     "apps/dwp/src/features/notifications/notification-preferences.tsx": {
       "Alert": 4
@@ -1897,7 +1887,7 @@
     "apps/dwp/src/features/rooms/workplace-admin-operations.tsx": {
       "LinearProgress": 1,
       "Alert": 2,
-      "RawTypography": 6
+      "RawTypography": 4
     },
     "apps/dwp/src/features/rooms/workplace-admin-policy.tsx": {
       "Skeleton": 1
@@ -2185,9 +2175,6 @@
     "apps/dwp/src/pages/account/settings.tsx": {
       "Alert": 3,
       "RawRadius": 3
-    },
-    "apps/dwp/src/pages/activity.tsx": {
-      "LinearProgress": 1
     },
     "apps/dwp/src/pages/admin.tsx": {
       "RawRadius": 1

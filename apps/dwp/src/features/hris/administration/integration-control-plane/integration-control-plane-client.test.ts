@@ -169,7 +169,7 @@ describe('SYS-008 integration control-plane typed client', () => {
       expect(headers.get('If-Match')).toBe(policy.requiresObjectRevision ? '"12"' : null);
       expect(headers.has('X-Tenant-Id')).toBe(false);
       expect(headers.has('X-DWP-Step-Up-Challenge')).toBe(false);
-      expect(headers.has('X-DWP-Expected-Object-Version')).toBe(false);
+      expect(headers.get('X-DWP-Expected-Object-Version')).toBe(policy.highRisk ? '12' : null);
     });
   });
 

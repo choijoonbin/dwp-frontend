@@ -7,12 +7,16 @@ import { afterEach, test } from 'node:test';
 import { fileURLToPath } from 'node:url';
 
 import {
+  allItems,
   cleanupReadinessFixtures,
+  closureReference,
   createReadinessFixtureDirectory,
   makeInternalClosureComplete,
   makeInternalClosurePartial,
   makeManifestInternalPending,
+  productExternalBlockers,
   run,
+  runWithSchema,
 } from './check-product-surface-production-readiness.test-support.mjs';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
@@ -59,12 +63,6 @@ const provenanceKindByEvidenceType = new Map([
   ['USABILITY_STUDY', 'INDEPENDENT_REVIEW_ATTESTATION'],
   ['PENETRATION_TEST', 'INDEPENDENT_REVIEW_ATTESTATION'],
 ]);
-const closureReference = 'architecture/product-surface-internal-closure.v1.generated.json';
-const productExternalBlockers = (productId) => [
-  `EXTERNAL_${productId.toUpperCase()}_PRODUCT_SECURITY_OWNER_APPROVAL`,
-  `EXTERNAL_${productId.toUpperCase()}_IMMUTABLE_RELEASE_ATTESTATION`,
-];
-
 afterEach(cleanupReadinessFixtures);
 
 function fixture() {
@@ -80,21 +78,6 @@ function fixture() {
     authorization: JSON.parse(readFileSync(authorizationSource, 'utf8')),
     trustPolicy: JSON.parse(readFileSync(trustPolicySource, 'utf8')),
   };
-}
-
-function runWithSchema(value, schema) {
-  const schemaPath = join(value.directory, 'schema.json');
-  writeFileSync(schemaPath, `${JSON.stringify(schema, null, 2)}\n`);
-  return run(value, ['--schema', schemaPath]);
-}
-
-function allItems(manifest) {
-  return [
-    ...manifest.productionGates,
-    ...manifest.decisions,
-    ...manifest.products,
-    ...manifest.exitCriteria,
-  ];
 }
 
 function activateTrustPolicy(value) {
@@ -606,11 +589,22 @@ test('keeps X-03 internal while the calculated five-vector matrix is partial', (
   assert.match(result.stdout, /owner-service PEP cells: 55\/60/);
 });
 
-test('release mode fails closed without converting pending approvals to completion', () => {
+test('release mode reports registry drift and pending approvals without converting either to completion', () => {
   const value = fixture();
+  const { version: latest, checksum: latestChecksum } = value.authorization.latestAlias;
+  const { version: attested, checksum: attestedChecksum } =
+    value.closure.generatedFrom.authorizationBundle;
   const result = run(value, ['--release']);
   assert.equal(result.status, 2);
-  assert.doesNotMatch(result.stderr, /AUTHORIZATION_CLOSURE_ATTESTATION/);
+  assert.match(result.stderr, /AUTHORIZATION_CLOSURE_ATTESTATION/);
+  assert.match(
+    result.stderr,
+    new RegExp(`latest authorization registry v${latest} \\(${latestChecksum}\\)`)
+  );
+  assert.match(
+    result.stderr,
+    new RegExp(`attested closure v${attested} \\(${attestedChecksum}\\)`)
+  );
   assert.match(result.stderr, /G-02 BLOCKED_EXTERNAL/);
   assert.match(
     result.stderr,

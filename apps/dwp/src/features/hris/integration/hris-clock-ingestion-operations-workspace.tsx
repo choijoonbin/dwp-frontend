@@ -1,7 +1,7 @@
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSearchParams } from 'react-router-dom';
-import { resolveSupportedLocale } from '@dwp-frontend/shared-i18n';
+import { resolveSupportedLocale, resolveSystemTimeZone } from '@dwp-frontend/shared-i18n';
 
 import {
   ClockIngestionWorkspace,
@@ -61,7 +61,7 @@ export function HrisClockIngestionOperationsWorkspace({
     [scopeIdentity]
   );
   const locale = resolveSupportedLocale(i18n.resolvedLanguage, i18n.language);
-  const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC';
+  const timeZone = resolveSystemTimeZone('UTC');
   const scope = useMemo<ClockIngestionScope>(
     () => ({
       ready:

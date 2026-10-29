@@ -6,22 +6,12 @@ import Chip from '@mui/material/Chip';
 import Paper from '@mui/material/Paper';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
+import { useTranslation } from 'react-i18next';
 
 import { TIMECARD_STATES, formatTimecardMinutes } from '../model/timecard-model';
 
 import type { ReactNode } from 'react';
 import type { Timecard } from '../model/timecard-model';
-
-const STATE_LABELS = {
-  OPEN: 'Open',
-  SUBMITTED: 'Submitted',
-  APPROVED: 'Approved',
-  REJECTED: 'Rejected',
-  CORRECTION_REQUIRED: 'Correction required',
-  LOCKED: 'Locked',
-  CLOSED: 'Closed',
-  SUPERSEDED: 'Superseded',
-} as const;
 
 function SummaryItem({ icon, label, value }: { icon: ReactNode; label: string; value: string }) {
   return (
@@ -40,6 +30,10 @@ function SummaryItem({ icon, label, value }: { icon: ReactNode; label: string; v
 }
 
 export function TimecardSummary({ timecard }: { timecard: Timecard }) {
+  const { t } = useTranslation('hcm');
+  const stateLabel = (state: Timecard['state']) =>
+    t(`hrisTime.i18nClosure.timecard.summary.states.${state}`);
+
   return (
     <Stack gap={2}>
       <Paper component="section" variant="outlined" aria-labelledby="timecard-summary-title">
@@ -52,7 +46,7 @@ export function TimecardSummary({ timecard }: { timecard: Timecard }) {
           >
             <Box minWidth={0}>
               <Typography id="timecard-summary-title" component="h2" variant="h6">
-                Timecard summary
+                {t('hrisTime.i18nClosure.timecard.summary.title')}
               </Typography>
               <Typography color="text.secondary" sx={{ overflowWrap: 'anywhere' }}>
                 {timecard.periodStart} – {timecard.periodEnd}
@@ -67,7 +61,9 @@ export function TimecardSummary({ timecard }: { timecard: Timecard }) {
                     ? 'warning'
                     : 'default'
               }
-              label={`State: ${STATE_LABELS[timecard.state]}`}
+              label={t('hrisTime.i18nClosure.timecard.summary.stateValue', {
+                value: stateLabel(timecard.state),
+              })}
             />
           </Stack>
         </Box>
@@ -82,22 +78,22 @@ export function TimecardSummary({ timecard }: { timecard: Timecard }) {
         >
           <SummaryItem
             icon={<Clock3 size={17} aria-hidden="true" />}
-            label="Recorded total"
+            label={t('hrisTime.i18nClosure.timecard.summary.recordedTotal')}
             value={formatTimecardMinutes(timecard.totalMinutes)}
           />
           <SummaryItem
             icon={<History size={17} aria-hidden="true" />}
-            label="Ledger revision"
+            label={t('hrisTime.i18nClosure.timecard.summary.ledgerRevision')}
             value={String(timecard.ledgerRevision)}
           />
           <SummaryItem
             icon={<ShieldCheck size={17} aria-hidden="true" />}
-            label="Aggregate version"
+            label={t('hrisTime.i18nClosure.timecard.summary.aggregateVersion')}
             value={String(timecard.version)}
           />
           <SummaryItem
             icon={<CalendarDays size={17} aria-hidden="true" />}
-            label="Worker reference"
+            label={t('hrisTime.i18nClosure.timecard.summary.workerReference')}
             value={timecard.workerId}
           />
         </Box>
@@ -105,11 +101,10 @@ export function TimecardSummary({ timecard }: { timecard: Timecard }) {
 
       <Paper component="section" variant="outlined" sx={{ p: { xs: 2, md: 2.5 } }}>
         <Typography id="timecard-state-model-title" component="h2" variant="subtitle1">
-          Canonical state model
+          {t('hrisTime.i18nClosure.timecard.summary.stateModelTitle')}
         </Typography>
         <Typography color="text.secondary" variant="body2" sx={{ mt: 0.5 }}>
-          Commands are available only for the current server state. Closed and superseded records
-          stay read only.
+          {t('hrisTime.i18nClosure.timecard.summary.stateModelDescription')}
         </Typography>
         <Box
           component="ol"
@@ -141,13 +136,15 @@ export function TimecardSummary({ timecard }: { timecard: Timecard }) {
                 }}
               >
                 <Typography variant="caption" color="text.secondary">
-                  {current ? 'Current state' : 'State'}
+                  {current
+                    ? t('hrisTime.i18nClosure.timecard.summary.currentState')
+                    : t('hrisTime.i18nClosure.timecard.summary.state')}
                 </Typography>
                 <Typography
                   variant="body2"
                   fontWeight={current ? 'fontWeightBold' : 'fontWeightMedium'}
                 >
-                  {STATE_LABELS[state]}
+                  {stateLabel(state)}
                 </Typography>
               </Box>
             );

@@ -472,7 +472,8 @@
           "QUEUE_CHANGED": "The queue and detail versions differ and must be checked again.",
           "CONTENT_ACCESS_DENIED": "The request body and decision evidence are unavailable with current authority.",
           "SELF_APPROVAL_BLOCKED": "The self-approval policy prevents this decision.",
-          "DECISION_AUTHORITY_UNAVAILABLE": "The current user does not have decision authority for this approval."
+          "DECISION_AUTHORITY_UNAVAILABLE": "The current user does not have decision authority for this approval.",
+          "HIGH_RISK_CONFIRMATION_REQUIRED": "This approval requires an individual high-risk confirmation."
         }
       },
       "batchCompleted": "Batch approval completed.",

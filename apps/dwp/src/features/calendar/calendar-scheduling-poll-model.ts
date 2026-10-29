@@ -5,6 +5,11 @@ import type {
   CastCalendarSchedulingPollVotesInput,
   CreateCalendarSchedulingPollInput,
 } from '@dwp-frontend/shared-utils/api/calendar-scheduling-poll-api';
+import {
+  formatDate,
+  resolveCanonicalTimeZone,
+  resolveSupportedLocale,
+} from '@dwp-frontend/shared-i18n';
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/u;
 const OFFSET_DATE_TIME =
@@ -74,16 +79,12 @@ export type CalendarSchedulingPollVoteChoices = Readonly<
 >;
 
 function isCanonicalTimeZone(value: string) {
-  try {
-    return (
-      value.length > 0 &&
-      value.length <= 80 &&
-      value === value.trim() &&
-      new Intl.DateTimeFormat('en-US', { timeZone: value }).resolvedOptions().timeZone === value
-    );
-  } catch {
-    return false;
-  }
+  return (
+    value.length > 0 &&
+    value.length <= 80 &&
+    value === value.trim() &&
+    resolveCanonicalTimeZone(value) === value
+  );
 }
 
 function finiteTimestamp(value: string) {
@@ -317,11 +318,15 @@ export function formatCalendarSchedulingPollDateTime(
   const date = new Date(value);
   if (!Number.isFinite(date.getTime()) || !isCanonicalTimeZone(timeZone)) return null;
   try {
-    return new Intl.DateTimeFormat(language, {
-      dateStyle: 'medium',
-      timeStyle: 'short',
-      timeZone,
-    }).format(date);
+    return formatDate(
+      date,
+      {
+        dateStyle: 'medium',
+        timeStyle: 'short',
+        timeZone,
+      },
+      resolveSupportedLocale(language)
+    );
   } catch {
     return null;
   }

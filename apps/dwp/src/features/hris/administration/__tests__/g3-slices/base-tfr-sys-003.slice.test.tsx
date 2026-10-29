@@ -4,6 +4,11 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { createRoot, type Root } from 'react-dom/client';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
+vi.mock('react-i18next', async () => {
+  const { hcmTestUseTranslation } = await import('../../../../../test-utils/hcm-i18n-test-stub');
+  return { useTranslation: hcmTestUseTranslation };
+});
+
 import type * as DesignSystem from '@dwp-frontend/design-system';
 
 vi.mock('@dwp-frontend/design-system', async (importOriginal) => ({

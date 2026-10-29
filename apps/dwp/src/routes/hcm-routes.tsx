@@ -5,7 +5,7 @@ import { useAuth } from '@dwp-frontend/shared-utils/auth/auth-provider';
 import { isProviderIdentity } from '@dwp-frontend/shared-utils/auth/control-plane-access';
 import { usePermissions } from '@dwp-frontend/shared-utils/auth/use-permissions';
 import { useProviderSupportContext } from '@dwp-frontend/shared-utils/auth/provider-support-context';
-import { Navigate, Outlet, useLocation, type RouteObject } from 'react-router-dom';
+import { Navigate, Outlet, useLocation, useRoutes, type RouteObject } from 'react-router-dom';
 
 import { mapLegacyHrPath } from '../features/hcm/hcm-legacy-paths';
 import {
@@ -14,6 +14,7 @@ import {
 } from '../features/hcm/hcm-navigation';
 import { HCM_PRODUCT_MANIFEST } from '../features/hcm/hcm-product-manifest';
 import { canAccessLegacyHcmSurface, useHcmAccess } from '../features/hcm/hcm-surface-access';
+import { assertHcmOperationalMutationApiRegistry } from '../features/hris/hris-operational-mutation-api-contracts';
 import {
   HrisNavigationPolicyDeepLinkGuard,
   HRIS_TASK_NAVIGATION_LAYOUT_PROPS,
@@ -64,6 +65,8 @@ const HrisWorkExplorer = lazy(() => import('../features/hris/explorer'));
 const HcmLayout = lazy(() =>
   import('../layouts/hcm-layout').then((module) => ({ default: module.HcmLayout }))
 );
+
+assertHcmOperationalMutationApiRegistry();
 
 export const HCM_CONFIGURED_TASK_NAVIGATION_LAYOUT_PROPS = HRIS_TASK_NAVIGATION_LAYOUT_PROPS;
 
@@ -555,3 +558,25 @@ export const hcmRoutes: RouteObject[] = [
     ),
   },
 ];
+
+/**
+ * Runtime entry used by the workspace shell's async HCM boundary.
+ *
+ * Keep the complete route tree in this module so contract tests and the generated
+ * PAGE registry continue to validate the exact same route objects. The lightweight
+ * shell entry imports this module only after an `/hr` navigation, which keeps the
+ * HRIS policy registries and operational API contract assertion out of startup.
+ */
+export function HcmProductRouteRuntime() {
+  const root = hcmRoutes[0];
+  if (!root) throw new Error('HCM product route is not registered.');
+  return useRoutes([{ element: root.element, children: root.children }]);
+}
+
+export function HcmPeopleLegacyRouteRuntime() {
+  return hcmRoutes[1]?.element ?? null;
+}
+
+export function HcmWorkforceLegacyRouteRuntime() {
+  return hcmRoutes[2]?.element ?? null;
+}

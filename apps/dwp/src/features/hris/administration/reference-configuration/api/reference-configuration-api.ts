@@ -57,6 +57,63 @@ export const REFERENCE_CONFIGURATION_OPERATION_BINDINGS = [
   ['POST', `${REFERENCE_CONFIGURATION_BASE_PATH}/{configId}/versions/{version}/retire`],
 ] as const;
 
+export const HCM_REFERENCE_CONFIGURATION_MUTATION_API_CONTRACTS = [
+  {
+    apiFunction: 'createReferenceConfigurationVersion',
+    routeContractKey: 'route.hcm.configuration.configuration-version-create.action',
+    method: 'POST',
+    path: `${REFERENCE_CONFIGURATION_BASE_PATH}/{configId}/versions`,
+  },
+  {
+    apiFunction: 'validateReferenceConfigurationVersion',
+    routeContractKey: 'route.hcm.configuration.configuration-version-validate.action',
+    method: 'POST',
+    path: `${REFERENCE_CONFIGURATION_BASE_PATH}/{configId}/versions/{version}/validate`,
+  },
+  {
+    apiFunction: 'simulateReferenceConfigurationVersion',
+    routeContractKey: 'route.hcm.configuration.configuration-version-simulate.action',
+    method: 'POST',
+    path: `${REFERENCE_CONFIGURATION_BASE_PATH}/{configId}/versions/{version}/simulate`,
+  },
+  {
+    apiFunction: 'submitReferenceConfigurationVersion',
+    routeContractKey: 'route.hcm.configuration.configuration-version-submit.action',
+    method: 'POST',
+    path: `${REFERENCE_CONFIGURATION_BASE_PATH}/{configId}/versions/{version}/submit`,
+  },
+  {
+    apiFunction: 'approveReferenceConfigurationVersion',
+    routeContractKey: 'route.hcm.configuration.configuration-version-approve.action',
+    method: 'POST',
+    path: `${REFERENCE_CONFIGURATION_BASE_PATH}/{configId}/versions/{version}/approve`,
+  },
+  {
+    apiFunction: 'scheduleReferenceConfigurationVersion',
+    routeContractKey: 'route.hcm.configuration.configuration-version-schedule.action',
+    method: 'POST',
+    path: `${REFERENCE_CONFIGURATION_BASE_PATH}/{configId}/versions/{version}/schedule`,
+  },
+  {
+    apiFunction: 'publishReferenceConfigurationVersion',
+    routeContractKey: 'route.hcm.configuration.configuration-version-publish.action',
+    method: 'POST',
+    path: `${REFERENCE_CONFIGURATION_BASE_PATH}/{configId}/versions/{version}/publish`,
+  },
+  {
+    apiFunction: 'rollbackReferenceConfigurationVersion',
+    routeContractKey: 'route.hcm.configuration.configuration-version-rollback.action',
+    method: 'POST',
+    path: `${REFERENCE_CONFIGURATION_BASE_PATH}/{configId}/versions/{version}/rollback`,
+  },
+  {
+    apiFunction: 'retireReferenceConfigurationVersion',
+    routeContractKey: 'route.hcm.configuration.configuration-version-retire.action',
+    method: 'POST',
+    path: `${REFERENCE_CONFIGURATION_BASE_PATH}/{configId}/versions/{version}/retire`,
+  },
+] as const;
+
 export type ReferenceConfigurationWorkbenchQuery = Readonly<{
   limit?: number;
   cursor?: string;

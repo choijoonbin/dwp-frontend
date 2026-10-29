@@ -145,7 +145,7 @@ export function useHomeV2Runtime({
     };
   }, [queryClient, scopeKey]);
 
-  const query = useQuery({
+  const query = useQuery<HomeV2ReadResult>({
     queryKey: [...HOME_V2_QUERY_ROOT, scopeKey],
     queryFn: async ({ signal }) => {
       const requestedScope = scopeKey;

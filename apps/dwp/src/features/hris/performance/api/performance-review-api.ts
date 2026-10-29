@@ -57,6 +57,11 @@ export const PERFORMANCE_REVIEW_API_CONTRACTS = [
   },
 ] as const;
 
+export const HCM_PERFORMANCE_REVIEW_MUTATION_API_CONTRACTS = [
+  PERFORMANCE_REVIEW_API_CONTRACTS[1],
+  PERFORMANCE_REVIEW_API_CONTRACTS[2],
+] as const;
+
 export type PerformanceReviewMutationExecution = Readonly<{
   authority: ProductSurfaceGovernedMutationAuthority;
   idempotencyKey: string;

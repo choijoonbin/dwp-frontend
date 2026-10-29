@@ -22,10 +22,10 @@ import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
 import { ActivityConnectorStatus } from '../../components/activity/activity-connector-status';
+import { usableActivityQueryData } from '../../components/activity/activity-query-contract';
 import { ActivitySourceStatus } from '../../components/activity/activity-source-status';
 import { useShellAuxiliaryAvoidance } from '../../components/shell-auxiliary-avoidance/use-shell-auxiliary-avoidance';
 import { activityCompositeRefreshState, activityRefreshState } from './activity-model';
-import { usableActivityQueryData } from './activity-query-state';
 import { useActivityData } from './use-activity-data';
 
 import type { WorkspaceActivityEvent } from '@dwp-frontend/shared-utils';

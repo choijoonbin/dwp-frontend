@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';
-import { resolveSupportedLocale } from '@dwp-frontend/shared-i18n';
+import { resolveSupportedLocale, resolveSystemTimeZone } from '@dwp-frontend/shared-i18n';
 import { useAuth } from '@dwp-frontend/shared-utils/auth/auth-provider';
 import { useProductSurfaceAuthority } from '@dwp-frontend/shared-utils/auth/product-surface-context-provider';
 
@@ -328,7 +328,7 @@ type DataAdmissionState =
 
 function Hrm009RouteAdmission({ queryId }: Readonly<{ queryId: Hrm009QueryId }>) {
   const auth = useAuth();
-  const { i18n } = useTranslation('hcm');
+  const { i18n, t } = useTranslation('hcm');
   const location = useLocation();
   const pageDecision = useOptionalAllowedExactProductRoute();
   const authority = useProductSurfaceAuthority();
@@ -540,7 +540,7 @@ function Hrm009RouteAdmission({ queryId }: Readonly<{ queryId: Hrm009QueryId }>)
     dataAdmission.serverDeadlineMs > now
   );
   const locale = resolveSupportedLocale(i18n.resolvedLanguage, i18n.language);
-  const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC';
+  const timeZone = resolveSystemTimeZone('UTC');
   const scope = useMemo<Hrm009TrustedScope | undefined>(
     () =>
       admitted
@@ -567,7 +567,7 @@ function Hrm009RouteAdmission({ queryId }: Readonly<{ queryId: Hrm009QueryId }>)
   ) {
     return (
       <Typography role="status" aria-live="polite" data-runtime-state="loading">
-        Loading governed certificate authority…
+        {t('administration.integration.loadingCertificateAuthority')}
       </Typography>
     );
   }

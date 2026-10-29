@@ -11,6 +11,7 @@ import Divider from '@mui/material/Divider';
 import Paper from '@mui/material/Paper';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
+import { useTranslation } from 'react-i18next';
 
 import { timeCloseCommandAllowed } from '../model/time-close-model';
 
@@ -89,6 +90,7 @@ export function TimeCloseCommandCenter({
   onHandoffIdChange,
   onReadHandoff,
 }: TimeCloseCommandCenterProps) {
+  const { t } = useTranslation('hcm');
   const [title, description] = titles[entryMode];
   const normalizedFilter = filter.trim().toLocaleLowerCase();
   const periods = workspace.periods.filter(
@@ -136,46 +138,61 @@ export function TimeCloseCommandCenter({
             role="status"
             aria-live="polite"
           >
-            <Chip size="small" label={`Freshness: ${workspace.freshness}`} />
+            <Chip
+              size="small"
+              label={t('hrisTime.i18nClosure.close.center.freshness', {
+                value: workspace.freshness,
+              })}
+            />
             <Typography variant="caption" color="text.secondary" sx={{ alignSelf: 'center' }}>
-              Snapshot: {workspace.asOf ?? 'not loaded'}
+              {t('hrisTime.i18nClosure.close.center.snapshot', {
+                value: workspace.asOf ?? t('hrisTime.i18nClosure.common.notLoaded'),
+              })}
             </Typography>
           </Stack>
         </Box>
         <ActionButton intent="secondary" disabled={busy} onClick={onRefresh}>
-          Refresh evidence
+          {t('hrisTime.i18nClosure.close.center.refreshEvidence')}
         </ActionButton>
       </Stack>
 
       {workspace.refreshFailure && workspace.kind !== 'ERROR' && (
-        <InlineFeedback severity="warning" title="Latest refresh could not be verified">
-          The last authorized snapshot remains visible as stale evidence. Commands stay bound to its
-          version and may be disabled until a successful refresh.
+        <InlineFeedback
+          severity="warning"
+          title={t('hrisTime.i18nClosure.close.center.refreshFailedTitle')}
+        >
+          {t('hrisTime.i18nClosure.close.center.refreshFailedDescription')}
         </InlineFeedback>
       )}
       {workspace.kind === 'PARTIAL' && (
-        <InlineFeedback severity="warning" title="Some close evidence is unavailable">
+        <InlineFeedback
+          severity="warning"
+          title={t('hrisTime.i18nClosure.close.center.partialTitle')}
+        >
           {workspace.failures.length > 0
             ? workspace.failures.map((failure) => failure.errorCode).join(' · ')
-            : 'A refresh component failed. The verified period snapshot is preserved.'}
+            : t('hrisTime.i18nClosure.close.center.partialDescription')}
         </InlineFeedback>
       )}
       {workspace.kind === 'ERROR' && (
-        <InlineFeedback severity="error" title="Time close evidence is unavailable">
-          No prior period facts or actions are exposed for the current authority scope.
+        <InlineFeedback
+          severity="error"
+          title={t('hrisTime.i18nClosure.close.center.unavailableTitle')}
+        >
+          {t('hrisTime.i18nClosure.close.center.unavailableDescription')}
         </InlineFeedback>
       )}
       {workspace.kind === 'LOADING' && (
         <Paper variant="outlined" sx={{ p: 3 }}>
-          <LoadingState label="Loading authorized time close evidence…" embedded />
+          <LoadingState label={t('hrisTime.i18nClosure.close.center.loading')} embedded />
         </Paper>
       )}
       {workspace.kind === 'EMPTY' && (
         <GuidedEmptyState
           kind="empty"
           size="compact"
-          title="No close periods match this scope"
-          description="The owner returned an explicit empty result. Adjust the authority scope or effective date outside this workbench."
+          title={t('hrisTime.i18nClosure.close.center.emptyTitle')}
+          description={t('hrisTime.i18nClosure.close.center.emptyDescription')}
         />
       )}
 
@@ -194,12 +211,12 @@ export function TimeCloseCommandCenter({
           <Paper component="section" variant="outlined" sx={{ minWidth: 0, overflow: 'hidden' }}>
             <Stack gap={1.5} sx={{ p: { xs: 1.5, sm: 2 } }}>
               <Typography component="h2" variant="h6">
-                Periods
+                {t('hrisTime.i18nClosure.close.center.periods')}
               </Typography>
               <FormField
                 fullWidth
                 size="small"
-                label="Filter periods"
+                label={t('hrisTime.i18nClosure.close.center.filterPeriods')}
                 value={filter}
                 onChange={(event) => onFilterChange(event.target.value)}
                 inputProps={{ maxLength: 120 }}
@@ -227,8 +244,11 @@ export function TimeCloseCommandCenter({
                         {period.title}
                       </Typography>
                       <Typography variant="caption" color="text.secondary">
-                        {period.periodStart ?? 'masked'} — {period.periodEnd ?? 'open ended'} · v
-                        {period.version ?? 'masked'}
+                        {t('hrisTime.i18nClosure.close.center.periodMeta', {
+                          start: period.periodStart ?? t('hrisTime.i18nClosure.common.masked'),
+                          end: period.periodEnd ?? t('hrisTime.i18nClosure.common.openEnded'),
+                          version: period.version ?? t('hrisTime.i18nClosure.common.masked'),
+                        })}
                       </Typography>
                     </Box>
                     <Chip size="small" label={period.closeStatus ?? period.statusCode} />
@@ -239,7 +259,7 @@ export function TimeCloseCommandCenter({
             {workspace.nextCursor && (
               <Box sx={{ p: 1.5, pt: 0 }}>
                 <ActionButton intent="secondary" disabled={busy} onClick={onLoadMore}>
-                  Load more periods
+                  {t('hrisTime.i18nClosure.close.center.loadMore')}
                 </ActionButton>
               </Box>
             )}
@@ -253,7 +273,7 @@ export function TimeCloseCommandCenter({
                     {selected.title}
                   </Typography>
                   <Typography variant="body2" color="text.secondary">
-                    Owner facts are read-only. Commands create new immutable attempts and results.
+                    {t('hrisTime.i18nClosure.close.center.ownerFacts')}
                   </Typography>
                 </Box>
                 <Box
@@ -263,20 +283,42 @@ export function TimeCloseCommandCenter({
                     gap: 1.5,
                   }}
                 >
-                  <Fact label="Period ID" value={selected.periodId} />
-                  <Fact label="Aggregate version" value={String(selected.version ?? 'masked')} />
-                  <Fact label="Close status" value={selected.closeStatus ?? selected.statusCode} />
-                  <Fact label="Blockers" value={String(selected.blockerCount ?? 'masked')} />
-                  <Fact label="Impact" value={String(selected.impactCount ?? 'masked')} />
                   <Fact
-                    label="Command receipt"
-                    value={selected.commandReceipt?.receiptId ?? 'none exposed'}
+                    label={t('hrisTime.i18nClosure.close.center.periodId')}
+                    value={selected.periodId}
+                  />
+                  <Fact
+                    label={t('hrisTime.i18nClosure.close.center.aggregateVersion')}
+                    value={String(selected.version ?? t('hrisTime.i18nClosure.common.masked'))}
+                  />
+                  <Fact
+                    label={t('hrisTime.i18nClosure.close.center.closeStatus')}
+                    value={selected.closeStatus ?? selected.statusCode}
+                  />
+                  <Fact
+                    label={t('hrisTime.i18nClosure.close.center.blockers')}
+                    value={String(selected.blockerCount ?? t('hrisTime.i18nClosure.common.masked'))}
+                  />
+                  <Fact
+                    label={t('hrisTime.i18nClosure.close.center.impact')}
+                    value={String(selected.impactCount ?? t('hrisTime.i18nClosure.common.masked'))}
+                  />
+                  <Fact
+                    label={t('hrisTime.i18nClosure.close.center.commandReceipt')}
+                    value={
+                      selected.commandReceipt?.receiptId ??
+                      t('hrisTime.i18nClosure.common.noneExposed')
+                    }
                   />
                 </Box>
                 {selected.blockerCount !== null && selected.blockerCount > 0 && (
-                  <InlineFeedback severity="warning" title="Close is blocked">
-                    Resolve {selected.blockerCount} blocker(s), then validate a fresh aggregate
-                    version.
+                  <InlineFeedback
+                    severity="warning"
+                    title={t('hrisTime.i18nClosure.close.center.blockedTitle')}
+                  >
+                    {t('hrisTime.i18nClosure.close.center.blockedDescription', {
+                      count: selected.blockerCount,
+                    })}
                   </InlineFeedback>
                 )}
                 <Stack direction={{ xs: 'column', sm: 'row' }} gap={1} flexWrap="wrap">
@@ -298,10 +340,10 @@ export function TimeCloseCommandCenter({
                       >
                         {
                           {
-                            VALIDATE: 'Validate',
-                            CLOSE: 'Close period',
-                            REOPEN: 'Reopen',
-                            HANDOFF: 'Create handoff',
+                            VALIDATE: t('hrisTime.i18nClosure.close.center.validate'),
+                            CLOSE: t('hrisTime.i18nClosure.close.center.closePeriod'),
+                            REOPEN: t('hrisTime.i18nClosure.close.center.reopen'),
+                            HANDOFF: t('hrisTime.i18nClosure.close.center.createHandoff'),
                           }[kind]
                         }
                       </ActionButton>
@@ -310,7 +352,7 @@ export function TimeCloseCommandCenter({
                 </Stack>
                 <Divider />
                 <Typography component="h3" variant="subtitle1" fontWeight="fontWeightBold">
-                  Payroll handoff status
+                  {t('hrisTime.i18nClosure.close.center.payrollHandoffStatus')}
                 </Typography>
                 <Stack
                   direction={{ xs: 'column', sm: 'row' }}
@@ -320,7 +362,7 @@ export function TimeCloseCommandCenter({
                   <FormField
                     fullWidth
                     size="small"
-                    label="Handoff ID"
+                    label={t('hrisTime.i18nClosure.close.center.handoffId')}
                     value={handoffId}
                     onChange={(event) => onHandoffIdChange(event.target.value.trim())}
                     inputProps={{ maxLength: 36 }}
@@ -330,7 +372,7 @@ export function TimeCloseCommandCenter({
                     disabled={!canReadHandoff || handoffBusy || handoffId.length !== 36}
                     onClick={onReadHandoff}
                   >
-                    Check status
+                    {t('hrisTime.i18nClosure.close.center.checkStatus')}
                   </ActionButton>
                 </Stack>
                 {handoff && (
@@ -339,11 +381,26 @@ export function TimeCloseCommandCenter({
                       label={handoff.status}
                       color={handoff.status === 'ACKNOWLEDGED' ? 'success' : 'default'}
                     />
-                    <Fact label="Immutable result" value={handoff.closedTimeResultId} />
-                    <Fact label="Close revision" value={String(handoff.closeRevision)} />
-                    <Fact label="Payload digest" value={handoff.payloadDigest} />
-                    <Fact label="Receiver receipt" value={handoff.receiverReceiptId ?? 'pending'} />
-                    <Fact label="Outcome" value={handoff.outcomeAt ?? 'pending'} />
+                    <Fact
+                      label={t('hrisTime.i18nClosure.close.center.immutableResult')}
+                      value={handoff.closedTimeResultId}
+                    />
+                    <Fact
+                      label={t('hrisTime.i18nClosure.close.center.closeRevision')}
+                      value={String(handoff.closeRevision)}
+                    />
+                    <Fact
+                      label={t('hrisTime.i18nClosure.close.center.payloadDigest')}
+                      value={handoff.payloadDigest}
+                    />
+                    <Fact
+                      label={t('hrisTime.i18nClosure.close.center.receiverReceipt')}
+                      value={handoff.receiverReceiptId ?? t('hrisTime.i18nClosure.common.pending')}
+                    />
+                    <Fact
+                      label={t('hrisTime.i18nClosure.close.center.outcome')}
+                      value={handoff.outcomeAt ?? t('hrisTime.i18nClosure.common.pending')}
+                    />
                   </Stack>
                 )}
               </Stack>
@@ -351,8 +408,8 @@ export function TimeCloseCommandCenter({
               <GuidedEmptyState
                 kind="no-results"
                 size="compact"
-                title="Select a period"
-                description="Choose a period to inspect blockers, immutable receipt evidence, and allowed actions."
+                title={t('hrisTime.i18nClosure.close.center.selectPeriodTitle')}
+                description={t('hrisTime.i18nClosure.close.center.selectPeriodDescription')}
               />
             )}
           </Paper>

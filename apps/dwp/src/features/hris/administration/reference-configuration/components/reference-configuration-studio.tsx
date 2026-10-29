@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { InlineFeedback, ActionButton, LoadingState } from '@dwp-frontend/design-system';
+import { formatDate } from '@dwp-frontend/shared-i18n';
 import Chip from '@mui/material/Chip';
 import Divider from '@mui/material/Divider';
 import FormControl from '@mui/material/FormControl';
@@ -69,6 +71,7 @@ export function ReferenceConfigurationStudio({
   commandOwner,
   onCommandCommitted,
 }: ReferenceConfigurationStudioProps) {
+  const { t } = useTranslation('hcm');
   const [commandState, setCommandState] = useState<ReferenceConfigurationCommandState>('IDLE');
   const [commandAction, setCommandAction] = useState<ReferenceConfigurationLifecycleAction>();
   const [receipt, setReceipt] = useState<ReferenceConfigurationCommandReceipt>();
@@ -115,21 +118,25 @@ export function ReferenceConfigurationStudio({
   if (state === 'LOADING') {
     return (
       <Stack alignItems="center" justifyContent="center" minHeight={280} gap={2} role="status">
-        <LoadingState embedded spinnerSize={28} label="Loading reference-configuration evidence…" />
+        <LoadingState
+          embedded
+          spinnerSize={28}
+          label={t('administration.reference.loadingWorkspace')}
+        />
       </Stack>
     );
   }
   if (state === 'DENIED') {
     return (
-      <InlineFeedback severity="error" title="Reference configuration is restricted">
-        Your current scope cannot read this workbench. Request the configuration-reader duty.
+      <InlineFeedback severity="error" title={t('administration.reference.restrictedTitle')}>
+        {t('administration.reference.restrictedDescription')}
       </InlineFeedback>
     );
   }
   if (state === 'ERROR' || state === 'UNAVAILABLE') {
     return (
-      <InlineFeedback severity="error" title="Reference configuration is unavailable">
-        No lifecycle command has been submitted. Retry the owner projection when it is available.
+      <InlineFeedback severity="error" title={t('administration.reference.unavailableTitle')}>
+        {t('administration.reference.unavailableDescription')}
       </InlineFeedback>
     );
   }
@@ -143,8 +150,8 @@ export function ReferenceConfigurationStudio({
   return (
     <Stack gap={2} minWidth={0} data-testid="reference-configuration-studio">
       {state === 'PARTIAL' ? (
-        <InlineFeedback severity="warning" title="Some configuration evidence is unavailable">
-          Available versions remain visible. Refresh before making a lifecycle decision.
+        <InlineFeedback severity="warning" title={t('administration.reference.partialTitle')}>
+          {t('administration.reference.partialDescription')}
         </InlineFeedback>
       ) : null}
       <Stack
@@ -155,33 +162,37 @@ export function ReferenceConfigurationStudio({
       >
         <Stack gap={0.25}>
           <Typography component="h1" variant="h5">
-            Reference configuration
+            {t('administration.reference.title')}
           </Typography>
           <Typography color="text.secondary" variant="body2">
-            Compare lifecycle evidence before approving, publishing, retiring, or rolling back.
+            {t('administration.reference.description')}
           </Typography>
         </Stack>
         <Stack direction="row" gap={1} alignItems="center">
           <Chip
             size="small"
             color={workbench?.queryState.freshness === 'CURRENT' ? 'success' : 'warning'}
-            label={`Evidence: ${workbench?.queryState.freshness ?? 'UNAVAILABLE'}`}
+            label={t('administration.reference.evidenceState', {
+              state: workbench?.queryState.freshness ?? 'UNAVAILABLE',
+            })}
           />
           <ActionButton intent="secondary" onClick={onRefresh}>
-            Refresh
+            {t('administration.reference.refresh')}
           </ActionButton>
         </Stack>
       </Stack>
 
       <FormControl size="small" sx={{ width: { xs: '100%', sm: 240 } }}>
-        <InputLabel id="reference-configuration-status-label">Lifecycle status</InputLabel>
+        <InputLabel id="reference-configuration-status-label">
+          {t('administration.reference.lifecycleStatus')}
+        </InputLabel>
         <Select
           labelId="reference-configuration-status-label"
-          label="Lifecycle status"
+          label={t('administration.reference.lifecycleStatus')}
           value={statusFilter}
           onChange={(event) => onStatusFilterChange(event.target.value)}
         >
-          <MenuItem value="">All states</MenuItem>
+          <MenuItem value="">{t('administration.reference.allStates')}</MenuItem>
           {STATES.map((value) => (
             <MenuItem key={value} value={value}>
               {value.replaceAll('_', ' ')}
@@ -193,17 +204,17 @@ export function ReferenceConfigurationStudio({
       {state === 'EMPTY' ? (
         <Paper variant="outlined" sx={{ p: 3 }}>
           <Typography component="h2" variant="subtitle1">
-            No configuration versions match this scope
+            {t('administration.reference.emptyTitle')}
           </Typography>
           <Typography color="text.secondary">
-            Clear the lifecycle filter or create the first version from an existing owner reference.
+            {t('administration.reference.emptyDescription')}
           </Typography>
         </Paper>
       ) : (
         <Stack direction={{ xs: 'column', md: 'row' }} gap={2} alignItems="stretch">
           <Paper
             component="section"
-            aria-label="Reference configurations"
+            aria-label={t('administration.reference.listAriaLabel')}
             variant="outlined"
             sx={{ width: { xs: '100%', md: 360 }, flex: '0 0 auto', overflow: 'hidden' }}
           >
@@ -230,12 +241,16 @@ export function ReferenceConfigurationStudio({
 
           <Paper
             component="section"
-            aria-label="Selected configuration evidence"
+            aria-label={t('administration.reference.detailAriaLabel')}
             variant="outlined"
             sx={{ p: { xs: 2, sm: 2.5 }, minWidth: 0, flex: 1 }}
           >
             {detailLoading ? (
-              <LoadingState embedded spinnerSize={22} label="Loading immutable version evidence…" />
+              <LoadingState
+                embedded
+                spinnerSize={22}
+                label={t('administration.reference.loadingDetail')}
+              />
             ) : detail ? (
               <Stack gap={2}>
                 <Stack direction="row" gap={1} alignItems="center" flexWrap="wrap">
@@ -247,59 +262,79 @@ export function ReferenceConfigurationStudio({
                 </Stack>
                 <Stack direction={{ xs: 'column', sm: 'row' }} gap={2}>
                   <Evidence
-                    label="Version"
-                    value={`v${detail.version} · revision ${detail.aggregateVersion}`}
+                    label={t('administration.reference.version')}
+                    value={t('administration.reference.versionValue', {
+                      version: detail.version,
+                      revision: detail.aggregateVersion,
+                    })}
                   />
-                  <Evidence label="Effective from" value={formatTime(detail.effectiveFrom)} />
-                  <Evidence label="Effective to" value={formatTime(detail.effectiveTo)} />
+                  <Evidence
+                    label={t('administration.reference.effectiveFrom')}
+                    value={formatTime(
+                      detail.effectiveFrom,
+                      t('administration.reference.openEnded')
+                    )}
+                  />
+                  <Evidence
+                    label={t('administration.reference.effectiveTo')}
+                    value={formatTime(detail.effectiveTo, t('administration.reference.openEnded'))}
+                  />
                 </Stack>
                 <Divider />
                 <Stack gap={0.5}>
                   <Typography variant="overline" color="text.secondary">
-                    Owner evidence — content is not copied here
+                    {t('administration.reference.ownerEvidence')}
                   </Typography>
                   <Typography sx={{ overflowWrap: 'anywhere' }}>
-                    Configuration {detail.configurationId}
+                    {t('administration.reference.configurationId', {
+                      configurationId: detail.configurationId,
+                    })}
                   </Typography>
                   <Typography
                     variant="caption"
                     color="text.secondary"
                     sx={{ overflowWrap: 'anywhere' }}
                   >
-                    SHA-256 {detail.payloadDigest}
+                    {t('administration.reference.digest', { digest: detail.payloadDigest })}
                   </Typography>
                 </Stack>
                 <Divider />
                 <Stack gap={1}>
-                  <Typography variant="subtitle2">Available lifecycle decisions</Typography>
+                  <Typography variant="subtitle2">
+                    {t('administration.reference.availableDecisions')}
+                  </Typography>
                   {!commandOwner && lifecycleActions.length > 0 ? (
                     <InlineFeedback
                       severity="warning"
-                      title="Lifecycle command authority is unavailable"
+                      title={t('administration.reference.commandAuthorityUnavailableTitle')}
                     >
-                      Control has not injected the governed command owner. All lifecycle decisions
-                      remain disabled and no request will be sent.
+                      {t('administration.reference.commandAuthorityUnavailableDescription')}
                     </InlineFeedback>
                   ) : null}
                   {commandState === 'RUNNING' ? (
                     <InlineFeedback severity="info" title={`${commandAction} is running`}>
-                      Waiting for the immutable command receipt from the command owner.
+                      {t('administration.reference.commandRunningDescription')}
                     </InlineFeedback>
                   ) : null}
                   {commandState === 'SUCCEEDED' && receipt ? (
                     <InlineFeedback severity="success" title={`${commandAction} completed`}>
-                      Immutable receipt {receipt.receiptId} · aggregate revision{' '}
-                      {receipt.aggregateVersion}
+                      {t('administration.reference.commandSucceededDescription', {
+                        receiptId: receipt.receiptId,
+                        revision: receipt.aggregateVersion,
+                      })}
                     </InlineFeedback>
                   ) : null}
                   {commandState === 'STALE' ? (
-                    <InlineFeedback severity="warning" title="Lifecycle evidence is stale">
-                      {commandError} Refresh owner evidence before retrying this decision.
+                    <InlineFeedback
+                      severity="warning"
+                      title={t('administration.reference.staleTitle')}
+                    >
+                      {commandError} {t('administration.reference.staleDescription')}
                     </InlineFeedback>
                   ) : null}
                   {commandState === 'ERROR' ? (
                     <InlineFeedback severity="error" title={`${commandAction} failed`}>
-                      {commandError} No successful receipt was recorded by this workspace.
+                      {commandError} {t('administration.reference.commandFailedDescription')}
                     </InlineFeedback>
                   ) : null}
                   <Stack direction="row" gap={1} flexWrap="wrap">
@@ -316,7 +351,7 @@ export function ReferenceConfigurationStudio({
                     ))}
                     {lifecycleActions.length === 0 ? (
                       <Typography color="text.secondary" variant="body2">
-                        This immutable version has no available transition.
+                        {t('administration.reference.noTransition')}
                       </Typography>
                     ) : null}
                   </Stack>
@@ -324,14 +359,17 @@ export function ReferenceConfigurationStudio({
               </Stack>
             ) : (
               <Typography color="text.secondary">
-                Select a configuration to inspect its evidence.
+                {t('administration.reference.selectConfiguration')}
               </Typography>
             )}
           </Paper>
         </Stack>
       )}
       <Typography variant="caption" color="text.secondary">
-        Last owner projection: {formatTime(workbench?.asOf)} · {workbench?.projectionVersion}
+        {t('administration.reference.lastProjection', {
+          asOf: formatTime(workbench?.asOf, t('administration.reference.openEnded')),
+          version: workbench?.projectionVersion,
+        })}
       </Typography>
     </Stack>
   );
@@ -398,8 +436,10 @@ function referenceDataValue(fieldGroups?: Readonly<Record<string, unknown>>) {
   return { code: field.value.code };
 }
 
-function formatTime(value?: string | null) {
-  if (!value) return 'Open ended';
+function formatTime(value: string | null | undefined, openEnded: string) {
+  if (!value) return openEnded;
   const parsed = new Date(value);
-  return Number.isNaN(parsed.valueOf()) ? value : parsed.toLocaleString();
+  return Number.isNaN(parsed.valueOf())
+    ? value
+    : formatDate(parsed, { dateStyle: 'medium', timeStyle: 'short' });
 }

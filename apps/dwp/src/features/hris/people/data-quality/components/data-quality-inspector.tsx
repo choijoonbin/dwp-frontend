@@ -106,7 +106,11 @@ function FieldDecisionCard({
 }>) {
   return (
     <Paper component="section" variant="outlined" sx={{ p: 1.5, minWidth: 0 }}>
-      <Typography component="h3" variant="subtitle2" fontWeight={foundationTokens.home.typography.weightEmphasis}>
+      <Typography
+        component="h3"
+        variant="subtitle2"
+        fontWeight={foundationTokens.home.typography.weightEmphasis}
+      >
         {copy.fieldLabels[group]}
       </Typography>
       <Divider sx={{ my: 1 }} />

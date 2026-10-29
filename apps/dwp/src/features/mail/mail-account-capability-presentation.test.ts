@@ -1,11 +1,14 @@
 import { describe, expect, it } from 'vitest';
 
 import {
+  MAIL_ACCOUNT_READINESS_EVIDENCE_MAX_AGE_MS,
   mailAccountFeatureIsReady,
   mailAccountFeatureReadinessPresentation,
   mailAccountCapabilityPresentation,
   mailAccountReadinessIsReady,
 } from './mail-account-capability-presentation';
+
+const NOW = Date.parse('2026-09-17T05:01:00Z');
 
 describe('mail account capability presentation', () => {
   it('keeps provider send, content, attachment, and scheduling readiness distinct', () => {
@@ -98,16 +101,52 @@ describe('mail account capability presentation', () => {
         },
       },
     };
-    expect(mailAccountReadinessIsReady(evidence)).toBe(true);
-    expect(mailAccountReadinessIsReady({ ...evidence, credentialConfigured: false })).toBe(false);
-    expect(mailAccountReadinessIsReady({ ...evidence, consentEvidence: null })).toBe(false);
+    expect(mailAccountReadinessIsReady(evidence, NOW)).toBe(true);
+    expect(mailAccountReadinessIsReady({ ...evidence, credentialConfigured: false }, NOW)).toBe(
+      false
+    );
+    expect(mailAccountReadinessIsReady({ ...evidence, consentEvidence: null }, NOW)).toBe(false);
     expect(
-      mailAccountReadinessIsReady({
-        ...evidence,
-        tokenEvidence: { ...evidence.tokenEvidence, state: 'EXPIRED' },
-      })
+      mailAccountReadinessIsReady(
+        {
+          ...evidence,
+          tokenEvidence: { ...evidence.tokenEvidence, state: 'EXPIRED' },
+        },
+        NOW
+      )
     ).toBe(false);
-    expect(mailAccountReadinessIsReady(undefined)).toBe(false);
+    expect(mailAccountReadinessIsReady(undefined, NOW)).toBe(false);
+
+    expect(
+      mailAccountReadinessIsReady(
+        {
+          ...evidence,
+          observedAt: new Date(NOW - MAIL_ACCOUNT_READINESS_EVIDENCE_MAX_AGE_MS - 1).toISOString(),
+        },
+        NOW
+      )
+    ).toBe(false);
+    expect(
+      mailAccountReadinessIsReady(
+        {
+          ...evidence,
+          tokenEvidence: { ...evidence.tokenEvidence, expiresAt: new Date(NOW).toISOString() },
+        },
+        NOW
+      )
+    ).toBe(false);
+    expect(
+      mailAccountReadinessIsReady(
+        {
+          ...evidence,
+          tokenEvidence: { ...evidence.tokenEvidence, expiresAt: null },
+        },
+        NOW
+      )
+    ).toBe(false);
+    expect(
+      mailAccountReadinessIsReady({ ...evidence, observedAt: new Date(NOW + 1).toISOString() }, NOW)
+    ).toBe(false);
   });
 
   it('fails every feature closed unless current feature evidence is present', () => {
@@ -158,10 +197,10 @@ describe('mail account capability presentation', () => {
       },
     };
 
-    expect(mailAccountFeatureIsReady(readiness, 'SEND')).toBe(true);
-    expect(mailAccountFeatureIsReady(readiness, 'BCC')).toBe(false);
-    expect(mailAccountFeatureIsReady(readiness, 'HTML_BODY')).toBe(false);
-    expect(mailAccountFeatureReadinessPresentation(readiness).slice(0, 3)).toMatchObject([
+    expect(mailAccountFeatureIsReady(readiness, 'SEND', NOW)).toBe(true);
+    expect(mailAccountFeatureIsReady(readiness, 'BCC', NOW)).toBe(false);
+    expect(mailAccountFeatureIsReady(readiness, 'HTML_BODY', NOW)).toBe(false);
+    expect(mailAccountFeatureReadinessPresentation(readiness, NOW).slice(0, 3)).toMatchObject([
       { featureKey: 'SEND', ready: true },
       { featureKey: 'BCC', ready: false },
       { featureKey: 'HTML_BODY', ready: false, evidence: null },

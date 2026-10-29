@@ -6,6 +6,7 @@ import Chip from '@mui/material/Chip';
 import Paper from '@mui/material/Paper';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
+import { useTranslation } from 'react-i18next';
 
 import {
   TimeInterpretationCommandOutcomeUnknownError,
@@ -222,15 +223,16 @@ function WorkbenchTable({
   copy: TimeInterpretationCopy;
   onSelect: (runId: string) => void;
 }>) {
+  const { t } = useTranslation('hcm');
   return (
     <Box sx={{ overflowX: 'auto' }}>
       <table
-        aria-label="Time interpretation evidence"
+        aria-label={t('hrisTime.i18nClosure.interpretation.evidenceAriaLabel')}
         style={{ width: '100%', borderCollapse: 'collapse', minWidth: 760 }}
       >
         <thead>
           <tr>
-            <th scope="col">Run</th>
+            <th scope="col">{t('hrisTime.i18nClosure.interpretation.run')}</th>
             <th scope="col">{copy.result}</th>
             <th scope="col">{copy.ruleVersion}</th>
             <th scope="col">{copy.traceSteps}</th>
@@ -280,10 +282,11 @@ function WorkbenchAgenda({
   copy: TimeInterpretationCopy;
   onSelect: (runId: string) => void;
 }>) {
+  const { t } = useTranslation('hcm');
   return (
     <Box
       component="ul"
-      aria-label="Time interpretation agenda"
+      aria-label={t('hrisTime.i18nClosure.interpretation.agendaAriaLabel')}
       sx={{ m: 0, p: 0, display: { md: 'none' } }}
     >
       {workbench.items.map((item) => (
@@ -312,6 +315,7 @@ function TracePanel({
   available: boolean;
   copy: TimeInterpretationCopy;
 }>) {
+  const { t } = useTranslation('hcm');
   return (
     <Paper component="section" variant="outlined" sx={{ p: { xs: 2, md: 3 } }}>
       <Typography component="h2" variant="h6">
@@ -333,13 +337,13 @@ function TracePanel({
           </dl>
           <Box sx={{ overflowX: 'auto' }}>
             <table
-              aria-label="Deterministic interpretation trace"
+              aria-label={t('hrisTime.i18nClosure.interpretation.traceAriaLabel')}
               style={{ width: '100%', borderCollapse: 'collapse', minWidth: 520 }}
             >
               <thead>
                 <tr>
                   <th scope="col">#</th>
-                  <th scope="col">Rule</th>
+                  <th scope="col">{t('hrisTime.i18nClosure.interpretation.rule')}</th>
                   <th scope="col">{copy.inputMinutes}</th>
                   <th scope="col">{copy.outputMinutes}</th>
                 </tr>

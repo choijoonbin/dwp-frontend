@@ -24,6 +24,7 @@ import type {
   WorkplaceAdminBookingPage,
   WorkplaceAdminOverview,
   WorkplaceBooking,
+  WorkplaceCollaborationOverview,
   WorkplaceExploreResponse,
   WorkplaceGovernanceCampus,
   WorkplacePolicy,
@@ -146,7 +147,7 @@ const resolveMailFixture = (path: string): MenuRouteFixtureResolution | null => 
     case '/api/platform/v1/mail/preferences':
       return { data: defaultMailPreferences() };
     case '/api/platform/v1/mail/compose-context':
-      return { data: defaultMailComposeContext() };
+      return { data: defaultMailComposeContext(Date.parse(OBSERVED_AT)) };
     case '/api/platform/v1/mail/saved-views':
       return { data: [] satisfies MailSavedView[] };
     case '/api/platform/v1/admin/mail/overview':
@@ -214,6 +215,25 @@ const resolveMailFixture = (path: string): MenuRouteFixtureResolution | null => 
 
 const resolveWorkplaceFixture = (path: string): MenuRouteFixtureResolution | null => {
   switch (path) {
+    case '/api/platform/v1/workplace/experience/collaboration/overview':
+      return {
+        data: {
+          shareableGroups: [],
+          ownPlans: [],
+          sharedPlans: [],
+          preference: { optIn: false, visibility: 'PRIVATE', version: 0 },
+          policy: { sharingEnabled: true, maximumVisibility: 'SITE', version: 0 },
+          actualPresence: {
+            kind: 'ACTUAL_PRESENCE',
+            provider: null,
+            status: 'NOT_CONFIGURED',
+            configurationReference: null,
+            lastVerifiedAt: null,
+            version: 0,
+          },
+          generatedAt: OBSERVED_AT,
+        } satisfies WorkplaceCollaborationOverview,
+      };
     case '/api/platform/v1/workplace/explore':
       return {
         data: {

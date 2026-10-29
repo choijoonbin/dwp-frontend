@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState, type FormEvent } from 'react';
+import { useTranslation } from 'react-i18next';
 import { FileCheck2, RefreshCw, ShieldCheck } from 'lucide-react';
 import {
   ActionButton,
@@ -158,6 +159,7 @@ function CertificateRequestForm({
   canDelegate: () => boolean;
   onRequestCertificate?: Hrm009RequestCertificateDelegate;
 }>) {
+  const { t } = useTranslation('workforce');
   const contract = HRM009_QUERY_CONTRACTS[queryId];
   const commandFence = useRef(false);
   const [personPublicId, setPersonPublicId] = useState(defaultPersonPublicId ?? '');
@@ -214,8 +216,7 @@ function CertificateRequestForm({
         {contract.framing.primaryAction}
       </Typography>
       <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
-        Purpose is fixed to {purposeCode}. The People owner derives self or operations authority
-        from trusted identity and requires high step-up before mutation.
+        {t('governedPeople.certificates.request.purpose', { purposeCode })}
       </Typography>
       <Box
         sx={{
@@ -230,7 +231,7 @@ function CertificateRequestForm({
           required
           fullWidth
           size="small"
-          label="Person public ID"
+          label={t('governedPeople.certificates.request.personPublicId')}
           value={personPublicId}
           disabled={!onRequestCertificate}
           onChange={(event) => setPersonPublicId(event.target.value)}
@@ -241,20 +242,26 @@ function CertificateRequestForm({
           select
           fullWidth
           size="small"
-          label="Certificate type"
+          label={t('governedPeople.certificates.request.certificateType')}
           value={certificateType}
           disabled={!onRequestCertificate}
           onChange={(event) => setCertificateType(event.target.value)}
         >
-          <MenuItem value="EMPLOYMENT_CERTIFICATE">Employment certificate</MenuItem>
-          <MenuItem value="CAREER_CERTIFICATE">Career certificate</MenuItem>
-          <MenuItem value="INCOME_CERTIFICATE">Income certificate</MenuItem>
+          <MenuItem value="EMPLOYMENT_CERTIFICATE">
+            {t('governedPeople.certificates.request.types.employment')}
+          </MenuItem>
+          <MenuItem value="CAREER_CERTIFICATE">
+            {t('governedPeople.certificates.request.types.career')}
+          </MenuItem>
+          <MenuItem value="INCOME_CERTIFICATE">
+            {t('governedPeople.certificates.request.types.income')}
+          </MenuItem>
         </FormField>
         <FormField
           required
           fullWidth
           size="small"
-          label="As-of instant (ISO 8601)"
+          label={t('governedPeople.certificates.request.asOf')}
           value={requestAsOf}
           disabled={!onRequestCertificate}
           onChange={(event) => setRequestAsOf(event.target.value)}
@@ -282,23 +289,32 @@ function CertificateRequestForm({
             },
           }}
         >
-          Review and send request
+          {t('governedPeople.certificates.request.reviewAndSend')}
         </ActionButton>
         {!onRequestCertificate && (
           <Typography variant="caption" color="text.secondary">
-            The command delegate is intentionally withheld for this read-only Stage-A mount.
+            {t('governedPeople.certificates.request.delegateWithheld')}
           </Typography>
         )}
       </Stack>
       {error && (
-        <InlineFeedback severity="error" title="Certificate request was not accepted">
-          No certificate request was sent or retried by this component.
+        <InlineFeedback
+          severity="error"
+          title={t('governedPeople.certificates.request.notAcceptedTitle')}
+        >
+          {t('governedPeople.certificates.request.notAcceptedDescription')}
         </InlineFeedback>
       )}
       {receipt && (
-        <InlineFeedback severity="info" title="Certificate command receipt accepted">
+        <InlineFeedback
+          severity="info"
+          title={t('governedPeople.certificates.request.receiptAcceptedTitle')}
+        >
           <span role="status" aria-live="polite">
-            Receipt {receipt.receiptId} · {receipt.status}
+            {t('governedPeople.certificates.request.receipt', {
+              receiptId: receipt.receiptId,
+              status: receipt.status,
+            })}
           </span>
         </InlineFeedback>
       )}
@@ -393,6 +409,7 @@ function WorkDetail({
   defaultPersonPublicId?: string;
   onRequestCertificate?: Hrm009RequestCertificateDelegate;
 }>) {
+  const { t } = useTranslation('workforce');
   const contract = HRM009_QUERY_CONTRACTS[queryId];
   const deepLink = `${item.deepLink.route}?tab=overview&focus=${encodeURIComponent(
     item.deepLink.resourcePublicId
@@ -421,7 +438,7 @@ function WorkDetail({
         data-deep-link={deepLink}
         sx={{ display: 'block', mt: 1, overflowWrap: 'anywhere' }}
       >
-        Governed detail reference: {deepLink}
+        {t('governedPeople.certificates.detail.governedReference', { deepLink })}
       </Typography>
       <Divider sx={{ my: 1.5 }} />
       <Box
@@ -475,6 +492,7 @@ function OperationsFocusForm({
   defaultPersonPublicId?: string;
   onRequestCertificate?: Hrm009RequestCertificateDelegate;
 }>) {
+  const { t } = useTranslation('workforce');
   const contract = HRM009_QUERY_CONTRACTS['IAQ-010'];
   const deepLink = `${item.deepLink.route}?tab=overview&focus=${encodeURIComponent(
     item.deepLink.resourcePublicId
@@ -490,11 +508,10 @@ function OperationsFocusForm({
       <Stack gap={2}>
         <Box minWidth={0}>
           <Typography component="h2" variant="h6" sx={{ overflowWrap: 'anywhere' }}>
-            Certificate issuance focus
+            {t('governedPeople.certificates.focus.title')}
           </Typography>
           <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
-            Choose one disclosed metadata record, confirm its governed context, then prepare the
-            issuance request.
+            {t('governedPeople.certificates.focus.description')}
           </Typography>
         </Box>
 
@@ -502,7 +519,7 @@ function OperationsFocusForm({
           select
           fullWidth
           size="small"
-          label="Certificate metadata focus"
+          label={t('governedPeople.certificates.focus.fieldLabel')}
           value={item.itemPublicId}
           onChange={(event) => {
             const selected = items.find(
@@ -520,7 +537,7 @@ function OperationsFocusForm({
 
         <Box
           component="section"
-          aria-label="Selected certificate metadata"
+          aria-label={t('governedPeople.certificates.focus.selectedAriaLabel')}
           sx={{
             bgcolor: 'action.hover',
             borderRadius: foundationTokens.radius.surface + 'px',
@@ -554,7 +571,7 @@ function OperationsFocusForm({
             data-deep-link={deepLink}
             sx={{ display: 'block', mt: 1, overflowWrap: 'anywhere' }}
           >
-            Governed detail reference: {deepLink}
+            {t('governedPeople.certificates.detail.governedReference', { deepLink })}
           </Typography>
           <Box
             component="dl"
@@ -605,6 +622,7 @@ function ActiveCertificateWorkbench({
   defaultPersonPublicId?: string;
   onRequestCertificate?: Hrm009RequestCertificateDelegate;
 }>) {
+  const { t } = useTranslation('workforce');
   const theme = useTheme();
   const compactViewport = useMediaQuery(theme.breakpoints.down('sm'), { noSsr: true });
   const forcedColors = useMediaQuery('(forced-colors: active)', { noSsr: true });
@@ -621,7 +639,7 @@ function ActiveCertificateWorkbench({
   if (query.loading && !projection) {
     return (
       <Typography role="status" aria-live="polite" data-runtime-state="loading">
-        Loading governed certificate metadata…
+        {t('governedPeople.certificates.states.loading')}
       </Typography>
     );
   }
@@ -630,8 +648,8 @@ function ActiveCertificateWorkbench({
       <div data-testid="hrm-009-denied" data-runtime-state="denied">
         <GuidedEmptyState
           kind="permission"
-          title="This certificate surface is unavailable"
-          description="The current access context cannot disclose this workbench."
+          title={t('governedPeople.certificates.states.deniedTitle')}
+          description={t('governedPeople.certificates.states.deniedDescription')}
           size="page"
         />
       </div>
@@ -641,8 +659,8 @@ function ActiveCertificateWorkbench({
     return (
       <div data-testid="hrm-009-unavailable" data-runtime-state="unavailable">
         <LocalErrorState
-          title="Certificate metadata unavailable"
-          description="Owner data could not be loaded. No certificate action was enabled."
+          title={t('governedPeople.certificates.states.unavailableTitle')}
+          description={t('governedPeople.certificates.states.unavailableDescription')}
           retryLabel="Retry"
           onRetry={query.refresh}
           retrying={query.fetching}
@@ -655,8 +673,8 @@ function ActiveCertificateWorkbench({
     return (
       <div data-testid="hrm-009-unavailable" data-runtime-state="unavailable">
         <LocalErrorState
-          title="Certificate metadata unavailable"
-          description="The People owner returned no disclosable metadata for this request."
+          title={t('governedPeople.certificates.states.unavailableTitle')}
+          description={t('governedPeople.certificates.states.noDisclosableMetadata')}
           retryLabel="Retry"
           onRetry={query.refresh}
           retrying={query.fetching}
@@ -723,8 +741,11 @@ function ActiveCertificateWorkbench({
               {copy.description}
             </Typography>
             <Typography variant="caption" color="text.secondary" sx={{ mt: 1, display: 'block' }}>
-              Primary user: {contract.framing.primaryUser} · Operational question:{' '}
-              {contract.framing.operationalQuestion} · Archetype: {contract.framing.archetype}
+              {t('governedPeople.certificates.header.framing', {
+                primaryUser: contract.framing.primaryUser,
+                operationalQuestion: contract.framing.operationalQuestion,
+                archetype: contract.framing.archetype,
+              })}
             </Typography>
           </Box>
           <Stack direction="row" gap={0.75} flexWrap="wrap" useFlexGap alignItems="center">
@@ -741,28 +762,34 @@ function ActiveCertificateWorkbench({
               startIcon={<RefreshCw size={15} aria-hidden="true" />}
               onClick={query.refresh}
             >
-              Refresh
+              {t('governedPeople.common.refresh')}
             </ActionButton>
           </Stack>
         </Stack>
       </Paper>
 
       {!onRequestCertificate && (
-        <InlineFeedback severity="info" title="Stage-A is read only">
-          This mount discloses request status and certificate/document metadata only. Certificate
-          submission is disabled. Download, revoke, verification, expiry, access-audit, and
-          download-audit are not supported in this stage.
+        <InlineFeedback
+          severity="info"
+          title={t('governedPeople.certificates.states.readOnlyTitle')}
+        >
+          {t('governedPeople.certificates.states.readOnlyDescription')}
         </InlineFeedback>
       )}
 
       {query.stale && (
-        <InlineFeedback severity="warning" title="The disclosed metadata is stale">
-          Owner data could not be refreshed. All certificate actions remain disabled until a current
-          authorization-bound snapshot is returned.
+        <InlineFeedback
+          severity="warning"
+          title={t('governedPeople.certificates.states.staleTitle')}
+        >
+          {t('governedPeople.certificates.states.staleDescription')}
         </InlineFeedback>
       )}
       {projection.queryState.state === 'PARTIAL' && (
-        <InlineFeedback severity="warning" title="Some governed metadata is unavailable">
+        <InlineFeedback
+          severity="warning"
+          title={t('governedPeople.certificates.states.partialTitle')}
+        >
           <Box component="ul" sx={{ m: 0, pl: 2.5 }}>
             {projection.queryState.partialFailures.map((failure) => (
               <li key={`${failure.componentKey}:${failure.correlationId}`}>
@@ -831,14 +858,14 @@ function ActiveCertificateWorkbench({
           disabled={!query.canPrevious || query.fetching}
           onClick={query.previous}
         >
-          Previous
+          {t('governedPeople.common.previous')}
         </ActionButton>
         <ActionButton
           intent="quiet"
           disabled={!query.canNext || query.fetching}
           onClick={query.next}
         >
-          Next
+          {t('governedPeople.common.next')}
         </ActionButton>
       </Stack>
     </Stack>
@@ -854,14 +881,15 @@ export function Hrm009CertificateWorkbench({
   defaultPersonPublicId,
   onRequestCertificate,
 }: Hrm009CertificateWorkbenchProps) {
+  const { t } = useTranslation('workforce');
   const rolloutAdmitted = gate.feature === HRM009_FEATURE && gate.enabled && gate.tenantEnrolled;
   if (!rolloutAdmitted) {
     return (
       <div data-testid="hrm-009-disabled" data-runtime-state="disabled">
         <GuidedEmptyState
           kind="permission"
-          title="Certificate workbench is not enabled"
-          description="The feature is off or this tenant is not enrolled. No owner request was sent."
+          title={t('governedPeople.certificates.states.notEnabledTitle')}
+          description={t('governedPeople.certificates.states.notEnabledDescription')}
           size="page"
         />
       </div>
@@ -875,8 +903,8 @@ export function Hrm009CertificateWorkbench({
       <div data-testid="hrm-009-denied" data-runtime-state="denied">
         <GuidedEmptyState
           kind="permission"
-          title="This certificate surface is unavailable"
-          description="The current access context cannot disclose this workbench."
+          title={t('governedPeople.certificates.states.deniedTitle')}
+          description={t('governedPeople.certificates.states.deniedDescription')}
           size="page"
         />
       </div>
@@ -886,8 +914,8 @@ export function Hrm009CertificateWorkbench({
     return (
       <div data-testid="hrm-009-unavailable" data-runtime-state="unavailable">
         <LocalErrorState
-          title="Certificate metadata unavailable"
-          description="The sealed read adapter is not mounted. No owner request was sent."
+          title={t('governedPeople.certificates.states.unavailableTitle')}
+          description={t('governedPeople.certificates.states.adapterNotMounted')}
           size="page"
         />
       </div>

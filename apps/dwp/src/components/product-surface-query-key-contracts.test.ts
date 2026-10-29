@@ -20,7 +20,7 @@ describe('Product Surface query cache discriminator contract', () => {
     expect(formInspector).toContain('getApprovalFormReferenceWorkflow(');
     expect(workflowStudio).toContain("'workflows', 'view', 'absent'");
     expect(workflowStudio).toContain('getApprovalStudioWorkflows(');
-    expect(workflowStudio).toContain('getApprovalStudioWorkflow(');
+    expect(workflowStudio).toContain('getApprovalStudioWorkflowReadProjection(');
   });
 
   it('keeps Services home, work lists, details, and management projections isolated', () => {

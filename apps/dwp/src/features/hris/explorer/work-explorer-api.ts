@@ -22,6 +22,21 @@ export const WORK_EXPLORER_PREFERENCES_ACTION =
 export const WORK_EXPLORER_RECENT_ACTION =
   'route.hcm.utility.explorer-recent-create.action' as const;
 
+export const HCM_EXPLORER_MUTATION_API_CONTRACTS = [
+  {
+    apiFunction: 'replaceWorkExplorerPreferences',
+    routeContractKey: WORK_EXPLORER_PREFERENCES_ACTION,
+    method: 'PUT',
+    path: '/api/platform/v1/hris/explorer/preferences',
+  },
+  {
+    apiFunction: 'recordWorkExplorerRecent',
+    routeContractKey: WORK_EXPLORER_RECENT_ACTION,
+    method: 'POST',
+    path: '/api/platform/v1/hris/explorer/recents',
+  },
+] as const;
+
 type GeneratedExplorerQuery = Omit<
   operations['platform_getHrisWorkExplorer']['parameters']['query'],
   'contextScopeKey'
@@ -56,20 +71,20 @@ function queryString(query: ExplorerQuery): string {
   return `?${params.toString()}`;
 }
 
-function commandConfig(context: ExplorerCommandContext, ifMatch?: number) {
+function commandConfig(execution: ExplorerCommandContext, ifMatch?: number) {
   if (
-    context.idempotencyKey.length < 16 ||
-    context.idempotencyKey.length > 128 ||
+    execution.idempotencyKey.length < 16 ||
+    execution.idempotencyKey.length > 128 ||
     (ifMatch !== undefined && (!Number.isSafeInteger(ifMatch) || ifMatch < 1))
   ) {
     throw new Error('HRIS Work Explorer command authority is invalid.');
   }
-  const governed = productSurfaceGovernedMutationConfig(context.authority);
+  const governed = productSurfaceGovernedMutationConfig(execution.authority);
   return {
     ...governed,
     headers: {
       ...governed.headers,
-      'Idempotency-Key': context.idempotencyKey,
+      'Idempotency-Key': execution.idempotencyKey,
       ...(ifMatch === undefined ? {} : { 'If-Match': `"pref-${ifMatch}"` }),
     },
   };
@@ -108,7 +123,7 @@ export async function queryWorkExplorer(
 export async function replaceWorkExplorerPreferences(
   orderedFavoriteRouteKeys: readonly string[],
   favoritePreferenceRevision: number,
-  context: ExplorerCommandContext
+  execution: ExplorerCommandContext
 ): Promise<ExplorerReceipt> {
   if (
     orderedFavoriteRouteKeys.length > 20 ||
@@ -119,19 +134,19 @@ export async function replaceWorkExplorerPreferences(
   const response = await axiosInstance.put<GeneratedExplorerReceipt, GeneratedPreferenceCommand>(
     HRIS_WORK_EXPLORER_BASE_PATH + '/preferences',
     { orderedFavoriteRouteKeys: [...orderedFavoriteRouteKeys] },
-    commandConfig(context, favoritePreferenceRevision)
+    commandConfig(execution, favoritePreferenceRevision)
   );
   return commandReceipt(response.data, 'EXPLORER_PREFERENCES_REPLACE');
 }
 
 export async function recordWorkExplorerRecent(
   routeKey: string,
-  context: ExplorerCommandContext
+  execution: ExplorerCommandContext
 ): Promise<ExplorerReceipt> {
   const response = await axiosInstance.post<GeneratedExplorerReceipt, GeneratedRecentCommand>(
     HRIS_WORK_EXPLORER_BASE_PATH + '/recents',
     { routeKey },
-    commandConfig(context)
+    commandConfig(execution)
   );
   return commandReceipt(response.data, 'EXPLORER_RECENT_RECORD');
 }

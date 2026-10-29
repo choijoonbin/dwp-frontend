@@ -184,6 +184,10 @@
           "label": "연결된 메일 계정 없음",
           "action": "계정 연결"
         },
+        "BLOCKED_EXTERNAL": {
+          "label": "계정 연결 {{count}}개가 외부 공급자 승인을 기다리는 중",
+          "action": "외부 활성화 확인"
+        },
         "ACTION_REQUIRED": {
           "label": "계정 연결 {{count}}개 복구 필요",
           "action": "계정 복구"

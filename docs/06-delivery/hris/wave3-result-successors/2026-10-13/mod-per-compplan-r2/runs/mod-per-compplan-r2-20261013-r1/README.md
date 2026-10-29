@@ -22,4 +22,3 @@ The next legal transition is a separate result-admission receipt with
 `integrationMergeAuthorized=false`. Central Control must then implement and
 pin the HRM runtime projection, AUTH_PEP, CONTRACT_GATEWAY, SHELL_ROUTE, and
 SVC_PEP_SECURITY obligations before issuing exact-head integration authority.
-

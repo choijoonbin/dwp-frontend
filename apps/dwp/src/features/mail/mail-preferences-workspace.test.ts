@@ -1,8 +1,58 @@
 import { describe, expect, it } from 'vitest';
 
-import { mailPreferencesEqual, preferenceTab, readinessActionPath } from './mail-preferences-model';
+import {
+  mailPreferencesEqual,
+  preferenceTab,
+  readinessActionPath,
+  resolveReadinessAction,
+} from './mail-preferences-model';
 
-import type { MailPreferences } from '@dwp-frontend/shared-utils';
+import type {
+  MailAccount,
+  MailAccountReadinessEvidence,
+  MailPreferences,
+} from '@dwp-frontend/shared-utils';
+
+const NOW = Date.parse('2026-10-28T02:00:00.000Z');
+
+const account: MailAccount = {
+  accountId: 'account-1',
+  emailAddress: 'user@example.com',
+  displayName: 'Work',
+  accountKind: 'PERSONAL',
+  providerType: 'DWP_SANDBOX',
+  connectionState: 'ACTIVE',
+  synchronizationState: 'READY',
+  defaultAccount: true,
+};
+
+const readiness: MailAccountReadinessEvidence = {
+  state: 'READY',
+  source: 'CONNECTOR_RUNTIME',
+  observedAt: '2026-10-28T01:59:00.000Z',
+  errorCode: null,
+  credentialConfigured: true,
+  lastSuccessfulSyncAt: '2026-10-28T01:59:00.000Z',
+  lastSuccessfulSyncScope: 'INBOX',
+  action: 'NONE',
+  consentEvidence: {
+    state: 'NOT_REQUIRED',
+    source: 'CONNECTOR_RUNTIME',
+    observedAt: '2026-10-28T01:59:00.000Z',
+    expiresAt: null,
+    errorCode: null,
+    action: 'NONE',
+  },
+  tokenEvidence: {
+    state: 'NOT_REQUIRED',
+    source: 'CONNECTOR_RUNTIME',
+    observedAt: '2026-10-28T01:59:00.000Z',
+    expiresAt: null,
+    errorCode: null,
+    action: 'NONE',
+  },
+  featureReadiness: {},
+};
 
 function preferences(overrides: Partial<MailPreferences> = {}): MailPreferences {
   return {
@@ -39,5 +89,13 @@ describe('mail preferences draft state', () => {
     expect(readinessActionPath('ACTIVATE_EXTERNALLY', 'account-1')).toBe(
       '/apps?requestManagement=APP.MAIL&requestSurface=mail.management&requestAccountId=account-1'
     );
+  });
+
+  it('retries stale readiness instead of rendering a stale READY receipt as usable', () => {
+    expect(resolveReadinessAction(account, readiness, NOW)).toBe('NONE');
+    expect(
+      resolveReadinessAction(account, { ...readiness, observedAt: '2026-10-28T01:50:00.000Z' }, NOW)
+    ).toBe('RETRY');
+    expect(resolveReadinessAction(account, undefined, NOW)).toBe('ACTIVATE_EXTERNALLY');
   });
 });

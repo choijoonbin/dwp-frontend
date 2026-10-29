@@ -262,7 +262,7 @@ export async function mockMailMember(
     permissions: [...MEMBER_PERMISSIONS, ...additionalPermissions],
   });
   await page.route('**/api/platform/v1/mail/compose-context', (route) =>
-    fulfill(route, defaultMailComposeContext())
+    fulfill(route, defaultMailComposeContext(Date.now()))
   );
   await page.route('**/api/platform/v1/mail/writing-assets', (route) =>
     fulfill(route, { templates: [], signatures: [] })
@@ -307,7 +307,8 @@ export function defaultMailPreferences() {
   };
 }
 
-export function defaultMailComposeContext() {
+export function defaultMailComposeContext(nowMs: number) {
+  const readinessObservedAt = new Date(nowMs).toISOString();
   const capabilities = {
     multipleRecipients: true,
     cc: true,
@@ -327,7 +328,7 @@ export function defaultMailComposeContext() {
       '10000000-0000-0000-0000-000000000001': {
         state: 'READY',
         source: 'CONNECTOR_RUNTIME',
-        observedAt: '2026-09-17T05:00:00Z',
+        observedAt: readinessObservedAt,
         errorCode: null,
         credentialConfigured: true,
         lastSuccessfulSyncAt: '2026-09-17T04:55:00Z',
@@ -336,7 +337,7 @@ export function defaultMailComposeContext() {
         consentEvidence: {
           state: 'NOT_REQUIRED',
           source: 'CONNECTOR_RUNTIME',
-          observedAt: '2026-09-17T05:00:00Z',
+          observedAt: readinessObservedAt,
           expiresAt: null,
           errorCode: null,
           action: 'NONE',
@@ -344,7 +345,7 @@ export function defaultMailComposeContext() {
         tokenEvidence: {
           state: 'NOT_REQUIRED',
           source: 'CONNECTOR_RUNTIME',
-          observedAt: '2026-09-17T05:00:00Z',
+          observedAt: readinessObservedAt,
           expiresAt: null,
           errorCode: null,
           action: 'NONE',
@@ -355,7 +356,7 @@ export function defaultMailComposeContext() {
             {
               state: 'READY',
               source: 'CONNECTOR_RUNTIME',
-              observedAt: '2026-09-17T05:00:00Z',
+              observedAt: readinessObservedAt,
               errorCode: null,
               lastSuccessfulAt: '2026-09-17T04:55:00Z',
               lastSuccessfulScope: feature,

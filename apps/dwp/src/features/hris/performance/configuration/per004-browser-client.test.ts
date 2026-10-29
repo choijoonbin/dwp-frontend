@@ -23,9 +23,13 @@ describe('PER-004 unbound browser client', () => {
     const transport = vi.fn().mockResolvedValue({ status: 200, data: sample });
     const client = createPer004BrowserClient(transport);
     await expect(client.load('PERFORMANCE')).resolves.toMatchObject({ variantKey: 'PERFORMANCE' });
-    expect(transport).toHaveBeenCalledWith(PER004_ROUTES.settingsPerformance,
-      { method: 'GET', headers: {} });
-    expect(PER004_ROUTES.formsScales).toBe('/api/people/v1/hris/performance/workbench/forms-scales');
+    expect(transport).toHaveBeenCalledWith(PER004_ROUTES.settingsPerformance, {
+      method: 'GET',
+      headers: {},
+    });
+    expect(PER004_ROUTES.formsScales).toBe(
+      '/api/people/v1/hris/performance/workbench/forms-scales'
+    );
     transport.mockResolvedValueOnce({ status: 200, data: { ...sample, ownerPayload: {} } });
     await expect(client.load('PERFORMANCE')).rejects.toThrow('PER004_CONTRACT_INVALID');
   });
@@ -45,10 +49,14 @@ describe('PER-004 unbound browser client', () => {
       },
       body: JSON.stringify(grant.body),
     });
-    const replaced = { ...action, resolvedHref: '/api/platform/v1/admin/hris/configurations/other/versions' };
+    const replaced = {
+      ...action,
+      resolvedHref: '/api/platform/v1/admin/hris/configurations/other/versions',
+    };
     await expect(client.execute(replaced, grant)).rejects.toThrow('PER004_ACTION_INVALID');
-    await expect(client.execute(action, { ...grant, targetVersion: 8 }))
-      .rejects.toThrow('PER004_ACTION_GRANT_MISMATCH');
+    await expect(client.execute(action, { ...grant, targetVersion: 8 })).rejects.toThrow(
+      'PER004_ACTION_GRANT_MISMATCH'
+    );
     expect(transport).toHaveBeenCalledTimes(1);
   });
 
@@ -64,9 +72,17 @@ describe('PER-004 unbound browser client', () => {
       idempotencyPolicy: 'REQUIRED_IDEMPOTENCY_KEY',
       stepUpPolicy: 'OWNER_PEP_RISK_POLICY_DECISION_REQUIRED',
     };
-    await expect(client.execute(create, { ...grant, actionKey: create.actionKey,
-      targetVersion: undefined, expectedObjectVersion: undefined })).resolves.toBe('SUCCEEDED');
-    expect(transport.mock.calls[0]?.[1]?.headers).not.toHaveProperty('X-DWP-Expected-Object-Version');
+    await expect(
+      client.execute(create, {
+        ...grant,
+        actionKey: create.actionKey,
+        targetVersion: undefined,
+        expectedObjectVersion: undefined,
+      })
+    ).resolves.toBe('SUCCEEDED');
+    expect(transport.mock.calls[0]?.[1]?.headers).not.toHaveProperty(
+      'X-DWP-Expected-Object-Version'
+    );
     expect(transport.mock.calls[0]?.[0]).toBe(create.resolvedHref);
   });
 });

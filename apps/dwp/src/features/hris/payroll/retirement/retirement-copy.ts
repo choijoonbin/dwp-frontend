@@ -98,10 +98,8 @@ const COPY: Readonly<Record<SupportedLocale, Pay004Copy>> = Object.freeze({
     sortLabel: '정렬 기준',
     applyFilters: '조회 조건 적용',
     resetFilters: '조건 초기화',
-    criteriaValidation:
-      '조회 조건 형식을 확인해 주세요. 잘못된 조건은 서버로 전송되지 않았습니다.',
-    sessionSaved:
-      '적용한 조건은 이 탭에서만 보존되며 권한 범위가 바뀌면 자동으로 분리됩니다.',
+    criteriaValidation: '조회 조건 형식을 확인해 주세요. 잘못된 조건은 서버로 전송되지 않았습니다.',
+    sessionSaved: '적용한 조건은 이 탭에서만 보존되며 권한 범위가 바뀌면 자동으로 분리됩니다.',
     activeFilterCount: (count: number) => `활성 필터 ${count}개`,
     sortLabels: Object.freeze({
       'retirementResult:ASC': '퇴직 결과 금액 오름차순',

@@ -54,9 +54,7 @@ describe('generated Mail Gateway contract', () => {
       gateway.paths[path]?.[method]?.operationId;
     expect(operationId('post', '/api/platform/v1/mail/messages')).toBe('platform_compose');
     expect(operationId('get', '/api/platform/v1/mail/threads')).toBe('platform_threads');
-    expect(operationId('get', '/api/platform/v1/mail/events')).toBe(
-      'platform_streamMailEvents'
-    );
+    expect(operationId('get', '/api/platform/v1/mail/events')).toBe('platform_streamMailEvents');
     expect(operationId('get', '/api/platform/v1/mail/events/catch-up')).toBe(
       'platform_catchUpMailEvents'
     );
@@ -99,10 +97,7 @@ describe('generated Mail Gateway contract', () => {
   });
 
   it('derives replay-safe bulk identities from the authoritative request schemas', () => {
-    for (const schemaName of [
-      'platform_ThreadActionRequest',
-      'platform_LifecycleRequest',
-    ]) {
+    for (const schemaName of ['platform_ThreadActionRequest', 'platform_LifecycleRequest']) {
       const properties = gateway.components.schemas[schemaName]?.properties;
       expect(properties, schemaName).toHaveProperty('bulkIntentId');
       expect(properties, schemaName).toHaveProperty('itemIdempotencyKey');

@@ -162,13 +162,15 @@ describe('sealed compensation-planning contracts', () => {
         item: {
           ...cycle,
           budgetMasked: true,
-          budgetAggregates: [{
-            organizationPublicId: ID.organization,
-            currency: 'USD',
-            allocatedAmount: '1',
-            committedAmount: '0',
-            remainingAmount: '1',
-          }],
+          budgetAggregates: [
+            {
+              organizationPublicId: ID.organization,
+              currency: 'USD',
+              allocatedAmount: '1',
+              committedAmount: '0',
+              remainingAmount: '1',
+            },
+          ],
         },
         referenceEffectiveAt: NOW,
         freshnessWatermark: NOW,
@@ -180,14 +182,16 @@ describe('sealed compensation-planning contracts', () => {
         item: {
           ...cycle,
           budgetMasked: false,
-          budgetAggregates: [{
-            organizationPublicId: ID.organization,
-            currency: 'USD',
-            allocatedAmount: '1',
-            committedAmount: '0',
-            remainingAmount: '1',
-            clientCalculated: false,
-          }],
+          budgetAggregates: [
+            {
+              organizationPublicId: ID.organization,
+              currency: 'USD',
+              allocatedAmount: '1',
+              committedAmount: '0',
+              remainingAmount: '1',
+              clientCalculated: false,
+            },
+          ],
         },
         referenceEffectiveAt: NOW,
         freshnessWatermark: NOW,
@@ -302,9 +306,7 @@ describe('sealed compensation-planning contracts', () => {
       publishedAt: NOW,
     });
     expect(published.sourceVersion).toBe(5);
-    expect(() =>
-      parseCompensationSnapshotPublished({ ...published, lines: [] })
-    ).toThrow();
+    expect(() => parseCompensationSnapshotPublished({ ...published, lines: [] })).toThrow();
   });
 
   it('rejects noncanonical money, timestamps, ordering, and zero-line snapshots', () => {
@@ -332,15 +334,17 @@ describe('sealed compensation-planning contracts', () => {
             population: {
               asOf: NOW,
               hrmOwnerRevision: 12,
-              lines: [{
-                workerPublicId: ID.worker,
-                assignmentPublicId: ID.assignment,
-                organizationPublicId: ID.organization,
-                gradePublicId: null,
-                jobProfilePublicId: null,
-                assignmentOwnerRevision: 3,
-                eligibleComponentCodes: ['BASE'],
-              }],
+              lines: [
+                {
+                  workerPublicId: ID.worker,
+                  assignmentPublicId: ID.assignment,
+                  organizationPublicId: ID.organization,
+                  gradePublicId: null,
+                  jobProfilePublicId: null,
+                  assignmentOwnerRevision: 3,
+                  eligibleComponentCodes: ['BASE'],
+                },
+              ],
             },
             budgetEntries: [],
             budgetAggregates: [
@@ -398,19 +402,34 @@ describe('sealed compensation-planning contracts', () => {
 
   it('validates every outgoing closed command body and rejects money at its exact field', () => {
     const guidelines = {
-      components: [{
-        componentCode: 'BASE', currency: 'USD', minimumAmount: '0', maximumAmount: '100',
-        exceptionPolicyCode: 'NONE', roundingPolicyVersionPublicId: ID.policy,
-      }],
-      budgetMode: 'HARD_CAP', effectiveFrom: '2027-01-01', effectiveTo: null,
+      components: [
+        {
+          componentCode: 'BASE',
+          currency: 'USD',
+          minimumAmount: '0',
+          maximumAmount: '100',
+          exceptionPolicyCode: 'NONE',
+          roundingPolicyVersionPublicId: ID.policy,
+        },
+      ],
+      budgetMode: 'HARD_CAP',
+      effectiveFrom: '2027-01-01',
+      effectiveTo: null,
     } as const;
     const population = {
-      asOf: NOW, hrmOwnerRevision: 12,
-      lines: [{
-        workerPublicId: ID.worker, assignmentPublicId: ID.assignment,
-        organizationPublicId: ID.organization, gradePublicId: null, jobProfilePublicId: null,
-        assignmentOwnerRevision: 3, eligibleComponentCodes: ['BASE'],
-      }],
+      asOf: NOW,
+      hrmOwnerRevision: 12,
+      lines: [
+        {
+          workerPublicId: ID.worker,
+          assignmentPublicId: ID.assignment,
+          organizationPublicId: ID.organization,
+          gradePublicId: null,
+          jobProfilePublicId: null,
+          assignmentOwnerRevision: 3,
+          eligibleComponentCodes: ['BASE'],
+        },
+      ],
     } as const;
     const sourceRef = {
       snapshotPublicId: ID.child,
@@ -421,8 +440,11 @@ describe('sealed compensation-planning contracts', () => {
       purposeCode: 'HRIS_PER_COMPENSATION_POPULATION',
     } as const;
     const common = {
-      guidelines, population, populationSourceRef: sourceRef,
-      effectiveFrom: '2027-01-01', effectiveTo: null,
+      guidelines,
+      population,
+      populationSourceRef: sourceRef,
+      effectiveFrom: '2027-01-01',
+      effectiveTo: null,
     };
     const authoringContext = parseCompensationCycleAuthoringContext({
       guidelines,
@@ -431,48 +453,78 @@ describe('sealed compensation-planning contracts', () => {
     });
     expect(Object.isFrozen(authoringContext)).toBe(true);
     expect(authoringContext.populationSourceRef).toEqual(sourceRef);
-    expect(() => parseCompensationCycleAuthoringContext({
-      guidelines,
-      population,
-      populationSourceRef: sourceRef,
-      fabricatedFallback: true,
-    })).toThrow();
-    expect(() => parseCompensationCycleAuthoringContext({
-      guidelines,
-      population,
-      populationSourceRef: { ...sourceRef, ownerRevision: 13 },
-    })).toThrow();
-    expect(parseCreateCompensationCycleBody({ ...common, cycleCode: 'FY27' }).cycleCode)
-      .toBe('FY27');
+    expect(() =>
+      parseCompensationCycleAuthoringContext({
+        guidelines,
+        population,
+        populationSourceRef: sourceRef,
+        fabricatedFallback: true,
+      })
+    ).toThrow();
+    expect(() =>
+      parseCompensationCycleAuthoringContext({
+        guidelines,
+        population,
+        populationSourceRef: { ...sourceRef, ownerRevision: 13 },
+      })
+    ).toThrow();
+    expect(parseCreateCompensationCycleBody({ ...common, cycleCode: 'FY27' }).cycleCode).toBe(
+      'FY27'
+    );
     expect(parseReviseCompensationCycleBody(common).guidelines.budgetMode).toBe('HARD_CAP');
-    expect(parseCompensationBudgetBody({
-      organizationPublicId: ID.organization, amount: '10.25', currency: 'USD',
-      ledgerEntryType: 'ALLOCATE', reversesEntryPublicId: null,
-    }).amount).toBe('10.25');
+    expect(
+      parseCompensationBudgetBody({
+        organizationPublicId: ID.organization,
+        amount: '10.25',
+        currency: 'USD',
+        ledgerEntryType: 'ALLOCATE',
+        reversesEntryPublicId: null,
+      }).amount
+    ).toBe('10.25');
     const content = {
-      cyclePublicId: ID.cycle, workerPublicId: ID.worker, assignmentPublicId: ID.assignment,
-      componentCode: 'BASE', currency: 'USD', amount: '10.25',
-      effectiveFrom: '2027-01-01', effectiveTo: null,
-      exceptionReasonCode: null, supersedesProposalPublicId: null,
+      cyclePublicId: ID.cycle,
+      workerPublicId: ID.worker,
+      assignmentPublicId: ID.assignment,
+      componentCode: 'BASE',
+      currency: 'USD',
+      amount: '10.25',
+      effectiveFrom: '2027-01-01',
+      effectiveTo: null,
+      exceptionReasonCode: null,
+      supersedesProposalPublicId: null,
     } as const;
     expect(parseUpsertCompensationProposalBody({ content }).content.amount).toBe('10.25');
-    expect(parseSubmitCompensationProposalBody({ submissionDigest: HASH, effectiveDate: null }))
-      .toEqual({ submissionDigest: HASH, effectiveDate: null });
-    expect(parseApproveCompensationPlanBody({ decision: 'APPROVE', reasonCode: 'ANNUAL_REVIEW' }))
-      .toEqual({ decision: 'APPROVE', reasonCode: 'ANNUAL_REVIEW' });
-    expect(parsePublishCompensationSnapshotBody({ approvalReceiptId: ID.receipt }))
-      .toEqual({ approvalReceiptId: ID.receipt });
+    expect(
+      parseSubmitCompensationProposalBody({ submissionDigest: HASH, effectiveDate: null })
+    ).toEqual({ submissionDigest: HASH, effectiveDate: null });
+    expect(
+      parseApproveCompensationPlanBody({ decision: 'APPROVE', reasonCode: 'ANNUAL_REVIEW' })
+    ).toEqual({ decision: 'APPROVE', reasonCode: 'ANNUAL_REVIEW' });
+    expect(parsePublishCompensationSnapshotBody({ approvalReceiptId: ID.receipt })).toEqual({
+      approvalReceiptId: ID.receipt,
+    });
     expect(parseCancelCompensationCycleBody({})).toEqual({});
 
-    expect(() => parseCompensationBudgetBody({
-      organizationPublicId: ID.organization, amount: '1.20', currency: 'USD',
-      ledgerEntryType: 'ALLOCATE', reversesEntryPublicId: null,
-    })).toThrow();
-    expect(() => parseUpsertCompensationProposalBody({
-      content: { ...content, amount: '1.20' },
-    })).toThrow();
-    expect(() => parseApproveCompensationPlanBody({
-      decision: 'APPROVE', reasonCode: 'ANNUAL_REVIEW', unexpected: true,
-    })).toThrow();
+    expect(() =>
+      parseCompensationBudgetBody({
+        organizationPublicId: ID.organization,
+        amount: '1.20',
+        currency: 'USD',
+        ledgerEntryType: 'ALLOCATE',
+        reversesEntryPublicId: null,
+      })
+    ).toThrow();
+    expect(() =>
+      parseUpsertCompensationProposalBody({
+        content: { ...content, amount: '1.20' },
+      })
+    ).toThrow();
+    expect(() =>
+      parseApproveCompensationPlanBody({
+        decision: 'APPROVE',
+        reasonCode: 'ANNUAL_REVIEW',
+        unexpected: true,
+      })
+    ).toThrow();
   });
 });

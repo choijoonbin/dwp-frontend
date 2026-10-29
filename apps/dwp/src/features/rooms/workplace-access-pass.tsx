@@ -20,7 +20,7 @@ import {
   getWorkplaceAccessPassContext,
   previewWorkplaceAccessPass,
 } from '@dwp-frontend/shared-utils/api/workplace-access-pass-api';
-import { ActionButton, InlineFeedback } from '@dwp-frontend/design-system';
+import { ActionButton, InlineFeedback, foundationTokens } from '@dwp-frontend/design-system';
 import Box from '@mui/material/Box';
 import Checkbox from '@mui/material/Checkbox';
 import Chip from '@mui/material/Chip';
@@ -589,7 +589,10 @@ export function WorkplaceAccessPassPanel({ destination, locale, canUpdate, eleva
                 variant="caption"
                 sx={{
                   display: 'block',
-                  color: copyStatus === 'failed' ? '#fde68a' : 'rgba(255,255,255,.82)',
+                  color:
+                    copyStatus === 'failed'
+                      ? 'warning.light'
+                      : foundationTokens.home.color.heroMuted84,
                 }}
               >
                 {copyStatus === 'copied'

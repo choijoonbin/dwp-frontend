@@ -10,7 +10,7 @@ const generatedAuthorizationRegistry = vi.hoisted(() => ({
   },
 }));
 
-vi.mock('@dwp-frontend/shared-utils', async (importOriginal) => ({
+vi.mock('@dwp-frontend/shared-utils/axios-instance', async (importOriginal) => ({
   ...(await importOriginal<object>()),
   axiosInstance: transport,
 }));

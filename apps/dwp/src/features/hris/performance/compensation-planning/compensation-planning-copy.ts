@@ -1,3 +1,5 @@
+import { resolveSupportedLocale } from '@dwp-frontend/shared-i18n';
+
 export const compensationPlanningCopy = Object.freeze({
   en: Object.freeze({
     eyebrow: 'Performance · Compensation',
@@ -52,7 +54,8 @@ export const compensationPlanningCopy = Object.freeze({
     remaining: 'Remaining',
     noLedgerEntries: 'No visible ledger entries.',
     budgetProjectionUnavailableTitle: 'Authoritative budget projection temporarily unavailable',
-    budgetProjectionUnavailableBody: 'Allocation, commitment, and remainder are not estimated in the browser. Refresh after the service update is available.',
+    budgetProjectionUnavailableBody:
+      'Allocation, commitment, and remainder are not estimated in the browser. Refresh after the service update is available.',
     proposalPanelUnavailable: 'Proposal panel unavailable',
     proposalPanelContext: 'Cycle and budget context remain available.',
     loadingProposals: 'Loading proposals…',
@@ -67,10 +70,13 @@ export const compensationPlanningCopy = Object.freeze({
     proposalDetailUnavailable: 'Proposal detail unavailable',
     staleAmountHidden: 'No stale or mismatched amount is rendered.',
     hardCapPolicy: 'Hard-cap policy',
-    hardCapDescription: 'Approval performs a fresh population, identity, guideline, and organization/currency budget check.',
+    hardCapDescription:
+      'Approval performs a fresh population, identity, guideline, and organization/currency budget check.',
     authoringContextRequiredTitle: 'HRM authoritative authoring context required',
-    authoringContextRequiredBody: 'Connect the Central projection before creating or revising a cycle.',
-    highRiskDescription: 'Review impact, checker identity, reason, and immutable evidence before continuing.',
+    authoringContextRequiredBody:
+      'Connect the Central projection before creating or revising a cycle.',
+    highRiskDescription:
+      'Review impact, checker identity, reason, and immutable evidence before continuing.',
     recordingCommand: 'Recording governed command',
     commandNotSubmitted: 'Command not submitted',
     cycleCode: 'Cycle code',
@@ -104,9 +110,11 @@ export const compensationPlanningCopy = Object.freeze({
     effectiveDate: 'Effective date',
     impactPreview: 'Impact preview',
     submittedProposalsSuffix: 'submitted proposals',
-    impactRevalidation: 'Amounts and scope are revalidated by the server before any receipt, transition, or outbox write.',
+    impactRevalidation:
+      'Amounts and scope are revalidated by the server before any receipt, transition, or outbox write.',
     makerCheckerContext: 'Maker/checker context',
-    lineageDescription: 'All successful maker-side cycle/proposal receipts are included in server lineage. A maker cannot approve or publish.',
+    lineageDescription:
+      'All successful maker-side cycle/proposal receipts are included in server lineage. A maker cannot approve or publish.',
     approvalReasonCode: 'Approval reason code',
     approvalReasonHelp: 'Uppercase governed code, for example ANNUAL_REVIEW',
     approvalReceiptId: 'Approval receipt ID',
@@ -175,7 +183,8 @@ export const compensationPlanningCopy = Object.freeze({
     remaining: '잔여액',
     noLedgerEntries: '표시 가능한 원장 항목이 없습니다.',
     budgetProjectionUnavailableTitle: '정본 예산 집계를 잠시 사용할 수 없습니다',
-    budgetProjectionUnavailableBody: '브라우저에서 배정액, 계획 반영액, 잔여액을 추정하지 않습니다. 서비스 업데이트 후 새로고침해 주세요.',
+    budgetProjectionUnavailableBody:
+      '브라우저에서 배정액, 계획 반영액, 잔여액을 추정하지 않습니다. 서비스 업데이트 후 새로고침해 주세요.',
     proposalPanelUnavailable: '제안 패널을 사용할 수 없음',
     proposalPanelContext: '주기와 예산 컨텍스트는 계속 사용할 수 있습니다.',
     loadingProposals: '제안을 불러오는 중…',
@@ -190,7 +199,8 @@ export const compensationPlanningCopy = Object.freeze({
     proposalDetailUnavailable: '제안 상세를 사용할 수 없음',
     staleAmountHidden: '오래되었거나 일치하지 않는 금액은 표시하지 않습니다.',
     hardCapPolicy: '하드캡 정책',
-    hardCapDescription: '승인 시 대상 인구, 신원, 가이드라인과 조직/통화별 예산을 서버에서 다시 검증합니다.',
+    hardCapDescription:
+      '승인 시 대상 인구, 신원, 가이드라인과 조직/통화별 예산을 서버에서 다시 검증합니다.',
     authoringContextRequiredTitle: 'HRM 권위 작성 컨텍스트 필요',
     authoringContextRequiredBody: '중앙 projection 연결 후 생성 또는 개정할 수 있습니다.',
     highRiskDescription: '계속하기 전에 영향, 검토자 신원, 사유와 변경 불가능한 증빙을 확인하세요.',
@@ -227,9 +237,11 @@ export const compensationPlanningCopy = Object.freeze({
     effectiveDate: '적용일',
     impactPreview: '영향 미리보기',
     submittedProposalsSuffix: '개의 제출된 제안',
-    impactRevalidation: '영수증, 상태 전이 또는 아웃박스 기록 전에 금액과 범위를 서버에서 다시 검증합니다.',
+    impactRevalidation:
+      '영수증, 상태 전이 또는 아웃박스 기록 전에 금액과 범위를 서버에서 다시 검증합니다.',
     makerCheckerContext: '작성자/검토자 컨텍스트',
-    lineageDescription: '성공한 모든 작성자 측 주기/제안 영수증을 서버 계보에 포함합니다. 작성자는 승인하거나 게시할 수 없습니다.',
+    lineageDescription:
+      '성공한 모든 작성자 측 주기/제안 영수증을 서버 계보에 포함합니다. 작성자는 승인하거나 게시할 수 없습니다.',
     approvalReasonCode: '승인 사유 코드',
     approvalReasonHelp: '대문자 거버넌스 코드(예: ANNUAL_REVIEW)',
     approvalReceiptId: '승인 영수증 ID',
@@ -252,7 +264,5 @@ export type CompensationPlanningCopy = {
 };
 
 export function getCompensationPlanningCopy(locale = 'en'): CompensationPlanningCopy {
-  return locale.toLowerCase().startsWith('ko')
-    ? compensationPlanningCopy.ko
-    : compensationPlanningCopy.en;
+  return compensationPlanningCopy[resolveSupportedLocale(locale)];
 }

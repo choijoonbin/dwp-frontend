@@ -102,7 +102,7 @@ function legacyAccess(
 }
 
 describe('legacy product surface presentation', () => {
-  it('projects the work plane and one App Management transition for all 12 governed manifests', () => {
+  it('projects legacy-navigable work planes and one App Management transition', () => {
     expect(Object.keys(NAVIGATION_BY_PRODUCT).sort()).toEqual(
       GOVERNED_PRODUCT_MANIFESTS.map((candidate) => candidate.id).sort()
     );
@@ -117,6 +117,15 @@ describe('legacy product surface presentation', () => {
         canAccessItem: allowAll,
         canAccessSurface: allowAllSurfaces,
       });
+      const legacyNavigableSurfaces = candidate.surfaces.filter((surface) =>
+        surface.navigation.some((group) => group.items.length > 0)
+      );
+      expect(
+        candidate.surfaces
+          .filter((surface) => !surface.navigation.some((group) => group.items.length > 0))
+          .map((surface) => surface.id),
+        candidate.id
+      ).toEqual(candidate.id === 'hcm' ? ['hcm.utility'] : []);
 
       expect(presentation?.currentSurface.id, candidate.id).toBe(current!.id);
       expect(navigationPaths(presentation!.navigation), candidate.id).toEqual(
@@ -125,14 +134,14 @@ describe('legacy product surface presentation', () => {
       expect(
         presentation!.accessibleEntryPoints.map((entry) => entry.surfaceId),
         candidate.id
-      ).toEqual(candidate.surfaces.map((surface) => surface.id));
+      ).toEqual(legacyNavigableSurfaces.map((surface) => surface.id));
       expect(
         presentation!.headerEntryPoints
           .filter((entry) => entry.plane === 'work')
           .map((entry) => entry.surfaceId),
         candidate.id
       ).toEqual(
-        candidate.surfaces
+        legacyNavigableSurfaces
           .filter((surface) => surface.plane === 'work')
           .map((surface) => surface.id)
       );

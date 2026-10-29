@@ -3,16 +3,23 @@ import {
   ActionButton,
   dayjs,
   DwpDateTimeProvider,
+  FormDialog,
   FormField,
   InlineFeedback,
   LoadingState,
   LocalDateTimePickerField,
 } from '@dwp-frontend/design-system';
+import { formatDate, resolveZonedDateTimeParts } from '@dwp-frontend/shared-i18n';
 import MenuItem from '@mui/material/MenuItem';
 
+import { Per008ClientError } from './per008-client';
+
 import type {
+  Per008AssignedFeedbackDetail,
   Per008AnonymityMode,
   Per008CreateFeedbackRequestCommand,
+  Per008FeedbackAnswer,
+  Per008FeedbackResponseCommand,
   Per008ProtectedState,
   Per008RequestOptions,
 } from './per008-model';
@@ -166,11 +173,15 @@ export function Per008ActionNotice({ state, locale = 'ko' }: Omit<NoticeProps, '
 }
 
 export function formatPer008Instant(value: string, locale: Per008Locale, timeZone: string): string {
-  return new Intl.DateTimeFormat(locale === 'ko' ? 'ko-KR' : 'en-US', {
-    dateStyle: 'medium',
-    timeStyle: 'short',
-    timeZone,
-  }).format(new Date(value));
+  return formatDate(
+    value,
+    {
+      dateStyle: 'medium',
+      timeStyle: 'short',
+      timeZone,
+    },
+    locale
+  );
 }
 
 export function formatPer008AnonymityMode(mode: Per008AnonymityMode, locale: Per008Locale): string {
@@ -187,26 +198,9 @@ type Per008ZonedParts = Readonly<{
 }>;
 
 function zonedParts(value: string | number, timeZone: string): Per008ZonedParts {
-  const parts = new Intl.DateTimeFormat('en-US', {
-    timeZone,
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit',
-    hour: '2-digit',
-    minute: '2-digit',
-    second: '2-digit',
-    hourCycle: 'h23',
-  }).formatToParts(new Date(value));
-  const part = (type: Intl.DateTimeFormatPartTypes) =>
-    parts.find((item) => item.type === type)?.value ?? '';
-  return {
-    year: part('year'),
-    month: part('month'),
-    day: part('day'),
-    hour: part('hour'),
-    minute: part('minute'),
-    second: part('second'),
-  };
+  const parts = resolveZonedDateTimeParts(value, timeZone);
+  if (!parts) throw new RangeError('Unable to resolve the requested zoned date-time.');
+  return parts;
 }
 
 function inputValue(value: string | number, timeZone: string): string {
@@ -456,5 +450,299 @@ export function Per008RequestComposer({
         )}
       </form>
     </section>
+  );
+}
+
+export const personalCopy = {
+  en: {
+    eyebrow: 'My performance',
+    title: 'Feedback inbox',
+    description:
+      'Request feedback for your explicit SELF assignment and respond to work assigned to you.',
+    inbox: 'Assigned feedback',
+    detail: 'Feedback details',
+    status: 'Status',
+    window: 'Response window',
+    select: 'Open feedback',
+    noSelection: 'Select an assignment to view its protected details.',
+    unavailableDetail: 'The selected assignment details are not available.',
+    response: 'Your response',
+    submit: 'Submit final response',
+    submitting: 'Submitting…',
+    submitted: 'Your response was submitted.',
+    reviewSubmit: 'Review final response',
+    confirmTitle: 'Submit this immutable response?',
+    confirmImpact:
+      'After submission, this response cannot be edited or replaced. Review every answer before continuing.',
+    confirmSubmit: 'Confirm and submit',
+    backToEdit: 'Back to editing',
+    requiredMissing: 'Complete all required questions.',
+    responseLocked: 'A response is available only while this assignment is open and assigned.',
+    release: 'Released feedback',
+    openRelease: 'Open release status',
+    privacy: 'Privacy mode',
+    releasedAt: 'Released',
+    selfUnavailable: 'SELF request is unavailable.',
+    outcomeUnknown:
+      'The command outcome is unknown. Replay with the same request key to confirm it safely.',
+    replay: 'Replay safely',
+    previous: 'Previous page',
+    next: 'Next page',
+    page: 'Page',
+  },
+  ko: {
+    eyebrow: '나의 성과',
+    title: '피드백 받은 편지함',
+    description:
+      '명시적으로 확인된 SELF 배정으로 피드백을 요청하고 나에게 배정된 응답을 처리합니다.',
+    inbox: '배정된 피드백',
+    detail: '피드백 상세',
+    status: '상태',
+    window: '응답 기간',
+    select: '피드백 열기',
+    noSelection: '배정을 선택하면 보호된 상세 정보를 볼 수 있습니다.',
+    unavailableDetail: '선택한 배정의 상세 정보를 사용할 수 없습니다.',
+    response: '나의 응답',
+    submit: '최종 응답 제출',
+    submitting: '제출 중…',
+    submitted: '응답을 제출했습니다.',
+    reviewSubmit: '최종 응답 검토',
+    confirmTitle: '변경할 수 없는 응답을 제출할까요?',
+    confirmImpact:
+      '제출한 응답은 수정하거나 교체할 수 없습니다. 계속하기 전에 모든 답변을 확인하세요.',
+    confirmSubmit: '확인 후 제출',
+    backToEdit: '수정으로 돌아가기',
+    requiredMissing: '필수 질문에 모두 답해 주세요.',
+    responseLocked: '요청과 배정이 모두 열려 있을 때만 응답할 수 있습니다.',
+    release: '공개된 피드백',
+    openRelease: '공개 상태 열기',
+    privacy: '개인정보 보호 방식',
+    releasedAt: '공개 시각',
+    selfUnavailable: 'SELF 요청을 사용할 수 없습니다.',
+    outcomeUnknown:
+      '명령 결과를 확인할 수 없습니다. 동일한 요청 키로 안전하게 재실행해 확인하세요.',
+    replay: '동일 키로 재실행',
+    previous: '이전 페이지',
+    next: '다음 페이지',
+    page: '페이지',
+  },
+} as const;
+
+const localizedCodes: Record<Per008Locale, Readonly<Record<string, string>>> = {
+  en: {
+    ASSIGNED: 'Assigned',
+    SUBMITTED: 'Submitted',
+    DECLINED: 'Declined',
+    CANCELLED: 'Cancelled',
+    DRAFT: 'Draft',
+    OPEN: 'Open',
+    CLOSED: 'Closed',
+    AGGREGATED: 'Aggregated',
+    RELEASED: 'Released',
+  },
+  ko: {
+    ASSIGNED: '배정됨',
+    SUBMITTED: '제출됨',
+    DECLINED: '거절됨',
+    CANCELLED: '취소됨',
+    DRAFT: '초안',
+    OPEN: '진행 중',
+    CLOSED: '마감됨',
+    AGGREGATED: '집계 완료',
+    RELEASED: '공개됨',
+  },
+};
+
+export function localizedCode(value: string, locale: Per008Locale): string {
+  return localizedCodes[locale][value] ?? value.replaceAll('_', ' ');
+}
+
+export function showsProtectedRows(state: Per008ProtectedState): boolean {
+  return state === 'COMPLETE' || state === 'PARTIAL' || state === 'STALE';
+}
+
+export function stateFromError(error: unknown): Per008ProtectedState {
+  if (!(error instanceof Per008ClientError)) return 'UNAVAILABLE';
+  if (error.code === 'DENIED' || error.code === 'NOT_FOUND') return 'DENIED';
+  if (error.code === 'STALE') return 'STALE';
+  if (error.code === 'SUPPRESSED') return 'SUPPRESSED';
+  return 'UNAVAILABLE';
+}
+
+type ResponseFormProps = Readonly<{
+  detail: Per008AssignedFeedbackDetail;
+  locale: Per008Locale;
+  busy?: boolean;
+  onSubmit: (command: Per008FeedbackResponseCommand) => void;
+}>;
+
+export function Per008ResponseForm({ detail, locale, busy = false, onSubmit }: ResponseFormProps) {
+  const labels = personalCopy[locale];
+  const [pending, setPending] = useState<Per008FeedbackResponseCommand>();
+  const [validationMessage, setValidationMessage] = useState<string>();
+
+  const answerText = (answer: Per008FeedbackAnswer): string => {
+    if (answer.textValue !== null) return answer.textValue;
+    if (answer.numberValue !== null) return String(answer.numberValue);
+    const question = detail.questions.find(
+      (candidate) => candidate.questionPublicId === answer.questionPublicId
+    );
+    return answer.choiceOptionPublicIds
+      .map(
+        (id) =>
+          question?.choiceOptions.find((option) => option.choiceOptionPublicId === id)?.label ?? id
+      )
+      .join(', ');
+  };
+  return (
+    <>
+      <form
+        className="per008-response-form"
+        aria-labelledby="per008-response-heading"
+        onSubmit={(event) => {
+          event.preventDefault();
+          const data = new FormData(event.currentTarget);
+          const answers: Per008FeedbackAnswer[] = [];
+          let missingRequired = false;
+          for (const question of detail.questions) {
+            const values = data.getAll(question.questionPublicId).map(String);
+            const base = {
+              questionPublicId: question.questionPublicId,
+              answerType: question.answerType,
+            };
+            if (question.answerType === 'TEXT') {
+              const textValue = String(values[0] ?? '').trim();
+              if (!textValue) {
+                missingRequired ||= question.required;
+                continue;
+              }
+              answers.push({ ...base, textValue, numberValue: null, choiceOptionPublicIds: [] });
+              continue;
+            }
+            if (question.answerType === 'NUMBER') {
+              const raw = String(values[0] ?? '').trim();
+              if (!raw) {
+                missingRequired ||= question.required;
+                continue;
+              }
+              const numberValue = Number(raw);
+              if (!Number.isFinite(numberValue)) {
+                missingRequired = true;
+                continue;
+              }
+              answers.push({ ...base, textValue: null, numberValue, choiceOptionPublicIds: [] });
+              continue;
+            }
+            if (values.length === 0) {
+              missingRequired ||= question.required;
+              continue;
+            }
+            answers.push({
+              ...base,
+              textValue: null,
+              numberValue: null,
+              choiceOptionPublicIds: values.sort(),
+            });
+          }
+          if (missingRequired || answers.length === 0) {
+            setValidationMessage(labels.requiredMissing);
+            return;
+          }
+          setValidationMessage(undefined);
+          setPending({
+            expectedRequestVersion: detail.expectedRequestVersion,
+            templateContentHash: detail.templateContentHash,
+            response: { schemaKey: 'PerformanceFeedbackResponse.v1', answers },
+          });
+        }}
+      >
+        <h3 id="per008-response-heading">{labels.response}</h3>
+        {detail.questions.map((question, index) => (
+          <fieldset
+            key={question.questionPublicId}
+            className="per008-question"
+            disabled={busy || !!pending}
+          >
+            <legend>
+              <span>{index + 1}.</span> {question.prompt}
+            </legend>
+            {question.answerType === 'TEXT' && (
+              <textarea name={question.questionPublicId} required={question.required} rows={5} />
+            )}
+            {question.answerType === 'NUMBER' && (
+              <input
+                name={question.questionPublicId}
+                type="number"
+                required={question.required}
+                step="any"
+              />
+            )}
+            {(question.answerType === 'SINGLE_CHOICE' ||
+              question.answerType === 'MULTI_CHOICE') && (
+              <div className="per008-choice-list" role="group" aria-required={question.required}>
+                {question.choiceOptions.map((option) => (
+                  <label key={option.choiceOptionPublicId}>
+                    <input
+                      name={question.questionPublicId}
+                      type={question.answerType === 'SINGLE_CHOICE' ? 'radio' : 'checkbox'}
+                      value={option.choiceOptionPublicId}
+                      required={question.answerType === 'SINGLE_CHOICE' && question.required}
+                    />
+                    <span>{option.label}</span>
+                  </label>
+                ))}
+              </div>
+            )}
+          </fieldset>
+        ))}
+        {validationMessage && (
+          <p className="per008-validation" role="alert">
+            {validationMessage}
+          </p>
+        )}
+        <div className="per008-actions">
+          <button
+            className="per008-button per008-button--primary"
+            type="submit"
+            disabled={busy || !!pending}
+          >
+            {busy ? labels.submitting : labels.reviewSubmit}
+          </button>
+        </div>
+      </form>
+      <FormDialog
+        open={!!pending}
+        title={labels.confirmTitle}
+        description={labels.confirmImpact}
+        cancelLabel={labels.backToEdit}
+        submitLabel={labels.confirmSubmit}
+        submittingLabel={labels.submitting}
+        busy={busy}
+        submitIntent="danger"
+        mobileFullScreen
+        onClose={() => setPending(undefined)}
+        onSubmit={() => {
+          if (!pending) return;
+          const command = pending;
+          setPending(undefined);
+          onSubmit(command);
+        }}
+      >
+        <ol className="per008-confirmation__answers">
+          {pending?.response.answers.map((answer) => (
+            <li key={answer.questionPublicId}>
+              <strong>
+                {
+                  detail.questions.find(
+                    (question) => question.questionPublicId === answer.questionPublicId
+                  )?.prompt
+                }
+              </strong>
+              <span>{answerText(answer)}</span>
+            </li>
+          ))}
+        </ol>
+      </FormDialog>
+    </>
   );
 }

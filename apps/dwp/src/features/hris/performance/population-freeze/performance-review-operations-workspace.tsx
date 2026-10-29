@@ -12,6 +12,11 @@ import {
   FormField,
   foundationTokens,
 } from '@dwp-frontend/design-system';
+import {
+  formatDate,
+  resolveSupportedLocale,
+  resolveSystemTimeZone,
+} from '@dwp-frontend/shared-i18n';
 
 import Box from '@mui/material/Box';
 import Checkbox from '@mui/material/Checkbox';
@@ -90,11 +95,15 @@ function fieldText<T extends { code?: string; label?: string }>(
 
 function formatInstant(value: string | null, locale: string, timeZone: string): string {
   if (!value) return '—';
-  return new Intl.DateTimeFormat(locale, {
-    dateStyle: 'medium',
-    timeStyle: 'short',
-    timeZone,
-  }).format(new Date(value));
+  return formatDate(
+    value,
+    {
+      dateStyle: 'medium',
+      timeStyle: 'short',
+      timeZone,
+    },
+    resolveSupportedLocale(locale)
+  );
 }
 
 function hasAction(item: PerformanceReviewOperationItem, key: string): boolean {
@@ -598,8 +607,8 @@ export function HrisPerformanceReviewOperationsWorkspace({
   const { i18n } = useTranslation('hcm');
   const [searchParams, setSearchParams] = useSearchParams();
   const requestScope = useHrisPerformanceReviewOperationsRequestScope();
-  const locale = i18n.resolvedLanguage || i18n.language || 'en';
-  const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC';
+  const locale = resolveSupportedLocale(i18n.resolvedLanguage, i18n.language);
+  const timeZone = resolveSystemTimeZone('UTC');
   const copy = getPerformanceReviewOperationsCopy(locale);
   const controlledFocus = focusResourcePublicId !== undefined;
   const focus = controlledFocus ? focusResourcePublicId : searchParams.get('focus');

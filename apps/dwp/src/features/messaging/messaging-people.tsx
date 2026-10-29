@@ -8,7 +8,13 @@ import {
   getMessagingPeoplePage,
 } from '@dwp-frontend/shared-utils/api/messaging-api';
 import { useToast } from '@dwp-frontend/shared-utils/toast/toast-store';
-import { ActionButton, FormField, GuidedEmptyState, PageCanvas } from '@dwp-frontend/design-system';
+import {
+  ActionButton,
+  FormField,
+  GuidedEmptyState,
+  InlineFeedback,
+  PageCanvas,
+} from '@dwp-frontend/design-system';
 
 import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
@@ -204,9 +210,9 @@ export function MessagingPeople() {
         </Stack>
 
         {presenceUnavailable && query.data && (
-          <Alert severity="warning" sx={{ mt: 1.5 }}>
+          <InlineFeedback severity="warning" sx={{ mt: 1.5 }}>
             {t('people.presenceUnavailable')}
-          </Alert>
+          </InlineFeedback>
         )}
 
         <Box
@@ -221,7 +227,7 @@ export function MessagingPeople() {
           }}
         >
           {query.isRefetchError && !query.isFetchNextPageError && query.data && (
-            <Alert
+            <InlineFeedback
               severity="warning"
               sx={{ m: 2 }}
               action={
@@ -231,7 +237,7 @@ export function MessagingPeople() {
               }
             >
               {t('people.refreshError')}
-            </Alert>
+            </InlineFeedback>
           )}
           {query.isPending ? (
             <Stack spacing={1} sx={{ p: 2 }} aria-label={t('people.loading')}>
@@ -301,9 +307,9 @@ export function MessagingPeople() {
           )}
 
           {query.isFetchNextPageError && (
-            <Alert severity="error" sx={{ m: 2 }}>
+            <InlineFeedback severity="error" sx={{ m: 2 }}>
               {t('people.loadMoreError')}
-            </Alert>
+            </InlineFeedback>
           )}
           {query.hasNextPage && (
             <Box

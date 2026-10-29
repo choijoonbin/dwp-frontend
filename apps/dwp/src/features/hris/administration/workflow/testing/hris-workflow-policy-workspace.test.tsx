@@ -4,6 +4,11 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { createRoot, type Root } from 'react-dom/client';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
+vi.mock('react-i18next', async () => {
+  const { hcmTestUseTranslation } = await import('../../../../../test-utils/hcm-i18n-test-stub');
+  return { useTranslation: hcmTestUseTranslation };
+});
+
 import { HrisWorkflowPolicyWorkspace } from '../pages/hris-workflow-policy-workspace';
 import { policy, workflowAdmission } from './hris-approval-adapter-fixtures.test-support';
 
@@ -47,7 +52,11 @@ describe('HRIS workflow policy workspace', () => {
   });
 
   it('loads only the authorized owner scope and removes a stale focus without disclosure', async () => {
-    window.history.replaceState(null, '', '/hr/settings/workflow?tab=overview&focus=missing-policy');
+    window.history.replaceState(
+      null,
+      '',
+      '/hr/settings/workflow?tab=overview&focus=missing-policy'
+    );
     const source: HrisWorkflowPolicyDataSource = {
       list: vi.fn().mockResolvedValue([policy()]),
       publish: vi.fn(),

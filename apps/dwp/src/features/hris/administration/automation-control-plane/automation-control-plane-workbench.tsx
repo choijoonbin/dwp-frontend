@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   ActionButton,
   FilterBar,
@@ -96,6 +97,7 @@ export function AutomationControlPlaneWorkbench({
   onRetry,
   onStepUp,
 }: AutomationControlPlaneWorkbenchProps) {
+  const { t } = useTranslation('hcm');
   const [localViewState, setLocalViewState] = useState(DEFAULT_VIEW_STATE);
   const currentView = viewState ?? localViewState;
   const allRows = useMemo(() => (catalog ? catalogRows(catalog) : []), [catalog]);
@@ -132,20 +134,28 @@ export function AutomationControlPlaneWorkbench({
         sx={{ inlineSize: '100%', maxInlineSize: '100%', overflowX: 'clip' }}
       >
         <ResourcePageHeader
-          eyebrow="HRIS governance"
-          title="Automation control plane"
+          eyebrow={t('administration.automation.eyebrow')}
+          title={t('administration.automation.title')}
           description={AUTOMATION_CONTROL_PLANE_EXPERIENCE.operationalQuestion}
-          scope={<Chip size="small" variant="outlined" label={`Scope: ${scopeLabel}`} />}
+          scope={
+            <Chip
+              size="small"
+              variant="outlined"
+              label={t('administration.automation.scope', { scope: scopeLabel })}
+            />
+          }
           status={
             <LiveStatus
               state={liveStatusFor(state)}
               label={liveStatusLabel(state)}
               detail={
                 catalog
-                  ? `As of ${formatAutomationTimestamp(catalog.asOf)}`
-                  : 'No verified snapshot'
+                  ? t('administration.automation.asOf', {
+                      asOf: formatAutomationTimestamp(catalog.asOf),
+                    })
+                  : t('administration.automation.noSnapshot')
               }
-              refreshLabel="Refresh automation evidence"
+              refreshLabel={t('administration.automation.refreshEvidence')}
               onRefresh={onRetry}
               refreshing={refreshing}
             />
@@ -158,7 +168,7 @@ export function AutomationControlPlaneWorkbench({
                 onClick={() => onAction({ descriptor: collectionAction })}
                 sx={{ minHeight: 44 }}
               >
-                New definition
+                {t('administration.automation.newDefinition')}
               </ActionButton>
             ) : undefined
           }
@@ -183,55 +193,75 @@ export function AutomationControlPlaneWorkbench({
             {state === 'partial' ? (
               <InlineFeedback
                 severity="warning"
-                title="Some automation evidence is restricted or stale"
+                title={t('administration.automation.partial.title')}
               >
-                Confirmed catalog facts remain visible, but all commands are disabled until a fresh,
-                complete authorization projection is available.
+                {t('administration.automation.partial.description')}
               </InlineFeedback>
             ) : null}
 
             <OperationalContextBar
-              label="Automation evidence context"
+              label={t('administration.automation.context.label')}
               items={[
-                { label: 'Tenant scope', value: scopeLabel, icon: <ShieldCheck size={16} /> },
                 {
-                  label: 'Snapshot',
+                  label: t('administration.automation.context.tenantScope'),
+                  value: scopeLabel,
+                  icon: <ShieldCheck size={16} />,
+                },
+                {
+                  label: t('administration.automation.context.snapshot'),
                   value: formatAutomationTimestamp(catalog.asOf),
                   icon: <RefreshCw size={16} />,
                 },
-                { label: 'Authorization revision', value: String(catalog.authorizationRevision) },
                 {
-                  label: 'Field visibility',
-                  value: `${catalog.fieldDecisionSummary.visible.length} visible · ${catalog.fieldDecisionSummary.masked.length + catalog.fieldDecisionSummary.omitted.length} restricted`,
+                  label: t('administration.automation.context.authorizationRevision'),
+                  value: String(catalog.authorizationRevision),
+                },
+                {
+                  label: t('administration.automation.context.fieldVisibility'),
+                  value: t('administration.automation.context.fieldVisibilityValue', {
+                    visible: catalog.fieldDecisionSummary.visible.length,
+                    restricted:
+                      catalog.fieldDecisionSummary.masked.length +
+                      catalog.fieldDecisionSummary.omitted.length,
+                  }),
                 },
               ]}
               status={
                 <Chip
                   size="small"
                   color={state === 'complete' ? 'success' : 'warning'}
-                  label={state === 'complete' ? 'Current evidence' : 'Read only'}
+                  label={t(
+                    state === 'complete'
+                      ? 'administration.automation.context.currentEvidence'
+                      : 'administration.automation.context.readOnly'
+                  )}
                 />
               }
             />
 
             <OperationalKpiStrip
-              ariaLabel="Automation governance summary"
+              ariaLabel={t('administration.automation.summaryAriaLabel')}
               items={governanceMetrics(allRows, run)}
             />
 
             <FilterBar
-              ariaLabel="Filter automation catalog"
-              searchLabel="Search catalog"
+              ariaLabel={t('administration.automation.filter.ariaLabel')}
+              searchLabel={t('administration.automation.filter.searchLabel')}
               searchValue={currentView.search}
-              searchPlaceholder="Automation key, handler, lifecycle…"
+              searchPlaceholder={t('administration.automation.filter.searchPlaceholder')}
               onSearchChange={(search) => updateView({ search, selectedKey: null })}
-              resultLabel={`${rows.length} of ${allRows.length} resources`}
+              resultLabel={t('administration.automation.filter.resultLabel', {
+                filtered: rows.length,
+                total: allRows.length,
+              })}
               filters={
                 <FormControl size="small" sx={{ width: { xs: '100%', sm: 220 } }}>
-                  <InputLabel id="automation-resource-filter-label">Resource type</InputLabel>
+                  <InputLabel id="automation-resource-filter-label">
+                    {t('administration.automation.filter.resourceType')}
+                  </InputLabel>
                   <Select
                     labelId="automation-resource-filter-label"
-                    label="Resource type"
+                    label={t('administration.automation.filter.resourceType')}
                     value={currentView.resourceType}
                     onChange={(event) =>
                       updateView({
@@ -240,10 +270,18 @@ export function AutomationControlPlaneWorkbench({
                       })
                     }
                   >
-                    <MenuItem value="ALL">All resources</MenuItem>
-                    <MenuItem value="AUTOMATION_DEFINITION">Definitions</MenuItem>
-                    <MenuItem value="AUTOMATION_VERSION">Versions</MenuItem>
-                    <MenuItem value="AUTOMATION_SCHEDULE">Schedules</MenuItem>
+                    <MenuItem value="ALL">
+                      {t('administration.automation.filter.allResources')}
+                    </MenuItem>
+                    <MenuItem value="AUTOMATION_DEFINITION">
+                      {t('administration.automation.filter.definitions')}
+                    </MenuItem>
+                    <MenuItem value="AUTOMATION_VERSION">
+                      {t('administration.automation.filter.versions')}
+                    </MenuItem>
+                    <MenuItem value="AUTOMATION_SCHEDULE">
+                      {t('administration.automation.filter.schedules')}
+                    </MenuItem>
                   </Select>
                 </FormControl>
               }
@@ -252,9 +290,9 @@ export function AutomationControlPlaneWorkbench({
             {rows.length === 0 ? (
               <GuidedEmptyState
                 kind="no-results"
-                title="No catalog resources match these filters"
-                description="Clear the search or select another resource type. No lifecycle command was submitted."
-                actionLabel="Clear filters"
+                title={t('administration.automation.filter.emptyTitle')}
+                description={t('administration.automation.filter.emptyDescription')}
+                actionLabel={t('administration.automation.filter.clear')}
                 onAction={() => updateView(DEFAULT_VIEW_STATE)}
               />
             ) : (
@@ -308,12 +346,13 @@ function StateBoundary({
   onStepUp?: () => void;
   refreshing: boolean;
 }>) {
+  const { t } = useTranslation('hcm');
   if ((state === 'complete' || state === 'partial') && !hasCatalog) {
     return (
       <LocalErrorState
-        title="Automation evidence is unavailable"
-        description="The declared state has no trusted owner projection. No command can be submitted."
-        retryLabel="Retry"
+        title={t('administration.automation.state.noProjectionTitle')}
+        description={t('administration.automation.state.noProjectionDescription')}
+        retryLabel={t('common.retry')}
         onRetry={onRetry}
       />
     );
@@ -321,8 +360,8 @@ function StateBoundary({
   if (state === 'loading') {
     return (
       <LoadingState
-        label="Loading automation governance"
-        description="Confirming definitions, schedules, runs, and current authorization."
+        label={t('administration.automation.state.loadingTitle')}
+        description={t('administration.automation.state.loadingDescription')}
         variant="skeleton"
         skeletonHeights={[52, 148, 148]}
       />
@@ -332,9 +371,9 @@ function StateBoundary({
     return (
       <GuidedEmptyState
         kind="first-use"
-        title="No automation definitions in this scope"
-        description="Create definition identity and metadata first. Versions, schedules, and activation remain separate governed steps."
-        actionLabel={canCreate ? 'Create first definition' : undefined}
+        title={t('administration.automation.state.emptyTitle')}
+        description={t('administration.automation.state.emptyDescription')}
+        actionLabel={canCreate ? t('administration.automation.state.createFirst') : undefined}
         onAction={onCreate}
       />
     );
@@ -343,8 +382,8 @@ function StateBoundary({
     return (
       <GuidedEmptyState
         kind="permission"
-        title="Automation governance is restricted"
-        description="The current session does not have the required page, feature, or operation decision."
+        title={t('administration.automation.state.restrictedTitle')}
+        description={t('administration.automation.state.restrictedDescription')}
       />
     );
   }
@@ -352,9 +391,9 @@ function StateBoundary({
     return (
       <GuidedEmptyState
         kind="permission"
-        title="Additional verification is required"
-        description="Verify this session before reviewing or submitting a high-impact automation decision."
-        actionLabel={onStepUp ? 'Verify session' : undefined}
+        title={t('administration.automation.state.stepUpTitle')}
+        description={t('administration.automation.state.stepUpDescription')}
+        actionLabel={onStepUp ? t('administration.common.verifySession') : undefined}
         onAction={onStepUp}
       />
     );
@@ -362,9 +401,9 @@ function StateBoundary({
   if (state === 'retry') {
     return (
       <LocalErrorState
-        title="Automation evidence could not be refreshed"
-        description="The previous verified view was not replaced and no command was submitted."
-        retryLabel="Retry refresh"
+        title={t('administration.automation.state.retryTitle')}
+        description={t('administration.automation.state.retryDescription')}
+        retryLabel={t('administration.automation.state.retryRefresh')}
         onRetry={onRetry}
         retrying={refreshing}
       />
@@ -373,9 +412,9 @@ function StateBoundary({
   if (state === 'unavailable') {
     return (
       <LocalErrorState
-        title="Automation governance is unavailable"
-        description="Trusted catalog evidence is unavailable or beyond its stale boundary. No command can be submitted."
-        requestIdLabel="Use the correlation ID from the failed owner response when contacting support."
+        title={t('administration.automation.state.unavailableTitle')}
+        description={t('administration.automation.state.unavailableDescription')}
+        requestIdLabel={t('administration.automation.state.requestIdHelp')}
       />
     );
   }
@@ -395,21 +434,30 @@ function CatalogTable({
   onAction?: (action: AutomationControlPlaneAction) => void;
   readOnly: boolean;
 }>) {
+  const { t } = useTranslation('hcm');
   return (
     <TableContainer component={Paper} variant="outlined" sx={{ minWidth: 0, maxWidth: '100%' }}>
-      <Table size="small" aria-label="Automation resource catalog" sx={{ tableLayout: 'fixed' }}>
+      <Table
+        size="small"
+        aria-label={t('administration.automation.catalog.ariaLabel')}
+        sx={{ tableLayout: 'fixed' }}
+      >
         <TableHead>
           <TableRow>
-            <TableCell sx={{ width: { xs: '54%', md: '30%' } }}>Resource</TableCell>
-            <TableCell sx={{ width: { xs: '24%', md: '18%' } }}>State</TableCell>
+            <TableCell sx={{ width: { xs: '54%', md: '30%' } }}>
+              {t('administration.automation.catalog.resource')}
+            </TableCell>
+            <TableCell sx={{ width: { xs: '24%', md: '18%' } }}>
+              {t('administration.automation.catalog.state')}
+            </TableCell>
             <TableCell sx={{ display: { xs: 'none', md: 'table-cell' }, width: '22%' }}>
-              Context
+              {t('administration.automation.catalog.context')}
             </TableCell>
             <TableCell sx={{ display: { xs: 'none', lg: 'table-cell' }, width: '18%' }}>
-              Next event
+              {t('administration.automation.catalog.nextEvent')}
             </TableCell>
             <TableCell align="right" sx={{ width: { xs: '22%', md: '16%' } }}>
-              Action
+              {t('administration.automation.catalog.action')}
             </TableCell>
           </TableRow>
         </TableHead>
@@ -479,7 +527,7 @@ function CatalogTable({
                     </ActionButton>
                   ) : (
                     <Typography variant="caption" color="text.secondary">
-                      Review
+                      {t('administration.automation.catalog.review')}
                     </Typography>
                   )}
                 </TableCell>
@@ -501,6 +549,7 @@ function ResourceInspector({
   readOnly: boolean;
   onAction?: (action: AutomationControlPlaneAction) => void;
 }>) {
+  const { t } = useTranslation('hcm');
   return (
     <Paper
       component="aside"
@@ -523,29 +572,32 @@ function ResourceInspector({
               {row.title}
             </Typography>
             <Typography variant="body2" color="text.secondary">
-              {row.resourceLabel} governance detail
+              {t('administration.automation.inspector.detail', {
+                resource: row.resourceLabel,
+              })}
             </Typography>
           </Box>
         </Stack>
         <DefinitionList
           items={[
-            ['Lifecycle', row.lifecycle],
-            ['Context', row.context],
-            ['Next event', row.nextEvent],
+            [t('administration.automation.inspector.lifecycle'), row.lifecycle],
+            [t('administration.automation.catalog.context'), row.context],
+            [t('administration.automation.catalog.nextEvent'), row.nextEvent],
             [
-              'Target facts',
-              row.redacted ? 'Restricted — commands suppressed' : 'Visible and verified',
+              t('administration.automation.inspector.targetFacts'),
+              row.redacted
+                ? t('administration.automation.inspector.restrictedFacts')
+                : t('administration.automation.inspector.visibleFacts'),
             ],
           ]}
         />
         <Stack gap={1}>
           <Typography component="h3" variant="subtitle2">
-            Authorized next actions
+            {t('administration.automation.inspector.nextActions')}
           </Typography>
           {row.actions.length === 0 ? (
             <Typography variant="body2" color="text.secondary">
-              No action is available for the current lifecycle, eligibility, caller, and
-              visible-fact intersection.
+              {t('administration.automation.inspector.noActions')}
             </Typography>
           ) : (
             row.actions.map((action) => (
@@ -575,6 +627,7 @@ function RunEvidence({
   readOnly: boolean;
   onAction?: (action: AutomationControlPlaneAction) => void;
 }>) {
+  const { t } = useTranslation('hcm');
   const actions = automationActionsForRun(run);
   return (
     <Paper
@@ -591,11 +644,14 @@ function RunEvidence({
             </Box>
             <Box minWidth={0}>
               <Typography id="automation-run-evidence-title" component="h2" variant="h6">
-                Run evidence
+                {t('administration.automation.run.title')}
               </Typography>
               <Typography variant="body2" color="text.secondary" sx={{ overflowWrap: 'anywhere' }}>
-                Run {run.runPublicId} · Definition {run.definitionPublicId} · Version{' '}
-                {run.versionNumber}
+                {t('administration.automation.run.identity', {
+                  runId: run.runPublicId,
+                  definitionId: run.definitionPublicId,
+                  version: run.versionNumber,
+                })}
               </Typography>
             </Box>
           </Stack>
@@ -627,10 +683,10 @@ function RunEvidence({
           }}
         >
           {[
-            ['Items', run.itemTotal],
-            ['Succeeded', run.itemSucceeded],
-            ['Failed', run.itemFailed],
-            ['Retry eligible', run.retryEligibleItemCount],
+            [t('administration.automation.run.items'), run.itemTotal],
+            [t('administration.automation.run.succeeded'), run.itemSucceeded],
+            [t('administration.automation.run.failed'), run.itemFailed],
+            [t('administration.automation.run.retryEligible'), run.retryEligibleItemCount],
           ].map(([label, value]) => (
             <Box
               key={label}
@@ -659,19 +715,25 @@ function RunEvidence({
           }}
         >
           <EvidenceList
-            title="Attempts"
+            title={t('administration.automation.run.attempts')}
             icon={<RefreshCw size={17} />}
-            empty="No attempts recorded"
+            empty={t('administration.automation.run.noAttempts')}
             rows={run.attempts.map((attempt) => ({
               key: String(attempt.attemptNumber),
-              primary: `Attempt ${attempt.attemptNumber} · ${attempt.state}`,
-              secondary: `${attempt.selectionMode} · ${attempt.selectedItemCount} items`,
+              primary: t('administration.automation.run.attempt', {
+                attempt: attempt.attemptNumber,
+                state: attempt.state,
+              }),
+              secondary: t('administration.automation.run.attemptItems', {
+                mode: attempt.selectionMode,
+                count: attempt.selectedItemCount,
+              }),
             }))}
           />
           <EvidenceList
-            title="Items"
+            title={t('administration.automation.run.items')}
             icon={<FileCog size={17} />}
-            empty="No item receipts recorded"
+            empty={t('administration.automation.run.noItems')}
             rows={run.items.slice(0, 8).map((item) => ({
               key: item.itemPublicId,
               primary: `#${item.itemSequence} · ${item.state}`,
@@ -679,13 +741,19 @@ function RunEvidence({
             }))}
           />
           <EvidenceList
-            title="Checkpoints"
+            title={t('administration.automation.run.checkpoints')}
             icon={<CalendarClock size={17} />}
-            empty="No checkpoints committed"
+            empty={t('administration.automation.run.noCheckpoints')}
             rows={run.checkpoints.slice(0, 8).map((checkpoint) => ({
               key: checkpoint.checkpointPublicId,
-              primary: `Attempt ${checkpoint.attemptNumber} · checkpoint ${checkpoint.checkpointOrdinal}`,
-              secondary: `${checkpoint.processedItemCount} items · ${formatAutomationTimestamp(checkpoint.committedAt)}`,
+              primary: t('administration.automation.run.checkpoint', {
+                attempt: checkpoint.attemptNumber,
+                checkpoint: checkpoint.checkpointOrdinal,
+              }),
+              secondary: t('administration.automation.run.checkpointItems', {
+                count: checkpoint.processedItemCount,
+                committedAt: formatAutomationTimestamp(checkpoint.committedAt),
+              }),
             }))}
           />
         </Box>

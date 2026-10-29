@@ -45,7 +45,12 @@ function renderFields() {
   renderToStaticMarkup(
     <>
       <DatePickerField id="date-field" label="Date" value={null} onValueChange={() => undefined} />
-      <DateTimePickerField id="datetime-field" label="Date and time" value={null} onValueChange={() => undefined} />
+      <DateTimePickerField
+        id="datetime-field"
+        label="Date and time"
+        value={null}
+        onValueChange={() => undefined}
+      />
       <TimePickerField id="time-field" label="Time" value={null} onValueChange={() => undefined} />
     </>
   );

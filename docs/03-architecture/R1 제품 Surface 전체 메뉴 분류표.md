@@ -1,22 +1,23 @@
 # R1 제품 Surface 전체 메뉴 분류표
 
-- 상태: Governed ledger v1.18
-- 기준일: 2026-10-28
-- 기준 Frontend Commit: `7e87ba2174b8f4de6ef69ff91f183191df61359b` + 본 공통 변경 단위
+- 상태: Governed ledger v1.19
+- 기준일: 2026-10-29
+- 기준 Frontend Commit: `a8bf8fc2145762b7a2c88c5246fa5c18785d7f23` + 본 공통 변경 단위
 - 집계 Source: `apps/dwp/src/routes/product-menu-manifest.ts`
-- Ledger SHA-256: `0250c61ac837220f65bb60ad212366fffbae51d919120ee984bb010195d7ccb9`
+- Ledger SHA-256: `a854a719c01272eb47f5fc9100bb19cbe9eb12d0b6c8fddaa707b49a7f96c591`
+- Calendar +2 격리 Checkpoint SHA-256: `0250c61ac837220f65bb60ad212366fffbae51d919120ee984bb010195d7ccb9`
 - 상위 결정:
   [R1 제품 업무·관리 Surface 분리 및 관리 Context ADR](R1%20제품%20업무·관리%20Surface%20분리%20및%20관리%20Context%20ADR.md)
 
 ## 1. 범위와 판정
 
-이 표는 현재 Runtime의 정적 Menu Route **232개 전부**를 분류한다. Detail Route, Query View,
+이 표는 default-off Runtime의 정적 Menu Route **257개 전부**를 분류한다. Detail Route, Query View,
 Context Menu와 아직 Navigation Source에 없는 예정 메뉴는 수량에 포함하지 않는다. 각 행의
 `목표 Plane/Task`와 `목표 Surface`는 구현 시 Product Manifest와 자동 Test의 Golden Source가
 된다.
 
-전체 232개는 `GovernedMenuRecord.navigationContextId`를 정확히 하나 가진다. 표의 `목표
-Surface`는 12개 업무 앱 180개에서는 `productSurfaceId`이자 `navigationContextId`이고, 나머지
+전체 257개는 `GovernedMenuRecord.navigationContextId`를 정확히 하나 가진다. 표의 `목표
+Surface`는 12개 업무 앱 205개에서는 `productSurfaceId`이자 `navigationContextId`이고, 나머지
 52개에서는 Product Surface가 아닌 상위 Navigation Context다. 고정값은 `home`, `catalog`,
 `work.work`, `activity.work`, `tenant.admin`, `provider.control`, `account.settings`다.
 모든 `navigationContextId`는 `_`가 없는 lower-kebab 점 구간 문법을 사용한다. 비제품 Governed
@@ -67,16 +68,23 @@ Workplace와 Calendar의 권위·상세·변경 명령은 분리한 채 하나�
 투표·합의·최종 일정 확정을 소유한다. 외부 공개 예약과 외부 이메일 투표는 별도 보안 승인이
 완료될 때까지 계속 비활성 상태다.
 
-| 목표 Plane          |    수량 | 의미                                     |
-| ------------------- | ------: | ---------------------------------------- |
-| `work`              |     106 | 개인·참여 업무 103 + 관계 기반 팀 업무 3 |
-| `management`        |      84 | 제품 운영 41 + 제품 설정 43              |
-| `tenant-governance` |      22 | 회사 공통 운영 8 + 회사 공통 설정 14     |
-| `provider-control`  |      12 | Provider 운영 6 + Provider 설정·통제 6   |
-| `account`           |       8 | 개인 계정·선호                           |
-| **합계**            | **232** |                                          |
+2026-10-29 통합 원장은 HCM R6/R7 정식 Surface와 Messaging 업무 메뉴를 현재 Navigation Source에
+맞춰 흡수했다. HCM은 기존 `team-absence`, `operations`, `absence-operations` 세 메뉴를 폐기하고
+24개 정식 메뉴를 반영했으며, Messaging은 활동, 스레드, 파일, 설정 네 메뉴를 추가했다. HRM-009
+두 메뉴(`/hr/me/requests`, `/hr/operations/people/certificates-documents`)는 default-off이므로 이
+257개 원장에는 포함하지 않고 `createHcmNavigation(true)`의 기능 플래그 확장으로만 관리한다.
+위 Calendar +2 체크섬은 통합 전 격리 검증 이력이며 현재 통합 Ledger 체크섬을 대체하지 않는다.
 
-Task 기준 합계는 `work 111`, `team 3`, `operations 55`, `administration 63`이다. Account의
+| 목표 Plane          |    수량 | 의미                                   |
+| ------------------- | ------: | -------------------------------------- |
+| `work`              |     113 | 업무 앱 103 + 독립 Workspace 10        |
+| `management`        |     102 | 제품 운영 53 + 제품 설정 49            |
+| `tenant-governance` |      22 | 회사 공통 운영 8 + 회사 공통 설정 14   |
+| `provider-control`  |      12 | Provider 운영 6 + Provider 설정·통제 6 |
+| `account`           |       8 | 개인 계정·선호                         |
+| **합계**            | **257** |                                        |
+
+Task 기준 합계는 `work 116`, `team 5`, `operations 67`, `administration 69`이다. Account의
 개인 설정 8개는 Plane은 `account`, Task 집계에서는 `work`로 센다.
 
 ### 표기
@@ -97,11 +105,11 @@ Task 기준 합계는 `work 111`, `team 3`, `operations 55`, `administration 63`
 | `W0`     |              0 | 공통 Manifest·Resolver·Guard·Shell·Context API·Telemetry           |
 | `W0.5`   |             12 | Communications·Services Technical Canary                           |
 | `W1a`    |             20 | Approvals 대표 Pilot                                               |
-| `W1b`    |             26 | HCM 대표 Pilot                                                     |
+| `W1b`    |             47 | HCM 대표 Pilot                                                     |
 | `W2`     |             36 | DWAI·ON, Notifications, Spaces                                     |
-| `W3`     |             86 | DWAI·ON 확장, Calendar, Workplace/Rooms, Mail, Messaging, Meetings |
+| `W3`     |             90 | DWAI·ON 확장, Calendar, Workplace/Rooms, Mail, Messaging, Meetings |
 | `Keep`   |             52 | 이미 독립된 Workspace, Tenant, Provider, Account Plane             |
-| **합계** |        **232** |                                                                    |
+| **합계** |        **257** |                                                                    |
 
 ## 2. Workspace, Work와 Activity — 10
 
@@ -283,7 +291,7 @@ Parent는 `APP.MAIL`이다.
 `mail.work-access.v1` Policy를 함께 사용한다. 다만 W3 Exact Authority의 PAGE 계약은 제품 Owner가
 승인 Bundle로 승격하기 전까지 `DRAFT`이며 `110/111`에서 Fail Closed한다.
 
-## 10. Messaging — 8 (`W3`)
+## 10. Messaging — 12 (`W3`)
 
 Parent는 `APP.MESSAGING`이다.
 
@@ -291,10 +299,14 @@ Parent는 `APP.MESSAGING`이다.
 | -------------------------- | ------------------ | -------------------------- | ---------- | ---------------------- | -------------------------- | ---------------------------- |
 | `messaging.home`           | 시작 › 홈          | `/messages/home`           | W/W        | `messaging.work`       | P: App                     | Work Nav                     |
 | `messaging.inbox`          | 대화 › 받은 대화   | `/messages/inbox`          | W/W        | `messaging.work`       | P: App                     | Work Nav                     |
+| `messaging.activity`       | 대화 › 활동        | `/messages/activity`       | W/W        | `messaging.work`       | P: App; work policy        | Work Nav; Canonical PAGE     |
+| `messaging.threads`        | 대화 › 스레드      | `/messages/threads`        | W/W        | `messaging.work`       | P: App; work policy        | Work Nav; Canonical PAGE     |
 | `messaging.spaces`         | 대화 › Space 대화  | `/messages/spaces`         | W/W        | `messaging.work`       | P: App                     | Work Nav                     |
 | `messaging.direct`         | 대화 › DM          | `/messages/direct`         | W/W        | `messaging.work`       | P: App                     | Work Nav                     |
 | `messaging.people`         | 대화 › 구성원 찾기 | `/messages/people`         | W/W        | `messaging.work`       | P: App                     | Work Nav                     |
+| `messaging.files`          | 대화 › 파일        | `/messages/files`          | W/W        | `messaging.work`       | P: App; work policy        | Work Nav; Canonical PAGE     |
 | `messaging.later`          | 작업 › 나중에 보기 | `/messages/later`          | W/W        | `messaging.work`       | P: App                     | Work Nav                     |
+| `messaging.settings`       | 작업 › 설정        | `/messages/settings`       | W/W        | `messaging.work`       | P: App; work policy        | Work Nav; Canonical PAGE     |
 | `messaging.admin-overview` | 관리 › 운영 현황   | `/messages/admin/overview` | M/O        | `messaging.management` | I: `ADMIN.MESSAGING:VIEW+` | Management Nav; Guard 정합화 |
 | `messaging.admin-policy`   | 관리 › 대화 정책   | `/messages/admin/policy`   | M/A        | `messaging.management` | I: `ADMIN.MESSAGING:VIEW+` | Management Nav; Guard 정합화 |
 
@@ -368,46 +380,72 @@ Parent는 `APP.SPACES`다.
 | `spaces.admin-lifecycle`       | Space 운영 › 수명주기 검토  | `/spaces/admin/lifecycle`       | M/O        | `spaces.management` | I: `ADMIN.SPACE_ACCESS_REVIEW:VIEW+` | Management Nav; Guard 정합화 |
 | `spaces.admin-operations`      | Space 운영 › 복구 및 운영   | `/spaces/admin/operations`      | M/O        | `spaces.management` | I: `ADMIN.SPACE_GOVERNANCE:VIEW+`    | Management Nav; Guard 정합화 |
 
-## 14. HCM — 26 (`W1b` Pilot)
+## 14. HCM — 47 (`W1b` Pilot, HRM-009 default-off)
 
 현재 HCM Guard는 여러 App, 역할, Reporting Relation과 Support Scope를 결합하고 허용 Audience를
 한 Sidebar에 합친다. Pilot Surface는 `hcm.personal`, `hcm.team`, `hcm.operations`,
 `hcm.management`로 고정한다.
 
-| Menu ID                   | 현재 그룹 › 메뉴                | Path                         | Plane/Task | 목표 Surface     | 현재 조건 요약                                         | 결정                                                                            |
-| ------------------------- | ------------------------------- | ---------------------------- | ---------- | ---------------- | ------------------------------------------------------ | ------------------------------------------------------------------------------- |
-| `hcm.home`                | 홈 › HR 홈                      | `/hr/home`                   | W/W        | `hcm.personal`   | all; S `WORKFORCE_READ`                                | Personal Nav                                                                    |
-| `hcm.me`                  | 나의 인사 › 나의 인사정보       | `/hr/me`                     | W/W        | `hcm.personal`   | all                                                    | Personal Nav                                                                    |
-| `hcm.time`                | 나의 인사 › 나의 근태           | `/hr/time`                   | W/W        | `hcm.personal`   | all                                                    | Personal Nav                                                                    |
-| `hcm.absence`             | 나의 인사 › 휴가                | `/hr/absence`                | W/W        | `hcm.personal`   | all                                                    | Personal Nav                                                                    |
-| `hcm.benefits`            | 나의 인사 › 복리후생            | `/hr/benefits`               | W/W        | `hcm.personal`   | all                                                    | Personal Nav                                                                    |
-| `hcm.pay`                 | 나의 인사 › 급여 명세           | `/hr/pay`                    | W/W        | `hcm.personal`   | all                                                    | Personal Nav                                                                    |
-| `hcm.talent`              | 나의 인사 › 성장과 커리어       | `/hr/talent`                 | W/W        | `hcm.personal`   | all                                                    | Personal Nav                                                                    |
-| `hcm.services`            | 나의 인사 › HR 도움 및 요청     | `/hr/services`               | W/W        | `hcm.personal`   | Nav `APP.EMPLOYEE_SERVICES:VIEW+`, Page exact `VIEW`   | Personal Nav; Guard 정합화                                                      |
-| `hcm.directory`           | 조직 › 구성원 디렉터리          | `/hr/directory`              | W/W        | `hcm.personal`   | all; S `WORKFORCE_READ`                                | Personal Nav; Data boundary 확인                                                |
-| `hcm.organization`        | 조직 › 조직 탐색                | `/hr/organization`           | W/W        | `hcm.personal`   | all; S `WORKFORCE_READ`                                | Personal Nav; Data boundary 확인                                                |
-| `hcm.team`                | 팀 관리 › 내 팀                 | `/hr/team`                   | W/T        | `hcm.team`       | 실제 Reporting Relation 또는 Manager Authority         | Team Nav                                                                        |
-| `hcm.team-time`           | 팀 관리 › 팀 근태 승인          | `/hr/team/time`              | W/T        | `hcm.team`       | 현재 `isManager`만, Target Population 없음             | Team Nav; Permission+Relationship+Target 추가                                   |
-| `hcm.team-absence`        | 팀 관리 › 팀 휴가 승인          | `/hr/team/absence`           | W/T        | `hcm.team`       | 현재 `isManager`만, Target Population 없음             | Team Nav; Permission+Relationship+Target 추가                                   |
-| `hcm.operations`          | HR 운영 › 운영 현황             | `/hr/operations`             | M/O        | `hcm.operations` | Workforce operation or Support Read                    | Operations Nav                                                                  |
-| `hcm.time-operations`     | HR 운영 › 근태 운영             | `/hr/operations/time`        | M/O        | `hcm.operations` | I: `DATA.HR_TIME`                                      | Operations Nav; VIEW/APPROVE 정합화                                             |
-| `hcm.absence-operations`  | HR 운영 › 휴가 운영             | `/hr/operations/absence`     | M/O        | `hcm.operations` | I: `DATA.HR_ABSENCE`                                   | Operations Nav; VIEW/APPROVE 정합화                                             |
-| `hcm.benefits-operations` | HR 운영 › 복리후생 운영         | `/hr/operations/benefits`    | M/O        | `hcm.operations` | I: `DATA.HR_BENEFITS`                                  | Operations Nav; VIEW/APPROVE 정합화                                             |
-| `hcm.pay-operations`      | HR 운영 › 급여 운영             | `/hr/operations/pay`         | M/O        | `hcm.operations` | I: `DATA.HR_PAY`                                       | Operations Nav; VIEW/APPROVE 정합화                                             |
-| `hcm.talent-operations`   | HR 운영 › 인재 운영             | `/hr/operations/talent`      | M/O        | `hcm.operations` | I: `DATA.HR_TALENT`                                    | Operations Nav; VIEW/APPROVE 정합화                                             |
-| `hcm.people`              | HR 운영 › 인력 정보             | `/hr/operations/people`      | M/O        | `hcm.operations` | Workforce operation or Support Read                    | Operations Nav                                                                  |
-| `hcm.assignments`         | HR 운영 › 발령 현황             | `/hr/operations/assignments` | M/O        | `hcm.operations` | Workforce operation or Support Read                    | Operations Nav                                                                  |
-| `hcm.organization-design` | 조직 설계 › 조직 설계           | `/hr/design/organization`    | M/A        | `hcm.management` | 현재 operator audience, Support `WORKFORCE_READ` 포함  | Management Nav; Support 차단+전용 capability                                    |
-| `hcm.system-access`       | HRIS 설정 › 시스템 접근 및 구성 | `/hr/manage/system`          | M/A        | `hcm.management` | I: `hcm.management-system-access.v1`; `view=system`    | Management Nav; Canonical read-only PAGE                                        |
-| `hcm.reference-data`      | 데이터 및 연계 › 인력 기준정보  | `/hr/data/reference`         | M/A        | `hcm.management` | 현재 `canOperate` + `ACTION.WORKFORCE_REFERENCE`       | Management Nav; Exact Action 정합화                                             |
-| `hcm.data-operations`     | 데이터 및 연계 › 연계 및 정합성 | `/hr/data/integrations`      | M/O        | `hcm.management` | 현재 `canOperate` + `ACTION.WORKFORCE_DATA_OPERATIONS` | Management Nav; Exact Action 정합화                                             |
-| `hcm.exports`             | 데이터 및 연계 › 통제형 반출    | `/hr/data/exports`           | M/O        | `hcm.management` | 현재 `canOperate` + `DATA.WORKFORCE:MANAGE`            | Management Nav; 신규 `ACTION.WORKFORCE_CONTROLLED_EXPORT:VIEW/EXPORT` + Step-up |
+| Menu ID                             | 현재 그룹 › 메뉴                | Path                                               | Plane/Task | 목표 Surface     | 현재 조건 요약                                         | 결정                                                                            |
+| ----------------------------------- | ------------------------------- | -------------------------------------------------- | ---------- | ---------------- | ------------------------------------------------------ | ------------------------------------------------------------------------------- |
+| `hcm.home`                          | 홈 › HR 홈                      | `/hr/home`                                         | W/W        | `hcm.personal`   | all; S `WORKFORCE_READ`                                | Personal Nav                                                                    |
+| `hcm.me`                            | 나의 인사 › 나의 인사정보       | `/hr/me`                                           | W/W        | `hcm.personal`   | all                                                    | Personal Nav                                                                    |
+| `hcm.employment-documents`          | 나의 인사 › 재직 문서           | `/hr/me/employment-documents`                      | W/W        | `hcm.personal`   | I: `DATA.HRIS_WORKFORCE:VIEW`                          | Personal Nav; Governed PAGE                                                     |
+| `hcm.time`                          | 나의 인사 › 나의 근태           | `/hr/time`                                         | W/W        | `hcm.personal`   | all                                                    | Personal Nav                                                                    |
+| `hcm.absence`                       | 나의 인사 › 휴가                | `/hr/absence`                                      | W/W        | `hcm.personal`   | all                                                    | Personal Nav                                                                    |
+| `hcm.benefits`                      | 나의 인사 › 복리후생            | `/hr/benefits`                                     | W/W        | `hcm.personal`   | all                                                    | Personal Nav                                                                    |
+| `hcm.pay`                           | 나의 인사 › 급여 명세           | `/hr/pay`                                          | W/W        | `hcm.personal`   | all                                                    | Personal Nav                                                                    |
+| `hcm.talent`                        | 나의 인사 › 성장과 커리어       | `/hr/talent`                                       | W/W        | `hcm.personal`   | all                                                    | Personal Nav                                                                    |
+| `hcm.services`                      | 나의 인사 › HR 도움 및 요청     | `/hr/services`                                     | W/W        | `hcm.personal`   | Nav `APP.EMPLOYEE_SERVICES:VIEW+`, Page exact `VIEW`   | Personal Nav; Guard 정합화                                                      |
+| `hcm.directory`                     | 조직 › 구성원 디렉터리          | `/hr/directory`                                    | W/W        | `hcm.personal`   | all; S `WORKFORCE_READ`                                | Personal Nav; Data boundary 확인                                                |
+| `hcm.organization`                  | 조직 › 조직 탐색                | `/hr/organization`                                 | W/W        | `hcm.personal`   | all; S `WORKFORCE_READ`                                | Personal Nav; Data boundary 확인                                                |
+| `hcm.team`                          | 팀 관리 › 내 팀                 | `/hr/team`                                         | W/T        | `hcm.team`       | 실제 Reporting Relation 또는 Manager Authority         | Team Nav                                                                        |
+| `hcm.team-time`                     | 팀 관리 › 팀 근태 승인          | `/hr/team/time`                                    | W/T        | `hcm.team`       | 현재 `isManager`만, Target Population 없음             | Team Nav; Permission+Relationship+Target 추가                                   |
+| `hcm.team-leave`                    | 팀 관리 › 팀 휴가               | `/hr/team/leave`                                   | W/T        | `hcm.team`       | I: `DATA.HR_ABSENCE:VIEW`                              | Team Nav; Governed PAGE                                                         |
+| `hcm.team-people-changes`           | 팀 관리 › 인사 변경             | `/hr/team/people-changes`                          | W/T        | `hcm.team`       | I: `DATA.HRIS_WORKFORCE:VIEW`                          | Team Nav; Governed PAGE                                                         |
+| `hcm.team-delegation`               | 팀 관리 › 위임                  | `/hr/team/delegation`                              | W/T        | `hcm.team`       | I: `DATA.HRIS_WORKFORCE:VIEW`                          | Team Nav; Governed PAGE                                                         |
+| `hcm.operations-home`               | HR 운영 › 운영 현황             | `/hr/operations/home`                              | M/O        | `hcm.operations` | Workforce operation or Support Read                    | Operations Nav                                                                  |
+| `hcm.time-operations`               | HR 운영 › 근태 운영             | `/hr/operations/time`                              | M/O        | `hcm.operations` | I: `DATA.HR_TIME`                                      | Operations Nav; VIEW/APPROVE 정합화                                             |
+| `hcm.time-work-plans`               | HR 운영 › 근무 계획             | `/hr/operations/time/work-plans`                   | M/O        | `hcm.operations` | I: `DATA.HR_TIME:VIEW`                                 | Operations Nav; Governed PAGE                                                   |
+| `hcm.time-clock-ingestion`          | HR 운영 › 출퇴근 수집           | `/hr/operations/time/clock-ingestion`              | M/O        | `hcm.operations` | I: `DATA.HR_TIME:VIEW`                                 | Operations Nav; Governed PAGE                                                   |
+| `hcm.time-interpretation`           | HR 운영 › 근태 해석             | `/hr/operations/time/interpretation`               | M/O        | `hcm.operations` | I: `DATA.HR_TIME:VIEW`                                 | Operations Nav; Governed PAGE                                                   |
+| `hcm.time-exceptions`               | HR 운영 › 근태 예외             | `/hr/operations/time/exceptions`                   | M/O        | `hcm.operations` | I: `DATA.HR_TIME:VIEW`                                 | Operations Nav; Governed PAGE                                                   |
+| `hcm.time-leave-operations`         | HR 운영 › 휴가 운영             | `/hr/operations/time/leave-operations`             | M/O        | `hcm.operations` | I: `DATA.HR_ABSENCE:VIEW`                              | Operations Nav; Governed PAGE                                                   |
+| `hcm.benefits-operations`           | HR 운영 › 복리후생 운영         | `/hr/operations/benefits`                          | M/O        | `hcm.operations` | I: `DATA.HR_BENEFITS`                                  | Operations Nav; VIEW/APPROVE 정합화                                             |
+| `hcm.pay-operations`                | HR 운영 › 급여 운영             | `/hr/operations/pay`                               | M/O        | `hcm.operations` | I: `DATA.HR_PAY`                                       | Operations Nav; VIEW/APPROVE 정합화                                             |
+| `hcm.talent-operations`             | HR 운영 › 인재 운영             | `/hr/operations/talent`                            | M/O        | `hcm.operations` | I: `DATA.HR_TALENT`                                    | Operations Nav; VIEW/APPROVE 정합화                                             |
+| `hcm.performance-goal-cycles`       | HR 운영 › 목표 주기             | `/hr/operations/performance/goal-cycles`           | M/O        | `hcm.operations` | I: `DATA.HR_TALENT:VIEW`                               | Operations Nav; Governed PAGE                                                   |
+| `hcm.performance-review-operations` | HR 운영 › 평가 운영             | `/hr/operations/performance/review-operations`     | M/O        | `hcm.operations` | I: `DATA.HR_TALENT:VIEW`                               | Operations Nav; Governed PAGE                                                   |
+| `hcm.compensation-planning`         | HR 운영 › 보상 계획             | `/hr/operations/performance/compensation-planning` | M/O        | `hcm.operations` | I: `DATA.HRIS_COMPENSATION_PLAN:VIEW`                  | Operations Nav; Governed PAGE                                                   |
+| `hcm.people`                        | HR 운영 › 인력 정보             | `/hr/operations/people`                            | M/O        | `hcm.operations` | Workforce operation or Support Read                    | Operations Nav                                                                  |
+| `hcm.employee-change-requests`      | HR 운영 › 인사 변경 요청        | `/hr/operations/people/employee-change-requests`   | M/O        | `hcm.operations` | I: `DATA.HRIS_WORKFORCE:VIEW`                          | Operations Nav; Governed PAGE                                                   |
+| `hcm.employment-assignments`        | HR 운영 › 고용 배정             | `/hr/operations/people/employment-assignments`     | M/O        | `hcm.operations` | I: `DATA.HRIS_WORKFORCE:VIEW`                          | Operations Nav; Governed PAGE                                                   |
+| `hcm.people-appointments`           | HR 운영 › 발령 처리             | `/hr/operations/people/appointments`               | M/O        | `hcm.operations` | I: `DATA.HRIS_WORKFORCE:VIEW`                          | Operations Nav; Governed PAGE                                                   |
+| `hcm.organization-positions`        | HR 운영 › 조직·직위             | `/hr/operations/people/organization-positions`     | M/O        | `hcm.operations` | I: `DATA.HRIS_ORGANIZATION:VIEW`                       | Operations Nav; Governed PAGE                                                   |
+| `hcm.payroll-population`            | HR 운영 › 급여 대상             | `/hr/operations/payroll/population`                | M/O        | `hcm.operations` | I: `DATA.HR_PAY:VIEW`                                  | Operations Nav; Governed PAGE                                                   |
+| `hcm.assignments`                   | HR 운영 › 발령 현황             | `/hr/operations/assignments`                       | M/O        | `hcm.operations` | Workforce operation or Support Read                    | Operations Nav                                                                  |
+| `hcm.organization-design`           | 조직 설계 › 조직 설계           | `/hr/design/organization`                          | M/A        | `hcm.management` | 현재 operator audience, Support `WORKFORCE_READ` 포함  | Management Nav; Support 차단+전용 capability                                    |
+| `hcm.system-access`                 | HRIS 설정 › 시스템 접근 및 구성 | `/hr/manage/system`                                | M/A        | `hcm.management` | I: `hcm.management-system-access.v1`; `view=system`    | Management Nav; Canonical read-only PAGE                                        |
+| `hcm.settings-reference`            | HRIS 설정 › 기준정보 설정       | `/hr/settings/reference-data`                      | M/A        | `hcm.management` | I: `CONFIG.HRIS_WORKBENCH:VIEW`                        | Management Nav; Governed PAGE                                                   |
+| `hcm.settings-payroll`              | HRIS 설정 › 급여 설정           | `/hr/settings/payroll`                             | M/A        | `hcm.management` | I: `CONFIG.HRIS_WORKBENCH:VIEW`                        | Management Nav; Governed PAGE                                                   |
+| `hcm.settings-navigation-policy`    | HRIS 설정 › 내비게이션 정책     | `/hr/settings/navigation-policy`                   | M/A        | `hcm.management` | I: `CONFIG.HRIS_NAVIGATION_POLICY:VIEW`                | Management Nav; Governed PAGE                                                   |
+| `hcm.settings-operations`           | HRIS 설정 › 운영 설정           | `/hr/settings/operations`                          | M/A        | `hcm.management` | I: `CONFIG.HRIS_WORKBENCH:VIEW`                        | Management Nav; Governed PAGE                                                   |
+| `hcm.settings-people-employment`    | HRIS 설정 › 인력·고용 설정      | `/hr/settings/people-employment`                   | M/A        | `hcm.management` | I: `CONFIG.HRIS_WORKBENCH:VIEW`                        | Management Nav; Governed PAGE                                                   |
+| `hcm.settings-workflow`             | HRIS 설정 › 워크플로 설정       | `/hr/settings/workflow`                            | M/A        | `hcm.management` | I: `CONFIG.HRIS_WORKBENCH:VIEW`                        | Management Nav; Governed PAGE                                                   |
+| `hcm.reference-data`                | 데이터 및 연계 › 인력 기준정보  | `/hr/data/reference`                               | M/A        | `hcm.management` | 현재 `canOperate` + `ACTION.WORKFORCE_REFERENCE`       | Management Nav; Exact Action 정합화                                             |
+| `hcm.data-operations`               | 데이터 및 연계 › 연계 및 정합성 | `/hr/data/integrations`                            | M/O        | `hcm.management` | 현재 `canOperate` + `ACTION.WORKFORCE_DATA_OPERATIONS` | Management Nav; Exact Action 정합화                                             |
+| `hcm.exports`                       | 데이터 및 연계 › 통제형 반출    | `/hr/data/exports`                                 | M/O        | `hcm.management` | 현재 `canOperate` + `DATA.WORKFORCE:MANAGE`            | Management Nav; 신규 `ACTION.WORKFORCE_CONTROLLED_EXPORT:VIEW/EXPORT` + Step-up |
 
 목표 계약은 Provider `WORKFORCE_READ`를 `hcm.operations` Read-only에만 허용하는 것이다. 현재는
 HCM Direct Route와 People Service의 광범위 GET Prefix 때문에 Personal·Organization Design까지
 열릴 수 있는 Gap이 있으므로 W1b 전에 Support 미활성 Provider 403, Endpoint+Method Allowlist와
 Gateway Exact Capability Mapping을 선행한다. `hcm.organization-design`에는 전용 Granular
 Capability와 API Predicate를 추가한다.
+
+HRM-009가 명시적으로 활성화된 경우에만 `hcm.requests`(`/hr/me/requests`, W/W,
+`hcm.personal`)와 `hcm.certificates-documents`
+(`/hr/operations/people/certificates-documents`, M/O, `hcm.operations`) 두 항목이 추가된다.
+두 항목은 default-off 원장 수량과 위 Ledger SHA-256에 포함하지 않는다.
 
 ## 15. Tenant Admin Hub — 22 (`Keep`)
 
@@ -517,12 +555,12 @@ Query·Hash를 보존해 한 번 Redirect하며 대상이 없으면 Workplace Su
 
 ## 19. 검증 불변식
 
-1. 정적 Menu ID와 Path는 각각 232개이고 중복이 없다.
-2. Plane 합계는 `106 + 84 + 22 + 12 + 8 = 232`이다.
-3. Task 합계는 `111 + 3 + 55 + 63 = 232`이다.
-4. `management` 84개가 Work Sidebar에 나타나지 않는다.
-5. 12개 주요 업무 앱의 Work·Team 106개가 Product Management Sidebar에 나타나지 않는다.
-6. 전체 232개 Menu가 정확히 한 `navigationContextId`를 가지며, 업무 앱 180개는 정확히 한
+1. default-off 정적 Menu ID와 Path는 각각 257개이고 중복이 없다.
+2. Plane 합계는 `113 + 102 + 22 + 12 + 8 = 257`이다.
+3. Task 합계는 `116 + 5 + 67 + 69 = 257`이다.
+4. `management` 102개가 Work Sidebar에 나타나지 않는다.
+5. 12개 주요 업무 앱의 Work·Team 103개가 Product Management Sidebar에 나타나지 않는다.
+6. 전체 257개 Menu가 정확히 한 `navigationContextId`를 가지며, 업무 앱 205개는 정확히 한
    `productSurfaceId`도 가진다.
 7. Legacy Alias는 정적 Menu를 추가하지 않고 대상 Canonical Route와 같은 Surface를 해석한다.
 8. 동적 Detail Route는 Parent Menu의 Surface를 상속하되 Object 권한을 서버에서 다시 검사한다.

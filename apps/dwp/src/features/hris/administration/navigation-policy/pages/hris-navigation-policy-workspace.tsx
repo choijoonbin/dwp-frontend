@@ -1,4 +1,5 @@
 import { InlineFeedback } from '@dwp-frontend/design-system';
+import { useTranslation } from 'react-i18next';
 import Paper from '@mui/material/Paper';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
@@ -76,6 +77,7 @@ function ActiveNavigationPolicyWorkspace({
 }
 
 function UnavailableBoundary() {
+  const { t } = useTranslation('hcm');
   return (
     <Stack
       gap={2}
@@ -83,17 +85,15 @@ function UnavailableBoundary() {
       data-runtime-state="OFF"
       minWidth={0}
     >
-      <InlineFeedback severity="info" title="HRIS navigation policy is not activated">
-        The studio is installed but remains feature-off. No tenant policy is loaded and no command
-        can be submitted.
+      <InlineFeedback severity="info" title={t('administration.navigation.disabled.title')}>
+        {t('administration.navigation.disabled.description')}
       </InlineFeedback>
       <Paper component="section" variant="outlined" sx={{ p: { xs: 2, sm: 2.5 } }}>
         <Typography component="h2" variant="subtitle1" fontWeight="fontWeightBold">
-          Activation remains centrally governed
+          {t('administration.navigation.disabled.governedTitle')}
         </Typography>
         <Typography color="text.secondary">
-          Control must bind the PAGE policy, trusted scope, route, and command authority before
-          enabling this tenant.
+          {t('administration.navigation.disabled.governedDescription')}
         </Typography>
       </Paper>
     </Stack>
@@ -101,15 +101,15 @@ function UnavailableBoundary() {
 }
 
 function MissingTrustedScopeBoundary() {
+  const { t } = useTranslation('hcm');
   return (
     <Stack
       data-testid="hris-navigation-policy-workspace"
       data-runtime-state="SCOPE_REQUIRED"
       minWidth={0}
     >
-      <InlineFeedback severity="error" title="A legal-entity selector is required">
-        Control did not provide a legal-entity public identifier for server-side ownership
-        verification. No policy data was requested.
+      <InlineFeedback severity="error" title={t('administration.navigation.scopeRequired.title')}>
+        {t('administration.navigation.scopeRequired.description')}
       </InlineFeedback>
     </Stack>
   );

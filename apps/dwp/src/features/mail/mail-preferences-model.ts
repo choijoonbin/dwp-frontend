@@ -5,6 +5,8 @@ import type {
   MailReadinessAction,
 } from '@dwp-frontend/shared-utils';
 
+import { mailAccountReadinessIsReady } from './mail-account-capability-presentation';
+
 export type PreferenceTab = 'accounts' | 'reading' | 'notifications' | 'shortcuts';
 
 const PREFERENCE_TABS = new Set<PreferenceTab>([
@@ -36,7 +38,8 @@ export function mailPreferencesEqual(left: MailPreferences, right: MailPreferenc
 
 export function resolveReadinessAction(
   account: MailAccount,
-  readiness?: MailAccountReadinessEvidence
+  readiness?: MailAccountReadinessEvidence,
+  now = Date.now()
 ): MailReadinessAction {
   if (account.connectionState === 'REAUTHENTICATION_REQUIRED') return 'ACTIVATE_EXTERNALLY';
   const actions = [
@@ -44,10 +47,10 @@ export function resolveReadinessAction(
     readiness?.consentEvidence?.action,
     readiness?.tokenEvidence?.action,
   ];
-  return (
-    actions.find((action) => action && action !== 'NONE') ??
-    (readiness ? 'NONE' : 'ACTIVATE_EXTERNALLY')
-  );
+  const reportedAction = actions.find((action) => action && action !== 'NONE');
+  if (reportedAction) return reportedAction;
+  if (!readiness) return 'ACTIVATE_EXTERNALLY';
+  return mailAccountReadinessIsReady(readiness, now) ? 'NONE' : 'RETRY';
 }
 
 export function readinessActionPath(action: MailReadinessAction, accountId: string) {

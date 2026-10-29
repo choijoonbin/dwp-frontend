@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   ActionButton,
   FilterBar,
@@ -98,6 +99,7 @@ export function IntegrationControlPlaneWorkbench({
   onRetry,
   onStepUp,
 }: IntegrationControlPlaneWorkbenchProps) {
+  const { t } = useTranslation('hcm');
   const [localViewState, setLocalViewState] = useState(DEFAULT_VIEW_STATE);
   const currentView = viewState ?? localViewState;
   const allRows = useMemo(
@@ -148,16 +150,28 @@ export function IntegrationControlPlaneWorkbench({
         }}
       >
         <ResourcePageHeader
-          eyebrow="HRIS governance"
-          title="Integration control plane"
+          eyebrow={t('administration.integrationControl.eyebrow')}
+          title={t('administration.integrationControl.title')}
           description={INTEGRATION_CONTROL_PLANE_EXPERIENCE.operationalQuestion}
-          scope={<Chip size="small" variant="outlined" label={`Scope: ${scopeLabel}`} />}
+          scope={
+            <Chip
+              size="small"
+              variant="outlined"
+              label={t('administration.integrationControl.scope', { scope: scopeLabel })}
+            />
+          }
           status={
             <LiveStatus
               state={liveStatusFor(state)}
               label={liveStatusLabel(state)}
-              detail={asOf ? `As of ${formatIntegrationTimestamp(asOf)}` : 'No verified snapshot'}
-              refreshLabel="Refresh integration evidence"
+              detail={
+                asOf
+                  ? t('administration.integrationControl.asOf', {
+                      asOf: formatIntegrationTimestamp(asOf),
+                    })
+                  : t('administration.integrationControl.noSnapshot')
+              }
+              refreshLabel={t('administration.integrationControl.refreshEvidence')}
               onRefresh={onRetry}
               refreshing={refreshing}
             />
@@ -176,7 +190,7 @@ export function IntegrationControlPlaneWorkbench({
                 }
                 sx={{ minHeight: 44 }}
               >
-                New connector
+                {t('administration.integrationControl.newConnector')}
               </ActionButton>
             ) : undefined
           }
@@ -208,37 +222,41 @@ export function IntegrationControlPlaneWorkbench({
             severity="warning"
             title={
               state === 'result-unknown'
-                ? 'The latest command outcome is not confirmed'
-                : 'Some integration evidence is restricted or stale'
+                ? t('administration.integrationControl.partial.resultUnknownTitle')
+                : t('administration.integrationControl.partial.restrictedTitle')
             }
           >
-            Verified connector facts remain visible, but every command is withheld until current,
-            complete owner evidence is available. Reconciliation never mutates the original
-            result-unknown receipt.
+            {t('administration.integrationControl.partial.description')}
           </InlineFeedback>
         ) : null}
 
         {projection && hasVerifiedRows ? (
           <>
             <OperationalContextBar
-              label="Integration evidence context"
+              label={t('administration.integrationControl.context.label')}
               items={[
-                { label: 'Tenant scope', value: scopeLabel, icon: <ShieldCheck size={16} /> },
                 {
-                  label: 'Projection',
+                  label: t('administration.integrationControl.context.tenantScope'),
+                  value: scopeLabel,
+                  icon: <ShieldCheck size={16} />,
+                },
+                {
+                  label: t('administration.integrationControl.context.projection'),
                   value:
                     projection.projection === 'PRIMARY_HRIS_SETTINGS'
-                      ? 'HRIS settings'
-                      : 'DWP control',
+                      ? t('administration.integrationControl.context.hrisSettings')
+                      : t('administration.integrationControl.context.dwpControl'),
                   icon: <Cable size={16} />,
                 },
                 {
-                  label: 'Snapshot',
-                  value: asOf ? formatIntegrationTimestamp(asOf) : 'Injected owner snapshot',
+                  label: t('administration.integrationControl.context.snapshot'),
+                  value: asOf
+                    ? formatIntegrationTimestamp(asOf)
+                    : t('administration.integrationControl.context.injectedSnapshot'),
                   icon: <RefreshCw size={16} />,
                 },
                 {
-                  label: 'Evidence state',
+                  label: t('administration.integrationControl.context.evidenceState'),
                   value: projection.state,
                   icon: <Activity size={16} />,
                 },
@@ -247,31 +265,38 @@ export function IntegrationControlPlaneWorkbench({
                 <Chip
                   size="small"
                   color={state === 'complete' ? 'success' : 'warning'}
-                  label={state === 'complete' ? 'Current evidence' : 'Read only'}
+                  label={t(
+                    state === 'complete'
+                      ? 'administration.integrationControl.context.currentEvidence'
+                      : 'administration.integrationControl.context.readOnly'
+                  )}
                 />
               }
             />
 
             <OperationalKpiStrip
-              ariaLabel="Integration governance summary"
+              ariaLabel={t('administration.integrationControl.summaryAriaLabel')}
               items={governanceMetrics(allRows, execution)}
             />
 
             <FilterBar
-              ariaLabel="Filter connector evidence"
-              searchLabel="Search connectors"
+              ariaLabel={t('administration.integrationControl.filter.ariaLabel')}
+              searchLabel={t('administration.integrationControl.filter.searchLabel')}
               searchValue={currentView.search}
-              searchPlaceholder="Connector, policy, status…"
+              searchPlaceholder={t('administration.integrationControl.filter.searchPlaceholder')}
               onSearchChange={(search) => updateView({ search, selectedItemPublicId: null })}
-              resultLabel={`${rows.length} of ${allRows.length} connectors`}
+              resultLabel={t('administration.integrationControl.filter.resultLabel', {
+                filtered: rows.length,
+                total: allRows.length,
+              })}
             />
 
             {rows.length === 0 ? (
               <GuidedEmptyState
                 kind="no-results"
-                title="No connectors match this search"
-                description="Clear the search to return to the verified owner projection. No command was submitted."
-                actionLabel="Clear search"
+                title={t('administration.integrationControl.filter.emptyTitle')}
+                description={t('administration.integrationControl.filter.emptyDescription')}
+                actionLabel={t('administration.integrationControl.filter.clear')}
                 onAction={() => updateView(DEFAULT_VIEW_STATE)}
               />
             ) : (
@@ -327,12 +352,13 @@ function StateBoundary({
   onStepUp?: () => void;
   refreshing: boolean;
 }>) {
+  const { t } = useTranslation('hcm');
   if ((state === 'complete' || state === 'partial') && !hasProjection) {
     return (
       <LocalErrorState
-        title="Integration evidence is unavailable"
-        description="The declared state has no trusted owner projection. No command can be submitted."
-        retryLabel="Retry"
+        title={t('administration.integrationControl.state.noProjectionTitle')}
+        description={t('administration.integrationControl.state.noProjectionDescription')}
+        retryLabel={t('common.retry')}
         onRetry={onRetry}
       />
     );
@@ -340,8 +366,8 @@ function StateBoundary({
   if (state === 'loading') {
     return (
       <LoadingState
-        label="Loading integration governance"
-        description="Confirming connector policy, effective status, and current authorization."
+        label={t('administration.integrationControl.state.loadingTitle')}
+        description={t('administration.integrationControl.state.loadingDescription')}
         variant="skeleton"
         skeletonHeights={[52, 148, 148]}
       />
@@ -351,9 +377,11 @@ function StateBoundary({
     return (
       <GuidedEmptyState
         kind="first-use"
-        title="No connector definitions in this scope"
-        description="Create a connector definition first. Validation, approval, activation, and provider execution remain separate governed steps."
-        actionLabel={canCreate ? 'Create first connector' : undefined}
+        title={t('administration.integrationControl.state.emptyTitle')}
+        description={t('administration.integrationControl.state.emptyDescription')}
+        actionLabel={
+          canCreate ? t('administration.integrationControl.state.createFirst') : undefined
+        }
         onAction={onCreate}
       />
     );
@@ -362,8 +390,8 @@ function StateBoundary({
     return (
       <GuidedEmptyState
         kind="permission"
-        title="Integration governance is restricted"
-        description="The current session has no valid feature, route, or operation decision."
+        title={t('administration.integrationControl.state.restrictedTitle')}
+        description={t('administration.integrationControl.state.restrictedDescription')}
       />
     );
   }
@@ -371,9 +399,9 @@ function StateBoundary({
     return (
       <GuidedEmptyState
         kind="permission"
-        title="Additional verification is required"
-        description="Verify this session before submitting a high-impact integration decision."
-        actionLabel={onStepUp ? 'Verify session' : undefined}
+        title={t('administration.integrationControl.state.stepUpTitle')}
+        description={t('administration.integrationControl.state.stepUpDescription')}
+        actionLabel={onStepUp ? t('administration.common.verifySession') : undefined}
         onAction={onStepUp}
       />
     );
@@ -381,9 +409,9 @@ function StateBoundary({
   if (state === 'retry') {
     return (
       <LocalErrorState
-        title="Integration evidence could not be refreshed"
-        description="The previous verified view was not replaced and no command was submitted."
-        retryLabel="Retry refresh"
+        title={t('administration.integrationControl.state.retryTitle')}
+        description={t('administration.integrationControl.state.retryDescription')}
+        retryLabel={t('administration.integrationControl.state.retryRefresh')}
         onRetry={onRetry}
         retrying={refreshing}
       />
@@ -392,17 +420,17 @@ function StateBoundary({
   if (state === 'unavailable') {
     return (
       <LocalErrorState
-        title="Integration governance is unavailable"
-        description="Trusted owner evidence is unavailable. No connector command can be submitted."
-        requestIdLabel="Use the correlation ID from the failed owner response when contacting support."
+        title={t('administration.integrationControl.state.unavailableTitle')}
+        description={t('administration.integrationControl.state.unavailableDescription')}
+        requestIdLabel={t('administration.integrationControl.state.requestIdHelp')}
       />
     );
   }
   if (state === 'result-unknown' && !hasVerifiedRows) {
     return (
       <LocalErrorState
-        title="Command outcome requires reconciliation"
-        description="No verified read snapshot is available. Use the original correlation and provider receipt evidence; never redispatch blindly."
+        title={t('administration.integrationControl.state.reconcileTitle')}
+        description={t('administration.integrationControl.state.reconcileDescription')}
       />
     );
   }
@@ -433,6 +461,7 @@ function ConnectorTable({
   onSelect(key: string): void;
   onAction?: (action: IntegrationWorkbenchAction) => void;
 }>) {
+  const { t } = useTranslation('hcm');
   return (
     <TableContainer
       component={Paper}
@@ -440,16 +469,24 @@ function ConnectorTable({
       data-integration-surface
       sx={{ minWidth: 0, maxWidth: '100%' }}
     >
-      <Table size="small" aria-label="Connector governance evidence" sx={{ tableLayout: 'fixed' }}>
+      <Table
+        size="small"
+        aria-label={t('administration.integrationControl.catalog.ariaLabel')}
+        sx={{ tableLayout: 'fixed' }}
+      >
         <TableHead>
           <TableRow>
-            <TableCell sx={{ width: { xs: '54%', md: '34%' } }}>Connector</TableCell>
-            <TableCell sx={{ width: { xs: '24%', md: '22%' } }}>Status</TableCell>
+            <TableCell sx={{ width: { xs: '54%', md: '34%' } }}>
+              {t('administration.integrationControl.catalog.connector')}
+            </TableCell>
+            <TableCell sx={{ width: { xs: '24%', md: '22%' } }}>
+              {t('administration.integrationControl.catalog.status')}
+            </TableCell>
             <TableCell sx={{ display: { xs: 'none', md: 'table-cell' }, width: '28%' }}>
-              Policy context
+              {t('administration.integrationControl.catalog.policyContext')}
             </TableCell>
             <TableCell align="right" sx={{ width: { xs: '22%', md: '16%' } }}>
-              Action
+              {t('administration.integrationControl.catalog.action')}
             </TableCell>
           </TableRow>
         </TableHead>
@@ -490,7 +527,9 @@ function ConnectorTable({
                         {row.title}
                       </Typography>
                       <Typography variant="caption" color="text.secondary">
-                        Revision {row.effectiveStatusRevision}
+                        {t('administration.integrationControl.catalog.revision', {
+                          revision: row.effectiveStatusRevision,
+                        })}
                         {row.redacted ? ' · restricted facts' : ''}
                       </Typography>
                     </Stack>
@@ -524,7 +563,7 @@ function ConnectorTable({
                     </ActionButton>
                   ) : (
                     <Typography variant="caption" color="text.secondary">
-                      Review
+                      {t('administration.integrationControl.catalog.review')}
                     </Typography>
                   )}
                 </TableCell>
@@ -546,6 +585,7 @@ function ConnectorInspector({
   readOnly: boolean;
   onAction?: (action: IntegrationWorkbenchAction) => void;
 }>) {
+  const { t } = useTranslation('hcm');
   return (
     <Paper
       component="aside"
@@ -569,30 +609,35 @@ function ConnectorInspector({
               {row.title}
             </Typography>
             <Typography variant="body2" color="text.secondary">
-              Connector governance detail
+              {t('administration.integrationControl.inspector.detail')}
             </Typography>
           </Box>
         </Stack>
         <DefinitionList
           items={[
-            ['Effective status', row.effectiveStatus],
-            ['Policy context', row.context],
-            ['Status revision', String(row.effectiveStatusRevision)],
+            [t('administration.integrationControl.inspector.effectiveStatus'), row.effectiveStatus],
+            [t('administration.integrationControl.catalog.policyContext'), row.context],
             [
-              'Target facts',
-              row.redacted ? 'Restricted — commands suppressed' : 'Visible and verified',
+              t('administration.integrationControl.inspector.statusRevision'),
+              String(row.effectiveStatusRevision),
+            ],
+            [
+              t('administration.integrationControl.inspector.targetFacts'),
+              row.redacted
+                ? t('administration.integrationControl.inspector.restrictedFacts')
+                : t('administration.integrationControl.inspector.visibleFacts'),
             ],
           ]}
         />
         <Stack gap={1}>
           <Typography component="h3" variant="subtitle2">
-            Authorized next actions
+            {t('administration.integrationControl.inspector.nextActions')}
           </Typography>
           {readOnly || row.actions.length === 0 ? (
             <Typography variant="body2" color="text.secondary">
               {readOnly
-                ? 'Commands are withheld until current, complete owner evidence is available.'
-                : 'No action is available from the current owner-policy intersection.'}
+                ? t('administration.integrationControl.inspector.commandsWithheld')
+                : t('administration.integrationControl.inspector.noActions')}
             </Typography>
           ) : (
             row.actions.map((actionKey) => (
@@ -625,6 +670,7 @@ function ExecutionEvidence({
   execution,
   readOnly,
 }: Readonly<{ execution: ConnectorExecutionResponse; readOnly: boolean }>) {
+  const { t } = useTranslation('hcm');
   const unresolved = execution.state === 'RESULT_UNKNOWN' || execution.state === 'RECONCILING';
   return (
     <Paper
@@ -649,22 +695,33 @@ function ExecutionEvidence({
             </Box>
             <Box minWidth={0}>
               <Typography id="integration-execution-evidence-title" component="h2" variant="h6">
-                Execution evidence
+                {t('administration.integrationControl.execution.title')}
               </Typography>
               <Typography variant="body2" color="text.secondary" sx={{ overflowWrap: 'anywhere' }}>
-                Execution {execution.executionId} · Mapping version {execution.mappingVersion}
+                {t('administration.integrationControl.execution.identity', {
+                  executionId: execution.executionId,
+                  mappingVersion: execution.mappingVersion,
+                })}
               </Typography>
             </Box>
           </Stack>
           <Stack direction="row" gap={1} alignItems="center">
             <StatusChip value={execution.state} />
-            {readOnly ? <Chip size="small" variant="outlined" label="Commands withheld" /> : null}
+            {readOnly ? (
+              <Chip
+                size="small"
+                variant="outlined"
+                label={t('administration.integrationControl.execution.commandsWithheld')}
+              />
+            ) : null}
           </Stack>
         </Stack>
         {unresolved ? (
-          <InlineFeedback severity="warning" title="Provider outcome requires evidence">
-            Reconcile with the original provider key and receipt evidence. Blind redispatch is not
-            available.
+          <InlineFeedback
+            severity="warning"
+            title={t('administration.integrationControl.execution.outcomeTitle')}
+          >
+            {t('administration.integrationControl.execution.outcomeDescription')}
           </InlineFeedback>
         ) : null}
         <Box
@@ -679,10 +736,13 @@ function ExecutionEvidence({
           }}
         >
           {[
-            ['Source', execution.sourceCount],
-            ['Accepted', execution.acceptedCount],
-            ['Rejected', execution.rejectedCount],
-            ['Selected', execution.selectedItemCount],
+            [t('administration.integrationControl.execution.source'), execution.sourceCount],
+            [t('administration.integrationControl.execution.accepted'), execution.acceptedCount],
+            [t('administration.integrationControl.execution.rejected'), execution.rejectedCount],
+            [
+              t('administration.integrationControl.execution.selected'),
+              execution.selectedItemCount,
+            ],
           ].map(([label, value]) => (
             <Box
               key={label}

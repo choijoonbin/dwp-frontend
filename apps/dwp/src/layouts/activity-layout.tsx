@@ -1,5 +1,5 @@
 import { ACTIVITY_NAVIGATION } from '../features/activity/activity-navigation';
-import { ProductAreaLayout } from './product-area-layout';
+import { ProductAreaLayout } from './product-area-layout-boundary';
 
 export function ActivityLayout() {
   return (

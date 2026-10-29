@@ -1,5 +1,5 @@
 import { useMemo, type SyntheticEvent } from 'react';
-import { resolveSupportedLocale } from '@dwp-frontend/shared-i18n';
+import { resolveSupportedLocale, resolveSystemTimeZone } from '@dwp-frontend/shared-i18n';
 import { InlineFeedback } from '@dwp-frontend/design-system';
 import { useTranslation } from 'react-i18next';
 import { useSearchParams } from 'react-router-dom';
@@ -35,7 +35,7 @@ export const HRIS_PAYROLL_CONFIGURATION_ACTION_CONTRACTS = Object.freeze({
 } as const satisfies Record<'validate' | 'simulate' | 'publish', ProductActionRouteContractKey>);
 
 function localTimeZone() {
-  return Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC';
+  return resolveSystemTimeZone('UTC');
 }
 
 export const HRIS_PAYROLL_FOUNDATION_SETTINGS_RUNTIME_STATE =

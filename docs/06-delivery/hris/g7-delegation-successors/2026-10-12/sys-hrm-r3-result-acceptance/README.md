@@ -163,6 +163,7 @@ and cannot be used by input evidence, plans, or output logs.
    generated evidence and streams in a single-parent frontend carrier directly
    after the frontend source-result commit, then push it. Do not rerun either
    module packet suite.
+
 9. Create closure.
 
    ```text
@@ -176,13 +177,13 @@ and cannot be used by input evidence, plans, or output logs.
    ```
 
 10. Commit and push the closure receipt, then validate its exact carrier.
-   Its first parent must be the shared-evidence carrier and its sole diff must
-   be the closure receipt.
+    Its first parent must be the shared-evidence carrier and its sole diff must
+    be the closure receipt.
 
-   ```text
-   python3 validate_g7_sys_hrm_result_acceptance.py closure \
-     --run-id <run-id> --carrier <closure-carrier-commit>
-   ```
+```text
+python3 validate_g7_sys_hrm_result_acceptance.py closure \
+  --run-id <run-id> --carrier <closure-carrier-commit>
+```
 
 The materializer's `sequence` subcommand prints the same order and all expected
 artifact names without modifying the repository.
@@ -219,10 +220,10 @@ The shared plan contains exactly these commands, in this order:
 5. `corepack yarn typecheck`
 6. `corepack yarn architecture:check`
 7. `env E2E_BASE_URL=http://127.0.0.1:4200 E2E_REUSE_EXISTING_SERVER=false
-   VITE_HRIS_REFERENCE_CONFIGURATION_ENABLED=true
-   VITE_HRIS_EMPLOYEE_CHANGE_ENABLED=true corepack yarn playwright test
-   e2e/hris-sys-hrm-responsive-accessibility.spec.ts --project=chromium
-   --project=mobile --workers=1 --reporter=json`
+VITE_HRIS_REFERENCE_CONFIGURATION_ENABLED=true
+VITE_HRIS_EMPLOYEE_CHANGE_ENABLED=true corepack yarn playwright test
+e2e/hris-sys-hrm-responsive-accessibility.spec.ts --project=chromium
+--project=mobile --workers=1 --reporter=json`
 
 The tools independently require the corresponding `package.json` scripts,
 dependencies, frontend test sources, backend OpenAPI exporter, and pinned
@@ -253,4 +254,3 @@ results fail closed, and the Playwright process stderr must be empty. The
 runner's self-test stub mode executes
 real subprocesses over command-specific machine-readable fixtures, is not
 exposed by the CLI, and is rejected by production closure validation.
-

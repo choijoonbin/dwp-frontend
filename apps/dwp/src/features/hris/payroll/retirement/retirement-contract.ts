@@ -1,3 +1,5 @@
+import { resolveCanonicalTimeZone } from '@dwp-frontend/shared-i18n';
+
 export const PAY004_FEATURE = 'HRIS_PAY_RETIREMENT_WORKBENCH' as const;
 export const PAY004_ADAPTER_KIND = 'HRIS_PAY_004_ENTRY_QUERY_V1' as const;
 export const PAY004_QUERY_ID = 'IAQ-049' as const;
@@ -379,10 +381,7 @@ function parseItem(value: unknown, index: number): Pay004RetirementItem {
     return invalid(`${path}.availableActions`);
   }
   const statusCode = text(source.statusCode, `${path}.statusCode`, 64, CODE);
-  if (
-    statusCode !== 'RESTRICTED' &&
-    !(CASE_STATES as readonly string[]).includes(statusCode)
-  ) {
+  if (statusCode !== 'RESTRICTED' && !(CASE_STATES as readonly string[]).includes(statusCode)) {
     return invalid(`${path}.statusCode`);
   }
   return Object.freeze({
@@ -529,9 +528,7 @@ function parseMoneyFilter(value: unknown, path: string) {
   if (value === null) return null;
   const source = exact(value, path, ['currency', 'minimumAmount', 'maximumAmount'], []);
   const amount = (candidate: unknown, child: string) =>
-    candidate === null
-      ? null
-      : text(candidate, `${path}.${child}`, Number.MAX_SAFE_INTEGER, MONEY);
+    candidate === null ? null : text(candidate, `${path}.${child}`, Number.MAX_SAFE_INTEGER, MONEY);
   const minimum =
     'minimumAmount' in source ? amount(source.minimumAmount, 'minimumAmount') : undefined;
   const maximum =
@@ -580,8 +577,7 @@ function parsePolicyFilter(value: unknown, path: string) {
 function parseStatusFilter(value: unknown, path: string) {
   if (value === null) return null;
   const source = exact(value, path, ['codes', 'minimumRevision'], []);
-  const codes =
-    'codes' in source ? stringList(source.codes, `${path}.codes`, CODE) : undefined;
+  const codes = 'codes' in source ? stringList(source.codes, `${path}.codes`, CODE) : undefined;
   if (codes?.some((code) => !(CASE_STATES as readonly string[]).includes(code))) {
     return invalid(`${path}.codes`);
   }
@@ -632,10 +628,9 @@ export function assertPay004TrustedScope(value: unknown): Pay004TrustedScope {
   const locale = text(source.locale, 'scope.locale', 35);
   const timeZone = text(source.timeZone, 'scope.timeZone', 255);
   let canonicalLocale: string;
-  let canonicalTimeZone: string;
+  const canonicalTimeZone = resolveCanonicalTimeZone(timeZone);
   try {
     [canonicalLocale] = Intl.getCanonicalLocales(locale);
-    canonicalTimeZone = new Intl.DateTimeFormat('en', { timeZone }).resolvedOptions().timeZone;
   } catch {
     return invalid('scope.localeOrTimeZone');
   }
@@ -702,10 +697,7 @@ export function createPay004QueryRequest(
   options: Pay004QueryOptions = {}
 ): Pay004QueryRequest {
   const scope = assertPay004TrustedScope(trustedScope);
-  const sort = pay004Sort(
-    options.sort ?? [PAY004_QUERY_CONTRACT.defaultSort],
-    true
-  );
+  const sort = pay004Sort(options.sort ?? [PAY004_QUERY_CONTRACT.defaultSort], true);
   return Object.freeze({
     limit: integer(options.limit ?? PAY004_QUERY_CONTRACT.pageLimit, 'request.limit', 1, 100),
     filter: parseFilter(options.filter ?? {}, 'request.filter'),
@@ -730,9 +722,10 @@ function pay004Sort(value: unknown, appendDefaultTieBreak: boolean): string[] {
     return invalid('request.sort');
   }
   const requested = value as string[];
-  const sort = appendDefaultTieBreak && !requested.some((entry) => entry.startsWith('itemPublicId:'))
-    ? [...requested, PAY004_QUERY_CONTRACT.defaultSort]
-    : [...requested];
+  const sort =
+    appendDefaultTieBreak && !requested.some((entry) => entry.startsWith('itemPublicId:'))
+      ? [...requested, PAY004_QUERY_CONTRACT.defaultSort]
+      : [...requested];
   if (
     sort.length < 1 ||
     sort.length > 3 ||

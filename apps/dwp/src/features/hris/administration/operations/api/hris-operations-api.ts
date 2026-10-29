@@ -73,13 +73,10 @@ function readConfig(
 export async function readHrisOperationsEntry(
   context: HrisOperationsEntryReadContext = {}
 ): Promise<HrisOperationsEntry> {
-  const response = await axiosInstance.get<unknown>(
-    HRIS_OPERATIONS_ENTRY_PATH,
-    {
-      ...productSurfaceReadScopeConfig(undefined, context.signal),
-      headers: { 'X-Purpose-Code': 'HRIS_CONFIGURATION' },
-    }
-  );
+  const response = await axiosInstance.get<unknown>(HRIS_OPERATIONS_ENTRY_PATH, {
+    ...productSurfaceReadScopeConfig(undefined, context.signal),
+    headers: { 'X-Purpose-Code': 'HRIS_CONFIGURATION' },
+  });
   return parseHrisOperationsEntry(response.data);
 }
 

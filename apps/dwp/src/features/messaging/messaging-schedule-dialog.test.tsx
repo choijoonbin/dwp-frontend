@@ -17,6 +17,10 @@ vi.mock('@dwp-frontend/shared-utils', () => ({
   getMessagingScheduledMessages: api.get,
   cancelMessagingScheduledMessage: api.cancel,
 }));
+vi.mock('@dwp-frontend/shared-i18n', () => ({
+  formatDate: (value: string) => value,
+  resolveSystemTimeZone: () => 'UTC',
+}));
 vi.mock('react-i18next', () => ({
   useTranslation: () => ({ t: (key: string) => key }),
 }));
@@ -71,6 +75,17 @@ describe('Messaging scheduled delivery UI', () => {
       (button) => button.textContent === 'schedule.confirm'
     );
     expect(submit?.disabled).toBe(true);
+  });
+
+  it('announces pending schedules once while treating the spinner as decorative', async () => {
+    api.get.mockReturnValue(new Promise(() => undefined));
+
+    await render();
+
+    const status = document.body.querySelector('[role="status"]');
+    expect(status?.getAttribute('aria-label')).toBe('schedule.pendingLoading');
+    expect(status?.textContent).toContain('schedule.pendingLoading');
+    expect(status?.querySelector('[role="progressbar"]')?.getAttribute('aria-hidden')).toBe('true');
   });
 
   it('queries pending commands and cancels using the current optimistic version', async () => {

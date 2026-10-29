@@ -99,10 +99,7 @@ function criteriaSessionKey(scope: Pay004TrustedScope, tenantId: string): string
   )}:${encodeURIComponent(scope.decisionRevision)}`;
 }
 
-function readSessionCriteria(
-  scope: Pay004TrustedScope,
-  tenantId: string
-): Pay004WorkbenchCriteria {
+function readSessionCriteria(scope: Pay004TrustedScope, tenantId: string): Pay004WorkbenchCriteria {
   if (typeof window === 'undefined') return PAY004_DEFAULT_CRITERIA;
   const key = criteriaSessionKey(scope, tenantId);
   try {

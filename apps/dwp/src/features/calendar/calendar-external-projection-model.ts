@@ -7,10 +7,11 @@ import type {
   CalendarSummary,
   CalendarVisibility,
 } from '@dwp-frontend/shared-utils';
+import { foundationTokens } from '@dwp-frontend/design-system';
 
 const PROVIDER = {
-  MICROSOFT_365: { name: 'Microsoft 365', color: '#0078D4' },
-  GOOGLE_WORKSPACE: { name: 'Google Workspace', color: '#4285F4' },
+  MICROSOFT_365: { name: 'Microsoft 365', color: foundationTokens.color.data.cobalt },
+  GOOGLE_WORKSPACE: { name: 'Google Workspace', color: foundationTokens.color.data.teal },
 } as const satisfies Record<CalendarExternalProvider, { name: string; color: string }>;
 
 const MICROSOFT_SOURCE_HOSTS = [

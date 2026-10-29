@@ -1,4 +1,5 @@
 import { resolveApprovalContentAccess } from '@dwp-frontend/shared-utils';
+import { readApprovalHrisSeparationWaiverTaskBinding } from './approval-hris-separation-waiver-command';
 
 import type { ApprovalTask, ApprovalTaskDetail } from '@dwp-frontend/shared-utils';
 import type { ApprovalBatchResult } from './approval-command-center-model';
@@ -11,7 +12,8 @@ export type ApprovalBatchPreflightReason =
   | 'QUEUE_CHANGED'
   | 'CONTENT_ACCESS_DENIED'
   | 'SELF_APPROVAL_BLOCKED'
-  | 'DECISION_AUTHORITY_UNAVAILABLE';
+  | 'DECISION_AUTHORITY_UNAVAILABLE'
+  | 'HIGH_RISK_CONFIRMATION_REQUIRED';
 
 export type ApprovalBatchPreflightInspection = Readonly<{
   taskId: string;
@@ -75,6 +77,18 @@ export function buildApprovalBatchPreflight({
     }
     if (!resolveApprovalContentAccess(detail).full) {
       return { taskId, ...identity, outcome: 'EXCLUDED', reason: 'CONTENT_ACCESS_DENIED' };
+    }
+    try {
+      if (readApprovalHrisSeparationWaiverTaskBinding(detail)) {
+        return {
+          taskId,
+          ...identity,
+          outcome: 'EXCLUDED',
+          reason: 'HIGH_RISK_CONFIRMATION_REQUIRED',
+        };
+      }
+    } catch {
+      return { taskId, ...identity, outcome: 'EXCLUDED', reason: 'DETAIL_UNAVAILABLE' };
     }
     if (detail.selfApprovalBlocked) {
       return { taskId, ...identity, outcome: 'EXCLUDED', reason: 'SELF_APPROVAL_BLOCKED' };

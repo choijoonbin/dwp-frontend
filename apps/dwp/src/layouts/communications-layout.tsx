@@ -1,7 +1,7 @@
 import type { ProductSurfaceLayoutRuntime } from '../components/product-surface-controls';
 import { COMMUNICATIONS_NAVIGATION } from '../features/communications/communications-navigation';
 import { COMMUNICATIONS_PRODUCT_MANIFEST } from '../features/communications/communications-product-manifest';
-import { ProductAreaLayout } from './product-area-layout';
+import { ProductAreaLayout } from './product-area-layout-boundary';
 
 export function CommunicationsLayout({ surface }: { surface?: ProductSurfaceLayoutRuntime } = {}) {
   return (

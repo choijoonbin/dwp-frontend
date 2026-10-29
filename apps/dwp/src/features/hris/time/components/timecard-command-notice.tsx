@@ -5,6 +5,7 @@ import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
+import { useTranslation } from 'react-i18next';
 
 import type {
   TimecardCommandFailure,
@@ -88,6 +89,7 @@ export function TimecardCommandNotice({
   onRetry: () => void;
   onReconcile: () => void;
 }) {
+  const { t } = useTranslation('hcm');
   if (!failure && !feedback) return null;
 
   const copy = failure ? FAILURE_COPY[failure.kind] : RECEIPT_COPY[feedback!.status];
@@ -124,7 +126,10 @@ export function TimecardCommandNotice({
               color="text.secondary"
               sx={{ display: 'block', mt: 0.75, overflowWrap: 'anywhere' }}
             >
-              Receipt {observedReceipt.receiptId} · {observedReceipt.status}
+              {t('hrisTime.i18nClosure.timecard.notice.receipt', {
+                id: observedReceipt.receiptId,
+                status: observedReceipt.status,
+              })}
             </Typography>
           )}
           <Stack direction={{ xs: 'column', sm: 'row' }} gap={0.75} sx={{ mt: 1.25 }}>
@@ -136,7 +141,7 @@ export function TimecardCommandNotice({
                 startIcon={<RotateCcw size={14} aria-hidden="true" />}
                 onClick={onRetry}
               >
-                Retry exact command
+                {t('hrisTime.i18nClosure.timecard.notice.retryExact')}
               </ActionButton>
             )}
             {(failure?.canReconcile || canReconcile) && (
@@ -147,7 +152,7 @@ export function TimecardCommandNotice({
                 startIcon={<SearchCheck size={14} aria-hidden="true" />}
                 onClick={onReconcile}
               >
-                Check existing receipt
+                {t('hrisTime.i18nClosure.timecard.notice.checkReceipt')}
               </ActionButton>
             )}
             {failure?.canRefresh && (
@@ -158,7 +163,7 @@ export function TimecardCommandNotice({
                 startIcon={<RefreshCw size={14} aria-hidden="true" />}
                 onClick={onRefresh}
               >
-                Refresh canonical timecard
+                {t('hrisTime.i18nClosure.timecard.notice.refresh')}
               </ActionButton>
             )}
           </Stack>

@@ -164,8 +164,7 @@ const correlationHeader = (correlationId: string) => ({
   'X-Correlation-ID': correlationId,
 });
 
-export const COMPENSATION_PLANNING_PROJECTION_VERSION_HEADER =
-  'X-HRIS-Compplan-Projection-Version';
+export const COMPENSATION_PLANNING_PROJECTION_VERSION_HEADER = 'X-HRIS-Compplan-Projection-Version';
 export const COMPENSATION_PLANNING_PROJECTION_VERSION = '5';
 
 function readConfig(context: CompensationReadContext) {
@@ -181,8 +180,7 @@ function cycleDetailReadConfig(context: CompensationReadContext) {
     ...config,
     headers: {
       ...config.headers,
-      [COMPENSATION_PLANNING_PROJECTION_VERSION_HEADER]:
-        COMPENSATION_PLANNING_PROJECTION_VERSION,
+      [COMPENSATION_PLANNING_PROJECTION_VERSION_HEADER]: COMPENSATION_PLANNING_PROJECTION_VERSION,
     },
   };
 }

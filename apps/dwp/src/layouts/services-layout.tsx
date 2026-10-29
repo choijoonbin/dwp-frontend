@@ -1,7 +1,7 @@
 import type { ProductSurfaceLayoutRuntime } from '../components/product-surface-controls';
 import { SERVICES_NAVIGATION } from '../features/services/services-navigation';
 import { SERVICES_PRODUCT_MANIFEST } from '../features/services/services-product-manifest';
-import { ProductAreaLayout } from './product-area-layout';
+import { ProductAreaLayout } from './product-area-layout-boundary';
 
 export function ServicesLayout({ surface }: { surface?: ProductSurfaceLayoutRuntime } = {}) {
   return (

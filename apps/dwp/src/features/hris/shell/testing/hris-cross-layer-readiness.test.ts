@@ -127,7 +127,7 @@ describe('HRIS IA-to-runtime and declared-activation cross-layer readiness', () 
       runtimeNodes: 99,
       baseCatalogNodes: 76,
       modernNodes: 22,
-      hcmNavigationRoutes: 49,
+      hcmNavigationRoutes: 47,
       compatibilityRoutes: 3,
       authorizedPageRoutes: 158,
       governedAdmissionMountedRoutes: 10,
@@ -181,6 +181,31 @@ describe('HRIS IA-to-runtime and declared-activation cross-layer readiness', () 
       hasExactMountedRoute: true,
       productionState: 'NOT_AUTHORIZED_G6',
     });
+    expect(
+      report.nodes
+        .filter((node) =>
+          ['my-hr-requests', 'hr-certificates-documents'].includes(node.sourceNodeKey)
+        )
+        .map((node) => ({
+          sourceNodeKey: node.sourceNodeKey,
+          state: node.state,
+          hasExactMountedRoute: node.hasExactMountedRoute,
+          mountedCurrentPartialPaths: node.mountedCurrentPartialPaths,
+        }))
+    ).toEqual([
+      {
+        sourceNodeKey: 'my-hr-requests',
+        state: 'MOUNTED_DEFAULT_OFF',
+        hasExactMountedRoute: true,
+        mountedCurrentPartialPaths: ['/hr/me/requests'],
+      },
+      {
+        sourceNodeKey: 'hr-certificates-documents',
+        state: 'MOUNTED_DEFAULT_OFF',
+        hasExactMountedRoute: true,
+        mountedCurrentPartialPaths: ['/hr/operations/people/certificates-documents'],
+      },
+    ]);
     expect(report.nodes.find((node) => node.sourceNodeKey === 'dwp-governance')).toMatchObject({
       hasCompatibilityRoute: false,
       mountedCompatibilityPaths: [],

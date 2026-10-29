@@ -14,6 +14,7 @@ const performanceSpec = readFileSync(
 const routeBudgets = JSON.parse(
   readFileSync(new URL('./notification-route-budgets.json', import.meta.url), 'utf8')
 );
+const pinnedSetupNode = 'actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6';
 
 test('Notification quality CI runs when shared build or browser configuration changes', () => {
   const requiredTriggerPaths = [
@@ -50,6 +51,43 @@ function jobSource(jobId) {
     ? workflow.slice(start)
     : workflow.slice(start, start + marker.length + nextJob);
 }
+
+test('Notification quality jobs activate Yarn 4 before restoring its cache', () => {
+  for (const [jobId, runner] of [
+    ['behavior', 'ubuntu-latest'],
+    ['visual-baselines', 'macos-15'],
+  ]) {
+    const source = jobSource(jobId);
+    const setupIndex = source.indexOf('      - name: Set up Node.js runtime\n');
+    const corepackIndex = source.indexOf('      - name: Enable Corepack and activate Yarn\n');
+    const cacheIndex = source.indexOf('      - name: Restore Yarn cache\n');
+    const installIndex = source.indexOf('      - name: Install dependencies\n');
+
+    assert.ok(
+      setupIndex >= 0 &&
+        setupIndex < corepackIndex &&
+        corepackIndex < cacheIndex &&
+        cacheIndex < installIndex,
+      `${jobId} must set up Node, activate Corepack, restore Yarn cache, then install`
+    );
+    assert.match(source, new RegExp(`runs-on: ${runner}`, 'u'));
+
+    const initialSetup = source.slice(setupIndex, corepackIndex);
+    assert.ok(initialSetup.includes(`uses: ${pinnedSetupNode}`));
+    assert.match(initialSetup, /node-version-file: \.node-version/u);
+    assert.doesNotMatch(initialSetup, /cache: yarn|cache-dependency-path:/u);
+
+    const corepack = source.slice(corepackIndex, cacheIndex);
+    assert.match(corepack, /corepack enable/u);
+    assert.match(corepack, /corepack prepare yarn@4\.17\.1 --activate/u);
+
+    const cache = source.slice(cacheIndex, installIndex);
+    assert.ok(cache.includes(`uses: ${pinnedSetupNode}`));
+    assert.match(cache, /node-version-file: \.node-version/u);
+    assert.match(cache, /cache: yarn/u);
+    assert.match(cache, /cache-dependency-path: yarn\.lock/u);
+  }
+});
 
 test('Notification behavior CI keeps unit, type, lint, build, chunk, and E2E gates mandatory', () => {
   const source = jobSource('behavior');

@@ -7,6 +7,7 @@ import { getMessagingThreads } from '@dwp-frontend/shared-utils';
 import {
   ActionButton,
   ErrorState,
+  FormField,
   GuidedEmptyState,
   LoadingState,
   PageCanvas,
@@ -16,7 +17,6 @@ import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
 import InputAdornment from '@mui/material/InputAdornment';
 import Stack from '@mui/material/Stack';
-import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 
 import { filterMessagingThreads } from './messaging-attention-model';
@@ -68,7 +68,8 @@ export function MessagingThreads() {
       />
 
       <Box component="section" aria-labelledby="messaging-threads-results" sx={{ mt: 2.5 }}>
-        <TextField
+        <FormField
+          fullWidth={false}
           size="small"
           value={queryText}
           onChange={(event) => updateSearch(event.target.value)}
@@ -162,7 +163,7 @@ export function MessagingThreads() {
                 </Box>
                 <Box sx={{ minWidth: 0 }}>
                   <Stack direction="row" spacing={0.75} alignItems="center" flexWrap="wrap">
-                    <Typography variant="body2" fontWeight={800}>
+                    <Typography variant="body2" fontWeight="fontWeightBold">
                       {item.conversationName || t('threadsPage.unnamedConversation')}
                     </Typography>
                     <Chip

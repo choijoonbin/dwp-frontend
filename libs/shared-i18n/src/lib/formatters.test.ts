@@ -5,9 +5,11 @@ import {
   formatDate,
   formatNumber,
   formatRelativeTime,
+  resolveCanonicalTimeZone,
   resolveSystemTimeZone,
   resolveZonedClock,
   resolveZonedDateKey,
+  resolveZonedDateTimeParts,
 } from './formatters';
 
 describe('locale-aware formatters', () => {
@@ -25,6 +27,12 @@ describe('locale-aware formatters', () => {
 
     expect(formatDate(value, options, 'en')).toBe('January 2, 2026');
     expect(formatDate(value, options, 'ko')).toBe('2026년 1월 2일');
+  });
+
+  it('resolves only canonical IANA time-zone identifiers', () => {
+    expect(resolveCanonicalTimeZone('Asia/Seoul')).toBe('Asia/Seoul');
+    expect(resolveCanonicalTimeZone('../Seoul')).toBeNull();
+    expect(resolveCanonicalTimeZone(' Asia/Seoul ')).toBeNull();
   });
 
   it('uses locale plural and relative-time rules instead of string assembly', () => {
@@ -74,6 +82,18 @@ describe('locale-aware formatters', () => {
       '2026-08-24'
     );
     expect(resolveZonedDateKey('2026-08-24T15:30:00.000Z', 'Invalid/TimeZone')).toBeNull();
+  });
+
+  it('resolves complete wall-clock parts for zoned date-time inputs', () => {
+    expect(resolveZonedDateTimeParts('2026-08-24T15:30:45.000Z', 'Asia/Seoul')).toEqual({
+      year: '2026',
+      month: '08',
+      day: '25',
+      hour: '00',
+      minute: '30',
+      second: '45',
+    });
+    expect(resolveZonedDateTimeParts('2026-08-24T15:30:45.000Z', 'Invalid/TimeZone')).toBeNull();
   });
 
   it('resolves the browser time zone while preserving each product fallback', () => {

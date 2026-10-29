@@ -19,14 +19,6 @@ const MAIL_OPERATION_ACTION_SUFFIXES = new Set([
   'delivery.retry',
 ]);
 
-const HCM_PAYROLL_CONFIGURATION_ACTIONS = new Set([
-  'route.hcm.configuration.payroll-element-version-create.action',
-  'route.hcm.configuration.payroll-formula-publish.action',
-  'route.hcm.configuration.payroll-formula-simulate.action',
-  'route.hcm.configuration.payroll-formula-validate.action',
-  'route.hcm.configuration.payroll-formula-version-create.action',
-]);
-
 function isRegisteredProductAction(binding: ProductSurfaceTaskBinding): boolean {
   return PRODUCT_AUTHORIZATION_ROUTE_PROJECTIONS.some(
     (route) =>
@@ -106,11 +98,13 @@ export function resolveProductSurfaceTaskKind(
   }
 
   if (productKey === 'hcm') {
+    if (routeContractKey.startsWith('route.hcm.configuration.')) return 'CONFIGURATION';
     if (surfaceKey === 'hcm.personal') return 'WORK';
     if (surfaceKey === 'hcm.team') return 'REVIEW';
+    if (surfaceKey === 'hcm.utility') return 'WORK';
     if (surfaceKey === 'hcm.operations') return 'OPERATIONS';
     if (surfaceKey === 'hcm.management') {
-      if (HCM_PAYROLL_CONFIGURATION_ACTIONS.has(routeContractKey)) return 'CONFIGURATION';
+      if (routeContractKey.includes('.controlled-transfer-')) return 'INTEGRATION';
       if (routeContractKey.includes('.controlled-export-')) return 'REPORTING';
       if (routeContractKey.includes('.integration-')) return 'INTEGRATION';
       if (routeContractKey.includes('.org-')) return 'DESIGN';

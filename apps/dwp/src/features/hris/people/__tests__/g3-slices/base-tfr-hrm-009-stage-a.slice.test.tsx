@@ -1,4 +1,5 @@
 import { readFileSync } from 'node:fs';
+import ts from 'typescript';
 import { describe, expect, it } from 'vitest';
 
 import {
@@ -14,6 +15,23 @@ const featureRoot = new URL('../../../employee-services/certificates/', import.m
 const apiSource = readFileSync(new URL('certificate-api.ts', featureRoot), 'utf8');
 const contractSource = readFileSync(new URL('certificate-contract.ts', featureRoot), 'utf8');
 const runtimeSource = readFileSync(new URL('certificate-workbench.tsx', featureRoot), 'utf8');
+
+function sourceIdentifiers(source: string): readonly string[] {
+  const sourceFile = ts.createSourceFile(
+    'certificate-workbench.tsx',
+    source,
+    ts.ScriptTarget.Latest,
+    true,
+    ts.ScriptKind.TSX
+  );
+  const identifiers: string[] = [];
+  const visit = (node: ts.Node) => {
+    if (ts.isIdentifier(node)) identifiers.push(node.text);
+    ts.forEachChild(node, visit);
+  };
+  visit(sourceFile);
+  return identifiers;
+}
 
 describe('[SLICE:BASE-TFR-HRM-009-STAGE-A] request and issue metadata surfaces', () => {
   it('pins IAQ-003, IAQ-010, and PEP-HRM-012 to the exact People paths', () => {
@@ -79,7 +97,14 @@ describe('[SLICE:BASE-TFR-HRM-009-STAGE-A] request and issue metadata surfaces',
     expect(HRM009_QUERY_CONTRACTS['IAQ-010'].actions.map((action) => action.actionKey)).toEqual([
       'hris.action.hrm.request-certificate',
     ]);
-    expect(runtimeSource.toLowerCase()).not.toMatch(/download|revoke|verification/iu);
+    expect(runtimeSource).toMatch(
+      /Download,\s+revoke,\s+verification,\s+expiry,\s+access-audit,\s+and\s+download-audit are not supported in this stage\./u
+    );
+    expect(
+      sourceIdentifiers(runtimeSource).filter((identifier) =>
+        /download|revoke|verification/iu.test(identifier)
+      )
+    ).toEqual([]);
   });
 
   it('pins the five-field request, required headers, 202 receipt, and TEAM_MANAGEMENT denial', () => {

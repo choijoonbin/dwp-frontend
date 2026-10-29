@@ -4,6 +4,7 @@ import { DatePickerField, FormDialog, FormField } from '@dwp-frontend/design-sys
 import MenuItem from '@mui/material/MenuItem';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
+import { useTranslation } from 'react-i18next';
 
 import type { ReactNode } from 'react';
 import type {
@@ -47,6 +48,7 @@ export function TimecardCommandDialogs({
   onSubmit: (command: TimecardSubmitCommand) => void;
   onDecide: (command: TimecardDecisionCommand) => void;
 }) {
+  const { t } = useTranslation('hcm');
   const [workDate, setWorkDate] = useState(timecard.periodStart);
   const [payCode, setPayCode] = useState('REGULAR');
   const [minutes, setMinutes] = useState('');
@@ -86,10 +88,13 @@ export function TimecardCommandDialogs({
     <>
       <FormDialog
         open={mode === 'CORRECT'}
-        title="Record an immutable correction"
-        description={`Period ${timecard.periodStart} to ${timecard.periodEnd}. Positive and negative minute adjustments are appended to the ledger.`}
-        cancelLabel="Cancel"
-        submitLabel="Record correction"
+        title={t('hrisTime.i18nClosure.timecard.dialog.correctionTitle')}
+        description={t('hrisTime.i18nClosure.timecard.dialog.correctionDescription', {
+          start: timecard.periodStart,
+          end: timecard.periodEnd,
+        })}
+        cancelLabel={t('hrisTime.i18nClosure.common.cancel')}
+        submitLabel={t('hrisTime.i18nClosure.timecard.dialog.correctionSubmit')}
         busy={busy}
         submitDisabled={!correctionValid || busy || commandDisabled}
         mobileFullScreen
@@ -112,13 +117,12 @@ export function TimecardCommandDialogs({
         <Stack gap={2}>
           {notice}
           <Typography variant="body2" color="text.secondary">
-            Existing ledger rows are never replaced. Use a negative value to reverse minutes and a
-            positive value to add minutes.
+            {t('hrisTime.i18nClosure.timecard.dialog.ledgerDescription')}
           </Typography>
           <DatePickerField
             autoFocus
             fullWidth
-            label="Work date"
+            label={t('hrisTime.i18nClosure.timecard.dialog.workDate')}
             value={workDate}
             onValueChange={(value) => setWorkDate(value ?? '')}
             minDate={timecard.periodStart}
@@ -126,23 +130,23 @@ export function TimecardCommandDialogs({
           />
           <FormField
             fullWidth
-            label="Pay code"
+            label={t('hrisTime.i18nClosure.timecard.dialog.payCode')}
             value={payCode}
             onChange={(event) => setPayCode(event.target.value)}
             inputProps={{ maxLength: 64 }}
           />
           <FormField
             fullWidth
-            label="Minute adjustment"
+            label={t('hrisTime.i18nClosure.timecard.dialog.minuteAdjustment')}
             type="number"
             value={minutes}
             onChange={(event) => setMinutes(event.target.value)}
-            supportingText="Enter a whole number from -1440 to 1440, excluding zero."
+            supportingText={t('hrisTime.i18nClosure.timecard.dialog.minuteHelp')}
             inputProps={{ min: -1_440, max: 1_440, step: 1 }}
           />
           <FormField
             fullWidth
-            label="Correction reason code"
+            label={t('hrisTime.i18nClosure.timecard.dialog.correctionReasonCode')}
             value={correctionReason}
             onChange={(event) => setCorrectionReason(event.target.value)}
             inputProps={{ maxLength: 64 }}
@@ -152,10 +156,10 @@ export function TimecardCommandDialogs({
 
       <FormDialog
         open={mode === 'SUBMIT'}
-        title="Submit this timecard"
-        description="Submission moves the current OPEN version to SUBMITTED. The server rechecks authority and version before accepting it."
-        cancelLabel="Cancel"
-        submitLabel="Submit timecard"
+        title={t('hrisTime.i18nClosure.timecard.dialog.submitTitle')}
+        description={t('hrisTime.i18nClosure.timecard.dialog.submitDescription')}
+        cancelLabel={t('hrisTime.i18nClosure.common.cancel')}
+        submitLabel={t('hrisTime.i18nClosure.timecard.dialog.submitAction')}
         busy={busy}
         submitDisabled={!submitValid || busy || commandDisabled}
         mobileFullScreen
@@ -172,7 +176,7 @@ export function TimecardCommandDialogs({
           <FormField
             autoFocus
             fullWidth
-            label="Submission reason code (optional)"
+            label={t('hrisTime.i18nClosure.timecard.dialog.submitReasonCode')}
             value={submitReason}
             onChange={(event) => setSubmitReason(event.target.value)}
             inputProps={{ maxLength: 64 }}
@@ -182,10 +186,10 @@ export function TimecardCommandDialogs({
 
       <FormDialog
         open={mode === 'DECIDE'}
-        title="Record an independent decision"
-        description="The worker, submitter, and latest correction maker cannot decide this timecard. Authority is re-evaluated at dispatch."
-        cancelLabel="Cancel"
-        submitLabel="Record decision"
+        title={t('hrisTime.i18nClosure.timecard.dialog.decisionTitle')}
+        description={t('hrisTime.i18nClosure.timecard.dialog.decisionDescription')}
+        cancelLabel={t('hrisTime.i18nClosure.common.cancel')}
+        submitLabel={t('hrisTime.i18nClosure.timecard.dialog.decisionSubmit')}
         busy={busy}
         submitDisabled={!decisionValid || busy || commandDisabled}
         mobileFullScreen
@@ -207,17 +211,19 @@ export function TimecardCommandDialogs({
             autoFocus
             select
             fullWidth
-            label="Decision"
+            label={t('hrisTime.i18nClosure.timecard.dialog.decision')}
             value={decision}
             onChange={(event) => setDecision(event.target.value as TimecardDecision)}
           >
-            <MenuItem value="APPROVE">Approve</MenuItem>
-            <MenuItem value="REJECT">Reject</MenuItem>
-            <MenuItem value="REQUIRE_CORRECTION">Require correction</MenuItem>
+            <MenuItem value="APPROVE">{t('hrisTime.i18nClosure.timecard.dialog.approve')}</MenuItem>
+            <MenuItem value="REJECT">{t('hrisTime.i18nClosure.timecard.dialog.reject')}</MenuItem>
+            <MenuItem value="REQUIRE_CORRECTION">
+              {t('hrisTime.i18nClosure.timecard.dialog.requireCorrection')}
+            </MenuItem>
           </FormField>
           <FormField
             fullWidth
-            label="Decision reason code"
+            label={t('hrisTime.i18nClosure.timecard.dialog.decisionReasonCode')}
             value={decisionReason}
             onChange={(event) => setDecisionReason(event.target.value)}
             inputProps={{ maxLength: 64 }}
@@ -226,10 +232,12 @@ export function TimecardCommandDialogs({
             fullWidth
             multiline
             minRows={3}
-            label="Restricted audit comment (optional)"
+            label={t('hrisTime.i18nClosure.timecard.dialog.auditComment')}
             value={comment}
             onChange={(event) => setComment(event.target.value)}
-            supportingText={`${comment.length}/1000. This comment is not included in the domain event.`}
+            supportingText={t('hrisTime.i18nClosure.timecard.dialog.auditCommentHelp', {
+              count: comment.length,
+            })}
             inputProps={{ maxLength: 1_000 }}
           />
         </Stack>

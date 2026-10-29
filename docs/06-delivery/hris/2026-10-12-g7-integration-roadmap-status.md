@@ -12,14 +12,14 @@ full mode 정확히 1회 실행되어 28/28 phase와 15/15 checkpoint assertion�
 
 ## G7 판정
 
-| 모듈 | Slice | 상태 | 현재 허용 범위 |
-| --- | --- | --- | --- |
-| PER | `BASE-TFR-PER-006` | `AUTHORIZED` | token-bound 새 child 경로와 Performance V2 migration의 domain authoring만 |
-| TIM | `BASE-TFR-TIM-006` | `AUTHORIZED` | token-bound 새 child 경로와 Time V8 migration의 domain authoring만 |
-| SYS | `BASE-TFR-SYS-007` | `START_WITHHELD` | packet/Platform V325 예약만; Control bootstrap 결과 pin 전 소스 변경 금지 |
-| HRM | `BASE-TFR-HRM-010` | `START_WITHHELD` | packet/People V54 예약만; event·양방향 Approval handoff pin 전 소스 변경 금지 |
-| PAY | `BASE-TFR-PAY-016` | `WITHHELD` | `MOD-PER-COMPPLAN` producer result와 named test 전 packet/token/lease 없음 |
-| Agent | 없음 | `WITHHELD` | canonical slice와 deterministic owner tool contract 전 packet/token 없음 |
+| 모듈  | Slice              | 상태             | 현재 허용 범위                                                                |
+| ----- | ------------------ | ---------------- | ----------------------------------------------------------------------------- |
+| PER   | `BASE-TFR-PER-006` | `AUTHORIZED`     | token-bound 새 child 경로와 Performance V2 migration의 domain authoring만     |
+| TIM   | `BASE-TFR-TIM-006` | `AUTHORIZED`     | token-bound 새 child 경로와 Time V8 migration의 domain authoring만            |
+| SYS   | `BASE-TFR-SYS-007` | `START_WITHHELD` | packet/Platform V325 예약만; Control bootstrap 결과 pin 전 소스 변경 금지     |
+| HRM   | `BASE-TFR-HRM-010` | `START_WITHHELD` | packet/People V54 예약만; event·양방향 Approval handoff pin 전 소스 변경 금지 |
+| PAY   | `BASE-TFR-PAY-016` | `WITHHELD`       | `MOD-PER-COMPPLAN` producer result와 named test 전 packet/token/lease 없음    |
+| Agent | 없음               | `WITHHELD`       | canonical slice와 deterministic owner tool contract 전 packet/token 없음      |
 
 PER/TIM token은 공통 경로 편집, 중앙 integration merge, customer data, activation 또는 production release를
 허용하지 않는다. Frontend와 Backend는 각각 전용 pushed branch/worktree에서 단일 writer로 작업한다.

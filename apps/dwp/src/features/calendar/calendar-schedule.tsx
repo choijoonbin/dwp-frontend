@@ -4,16 +4,11 @@ import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from '@tansta
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import { resolveSystemTimeZone } from '@dwp-frontend/shared-i18n';
 import {
-  cancelCalendarEvent,
   getCalendarExternalProjection,
   getCalendarEventsV2,
   getCalendarPolicy,
   getCalendars,
-  respondToCalendarEvent,
-  trashCalendarEvent,
-  updateCalendarEventPreference,
   updateCalendarSubscription,
-  updateCalendarEvent,
   usePermissions,
   useToast,
 } from '@dwp-frontend/shared-utils';
@@ -56,12 +51,7 @@ import { CalendarShareDialog } from './calendar-share-dialog';
 import { CalendarSourcePanel, CalendarSourcePicker } from './calendar-source-rail';
 import { CalendarScheduleChrome } from './calendar-schedule-chrome';
 import { CalendarScheduleEventOverlays } from './calendar-schedule-event-overlays';
-import { calendarScheduleMoveInput } from './calendar-schedule-event-move';
-import {
-  completeCalendarResponseIntent,
-  prepareCalendarResponseCommand,
-  type CalendarResponseIntent,
-} from './calendar-response-intent';
+import type { CalendarResponseIntent } from './calendar-response-intent';
 import { CalendarCommandPaletteOverlay } from './calendar-workspace-overlays';
 import { persistWorkCalendarHandoffLink } from './calendar-work-handoff';
 import { useCalendarCreateHandoff } from './use-calendar-create-handoff';
@@ -71,6 +61,7 @@ import {
   eventCapability,
   normalizeCalendarSelection,
 } from './calendar-source-model';
+import { useCalendarScheduleEventCommands } from './use-calendar-schedule-event-commands';
 import {
   authorizedCalendarWorkReturnTarget,
   calendarScheduleAuthorizedEvent,
@@ -88,12 +79,7 @@ import {
   type CalendarScheduleView,
 } from './calendar-schedule-state';
 
-import type {
-  CalendarEvent,
-  CalendarEventType,
-  CalendarResponseStatus,
-  CalendarSummary,
-} from '@dwp-frontend/shared-utils';
+import type { CalendarEvent, CalendarEventType, CalendarSummary } from '@dwp-frontend/shared-utils';
 const CALENDAR_SURFACE_RADIUS = `${foundationTokens.radius.surface}px`;
 export const CalendarSchedule = () => (
   <MailProposalOwnerAuthorityBoundary>
@@ -405,115 +391,23 @@ function CalendarScheduleContent() {
     () => setSourcePickerOpen(true)
   );
 
-  const clearEventSelection = () => {
-    setSelected(null);
-    if (!requestedEventId) return;
-    const next = new URLSearchParams(location.search);
-    next.delete('event');
-    setSearchParams(next, { replace: true });
-  };
-
-  const respondMutation = useMutation({
-    mutationFn: ({
-      eventId,
-      response,
-      expectedVersion,
-      idempotencyKey,
-    }: {
-      eventId: string;
-      response: Exclude<CalendarResponseStatus, 'NEEDS_ACTION'>;
-      expectedVersion: number;
-      idempotencyKey: string;
-    }) => respondToCalendarEvent(eventId, response, expectedVersion, idempotencyKey),
-    onSuccess: async (event, command) => {
-      responseIntentRef.current = completeCalendarResponseIntent(
-        responseIntentRef.current,
-        command.idempotencyKey
-      );
-      setSelected(event);
-      await queryClient.invalidateQueries({ queryKey: ['calendar'] });
-      toast.success(t('event.responseSaved'));
-    },
-    onError: () => toast.error(t('event.responseError')),
+  const {
+    cancelMutation,
+    canDelete,
+    canManage,
+    canMove,
+    clearEventSelection,
+    moveMutation,
+    preferenceMutation,
+    respond,
+    trashMutation,
+  } = useCalendarScheduleEventCommands({
+    canUpdate,
+    responseIntentRef,
+    setSelected,
+    setCancelling,
+    setTrashing,
   });
-  const cancelMutation = useMutation({
-    mutationFn: (event: CalendarEvent) => cancelCalendarEvent(event.eventId, event.version),
-    onSuccess: async () => {
-      clearEventSelection();
-      setCancelling(null);
-      await queryClient.invalidateQueries({ queryKey: ['calendar'] });
-      toast.success(t('event.cancelled'));
-    },
-    onError: () => toast.error(t('event.cancelError')),
-  });
-  const trashMutation = useMutation({
-    mutationFn: (event: CalendarEvent) =>
-      trashCalendarEvent(event.eventId, event.version, t('event.userDeletionReason')),
-    onSuccess: async () => {
-      clearEventSelection();
-      setTrashing(null);
-      await queryClient.invalidateQueries({ queryKey: ['calendar'] });
-      toast.success(t('event.trashed'));
-    },
-    onError: () => toast.error(t('event.trashError')),
-  });
-  const preferenceMutation = useMutation({
-    mutationFn: (event: CalendarEvent) =>
-      updateCalendarEventPreference(event.eventId, {
-        starred: !event.starred,
-        hidden: false,
-        version: event.preferenceVersion ?? 0,
-      }),
-    onSuccess: async (preference, event) => {
-      setSelected((current) =>
-        current?.eventId === event.eventId
-          ? {
-              ...current,
-              starred: preference.starred,
-              preferenceVersion: preference.version,
-            }
-          : current
-      );
-      await queryClient.invalidateQueries({ queryKey: ['calendar', 'events'] });
-      toast.success(t(preference.starred ? 'event.starred' : 'event.unstarred'));
-    },
-    onError: () => toast.error(t('event.starError')),
-  });
-  const moveMutation = useMutation({
-    mutationFn: async ({
-      event,
-      change,
-    }: {
-      event: CalendarEvent;
-      change: Readonly<{ startsAt: string; endsAt: string; allDay: boolean }>;
-      revert: () => void;
-    }) => updateCalendarEvent(event.eventId, calendarScheduleMoveInput(event, change)),
-    onSuccess: async (saved) => {
-      setSelected((current) => (current?.eventId === saved.eventId ? saved : current));
-      await queryClient.invalidateQueries({ queryKey: ['calendar'] });
-      toast.success(t('schedule.moveSuccess'));
-    },
-    onError: (_error, variables) => {
-      variables.revert();
-      toast.error(t('schedule.moveError'));
-    },
-  });
-
-  const canManage = useCallback(
-    (event: CalendarEvent) =>
-      canUpdate && event.status !== 'CANCELLED' && eventCapability(event, 'canEdit'),
-    [canUpdate]
-  );
-  const canDelete = useCallback(
-    (event: CalendarEvent) =>
-      canUpdate && event.status !== 'CANCELLED' && eventCapability(event, 'canDelete'),
-    [canUpdate]
-  );
-  const canMove = useCallback(
-    (event: CalendarEvent) =>
-      !moveMutation.isPending && canManage(event) && event.recurrence === 'NONE',
-    [canManage, moveMutation.isPending]
-  );
   const events = useMemo(() => {
     const source = scheduleEventsData ?? [];
     if (!calendarSelectionInitialized || !calendarSourcesData) {
@@ -707,11 +601,6 @@ function CalendarScheduleContent() {
     start.setSeconds(0, 0);
     start.setMinutes(start.getMinutes() < 30 ? 30 : 60);
     setCreateState({ start: start.toISOString(), type });
-  };
-  const respond = (event: CalendarEvent, response: 'ACCEPTED' | 'TENTATIVE' | 'DECLINED') => {
-    const prepared = prepareCalendarResponseCommand(responseIntentRef.current, event, response);
-    responseIntentRef.current = prepared.intent;
-    respondMutation.mutate(prepared.command);
   };
   return (
     <CalendarCanvas archetype="temporal">

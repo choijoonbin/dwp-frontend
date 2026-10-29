@@ -1,6 +1,7 @@
 import { MoreHorizontal } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { NavLink } from 'react-router-dom';
+import { foundationTokens } from '@dwp-frontend/design-system/foundation/tokens';
 
 import List from '@mui/material/List';
 import ListItemButton from '@mui/material/ListItemButton';
@@ -75,7 +76,10 @@ function MailNavigationMore({
               component={NavLink}
               to={candidate.path}
               onClick={onNavigate}
-              sx={{ minHeight: 44, borderRadius: 1 }}
+              sx={{
+                minHeight: 44,
+                borderRadius: foundationTokens.radius.control + 'px',
+              }}
             >
               <ListItemIcon sx={{ minWidth: 36 }}>
                 <Icon size={18} />

@@ -22,6 +22,7 @@ const BACKEND_TASK_ALLOWLIST = {
   'hcm.operations': ['OPERATIONS'],
   'hcm.personal': ['WORK'],
   'hcm.team': ['REVIEW', 'WORK'],
+  'hcm.utility': ['WORK'],
   'mail.management': ['ADMINISTRATION', 'OPERATIONS'],
   'mail.work': ['WORK'],
   'meetings.work': ['WORK'],
@@ -66,6 +67,17 @@ describe('governed mutation telemetry task classification', () => {
     expect(task('route.hcm.management.integration-execute.action')).toBe('INTEGRATION');
     expect(task('route.hcm.management.controlled-export-create.action')).toBe('REPORTING');
     expect(task('route.hcm.management.reference-update.action')).toBe('CONFIGURATION');
+    expect(task('route.hcm.configuration.automation-definition-create.action')).toBe(
+      'CONFIGURATION'
+    );
+    expect(task('route.hcm.management.controlled-transfer-create.action')).toBe('INTEGRATION');
+    expect(
+      resolveProductSurfaceTaskKind({
+        productKey: 'hcm',
+        surfaceKey: 'hcm.utility',
+        routeContractKey: 'route.hcm.utility.explorer-preferences-update.action',
+      })
+    ).toBe('WORK');
 
     expect(
       resolveProductSurfaceTaskKind({

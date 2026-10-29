@@ -1,19 +1,20 @@
-import { useId, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CalendarSearch, MapPin, Search, UserRound } from 'lucide-react';
 import { useInfiniteQuery, useQueryClient } from '@tanstack/react-query';
-import { ActionButton, FormField } from '@dwp-frontend/design-system';
+import {
+  ActionButton,
+  ContentDialog,
+  FormField,
+  InlineFeedback,
+  LoadingState,
+  foundationTokens,
+} from '@dwp-frontend/design-system';
 import { searchCalendarEventsV2 } from '@dwp-frontend/shared-utils/api/calendar-event-search-api';
 import { useAuth } from '@dwp-frontend/shared-utils';
 
-import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
 import ButtonBase from '@mui/material/ButtonBase';
-import CircularProgress from '@mui/material/CircularProgress';
-import Dialog from '@mui/material/Dialog';
-import DialogActions from '@mui/material/DialogActions';
-import DialogContent from '@mui/material/DialogContent';
-import DialogTitle from '@mui/material/DialogTitle';
 import Divider from '@mui/material/Divider';
 import InputAdornment from '@mui/material/InputAdornment';
 import Stack from '@mui/material/Stack';
@@ -60,14 +61,14 @@ export function CalendarEventSearchResultList({
               textAlign: 'left',
               border: 1,
               borderColor: 'divider',
-              borderRadius: 1,
+              borderRadius: foundationTokens.radius.control + 'px',
               p: 1.5,
               '&:hover, &:focus-visible': { borderColor: 'primary.main', bgcolor: 'action.hover' },
             }}
           >
             <Stack spacing={0.65} sx={{ minWidth: 0, width: 1 }}>
               <Stack direction="row" justifyContent="space-between" gap={1} alignItems="start">
-                <Typography fontWeight={700} noWrap>
+                <Typography fontWeight={foundationTokens.home.typography.weightBold} noWrap>
                   {event.title}
                 </Typography>
                 <Typography variant="caption" color="text.secondary" sx={{ flexShrink: 0 }}>
@@ -121,7 +122,6 @@ export function CalendarEventSearchDialog({
   const auth = useAuth();
   const queryClient = useQueryClient();
   const fullScreen = useMediaQuery('(max-width:767.95px)', { noSsr: true });
-  const titleId = useId();
   const [draftQuery, setDraftQuery] = useState('');
   const [submittedQuery, setSubmittedQuery] = useState<string | null>(null);
   const [searchRevision, setSearchRevision] = useState(0);
@@ -184,127 +184,120 @@ export function CalendarEventSearchDialog({
   };
 
   return (
-    <Dialog
+    <ContentDialog
       open={open}
       onClose={close}
       fullScreen={fullScreen}
-      fullWidth
       maxWidth="sm"
-      aria-labelledby={titleId}
-    >
-      <DialogTitle id={titleId}>
-        <Stack direction="row" gap={1} alignItems="center">
-          <CalendarSearch size={20} aria-hidden="true" />
-          {t('eventSearch.title')}
-        </Stack>
-      </DialogTitle>
-      <DialogContent dividers>
-        <Typography color="text.secondary" variant="body2" sx={{ mb: 2 }}>
-          {t('eventSearch.description')}
-        </Typography>
-        <Box
-          component="form"
-          onSubmit={(event) => {
-            event.preventDefault();
-            submit();
-          }}
-        >
-          <Stack direction={{ xs: 'column', sm: 'row' }} gap={1} alignItems="start">
-            <FormField
-              autoFocus
-              fullWidth
-              label={t('eventSearch.queryLabel')}
-              placeholder={t('eventSearch.queryPlaceholder')}
-              value={draftQuery}
-              onChange={(event) => {
-                setDraftQuery(event.target.value);
-                setValidationVisible(false);
-              }}
-              inputProps={{ maxLength: 240 }}
-              slotProps={{
-                input: {
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <Search size={17} aria-hidden="true" />
-                    </InputAdornment>
-                  ),
-                },
-              }}
-              errorMessage={
-                validationVisible && !validation.valid
-                  ? t(`eventSearch.validation.${validation.reason}`)
-                  : undefined
-              }
-            />
-            <ActionButton intent="primary" type="submit" sx={{ mt: { sm: 3.25 } }}>
-              {t('eventSearch.submit')}
-            </ActionButton>
-          </Stack>
-        </Box>
-
-        <Divider sx={{ my: 2 }} />
-
-        {searchQuery.isPending && submittedQuery ? (
-          <Stack role="status" alignItems="center" gap={1} sx={{ py: 4 }}>
-            <CircularProgress size={24} aria-hidden="true" />
-            <Typography variant="body2">{t('eventSearch.loading')}</Typography>
-          </Stack>
-        ) : failed ? (
-          <Alert
-            severity="error"
-            action={
-              <ActionButton intent="quiet" onClick={() => void searchQuery.refetch()}>
-                {t('actions.retry')}
-              </ActionButton>
-            }
-          >
-            {t('eventSearch.loadError')}
-          </Alert>
-        ) : searchQuery.isSuccess && results.length === 0 ? (
-          <Box sx={{ py: 4, textAlign: 'center' }}>
-            <Typography fontWeight={700}>{t('eventSearch.emptyTitle')}</Typography>
-            <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
-              {t('eventSearch.emptyDescription')}
-            </Typography>
-          </Box>
-        ) : results.length > 0 ? (
-          <Stack spacing={1.25}>
-            <Typography role="status" variant="caption" color="text.secondary">
-              {t('eventSearch.resultCount', { count: results.length })}
-            </Typography>
-            <CalendarEventSearchResultList
-              events={results}
-              language={language}
-              onSelect={(event) => {
-                onSelect(event);
-                close();
-              }}
-            />
-            {searchQuery.hasNextPage ? (
-              <ActionButton
-                intent="secondary"
-                disabled={searchQuery.isFetchingNextPage}
-                onClick={() => void searchQuery.fetchNextPage()}
-              >
-                {t(
-                  searchQuery.isFetchingNextPage
-                    ? 'eventSearch.loadingMore'
-                    : 'eventSearch.loadMore'
-                )}
-              </ActionButton>
-            ) : null}
-          </Stack>
-        ) : (
-          <Typography color="text.secondary" variant="body2" sx={{ py: 3, textAlign: 'center' }}>
-            {t('eventSearch.idle')}
-          </Typography>
-        )}
-      </DialogContent>
-      <DialogActions>
+      title={t('eventSearch.title')}
+      closeLabel={t('actions.close')}
+      titleStart={<CalendarSearch size={20} aria-hidden="true" />}
+      contentDividers
+      footerContent={
         <ActionButton intent="quiet" onClick={close}>
           {t('actions.close')}
         </ActionButton>
-      </DialogActions>
-    </Dialog>
+      }
+    >
+      <Typography color="text.secondary" variant="body2" sx={{ mb: 2 }}>
+        {t('eventSearch.description')}
+      </Typography>
+      <Box
+        component="form"
+        onSubmit={(event) => {
+          event.preventDefault();
+          submit();
+        }}
+      >
+        <Stack direction={{ xs: 'column', sm: 'row' }} gap={1} alignItems="start">
+          <FormField
+            autoFocus
+            fullWidth
+            label={t('eventSearch.queryLabel')}
+            placeholder={t('eventSearch.queryPlaceholder')}
+            value={draftQuery}
+            onChange={(event) => {
+              setDraftQuery(event.target.value);
+              setValidationVisible(false);
+            }}
+            inputProps={{ maxLength: 240 }}
+            slotProps={{
+              input: {
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <Search size={17} aria-hidden="true" />
+                  </InputAdornment>
+                ),
+              },
+            }}
+            errorMessage={
+              validationVisible && !validation.valid
+                ? t(`eventSearch.validation.${validation.reason}`)
+                : undefined
+            }
+          />
+          <ActionButton intent="primary" type="submit" sx={{ mt: { sm: 3.25 } }}>
+            {t('eventSearch.submit')}
+          </ActionButton>
+        </Stack>
+      </Box>
+
+      <Divider sx={{ my: 2 }} />
+
+      {searchQuery.isPending && submittedQuery ? (
+        <Box sx={{ py: 4, display: 'flex', justifyContent: 'center' }}>
+          <LoadingState embedded label={t('eventSearch.loading')} />
+        </Box>
+      ) : failed ? (
+        <InlineFeedback
+          severity="error"
+          action={
+            <ActionButton intent="quiet" onClick={() => void searchQuery.refetch()}>
+              {t('actions.retry')}
+            </ActionButton>
+          }
+        >
+          {t('eventSearch.loadError')}
+        </InlineFeedback>
+      ) : searchQuery.isSuccess && results.length === 0 ? (
+        <Box sx={{ py: 4, textAlign: 'center' }}>
+          <Typography fontWeight={foundationTokens.home.typography.weightBold}>
+            {t('eventSearch.emptyTitle')}
+          </Typography>
+          <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
+            {t('eventSearch.emptyDescription')}
+          </Typography>
+        </Box>
+      ) : results.length > 0 ? (
+        <Stack spacing={1.25}>
+          <Typography role="status" variant="caption" color="text.secondary">
+            {t('eventSearch.resultCount', { count: results.length })}
+          </Typography>
+          <CalendarEventSearchResultList
+            events={results}
+            language={language}
+            onSelect={(event) => {
+              onSelect(event);
+              close();
+            }}
+          />
+          {searchQuery.hasNextPage ? (
+            <ActionButton
+              intent="secondary"
+              disabled={searchQuery.isFetchingNextPage}
+              onClick={() => void searchQuery.fetchNextPage()}
+            >
+              {t(
+                searchQuery.isFetchingNextPage ? 'eventSearch.loadingMore' : 'eventSearch.loadMore'
+              )}
+            </ActionButton>
+          ) : null}
+        </Stack>
+      ) : (
+        <Typography color="text.secondary" variant="body2" sx={{ py: 3, textAlign: 'center' }}>
+          {t('eventSearch.idle')}
+        </Typography>
+      )}
+    </ContentDialog>
   );
 }

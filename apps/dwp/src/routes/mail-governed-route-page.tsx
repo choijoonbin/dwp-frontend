@@ -1,9 +1,9 @@
 import { useMemo } from 'react';
-import {
-  MailGovernedAuthorityBoundary,
-  type MailGovernedRequestAuthority,
-  type MailProductSurfaceRolloutState,
-} from '@dwp-frontend/shared-utils';
+import { MailGovernedAuthorityBoundary } from '@dwp-frontend/shared-utils/api/mail-governed-authority-boundary';
+import type {
+  MailGovernedRequestAuthority,
+  MailProductSurfaceRolloutState,
+} from '@dwp-frontend/shared-utils/api/mail-governed-transport';
 
 import { useOptionalAllowedProductSurface } from '../features/shell/allowed-product-surface-context';
 import {

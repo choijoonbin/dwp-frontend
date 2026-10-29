@@ -20,11 +20,12 @@ type SuccessContent<TOperation> = TOperation extends {
     : never
   : never;
 
-type SuccessData<TOperation> = SuccessContent<TOperation> extends infer TEnvelope
-  ? TEnvelope extends { data?: infer TData }
-    ? TData
-    : never
-  : never;
+type SuccessData<TOperation> =
+  SuccessContent<TOperation> extends infer TEnvelope
+    ? TEnvelope extends { data?: infer TData }
+      ? TData
+      : never
+    : never;
 
 /** Contract-derived Mail types. Domain response models remain stricter after boundary parsing. */
 export type MailCreateDraftContractRequest = JsonRequestBody<operations['platform_createDraft']>;
@@ -42,9 +43,7 @@ export type MailPolicyUpdateContractRequest = JsonRequestBody<
 export type MailSaveDraftContractPath = PathParameters<operations['platform_saveDraft']>;
 export type MailUpdateDraftContractPath = PathParameters<operations['platform_updateMailDraft']>;
 export type MailComposeContractResponse = SuccessData<operations['platform_compose']>;
-export type MailEventStreamContractEvent = SuccessContent<
-  operations['platform_streamMailEvents']
->;
+export type MailEventStreamContractEvent = SuccessContent<operations['platform_streamMailEvents']>;
 export type MailEventCatchUpContractResponse = SuccessData<
   operations['platform_catchUpMailEvents']
 >;
@@ -56,7 +55,5 @@ export type MailEventCatchUpContractResponse = SuccessData<
 export type MailThreadActionContractRequest = JsonRequestBody<operations['platform_action']>;
 export type MailLifecycleContractRequest = JsonRequestBody<operations['platform_lifecycle']>;
 export type MailBulkMutationIdentity = Readonly<
-  Required<
-    Pick<MailThreadActionContractRequest, 'bulkIntentId' | 'itemIdempotencyKey'>
-  >
+  Required<Pick<MailThreadActionContractRequest, 'bulkIntentId' | 'itemIdempotencyKey'>>
 >;
